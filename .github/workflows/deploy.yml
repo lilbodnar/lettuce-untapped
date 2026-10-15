@@ -1,0 +1,56 @@
+# Runs the tests, then publishes the site to GitHub Pages on every push to main.
+# Before publishing it adds ?v=<commit> to every local .js and .css link in the HTML files,
+# so browsers always load the new files after a push (no hard refresh, no version numbers to bump).
+#
+# One-time setup: on GitHub, Settings → Pages → Build and deployment → Source: "GitHub Actions".
+
+name: Test and deploy
+
+on:
+  push:
+    branches: [main]
+  pull_request:
+  workflow_dispatch:
+
+permissions:
+  contents: read
+  pages: write
+  id-token: write
+
+concurrency:
+  group: pages
+  cancel-in-progress: true
+
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-node@v4
+        with:
+          node-version: 22
+      - run: npm test
+
+  deploy:
+    needs: test
+    if: github.event_name != 'pull_request'
+    runs-on: ubuntu-latest
+    environment:
+      name: github-pages
+      url: ${{ steps.deployment.outputs.page_url }}
+    steps:
+      - uses: actions/checkout@v4
+      - name: Add version to script and stylesheet links
+        run: |
+          v="${GITHUB_SHA::8}"
+          find . -name '*.html' -not -path './.git/*' -print0 |
+            xargs -0 sed -i -E "s#((src|href)=\"[^\":?]+\.(js|css))\"#\1?v=$v\"#g"
+          grep -n '?v=' index.html simulator/index.html
+      - name: Leave out files the site doesn't need
+        run: rm -rf .github tests worker package.json
+      - uses: actions/configure-pages@v5
+      - uses: actions/upload-pages-artifact@v3
+        with:
+          path: .
+      - id: deployment
+        uses: actions/deploy-pages@v4
