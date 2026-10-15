@@ -13,7 +13,7 @@ Card data and images come from [Scryfall](https://scryfall.com) (free, no accoun
 
 ## Getting started
 
-1. Open MTG Tracker and click **Simulator ▸** at the top right. Online, that's [lilbodnar.github.io/mtg-tracker/simulator](https://lilbodnar.github.io/mtg-tracker/simulator/). (Or double-click `simulator/index.html` in a downloaded copy.)
+1. Open MTG Tracker and click **Simulator ▸** at the top right. Online, that's [lilbodnar.github.io/lettuce-untapped/simulator](https://lilbodnar.github.io/lettuce-untapped/simulator/). (Or double-click `simulator/index.html` in a downloaded copy.)
 2. Your MTG Tracker decks show up on the **Decks** tab. Click **Play**.
 3. **◂ MTG Tracker** at the top right takes you back.
 
@@ -100,9 +100,9 @@ Combat counts power and toughness (with +1/+1 and -1/-1 counters), flying, reach
 
 ## Playing online with friends
 
-Play against up to 3 friends. The easiest way is for everyone to open the online version at **[lilbodnar.github.io/mtg-tracker/simulator](https://lilbodnar.github.io/mtg-tracker/simulator/)**. There's nothing to download, and everyone automatically has the same version. Use Chrome or Edge.
+Play against up to 3 friends. The easiest way is for everyone to open the online version at **[lilbodnar.github.io/lettuce-untapped/simulator](https://lilbodnar.github.io/lettuce-untapped/simulator/)**. There's nothing to download, and everyone automatically has the same version. Use Chrome or Edge.
 
-Each person's decks come from their own MTG Tracker, so friends should import their decks at [lilbodnar.github.io/mtg-tracker](https://lilbodnar.github.io/mtg-tracker/) first, in the same browser. Pasting a deck list on the Decks tab works too.
+Each person's decks come from their own MTG Tracker, so friends should import their decks at [lilbodnar.github.io/lettuce-untapped](https://lilbodnar.github.io/lettuce-untapped/) first, in the same browser. Pasting a deck list on the Decks tab works too.
 
 1. **Host:** on the **Decks** tab, under **Play online**, type your name and click **Host a game**. You land in the **lobby** with a game code like `K7QX2M`. Send it to your friends.
 2. **Everyone else:** type your name and the code, then click **Join**. You land in the same lobby.
