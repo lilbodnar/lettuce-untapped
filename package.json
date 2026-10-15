@@ -1,0 +1,8 @@
+{
+  "name": "mtg-tracker",
+  "private": true,
+  "description": "No build step and no dependencies. This file only gives the tests a short command: npm test",
+  "scripts": {
+    "test": "node --test"
+  }
+}

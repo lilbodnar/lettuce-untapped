@@ -1,0 +1,3846 @@
+/*
+ * MTG Simulator screens: pick a deck (from MTG Tracker or a pasted list), play it on a
+ * table, and see draw odds. Game rules live in game.js; this file draws the screen and
+ * turns clicks, drags and keys into game actions.
+ */
+(() => {
+  'use strict';
+  const Store = KVStore('mtg-simulator');
+
+  const $ = (sel, root = document) => root.querySelector(sel);
+  const esc = s => String(s == null ? '' : s).replace(/[&<>"']/g, c => ({ '&': '&amp;', '<': '&lt;', '>': '&gt;', '"': '&quot;', "'": '&#39;' }[c]));
+  const pct = p => (p >= 0.995 && p < 1 ? '>99' : p > 0 && p < 0.005 ? '<1' : Math.round(p * 100)) + '%';
+
+  const view = $('#view');
+  const modal = $('#modal');
+  const modalBox = $('#modalBox');
+  const menu = $('#menu');
+  const ghost = $('#ghost');
+
+  // Opened from the home-screen icon. On a touchscreen there, cards use hold / tap / double tap
+  // (see touchTap) instead of hover, click and right-click.
+  const appMode = window.matchMedia('(display-mode: standalone)').matches;
+  document.documentElement.classList.toggle('app', appMode);
+  const zoom = document.createElement('div');
+  zoom.className = 'zoom';
+  zoom.hidden = true;
+  document.body.appendChild(zoom);
+  // Shows a card big. It closes when you let go, or with the × (or a tap) if the phone missed that.
+  function showZoom(html) {
+    zoom.innerHTML = `<button class="zoom-close" aria-label="Close">×</button><div class="zoom-box">${html}</div>`;
+    zoom.hidden = false;
+  }
+  zoom.addEventListener('click', () => { zoom.hidden = true; });
+
+  let tracker = null; // { profiles, cards, activeProfileId, source }
+  let local = { decks: [], cards: {} };
+  let ui = { tab: 'decks', oddsDeck: null, oddsOnDraw: false, oddsCategory: '', oddsPicked: [], cardW: 92, autoTap: false, recentCounters: [] };
+  let game = null;
+  // Saved games, newest first: [{ id, deckName, deckKey, turn, life, createdAt, updatedAt,
+  //   online: { role, code, myId, activePid, players: [names] } | null }]. Each game's table is stored as 'game:<id>'.
+  let games = [];
+  let gameId = null; // which saved game `game` is
+  let undoStack = [];
+  let viewer = null; // { zone, top: n|null, ids (the cards looked at, for top n), filter, shuffleOnClose }
+  let hoverIid = null;
+  let sample = null; // { deckKey, order, shown }
+
+  // Online play (see online.js)
+  let peers = {}; // pid -> { board, offset, cards: { iid: card } }  what the other players have out
+  let peerDefs = {}; // card info other players sent, by Scryfall id
+  let sentDefs = new Set(); // card ids already sent to the other players
+  let chat = []; // { at, from, msg }, newest first
+  let activePid = null; // whose turn it is
+  let inLobby = false; // online, before the host starts the game
+  let remoteLife = 0; // total life change other players have made to you (kept through Undo)
+  let hoverOpp = null;
+
+  // ---------- data ----------
+
+  const def = id => (id && (local.cards[id] || (tracker && tracker.cards[id]) || peerDefs[id])) || null;
+
+  function trackerProfile() {
+    if (!tracker) return null;
+    return tracker.profiles.find(p => p.id === tracker.activeProfileId) || tracker.profiles[0];
+  }
+
+  function allDecks() {
+    const out = [];
+    const prof = trackerProfile();
+    if (prof) for (const d of prof.decks || []) out.push(TrackerLink.toDeck(d, prof));
+    out.push(...local.decks);
+    return out;
+  }
+
+  function findDeck(key) {
+    if (!key) return null;
+    const found = allDecks().find(d => d.key === key);
+    if (found) return found;
+    if (tracker && key.startsWith('tracker:')) {
+      const [, pid, did] = key.split(':');
+      const prof = tracker.profiles.find(p => p.id === pid);
+      const deck = prof && (prof.decks || []).find(d => d.id === did);
+      if (deck) return TrackerLink.toDeck(deck, prof);
+    }
+    return null;
+  }
+
+  async function connectTracker(quiet) {
+    try {
+      const t = await TrackerLink.fromBrowser();
+      if (t) tracker = t;
+      else if (!quiet) status('No MTG Tracker data found in this browser. Load a Tracker backup file instead.', 'warn');
+    } catch (e) {
+      if (!quiet) status('Could not read MTG Tracker data: ' + e.message, 'error');
+    }
+    renderLinkState();
+  }
+
+  async function saveLocal() {
+    await Store.set('decks', local.decks);
+    await Store.set('cards', local.cards);
+  }
+
+  let saveTimer;
+  function saveSoon() {
+    clearTimeout(saveTimer);
+    saveTimer = setTimeout(saveNow, 300);
+  }
+  // Also runs when the app is closed or hidden, so the last move is never lost.
+  function saveNow() {
+    clearTimeout(saveTimer);
+    saveGame();
+    Store.set('ui', { oddsDeck: ui.oddsDeck, oddsOnDraw: ui.oddsOnDraw, cardW: ui.cardW, autoTap: ui.autoTap, upkeepOff: ui.upkeepOff, recentCounters: ui.recentCounters, playerName: ui.playerName, botYou: ui.botYou, botOpp: ui.botOpp, botFirst: ui.botFirst, onlineDeck: ui.onlineDeck, hostCode: ui.hostCode, joinCode: ui.joinCode, gameId });
+  }
+
+  const gameMeta = () => games.find(g => g.id === gameId) || null;
+  const newGameId = () => Date.now().toString(36) + Math.random().toString(36).slice(2, 6);
+  // The online game this saved game belongs to is the one you're connected to now.
+  const linkedOnline = m => !!(m && m.online && Online.active() && Online.code() === m.online.code);
+
+  // Saves the current game and its line in the games list.
+  function saveGame() {
+    if (!game || !gameId) return;
+    let m = gameMeta();
+    if (!m) {
+      m = { id: gameId, createdAt: Date.now(), online: null };
+      games.unshift(m);
+    }
+    Object.assign(m, { deckName: game.deckName, deckKey: game.deckKey, turn: game.turn, life: game.life, vsBot: game.bot ? game.bot.s.deckName : null, updatedAt: Date.now() });
+    if (linkedOnline(m)) {
+      const names = Online.players().filter(p => p.pid !== Online.id()).map(p => p.name);
+      Object.assign(m.online, { role: Online.role(), myId: Online.id(), activePid, players: names.length ? names : m.online.players || [] });
+    }
+    Store.set('game:' + gameId, game);
+    Store.set('games', games);
+  }
+
+  // Puts a new game on the table: a new saved game, or (replace) in place of the current one.
+  function useNewGame(g, replace) {
+    if (!replace || !gameId) {
+      saveGame();
+      gameId = newGameId();
+      games.unshift({ id: gameId, createdAt: Date.now(), online: null });
+    }
+    game = g;
+    const m = gameMeta();
+    if (Online.active() && Online.code()) m.online = Object.assign(m.online || {}, { role: Online.role(), code: Online.code() });
+  }
+
+  // Switches to another saved game. Your connection to a different online game is closed first.
+  async function resumeGame(id) {
+    if (id === gameId && game) return setTab('play');
+    const m = games.find(g => g.id === id);
+    if (!m) return;
+    if (Online.active() && !linkedOnline(m)) {
+      if (!confirm(`Switching games disconnects you from online game ${Online.code()}. That game stays saved, and you can reconnect to it later.`)) return;
+      Online.leave();
+      chat = [];
+    }
+    saveGame();
+    let g = null;
+    try { g = await Store.get('game:' + id); } catch (e) { /* handled below */ }
+    if (!g) {
+      games = games.filter(x => x !== m);
+      Store.set('games', games);
+      status('That saved game couldn\'t be found.', 'error');
+      return renderDecks();
+    }
+    game = g;
+    gameId = id;
+    undoStack = [];
+    viewer = null;
+    sample = null;
+    remoteLife = 0;
+    inLobby = false;
+    activePid = linkedOnline(m) ? activePid : (m.online && m.online.activePid) || null;
+    saveNow();
+    setTab('play');
+    upgradeSavedGame();
+    if (m.online && !Online.active()) status(`This is online game ${m.online.code}. Click Reconnect (top right) to play with the others again.`, 'info', true);
+  }
+
+  async function deleteGame(id) {
+    const m = games.find(g => g.id === id);
+    if (!m || !confirm(`Delete the saved game with ${m.deckName} (turn ${m.turn})? It can't be undone.`)) return;
+    games = games.filter(g => g !== m);
+    Store.set('game:' + id, null);
+    if (id === gameId) {
+      game = null;
+      gameId = null;
+      undoStack = [];
+      syncSoon();
+    }
+    saveNow();
+    renderDecks();
+  }
+
+  // Reconnects the current saved game to its online game: the host opens the same game code again,
+  // everyone else joins it.
+  async function reconnectGame() {
+    const m = gameMeta();
+    if (!m || !m.online) return;
+    const was = m.online.code;
+    ui.playerName = ui.playerName || 'Player';
+    try {
+      if (m.online.role === 'host') await Online.host(ui.playerName, was);
+      else await Online.join(was, ui.playerName, m.online.myId);
+    } catch (e) {
+      return status(e.message, 'error');
+    }
+    if (!Online.active()) return refreshOnline();
+    if (Online.code() !== was) {
+      m.online.code = Online.code();
+      status(`Game code ${was} was still in use, so this game now has the code ${Online.code()}. Send it to the others so they can reconnect.`, 'warn', true);
+    } else if (m.online.role === 'host') {
+      status(`Game ${was} is open again. The others can click Reconnect on their saved game.`, 'ok');
+    }
+    inLobby = false;
+    saveNow();
+    sendPick();
+    syncSoon();
+    setTab('play');
+  }
+
+  // Makes sure every card in the deck has card info (images, types). Fetches any that are missing.
+  async function ensureDefs(ids, full) {
+    const missing = [...new Set(ids)].filter(id => id && (!def(id) || (full && !Array.isArray(def(id).producedMana))));
+    if (!missing.length) return;
+    status(`Getting card info from Scryfall (${missing.length} cards)…`);
+    const { found } = await Scryfall.collection(missing.map(id => ({ id })));
+    found.forEach(c => { local.cards[c.id] = c; });
+    await saveLocal();
+    hideStatus();
+  }
+
+  // ---------- status / modal / menu ----------
+
+  let statusTimer;
+  // sticky: true keeps it up until replaced or closed; a number is how long to show it (ms).
+  function status(msg, kind = 'info', sticky) {
+    const el = $('#status');
+    el.className = 'status ' + kind;
+    el.innerHTML = `<span>${esc(msg)}</span><button class="status-x" type="button" title="Close" aria-label="Close">×</button>`;
+    el.querySelector('.status-x').onclick = hideStatus;
+    el.hidden = false;
+    clearTimeout(statusTimer);
+    if (typeof sticky === 'number') statusTimer = setTimeout(hideStatus, sticky);
+    else if (!sticky && kind !== 'info-sticky') statusTimer = setTimeout(hideStatus, kind === 'error' ? 9000 : 4500);
+  }
+  function hideStatus() { clearTimeout(statusTimer); $('#status').hidden = true; }
+
+  function openModal(html) {
+    modalBox.innerHTML = html;
+    modal.hidden = false;
+  }
+  function closeModal() {
+    document.body.classList.remove('peek');
+    afterDiscard = null;
+    const wasSearching = viewer && viewer.shuffleOnClose;
+    viewer = null;
+    modal.hidden = true;
+    modalBox.innerHTML = '';
+    if (wasSearching && game) act(() => Game.shuffle(game));
+  }
+
+  function ask(title, value, type = 'number') {
+    return new Promise(resolve => {
+      openModal(`<form class="ask" id="askForm"><h3>${esc(title)}</h3>
+        <input name="v" type="${type}" value="${esc(value)}" ${type === 'number' ? 'min="0"' : ''} autofocus>
+        <div class="toolbar end"><button type="button" class="btn ghost" data-ask="cancel">Cancel</button><button class="btn">OK</button></div></form>`);
+      const form = $('#askForm');
+      const input = form.v;
+      input.focus();
+      input.select();
+      const done = v => { modal.hidden = true; modalBox.innerHTML = ''; resolve(v); };
+      form.onsubmit = e => { e.preventDefault(); done(type === 'number' ? Number(input.value) : input.value); };
+      form.querySelector('[data-ask=cancel]').onclick = () => done(null);
+    });
+  }
+
+  function showMenu(x, y, items) {
+    menu.innerHTML = items.map((it, i) => it.sep
+      ? '<div class="sep"></div>'
+      : `<button data-i="${i}" ${it.disabled ? 'disabled' : ''}>${esc(it.label)}${it.hint ? `<span class="hint">${esc(it.hint)}</span>` : ''}</button>`).join('');
+    menu.hidden = false;
+    const r = menu.getBoundingClientRect();
+    menu.style.left = Math.min(x, window.innerWidth - r.width - 8) + 'px';
+    menu.style.top = Math.min(y, window.innerHeight - r.height - 8) + 'px';
+    menu.onclick = e => {
+      const b = e.target.closest('button[data-i]');
+      if (!b) return;
+      hideMenu();
+      items[Number(b.dataset.i)].action();
+    };
+  }
+  function hideMenu() { menu.hidden = true; }
+
+  // ---------- game actions (with undo) ----------
+
+  function act(fn) {
+    if (!game) return;
+    delete game.oppHits;
+    game.opponents = isOnline() ? others().length || null : hasBot() ? 1 : null; // for "enters tapped unless you have two or more opponents"
+    const entry = { json: JSON.stringify(game), remote: remoteLife, hits: null };
+    undoStack.push(entry);
+    if (undoStack.length > 200) undoStack.shift();
+    fn();
+    entry.hits = sendHits(game.oppHits);
+    delete game.oppHits;
+    if (game.notice) {
+      status(game.notice + ' (Undo if that was wrong.)', 'ok');
+      delete game.notice;
+    }
+    afterChange();
+  }
+
+  function undo() {
+    const prev = undoStack.pop();
+    if (!prev) return status('Nothing to undo.');
+    game = JSON.parse(prev.json);
+    game.life += remoteLife - prev.remote; // life changes other players made since then stay
+    (prev.hits || []).forEach(h => Online.send({ t: 'life', d: -h.d }, h.pid));
+    afterChange();
+  }
+
+  function afterChange() {
+    if (game && game.mustDiscard) setTimeout(mustDiscardPrompt, 0); // after any modal this action opens
+    if (game && game.mustDestroy) setTimeout(mustDestroyPrompt, 0);
+    syncAuras(); // your Arrest on Opp's creature
+    if (game) Bot.refreshGrants(game, def); // "Goblins you control have haste" and the like
+    if (ui.tab === 'play') renderBoard();
+    if (viewer) renderViewer();
+    checkDeaths();
+    saveSoon();
+    syncSoon();
+  }
+
+  // ---------- someone loses ----------
+
+  // Everyone in the game and why they've lost, if they have: 0 life, 10 poison, or 21 commander damage.
+  function playersStatus() {
+    const why = (life, poison, cmd) => (life <= 0 ? `${life} life` : poison >= 10 ? `${poison} poison counters` : cmd >= 21 ? `${cmd} commander damage` : '');
+    const list = [{ key: 'me', name: 'You', why: why(game.life, game.poison || 0, Math.max(0, ...Object.values(game.cmdDamage || {}))) }];
+    if (isOnline()) {
+      for (const p of others()) {
+        const b = peers[p.pid] && peers[p.pid].board;
+        if (b) list.push({ key: p.pid, name: p.name, why: why(b.life, b.poison || 0, 0) });
+      }
+    } else {
+      list.push({ key: 'opp', name: 'Opp', why: why(game.oppLife, 0, 0) });
+    }
+    return list;
+  }
+
+  // Announces anyone who just dropped out. With one player left, they win; otherwise play goes on.
+  // game.dead remembers who's been announced (and forgets them if Undo brings them back).
+  function checkDeaths() {
+    if (!game) return;
+    const list = playersStatus();
+    const told = new Set(game.dead || []);
+    list.forEach(p => { if (!p.why) told.delete(p.key); });
+    const fresh = list.filter(p => p.why && !told.has(p.key));
+    game.dead = [...told, ...fresh.map(p => p.key)];
+    if (!fresh.length) return;
+    const alive = list.filter(p => !p.why);
+    const lines = fresh.map(p => `${p.name === 'You' ? 'You lose' : `${p.name} loses`} (${p.why}).`);
+    let title;
+    if (alive.length === 1) title = alive[0].key === 'me' ? 'You win!' : `${alive[0].name} wins!`;
+    else if (!alive.length) title = 'Everyone is out: it\'s a draw.';
+    else title = `${fresh.map(p => p.name).join(' and ')} ${fresh.length === 1 && fresh[0].key !== 'me' ? 'is' : 'are'} out. Play continues.`;
+    Game.log(game, `${lines.join(' ')} ${title}`);
+    showGameOver(title, lines, alive.length > 1);
+  }
+
+  const gameOver = document.createElement('div');
+  gameOver.className = 'game-over';
+  gameOver.hidden = true;
+  document.body.appendChild(gameOver);
+
+  // When the game is decided, OK ends it (so it leaves "Your games"); Undo takes back the last action instead.
+  function showGameOver(title, lines, goesOn) {
+    gameOver.innerHTML = `<div class="game-over-box">
+        <h2>${esc(title)}</h2>
+        ${lines.map(l => `<p>${esc(l)}</p>`).join('')}
+        <div class="toolbar"><button class="btn" data-go="${goesOn ? 'ok' : 'end'}">${goesOn ? 'Keep playing' : 'OK, end the game'}</button>
+          <button class="btn ghost" data-go="undo" title="Take back the last action">↶ Undo</button></div>
+      </div>`;
+    gameOver.hidden = false;
+  }
+  gameOver.addEventListener('click', e => {
+    const b = e.target.closest('[data-go]');
+    if (!b) return;
+    gameOver.hidden = true;
+    if (b.dataset.go === 'undo') undo();
+    if (b.dataset.go === 'end') endGame(true);
+  });
+
+  const MAX_HAND = 7;
+  let afterDiscard = null; // what to do once you've discarded down to 7
+
+  // True when something you control says "You have no maximum hand size" (Reliquary Tower, Thought Vessel…).
+  const noMaxHand = () => game.zones.battlefield.some(iid => {
+    const inst = game.cards[iid];
+    return !inst.faceDown && /\byou have no maximum hand size\b/i.test((def(inst.id) || {}).oracle || '');
+  });
+
+  // Ending your turn with more than 7 cards: pick cards to discard first, then carry on.
+  function checkHandSize(then) {
+    if (game.zones.hand.length <= MAX_HAND || noMaxHand()) return then();
+    afterDiscard = then;
+    renderDiscard();
+  }
+
+  function renderDiscard() {
+    const extra = game.zones.hand.length - MAX_HAND;
+    openModal(`
+      <div class="page-head"><h3>Discard ${extra === 1 ? 'a card' : extra + ' cards'}</h3><button class="btn ghost sm" data-act="close-modal">Cancel</button></div>
+      <p class="muted small">Your maximum hand size is ${MAX_HAND} and you have ${game.zones.hand.length}. Click ${extra === 1 ? 'the card' : 'the cards'} to discard, then your turn ends.</p>
+      <div class="viewer-grid">${game.zones.hand.map(iid => `<div class="viewer-card"><div class="card" data-discard="${iid}" title="Discard">${faceHtml((o.cards || game.cards)[iid])}</div></div>`).join('')}</div>`);
+  }
+
+  function discardDown(iid) {
+    act(() => Game.move(game, iid, 'graveyard'));
+    if (game.zones.hand.length > MAX_HAND) return renderDiscard();
+    const then = afterDiscard;
+    afterDiscard = null;
+    closeModal();
+    if (then) then();
+  }
+
+  // Pick cards from a list (your hand, your graveyard). o: { title, note, ids, min, max, ok, cancel }.
+  // done(iids) runs with the picks; Cancel (if offered) just closes it.
+  function pickCards(o, done) {
+    const chosen = new Set();
+    const min = o.min == null ? o.max : o.min;
+    const draw = () => {
+      openModal(`<div class="page-head"><h3>${esc(o.title)}</h3>${o.cancel ? `<button class="btn ghost sm" data-pick-cancel>${esc(o.cancel)}</button>` : ''}</div>
+        ${o.note ? `<p class="muted small">${esc(o.note)}</p>` : ''}
+        <div class="viewer-grid">${o.ids.map(iid => `<div class="viewer-card"><div class="card${chosen.has(iid) ? ' picked' : ''}" data-pick="${esc(iid)}" title="Click to pick">${faceHtml(game.cards[iid])}</div></div>`).join('')}</div>
+        <div class="toolbar end"><button class="btn" data-pick-ok ${chosen.size < min ? 'disabled' : ''}>${esc(o.ok)}${o.max > 1 ? ` (${chosen.size}/${o.max})` : ''}</button></div>`);
+      modalBox.querySelectorAll('[data-pick]').forEach(el => {
+        el.onclick = () => {
+          const iid = el.dataset.pick;
+          if (chosen.has(iid)) chosen.delete(iid);
+          else if (o.max === 1) { chosen.clear(); chosen.add(iid); }
+          else if (chosen.size < o.max) chosen.add(iid);
+          draw();
+        };
+      });
+      const cancel = modalBox.querySelector('[data-pick-cancel]');
+      if (cancel) cancel.onclick = () => { modal.hidden = true; modalBox.innerHTML = ''; if (o.onCancel) o.onCancel(); };
+      modalBox.querySelector('[data-pick-ok]').onclick = () => { modal.hidden = true; modalBox.innerHTML = ''; done([...chosen]); };
+    };
+    draw();
+  }
+
+  // Something made you discard (Earsplitting Rats entering, yours or Opp's): pick the cards.
+  function mustDiscardPrompt() {
+    const m = game && game.mustDiscard;
+    if (!m || !modal.hidden) return;
+    const n = Math.min(m.n, game.zones.hand.length);
+    if (!n) return act(() => { delete game.mustDiscard; });
+    pickCards({
+      title: `${m.why}: discard ${n === 1 ? 'a card' : n + ' cards'}`,
+      note: `Click ${n === 1 ? 'the card' : `${n} cards`} to discard, then Discard.`,
+      ids: [...game.zones.hand], max: n, ok: 'Discard', cancel: 'Skip',
+    }, picks => act(() => {
+      delete game.mustDiscard;
+      picks.forEach(iid => Game.move(game, iid, 'graveyard'));
+    }));
+    // Skip: the picker closes and nothing is discarded.
+    const cancel = modalBox.querySelector('[data-pick-cancel]');
+    if (cancel) cancel.onclick = () => { modal.hidden = true; modalBox.innerHTML = ''; act(() => { delete game.mustDiscard; }); };
+  }
+
+  // "Whenever one or more Cats you control deal combat damage to a player, destroy up to one target
+  // artifact or enchantment that player controls" (Feline Sovereign): pick one of Opp's, or skip.
+  function mustDestroyPrompt() {
+    const list = game && game.mustDestroy;
+    if (!list || !list.length || !modal.hidden) return;
+    const [m] = list;
+    const s = hasBot() ? game.bot.s : null;
+    const done = picks => act(() => {
+      game.mustDestroy = game.mustDestroy.slice(1);
+      if (!game.mustDestroy.length) delete game.mustDestroy;
+      picks.forEach(iid => {
+        Game.log(game, `${m.why}: destroyed Opp's ${s.cards[iid].name}.`);
+        Game.move(s, iid, s.cards[iid].commander ? 'command' : 'graveyard');
+      });
+    });
+    const ids = s ? Bot.destroyable(s, m.what).map(c => c.iid) : [];
+    if (!ids.length) {
+      return act(() => {
+        Game.log(game, s ? `${m.why}: Opp has no ${m.what} to destroy.` : `${m.why}: destroy up to one ${m.what} that player controls (they do that on their side).`);
+        game.mustDestroy = game.mustDestroy.slice(1);
+        if (!game.mustDestroy.length) delete game.mustDestroy;
+      });
+    }
+    pickCards({
+      title: `${m.why}: destroy up to one ${m.what}`,
+      note: `Click one of Opp's permanents to destroy it, or Skip.`,
+      ids, cards: s.cards, max: 1, min: 0, ok: 'Destroy', cancel: 'Skip', onCancel: () => done([]),
+    }, done);
+  }
+
+  // Your end step: "you may mill four cards. If you do, return up to two Rat creature cards from your
+  // graveyard to your hand" (Ashcoat of the Shadow Swarm). Asks for each, then runs then().
+  function endStep(then) {
+    if (game.endStepDone === game.turn) return then(); // already asked (End turn pressed again)
+    const todo = Bot.endStepTriggers(game, def);
+    const finish = () => { game.endStepDone = game.turn; then(); };
+    const next = i => {
+      const t = todo[i];
+      if (!t) return finish();
+      if (t.inst.zone !== 'battlefield') return next(i + 1);
+      openModal(`<div class="page-head"><h3>${esc(t.inst.name)}</h3></div>
+        <p>End step: mill ${t.mill}, then return up to ${t.up} ${esc(t.what)} card${t.up === 1 ? '' : 's'} from your graveyard to your hand?</p>
+        <div class="toolbar end"><button class="btn ghost" data-es="skip">Skip</button><button class="btn" data-es="go">Mill ${t.mill}</button></div>`);
+      modalBox.querySelector('[data-es=skip]').onclick = () => { modal.hidden = true; modalBox.innerHTML = ''; next(i + 1); };
+      modalBox.querySelector('[data-es=go]').onclick = () => {
+        modal.hidden = true;
+        modalBox.innerHTML = '';
+        act(() => Game.mill(game, t.mill));
+        const ids = Bot.returnable(game, t);
+        if (!ids.length) {
+          act(() => Game.log(game, `${t.inst.name}: no ${t.what} cards in your graveyard to return.`));
+          return next(i + 1);
+        }
+        pickCards({ title: `Return up to ${t.up} ${t.what} card${t.up === 1 ? '' : 's'}`, note: 'Pick the cards to put back in your hand.', ids, min: 0, max: t.up, ok: 'Return' }, picks => {
+          if (picks.length) act(() => {
+            picks.forEach(iid => Game.move(game, iid, 'hand'));
+            Game.log(game, `${t.inst.name}: returned ${picks.map(iid => game.cards[iid].name).join(' and ')} to your hand.`);
+          });
+          next(i + 1);
+        });
+      };
+    };
+    next(0);
+  }
+
+  // Playing alone: end this turn, then untap and draw. Online the same keys and menu items pass the turn.
+  function nextTurn() {
+    if (isOnline()) return passTurn();
+    if (hasBot()) {
+      if (game.bot.pending || game.bot.tapChoice) return oppWaiting();
+      return endStep(() => checkHandSize(() => oppTurn(true)));
+    }
+    endStep(() => checkHandSize(startNextTurn));
+  }
+
+  // Online: discard down to 7 if needed, then hand the turn to the next player. Their turn
+  // starts on its own when the message arrives.
+  function passTurn() {
+    const next = others()[0];
+    if (!next || !Online.connected()) return status('No one else is in the game yet.');
+    if (activePid && activePid !== Online.id()) return status(`It's ${nameOf(activePid)}'s turn, not yours.`);
+    endStep(() => checkHandSize(() => {
+      activePid = next.pid;
+      Online.send({ t: 'pass', next: next.pid });
+      act(() => { Game.endCrew(game); Game.endOfTurn(game); Game.log(game, `Passed the turn to ${next.name}.`); });
+    }));
+  }
+
+  // Cards with "At the beginning of your upkeep" (or each upkeep, or cumulative upkeep) get
+  // highlighted at the start of your turn until you click Done (unless Upkeep reminders is off).
+  const UPKEEP = /\bat the beginning of (?:your|each|each player's) upkeep\b|\bcumulative upkeep\b/i;
+
+  function markUpkeep() {
+    if (ui.upkeepOff) { game.upkeep = null; return; }
+    const iids = game.zones.battlefield.filter(iid => {
+      const inst = game.cards[iid];
+      return !inst.faceDown && UPKEEP.test((def(inst.id) || {}).oracle || '');
+    });
+    game.upkeep = iids.length ? { turn: game.turn, iids } : null;
+    if (iids.length) {
+      const names = iids.map(iid => game.cards[iid].name).join(', ');
+      Game.log(game, `Upkeep: ${names}.`);
+    }
+  }
+
+  const upkeepIids = () => (game && game.upkeep && game.upkeep.turn === game.turn ? game.upkeep.iids.filter(iid => game.cards[iid] && game.cards[iid].zone === 'battlefield') : []);
+
+  function startNextTurn() {
+    act(() => { Game.nextTurn(game); markUpkeep(); });
+    const upkeep = upkeepIids();
+    if (upkeep.length) status(`Upkeep triggers: ${upkeep.map(iid => game.cards[iid].name).join(', ')}. They're highlighted until you click Done.`);
+    if (Online.connected()) {
+      activePid = Online.id();
+      Online.send({ t: 'turn', turn: game.turn });
+      renderOpps();
+    }
+  }
+
+  // ---------- online play ----------
+
+  const isOnline = () => Online.active();
+  const nameOf = pid => (pid === BOT ? 'Opp' : pid === Online.id() ? 'You' : (Online.players().find(p => p.pid === pid) || {}).name || 'Player');
+
+  // The other players, in seat order starting with the one after you. Playing alone against the
+  // computer, that's Opp.
+  function others() {
+    if (!isOnline()) return hasBot() ? [{ pid: BOT, name: 'Opp' }] : [];
+    const ps = Online.players();
+    const i = ps.findIndex(p => p.pid === Online.id());
+    return i < 0 ? [] : [...ps.slice(i + 1), ...ps.slice(0, i)];
+  }
+
+  // Sends life loss from cards ("each opponent loses 2 life") or the life buttons to the other
+  // players. Returns what was sent, so Undo can send it back.
+  function sendHits(hits) {
+    if (!hits || !hits.length || !Online.connected()) return null;
+    const opps = others().map(p => p.pid);
+    const out = [];
+    for (const h of hits) {
+      if (h.to === 'target' && opps.length > 1) {
+        game.notice = (game.notice ? game.notice + ' ' : '') + `Pick which opponent loses ${-h.d} life: use − on their life.`;
+        continue;
+      }
+      const to = h.to === 'each' || h.to === 'target' ? opps : [h.to];
+      to.forEach(pid => out.push({ pid, d: h.d }));
+    }
+    out.forEach(h => Online.send({ t: 'life', d: h.d }, h.pid));
+    return out.length ? out : null;
+  }
+
+  let syncTimer;
+  function syncSoon() {
+    if (!Online.connected()) return;
+    clearTimeout(syncTimer);
+    syncTimer = setTimeout(sendState, 80);
+  }
+
+  // Sends your table to the other players, with card info for any cards they haven't seen yet.
+  function sendState() {
+    if (!Online.connected()) return;
+    if (!game) return Online.send({ t: 'state', none: true, now: Date.now() });
+    const snap = Online.snapshot(game);
+    const ids = new Set([...snap.battlefield, ...snap.graveyard, ...snap.exile, ...snap.command].map(c => c.id).filter(Boolean));
+    const fresh = [...ids].filter(id => !sentDefs.has(id) && def(id));
+    for (let i = 0; i < fresh.length; i += 40) {
+      const chunk = fresh.slice(i, i + 40);
+      Online.send({ t: 'defs', cards: Object.fromEntries(chunk.map(id => [id, Online.slimDef(def(id))])) });
+      chunk.forEach(id => sentDefs.add(id));
+    }
+    Online.send(snap);
+  }
+
+  const httpsOrNull = u => (typeof u === 'string' && /^https:\/\//.test(u) ? u : null);
+
+  function onMessage(m) {
+    const from = m.from;
+    if (!from || from === Online.id()) return;
+    switch (m.t) {
+      case 'state': {
+        const cards = {};
+        if (!m.none) [...m.battlefield, ...m.graveyard, ...m.exile, ...m.command].forEach(c => { cards[c.iid] = c; });
+        peers[from] = { board: m.none ? null : m, offset: Date.now() - (m.now || Date.now()), cards, pick: peers[from] && peers[from].pick };
+        receiveAuras(from, peers[from].board);
+        renderOppsSoon();
+        if (ui.tab === 'decks') refreshOnlinePanel();
+        return;
+      }
+      case 'defs':
+        for (const [id, c] of Object.entries(m.cards || {})) {
+          if (!c || typeof c !== 'object') continue;
+          peerDefs[id] = { id, name: String(c.name || ''), typeLine: String(c.typeLine || ''), image: httpsOrNull(c.image), imageLarge: httpsOrNull(c.imageLarge), backImage: httpsOrNull(c.backImage), power: c.power, toughness: c.toughness, loyalty: c.loyalty == null ? null : String(c.loyalty).slice(0, 4) };
+        }
+        return;
+      case 'life': return receiveLife(from, Number(m.d));
+      case 'counter': {
+        // Another player's counterspell: only your newest spell can be countered.
+        if (!game || !game.lastCast || game.lastCast.iid !== m.iid) return;
+        const by = `${nameOf(from)}'s ${String(m.by || 'counterspell').slice(0, 80)}`;
+        return act(() => {
+          const done = Game.counterLast(game);
+          game.notice = `${by}: ${done || 'your last spell already resolved, so undo what it did by hand.'}`;
+        });
+      }
+      case 'attack': return receiveAttack(from, m);
+      case 'combat': return receiveCombat(from, m);
+      case 'pick':
+        peers[from] = peers[from] || { board: null, cards: {} };
+        peers[from].pick = String(m.deck || '').slice(0, 80);
+        return refreshOnline();
+      case 'start':
+        if (!Online.players().length || from !== Online.players()[0].pid) return; // only the host starts games
+        return beginMatch(m.rounds, m.first);
+      case 'turn':
+        activePid = from;
+        status(`${nameOf(from)} started turn ${m.turn}.`);
+        saveSoon(); // remembers whose turn it is
+        return renderOpps();
+      case 'pass':
+        activePid = m.next;
+        if (m.next === Online.id() && game) {
+          startNextTurn(); // untaps, draws and tells everyone
+          status(`${nameOf(from)} passed the turn to you. You untapped and drew.`, 'ok');
+        }
+        return renderOpps();
+      case 'chat': {
+        const msg = String(m.msg || '').slice(0, 500);
+        chat.unshift({ at: Date.now(), from, msg });
+        if (chat.length > 200) chat.length = 200;
+        status(`${nameOf(from)}: ${msg}`);
+        return renderLog();
+      }
+    }
+  }
+
+  // Another player changed your life. Quick clicks from the same player share one log line.
+  function receiveLife(from, d) {
+    if (!game || !Number.isFinite(d)) return;
+    d = Math.max(-1000, Math.min(1000, Math.trunc(d)));
+    game.life += d;
+    remoteLife += d;
+    let line = game.log[0];
+    if (!(line && line.lifeFrom === from && Date.now() - line.at < 5000)) {
+      Game.log(game, '');
+      line = game.log[0];
+      line.lifeFrom = from;
+      line.lifeD = 0;
+    }
+    line.lifeD += d;
+    line.at = Date.now();
+    line.msg = `${nameOf(from)}: you ${line.lifeD < 0 ? 'lose' : 'gain'} ${Math.abs(line.lifeD)} life (now ${game.life}).`;
+    afterChange();
+  }
+
+  Online.on({
+    status: (st, msg) => {
+      if (msg) status(msg, st === 'off' || st === 'lost' ? 'warn' : 'info');
+      if (st === 'off') { peers = {}; activePid = null; inLobby = false; }
+      refreshOnline();
+    },
+    notice: msg => status(msg, 'warn'),
+    roster: players => {
+      const ids = new Set(players.map(p => p.pid));
+      for (const pid of Object.keys(peers)) if (!ids.has(pid)) delete peers[pid];
+      if (activePid && !ids.has(activePid)) activePid = null;
+      sentDefs = new Set(); // someone new may have joined: send them everything
+      sendState();
+      sendPick();
+      refreshOnline();
+    },
+    message: onMessage,
+  });
+
+  // Redraws whatever shows the online state on the current tab.
+  function refreshOnline() {
+    if (ui.tab === 'play') renderPlay();
+    else if (ui.tab === 'decks') refreshOnlinePanel();
+  }
+
+  async function startOnline(kind) {
+    const name = ($('#onlineName') || {}).value;
+    ui.playerName = (name || ui.playerName || '').trim() || 'Player';
+    try {
+      if (kind === 'host') {
+        // A new game gets a new code if a saved game still uses the old one.
+        const taken = games.some(g => g.online && g.online.code === ui.hostCode);
+        await Online.host(ui.playerName, taken ? null : ui.hostCode);
+        if (Online.code()) ui.hostCode = Online.code();
+      } else {
+        const code = kind === 'rejoin' ? Online.code() : ($('#joinCode') || {}).value;
+        ui.joinCode = code;
+        await Online.join(code, ui.playerName);
+      }
+    } catch (e) {
+      status(e.message, 'error');
+    }
+    if (!Online.active()) { saveSoon(); return refreshOnline(); }
+    // Joining from a saved online game whose host came back with a new code: keep playing it.
+    const m = gameMeta();
+    if (kind !== 'host' && game && m && m.online && m.online.role === 'guest'
+      && (m.online.code === Online.code() || confirm(`Continue your saved game with ${game.deckName} (turn ${game.turn}) in game ${Online.code()}? Click Cancel to go to the lobby for a new game instead.`))) {
+      m.online.code = Online.code();
+      inLobby = false;
+    } else inLobby = true;
+    saveSoon();
+    sendPick();
+    setTab('play');
+  }
+
+  // ---------- playing against the computer (see bot.js) ----------
+
+  const BOT = 'bot'; // Opp's id where other players have theirs
+  const hasBot = () => !isOnline() && !!(game && game.bot);
+
+  // Opp's table in the same shape another player's would arrive in, so it's drawn the same way.
+  function peerOf(pid) {
+    if (pid !== BOT) return peers[pid];
+    if (!hasBot()) return null;
+    const s = game.bot.s;
+    const board = Object.assign(Online.snapshot(s), { life: game.oppLife, cmdDamage: {} });
+    const cards = {};
+    [...board.battlefield, ...board.graveyard, ...board.exile, ...board.command].forEach(c => { cards[c.iid] = c; });
+    return { board, cards };
+  }
+
+  const kwText = st => (st.kw.size ? ' · ' + [...st.kw].join(', ') : '');
+  const outcome = () => (game.oppLife <= 0 ? ' Opp is at 0 life: you win!' : game.life <= 0 ? ' You are at 0 life: Opp wins.' : '');
+
+  function botPanelHtml() {
+    const decks = allDecks();
+    const has = k => decks.some(d => d.key === k);
+    const you = has(ui.botYou) ? ui.botYou : decks.length ? decks[0].key : '';
+    const opp = has(ui.botOpp) ? ui.botOpp : (decks[1] || decks[0] || {}).key;
+    const first = ui.botFirst || 'roll';
+    const opts = sel => decks.map(d => `<option value="${esc(d.key)}" ${d.key === sel ? 'selected' : ''}>${esc(d.name)}</option>`).join('');
+    return `<h3>Play against the computer</h3>
+      <p class="muted small">Opp plays any of your decks with simple rules: a land each turn, the biggest spells it can afford, attacks that look safe and blocks that keep it alive.
+        It casts creatures, artifacts and enchantments, and uses simple removal, burn and card draw. Other card text is ignored.</p>
+      ${decks.length ? `<div class="toolbar tight">
+        <label class="muted small">Your deck <select id="botYou">${opts(you)}</select></label>
+        <label class="muted small">Opp's deck <select id="botOpp">${opts(opp)}</select></label>
+        <label class="muted small">Who goes first <select id="botFirst">${[['roll', 'Roll a d20'], ['me', 'You'], ['opp', 'Opp']].map(([v, l]) => `<option value="${v}" ${v === first ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+        <button class="btn" data-act="bot-play">Play</button>
+      </div>` : '<p class="muted">Add a deck below first.</p>'}`;
+  }
+
+  async function playBot() {
+    const you = $('#botYou').value;
+    const opp = $('#botOpp').value;
+    const first = $('#botFirst').value;
+    Object.assign(ui, { botYou: you, botOpp: opp, botFirst: first });
+    saveSoon();
+    if (isOnline()) return status('Leave the online game first to play against the computer.');
+    let oppFirst = first === 'opp';
+    let note = '';
+    if (first === 'roll') {
+      let a;
+      let c;
+      do { a = Game.randomInt(20) + 1; c = Game.randomInt(20) + 1; } while (a === c);
+      oppFirst = c > a;
+      note = `d20 for first: you ${a}, Opp ${c}.`;
+    }
+    await startGame(you, oppFirst, false, opp, note);
+  }
+
+  // Opp's whole turn. If it attacks you pick blockers first; yoursNext then starts your turn.
+  function oppTurn(yoursNext) {
+    let res;
+    act(() => {
+      res = Bot.beginTurn(game, def);
+      if (game.bot.tapChoice) game.bot.tapChoice.yoursNext = yoursNext;
+      if (game.bot.pending) game.bot.pending.yoursNext = yoursNext;
+    });
+    if (res.tapChoice) return openTapChoice();
+    afterOppMain(res, yoursNext);
+  }
+
+  function afterOppMain(res, yoursNext) {
+    const did = res.notes.length ? `Opp ${res.notes.join(', ')}.` : '';
+    if (game.bot.pending) return openBlocks(did);
+    finishOppTurn(yoursNext, did);
+  }
+
+  // Opp waiting on you: your Sentinel's target at its beginning of combat, or your blocks.
+  function oppWaiting() {
+    if (game.bot.tapChoice) return openTapChoice();
+    if (game.bot.pending) return openBlocks();
+  }
+
+  // "At the beginning of combat on each opponent's turn, tap target creature that player controls":
+  // pick the creature for each of yours that has it. Opp's best would-be attacker is picked to start.
+  function openTapChoice() {
+    const choice = game.bot.tapChoice;
+    if (!choice) return;
+    const { tappers, targets, best } = Bot.tapChoices(game, def);
+    blockPreviews = {};
+    targets.forEach(x => { blockPreviews['a' + x.inst.iid] = x.inst; });
+    tappers.forEach(t => { blockPreviews['b' + t.iid] = t; });
+    const did = choice.notes.length ? `Opp ${choice.notes.join(', ')}.` : '';
+    const rows = tappers.map(t => `<div class="block-row">
+        <div class="viewer-card" data-peek="b${esc(t.iid)}"><div class="card readonly">${faceHtml(t)}</div></div>
+        <div><b>${esc(t.name)}</b> <span class="muted">taps</span>
+          <div class="block-picks">${targets.map(x => `<label class="check" data-peek="a${esc(x.inst.iid)}"><input type="radio" name="tap-${esc(t.iid)}" data-tapper="${esc(t.iid)}" value="${esc(x.inst.iid)}" ${x.inst === best ? 'checked' : ''}> ${esc(x.inst.name)} <span class="muted">(${x.st.pow}/${x.st.tou}${x.inst.tapped ? ', tapped' : ''})</span></label>`).join('')}</div>
+        </div></div>`);
+    openModal(`
+      <div class="page-head"><h3>Opp's beginning of combat</h3><button class="btn ghost sm" data-act="close-modal" title="Look at the table first. The End turn button brings this back.">Later</button></div>
+      ${did ? `<p class="small">${esc(did)}</p>` : ''}
+      <p class="muted small">Pick the creature of Opp's to tap. Hover one to see it.</p>
+      <div class="block-list">${rows.join('')}</div>
+      <div class="toolbar"><button class="btn" data-act="taps-done">Tap</button></div>`);
+  }
+
+  function tapsDone() {
+    const taps = {};
+    for (const r of modalBox.querySelectorAll('[data-tapper]:checked')) taps[r.dataset.tapper] = r.value;
+    const yoursNext = game.bot.tapChoice.yoursNext;
+    closeModal();
+    let res;
+    act(() => {
+      res = Bot.beginCombat(game, def, taps, game.bot.tapChoice.notes);
+      if (game.bot.pending) game.bot.pending.yoursNext = yoursNext;
+    });
+    afterOppMain(res, yoursNext);
+  }
+
+  function finishOppTurn(yoursNext, before) {
+    let notes;
+    act(() => { notes = Bot.endTurn(game, def); });
+    if (yoursNext) startNextTurn();
+    const msg = [before, notes.length ? `Opp ${notes.join(', ')}.` : ''].filter(Boolean).join(' ') || 'Opp didn\'t do anything this turn.';
+    status(msg + outcome(), 'ok', 10000);
+  }
+
+  // ---------- combat ----------
+  // Attacking Opp is resolved here and now. Online, the players you attack pick their own
+  // blockers and do the damage on their side, then send back which of your creatures died.
+
+  const loyaltyText = inst => { const n = Bot.loyaltyOf(inst, def(inst.id)); return n ? ` (loyalty ${n})` : ''; };
+  const myName = () => (Online.players().find(p => p.pid === Online.id()) || {}).name || 'Player';
+  const dies = inst => Game.move(game, inst.iid, inst.commander ? 'command' : 'graveyard');
+  let incoming = []; // online attacks on you waiting for blockers: [{ from, attacks }]
+
+  // Who you can attack: each opponent, and each of their planeswalkers.
+  function attackTargets() {
+    const out = [];
+    for (const p of others()) {
+      out.push({ value: p.pid + '|', label: p.name, pid: p.pid });
+      const peer = peerOf(p.pid);
+      for (const c of (peer && peer.board ? peer.board.battlefield : [])) {
+        if (Bot.isPlaneswalker(c)) out.push({ value: p.pid + '|' + c.iid, label: `${p.name}'s ${c.name}${loyaltyText(c)}`, pid: p.pid, pw: c.iid, pwName: c.name });
+      }
+    }
+    return out;
+  }
+
+  // Pick blockers for each attacker (more than one can block the same attacker; menace needs two).
+  // list: [{ key, card, st, aim }], aim being what it's going after.
+  let blockPreviews = {}; // data-peek key → card, for hovering cards in the block popup
+  function openBlockModal(title, before, list, doneAct, laterTip) {
+    const mine = Bot.yourCreatures(game, def).filter(c => !c.inst.tapped);
+    blockPreviews = {};
+    for (const x of list) blockPreviews['a' + x.key] = x.card;
+    for (const c of mine) blockPreviews['b' + c.inst.iid] = c.inst;
+    const rows = list.map(x => {
+      const can = mine.filter(c => Bot.canBlock(c.st, x.st, game));
+      const menace = x.st.kw.has('menace');
+      return `<div class="block-row">
+        <div class="viewer-card" data-peek="a${esc(x.key)}"><div class="card readonly">${faceHtml(x.card)}</div></div>
+        <div><b>${esc(x.card.name)}</b> <span class="muted">${x.st.pow}/${x.st.tou}${esc(kwText(x.st))}</span>
+          <div class="block-aim">→ ${esc(x.aim)}</div>
+          ${menace ? '<div class="muted small">Menace: block it with two or more creatures, or none.</div>' : ''}
+          ${can.length ? `<div class="block-picks">${can.map(c => `<label class="check" data-peek="b${esc(c.inst.iid)}"><input type="checkbox" data-block="${esc(x.key)}" data-name="${esc(x.card.name)}" ${menace ? 'data-menace="1"' : ''} value="${esc(c.inst.iid)}"> ${esc(c.inst.name)} <span class="muted">(${c.st.pow}/${c.st.tou})</span></label>`).join('')}</div>`
+            : '<div class="muted small">None of your untapped creatures can block it.</div>'}
+        </div></div>`;
+    });
+    openModal(`
+      <div class="page-head"><h3>${esc(title)}</h3><button class="btn ghost sm" data-act="close-modal" title="${esc(laterTip)}">Later</button></div>
+      ${before ? `<p class="small">${esc(before)}</p>` : ''}
+      <p class="muted small">Tick the creatures that block each attacker. Each of your creatures can block one attacker, and several can block the same one (the attacker's damage goes to them in the order listed). Unblocked attackers hit whatever they're aimed at: you, or one of your planeswalkers.</p>
+      <div class="block-list">${rows.join('')}</div>
+      <div class="toolbar"><button class="btn" data-act="${doneAct}">Done blocking</button></div>`);
+  }
+
+  // { attackerKey: [yourBlockerIid, …] }, or null (with a warning) if a creature blocks twice
+  // or a menace attacker has just one blocker.
+  function readBlocks() {
+    const blocks = {};
+    const used = new Set();
+    const menace = {};
+    for (const box of modalBox.querySelectorAll('[data-block]:checked')) {
+      if (used.has(box.value)) { status('Each of your creatures can only block one attacker.', 'warn'); return null; }
+      used.add(box.value);
+      (blocks[box.dataset.block] = blocks[box.dataset.block] || []).push(box.value);
+      if (box.dataset.menace) menace[box.dataset.block] = box.dataset.name;
+    }
+    for (const [key, name] of Object.entries(menace)) {
+      if (blocks[key].length < 2) { status(`${name} has menace: block it with two or more creatures, or none.`, 'warn'); return null; }
+    }
+    return blocks;
+  }
+
+  // Opp is attacking: pick a blocker for each attacker.
+  function openBlocks(before) {
+    const pending = game.bot.pending;
+    if (!pending) return;
+    const s = game.bot.s;
+    const targets = pending.targets || {};
+    const list = pending.attackers.map(iid => s.cards[iid]).filter(Boolean).map(a => {
+      const pw = targets[a.iid] && game.cards[targets[a.iid]];
+      return { key: a.iid, card: a, st: Bot.botStats(a), aim: pw && pw.zone === 'battlefield' ? `your ${pw.name}${loyaltyText(pw)}` : 'you' };
+    });
+    openBlockModal('Opp attacks you', before, list, 'blocks-done', 'Look at the table first. The End turn button brings this back.');
+  }
+
+  function blocksDone() {
+    const blocks = readBlocks();
+    if (!blocks) return;
+    const yoursNext = game.bot.pending.yoursNext;
+    closeModal();
+    let msg;
+    act(() => { msg = Bot.resolveOppAttack(game, blocks, def); });
+    finishOppTurn(yoursNext, msg);
+  }
+
+  // Your attack: pick creatures and what each one goes after (a player or a planeswalker).
+  // Against Opp, it blocks and the damage is done; online, each player you attack blocks.
+  function openAttack() {
+    if (!game || !(hasBot() || isOnline())) return;
+    if (hasBot() && (game.bot.pending || game.bot.tapChoice)) return oppWaiting();
+    if (incoming.length) return openIncoming();
+    if (isOnline() && activePid && activePid !== Online.id()) return status(`It's ${nameOf(activePid)}'s turn, not yours.`);
+    const targets = attackTargets();
+    if (!targets.length) return status('No one else is in the game yet.');
+    // Opp's Sentinel of the Eternal Watch taps one of your creatures at the beginning of your combat.
+    if (hasBot() && game.combatTapTurn !== game.turn && Bot.combatTappers(game.bot.s, def).length) {
+      let taps;
+      act(() => { taps = Bot.oppCombatTaps(game, def); });
+      if (taps.length) status(taps.join(' '), 'warn', 8000);
+    }
+    const options = targets.map(t => `<option value="${esc(t.value)}">${esc(t.label)}</option>`).join('');
+    let canAttack = false;
+    const rows = Bot.yourCreatures(game, def).map(c => {
+      const why = c.inst.attackedTurn === game.turn ? 'already attacked this turn' : c.inst.tapped ? 'tapped' : c.inst.enteredTurn === game.turn && !c.st.kw.has('haste') ? 'arrived this turn'
+        : c.st.kw.has("can't attack") ? "can't attack" : c.st.kw.has('defender') ? 'defender' : '';
+      if (!why) canAttack = true;
+      return `<div class="attack-row ${why ? 'muted' : ''}"><label><input type="checkbox" data-attacker="${esc(c.inst.iid)}" ${why ? 'disabled' : ''}>
+        <b>${esc(c.inst.name)}</b> ${c.st.pow}/${c.st.tou}${esc(kwText(c.st))}${why ? ` <span class="small">(${why})</span>` : ''}</label>
+        ${why ? '' : `<select data-target="${esc(c.inst.iid)}" title="What it attacks">${options}</select>`}</div>`;
+    });
+    // Vehicles that aren't crewed yet: crew them first, then they show up above as attackers.
+    const vehicles = game.zones.battlefield.map(id => game.cards[id])
+      .filter(v => Game.isVehicle(v) && !v.crewed && !v.faceDown && Bot.crewOf(v, def) != null)
+      .map(v => {
+        const st = Bot.stats(v, def(v.id));
+        return `<div class="attack-row"><span><b>${esc(v.name)}</b> ${st.pow}/${st.tou}${esc(kwText(st))} <span class="muted small">(Vehicle · Crew ${Bot.crewOf(v, def)})</span></span>
+          <button class="btn sm" data-act="crew" data-iid="${esc(v.iid)}" data-back="attack">Crew…</button></div>`;
+      });
+    const who = isOnline() ? 'the players you attack pick their blocks' : 'Opp picks its blocks';
+    openModal(`
+      <div class="page-head"><h3>Attack</h3><button class="btn ghost sm" data-act="close-modal">Cancel</button></div>
+      <p class="muted small">Tick the creatures that attack and pick what each one goes after: a player or one of their planeswalkers.
+        Then ${who}, the damage is done and creatures that die go to the graveyard (commanders to the command zone).
+        "Whenever this attacks" pumps (like Ashcoat's) and tokens that enter attacking (like Leonin Warleader's and Brimaz's) are counted; pump spells and other abilities aren't, so use counters first, or Undo if it should have gone differently.</p>
+      ${rows.length ? `<div class="attack-list">${rows.join('')}</div>` : '<p class="muted">You have no creatures on the battlefield.</p>'}
+      ${vehicles.length ? `<h4>Vehicles</h4><p class="muted small">Crew a Vehicle by tapping creatures with enough total power. It's a creature until the turn ends, and then it can attack.</p><div class="attack-list">${vehicles.join('')}</div>` : ''}
+      <div class="toolbar"><button class="btn" data-act="attack-go" ${canAttack ? '' : 'disabled'}>Attack</button></div>`);
+  }
+
+  // Crew: tick untapped creatures whose total power is at least the Vehicle's crew number.
+  // back: 'attack' to return to the attack screen afterwards.
+  function openCrew(iid, back) {
+    const v = game.cards[iid];
+    const n = v && Bot.crewOf(v, def);
+    if (!v || n == null) return;
+    if (v.crewed) return status(`${v.name} is already crewed this turn.`);
+    const crew = Bot.yourCreatures(game, def).filter(c => !c.inst.tapped && c.inst.iid !== iid);
+    openModal(`
+      <div class="page-head"><h3>Crew ${esc(v.name)}</h3><button class="btn ghost sm" data-act="${back === 'attack' ? 'attack' : 'close-modal'}">Back</button></div>
+      <p class="muted small">Crew ${n}: tap any of your untapped creatures with total power ${n} or more. Creatures that just arrived can crew. Crewing creatures can't attack this turn, since they're tapped.</p>
+      ${crew.length ? `<div class="attack-list">${crew.map(c => `<label class="check"><input type="checkbox" data-crew="${esc(c.inst.iid)}" data-pow="${c.st.pow}"> <b>${esc(c.inst.name)}</b> <span class="muted">power ${c.st.pow}</span></label>`).join('')}</div>`
+        : '<p class="muted">You have no untapped creatures to crew it with.</p>'}
+      <div class="toolbar"><button class="btn" data-act="crew-go" data-iid="${esc(iid)}" data-back="${esc(back || '')}" ${crew.length ? '' : 'disabled'}>Crew</button></div>`);
+  }
+
+  function crewGo(iid, back) {
+    const v = game.cards[iid];
+    if (!v) return;
+    const n = Bot.crewOf(v, def);
+    const picks = [...modalBox.querySelectorAll('[data-crew]:checked')];
+    const power = picks.reduce((sum, x) => sum + Number(x.dataset.pow), 0);
+    if (power < n) return status(`Not enough power: ${power} of the ${n} needed to crew ${v.name}.`, 'warn');
+    closeModal();
+    act(() => {
+      picks.forEach(x => { const c = game.cards[x.dataset.crew]; if (c) { c.tapped = true; c.tappedFor = null; } });
+      v.crewed = true;
+      v.crewedBy = picks.map(x => x.dataset.crew); // untapped again if you uncrew it
+      Game.log(game, `Crewed ${v.name} with ${picks.map(x => game.cards[x.dataset.crew].name).join(', ')}. It's a creature until the turn ends.`);
+    });
+    if (back === 'attack') openAttack();
+  }
+
+  function attackGo() {
+    const aim = {};
+    modalBox.querySelectorAll('[data-target]').forEach(sel => { aim[sel.dataset.target] = sel.value; });
+    const targets = new Map(attackTargets().map(t => [t.value, t]));
+    const picks = [...modalBox.querySelectorAll('[data-attacker]:checked')].map(x => ({ iid: x.dataset.attacker, to: targets.get(aim[x.dataset.attacker]) })).filter(p => p.to);
+    if (!picks.length) return status('Tick at least one creature to attack with.');
+    closeModal();
+    if (!isOnline()) {
+      let msg;
+      act(() => { msg = Bot.resolveYourAttack(game, picks.map(p => ({ iid: p.iid, pw: p.to.pw || null })), def); });
+      return status(msg + outcome(), 'ok', 10000);
+    }
+    const byPlayer = new Map();
+    act(() => {
+      const lines = [];
+      // "Whenever this attacks" pumps first, so the stats sent include them.
+      // Tokens that enter tapped and attacking (Leonin Warleader's Cats) go after the same player.
+      [...picks].forEach(p => { const inst = game.cards[p.iid]; if (inst && inst.zone === 'battlefield') Bot.combatTrigger(game, inst, 'attacks', def).forEach(iid => picks.push({ iid, to: p.to })); });
+      for (const p of picks) {
+        const inst = game.cards[p.iid];
+        if (!inst || inst.zone !== 'battlefield') continue;
+        const st = Bot.stats(inst, def(inst.id));
+        if (!st.kw.has('vigilance')) inst.tapped = true;
+        inst.attackedTurn = game.turn;
+        if (!byPlayer.has(p.to.pid)) byPlayer.set(p.to.pid, []);
+        byPlayer.get(p.to.pid).push({ iid: inst.iid, id: inst.faceDown ? null : inst.id, name: inst.name, pow: st.pow, tou: st.tou, kw: [...st.kw], colors: st.colors, artifact: st.artifact, commander: !!inst.commander, pw: p.to.pw || null });
+        lines.push(`${inst.name} → ${p.to.pw ? `${nameOf(p.to.pid)}'s ${p.to.pwName}` : nameOf(p.to.pid)}`);
+      }
+      Game.log(game, `Attacked: ${lines.join(', ')}.`);
+    });
+    for (const [pid, attacks] of byPlayer) Online.send({ t: 'attack', attacks }, pid);
+    status(`Attacking. Waiting for ${[...byPlayer.keys()].map(nameOf).join(' and ')} to block.`, 'ok', 10000);
+  }
+
+  // Online: another player attacks you. Their attackers come with the stats they had when they attacked.
+  function receiveAttack(from, m) {
+    if (!game) return;
+    const num = v => Math.max(-99, Math.min(99, Math.trunc(Number(v)) || 0));
+    const attacks = (Array.isArray(m.attacks) ? m.attacks : []).slice(0, 60).filter(a => a && typeof a === 'object').map(a => ({
+      iid: String(a.iid || ''), id: a.id ? String(a.id) : null, name: String(a.name || 'Creature').slice(0, 80),
+      pow: num(a.pow), tou: num(a.tou), kw: (Array.isArray(a.kw) ? a.kw : []).map(String).filter(k => k.length < 20).slice(0, 20),
+      colors: (Array.isArray(a.colors) ? a.colors : []).map(String).filter(k => Game.MANA.includes(k)), artifact: !!a.artifact,
+      commander: !!a.commander, pw: a.pw ? String(a.pw) : null,
+    }));
+    if (!attacks.length) return;
+    incoming.push({ from, attacks });
+    updateTurnButtons();
+    if (modal.hidden) openIncoming();
+    else status(`${nameOf(from)} is attacking you. Click the Block button to pick your blockers.`, 'warn', true);
+  }
+
+  function openIncoming() {
+    const fight = incoming[0];
+    if (!fight) return;
+    const peer = peers[fight.from];
+    const list = fight.attacks.map(a => {
+      const pw = a.pw && game.cards[a.pw];
+      return {
+        key: a.iid,
+        card: (peer && peer.cards[a.iid]) || { iid: a.iid, id: a.id, name: a.name },
+        st: { pow: a.pow, tou: a.tou, kw: new Set(a.kw), cmc: 0, colors: a.colors || [], artifact: !!a.artifact },
+        aim: pw && pw.zone === 'battlefield' ? `your ${pw.name}${loyaltyText(pw)}` : a.pw ? 'your planeswalker (already gone)' : 'you',
+      };
+    });
+    openBlockModal(`${nameOf(fight.from)} attacks you`, '', list, 'blocks-online', 'Look at the table first. The Block button brings this back.');
+  }
+
+  // Your blocks against another player: the damage is done here, and they're told which of
+  // their creatures died and how much life lifelink gave them.
+  function blocksOnlineDone() {
+    const blocks = readBlocks();
+    if (!blocks) return;
+    const fight = incoming.shift();
+    closeModal();
+    updateTurnButtons();
+    if (!fight) return;
+    const who = nameOf(fight.from);
+    const me = myName();
+    const dead = [];
+    const hitIids = []; // their attackers that dealt combat damage to you, for their "deals combat damage to a player" triggers
+    let gain = 0;
+    let dmg = 0;
+    const mine = [];
+    const theirs = [];
+    act(() => {
+      // Your "whenever this blocks" triggers happen before any damage.
+      Bot.blockTriggers(game, blocks, def);
+      for (const a of fight.attacks) {
+        const ast = { pow: a.pow, tou: a.tou, kw: new Set(a.kw), cmc: 0, colors: a.colors || [], artifact: !!a.artifact };
+        const bl = (blocks[a.iid] || []).map(id => game.cards[id]).filter(b => b && b.zone === 'battlefield');
+        const bsts = bl.map(b => Bot.stats(b, def(b.id)));
+        const r = Bot.combat(ast, bsts);
+        const hit = r.player;
+        const ll = Bot.lifelinkGain(ast, bsts, r);
+        gain += ll.attacker;
+        game.life += ll.blockers;
+        const pw = a.pw && game.cards[a.pw];
+        const pwLive = pw && pw.zone === 'battlefield';
+        if (a.pw) {
+          if (hit && pwLive) Bot.damagePlaneswalker(pw, def(pw.id), hit);
+        } else if (hit) {
+          dmg += hit;
+          hitIids.push(a.iid);
+          if (a.commander) {
+            const key = `${who}|${a.name}`;
+            game.cmdDamage = game.cmdDamage || {};
+            game.cmdDamage[key] = (game.cmdDamage[key] || 0) + hit;
+          }
+        }
+        // The same line twice: for your log ("your Bear") and for theirs ("Ann's Bear").
+        const line = yours => {
+          const own = n => (yours ? `your ${n}` : `${me}'s ${n}`);
+          let t = bl.length ? `${a.name} is blocked by ${Bot.blockText(a.name, bl.map(b => b.name), r, own, n => n)}` : '';
+          if (a.pw) {
+            const name = pwLive ? pw.name : 'planeswalker';
+            if (!bl.length) t = `${a.name} attacks ${own(name)}`;
+            if (hit && pwLive) t += `${bl.length ? ',' : ':'} ${hit} damage to ${own(name)}${pw.counters.loyalty <= 0 ? ', which dies' : ` (loyalty ${pw.counters.loyalty})`}`;
+          } else if (!bl.length) t = `${a.name} hits ${yours ? 'you' : me} for ${hit}`;
+          else if (hit) t += `, ${hit} tramples over`;
+          return t;
+        };
+        mine.push(line(true));
+        theirs.push(line(false));
+        if (r.a.dead) dead.push(a.iid);
+        bl.forEach((b, i) => { if (r.b[i].dead && !Bot.regenerates(game, b, def, false)) dies(b); });
+        if (pwLive && (pw.counters || {}).loyalty <= 0) dies(pw);
+      }
+      game.life -= dmg;
+      Game.log(game, `${who} attacked: ${mine.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}`);
+      Bot.dealtDamage(game, dmg, def);
+    });
+    const msg = `${me} blocked: ${theirs.join('; ')}.${dmg ? ` ${me} took ${dmg} (now ${game.life}).` : ''}${gain ? ` You gain ${gain} life.` : ''}`;
+    Online.send({ t: 'combat', dead, gain, msg, hit: hitIids }, fight.from);
+    status(`${who} attacked: ${mine.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}`, 'ok', 10000);
+    if (incoming.length) openIncoming();
+  }
+
+  // The player you attacked has blocked: your creatures that died go, and lifelink gains you life.
+  function receiveCombat(from, m) {
+    if (!game) return;
+    for (const iid of (Array.isArray(m.dead) ? m.dead : []).map(String)) {
+      const inst = game.cards[iid];
+      if (inst && inst.zone === 'battlefield' && !Bot.regenerates(game, inst, def, false)) dies(inst);
+    }
+    const gain = Math.max(0, Math.min(1000, Math.trunc(Number(m.gain)) || 0));
+    game.life += gain;
+    remoteLife += gain; // kept through Undo, like other players' life changes
+    const msg = String(m.msg || `${nameOf(from)} blocked.`).slice(0, 1500);
+    Game.log(game, msg);
+    // "Whenever one or more creatures you control … deal combat damage to a player" (Kutzil, Feline Sovereign).
+    const hits = (Array.isArray(m.hit) ? m.hit : []).map(String).map(iid => game.cards[iid])
+      .filter(inst => inst && (inst.zone === 'battlefield' || inst.zone === 'graveyard'))
+      .map(inst => ({ inst, st: Bot.stats(inst, def(inst.id)), card: def(inst.id) }));
+    Bot.combatDamage(game, hits, def, effectCtx());
+    status(msg, 'ok', 10000);
+    afterChange();
+  }
+
+  // ---------- lobby ----------
+
+  const pickedDeckName = () => {
+    const d = findDeck(onlineDeckKey());
+    return d ? d.name : '';
+  };
+  // Tells the others which deck you picked, for the lobby.
+  function sendPick() {
+    if (Online.connected()) Online.send({ t: 'pick', deck: pickedDeckName() });
+  }
+
+  function renderLobby() {
+    const st = Online.state();
+    const code = Online.code();
+    const isHost = Online.role() === 'host';
+    const players = Online.players();
+    const me = Online.id();
+    const deckOf = p => (p.pid === me ? pickedDeckName() : (peers[p.pid] && (peers[p.pid].pick || (peers[p.pid].board && peers[p.pid].board.deckName))) || '');
+    const ready = players.length >= 2 && players.every(p => deckOf(p));
+    const inProgress = players.some(p => p.pid !== me && peers[p.pid] && peers[p.pid].board);
+    view.innerHTML = `
+      <div class="lobby panel">
+        <div class="page-head">
+          <h2>Game lobby</h2>
+          <button class="btn sm danger" data-act="leave">Leave</button>
+        </div>
+        ${st === 'connecting' || st === 'starting' ? '<p class="muted">Connecting…</p>' : `
+        <div class="lobby-code">
+          <span class="muted">Game code</span> <b class="game-code">${esc(code)}</b>
+          ${isHost ? '<button class="btn sm ghost" data-act="copy-code">Copy</button>' : ''}
+          <span class="muted small">${isHost ? `Send this code to your friends (up to ${Online.MAX_PLAYERS} players).` : ''}</span>
+        </div>
+        ${st === 'lost' ? '<p class="bad">Lost the connection to the host. <button class="btn sm" data-act="rejoin">Rejoin</button></p>' : ''}
+        <h3>Players (${players.length}/${Online.MAX_PLAYERS})</h3>
+        <ul class="lobby-players">${players.map((p, i) => {
+          const deck = deckOf(p);
+          return `<li>
+            <span class="dot ${deck ? 'ok' : ''}"></span>
+            <b>${esc(p.name)}</b>${p.pid === me ? ' <span class="muted">(you)</span>' : ''}${i === 0 ? ' <span class="pill">host</span>' : ''}
+            <span class="lobby-deck">${deck ? esc(deck) : '<span class="muted">picking a deck…</span>'}</span>
+          </li>`;
+        }).join('')}</ul>
+        ${players.length < 2 ? '<p class="muted">Waiting for friends to join…</p>' : ''}
+        <div class="toolbar">${deckSelectHtml()}</div>
+        ${inProgress && !isHost ? `<p>A game is already going. <button class="btn sm" data-act="online-play">Join in with this deck</button></p>` : ''}
+        <div class="lobby-start">
+          ${isHost
+            ? `<button class="btn big" data-act="start-match" ${ready ? '' : 'disabled'}>🎲 Roll for first &amp; start</button>
+               <span class="muted small">${ready ? 'Everyone rolls a d20. Highest goes first (ties roll again).' : players.length < 2 ? 'You need at least one friend to start.' : 'Waiting for everyone to pick a deck.'}</span>`
+            : '<span class="muted">Waiting for the host to start the game. Everyone rolls a d20 and the highest goes first.</span>'}
+        </div>
+        ${game ? `<p class="muted small">You have a game in progress with ${esc(game.deckName)}. <button class="link-btn" data-act="back-to-game">Back to it</button></p>` : ''}`}
+      </div>`;
+  }
+
+  // Host: everyone rolls a d20, ties among the highest roll again, then everyone starts.
+  function startMatch() {
+    const players = Online.players();
+    if (players.length < 2) return;
+    if (others().some(p => peers[p.pid] && peers[p.pid].board) && !confirm('Start a new game for everyone? Current games will be lost.')) return;
+    const rounds = [];
+    let rolling = players.map(p => p.pid);
+    while (rolling.length > 1) {
+      const round = rolling.map(pid => ({ pid, r: Game.randomInt(20) + 1 }));
+      rounds.push(round);
+      const top = Math.max(...round.map(x => x.r));
+      rolling = round.filter(x => x.r === top).map(x => x.pid);
+    }
+    const first = rolling[0];
+    Online.send({ t: 'start', rounds, first });
+    beginMatch(rounds, first);
+  }
+
+  async function beginMatch(rounds, first) {
+    const key = onlineDeckKey();
+    if (!key || !Array.isArray(rounds)) return;
+    // Whoever goes first starts with turn 1's card already drawn. Everyone else draws when their turn comes.
+    await startGame(key, first === Online.id());
+    activePid = first;
+    if (first !== Online.id()) game.turn = 0;
+    const name = pid => (pid === Online.id() ? 'You' : nameOf(pid));
+    rounds.forEach((round, i) => {
+      const line = round.map(x => `${name(x.pid)} ${x.r}`).join(', ');
+      Game.log(game, `${i ? 'Tie, roll again' : 'd20 for first'}: ${line}.`);
+    });
+    const msg = first === Online.id() ? 'You rolled highest and go first!' : `${nameOf(first)} rolled highest and goes first.`;
+    Game.log(game, msg);
+    status(msg, 'ok');
+    afterChange();
+    renderOpps();
+  }
+
+  async function copyCode() {
+    try {
+      await navigator.clipboard.writeText(Online.code());
+      status('Game code copied. Send it to your friends.', 'ok');
+    } catch (e) {
+      status(`Your game code is ${Online.code()}`, 'info-sticky');
+    }
+  }
+
+  // replace: start over in place of the current game (Reset). Online, a new deck or a new
+  // match replaces the game you're connected to. Otherwise it's a new saved game.
+  // botKey: play against the computer with that deck (onDraw then means Opp goes first).
+  async function startGame(deckKey, onDraw, replace, botKey, note) {
+    replace = replace || linkedOnline(gameMeta());
+    const deck = findDeck(deckKey);
+    const botDeck = botKey && findDeck(botKey);
+    if (!deck || (botKey && !botDeck)) return status('That deck is no longer available.', 'error');
+    try {
+      await ensureDefs([...deck.rows, ...(botDeck ? botDeck.rows : [])].map(r => r.id), true);
+    } catch (e) {
+      status('Could not reach Scryfall for card images. Playing with text cards. (' + e.message + ')', 'warn');
+    }
+    const defsOf = d => {
+      const defs = {};
+      d.rows.forEach(r => { if (def(r.id)) defs[r.id] = def(r.id); });
+      return defs;
+    };
+    const g = Game.create(deck, defsOf(deck), { onDraw });
+    if (botDeck) {
+      g.bot = Bot.create(botDeck, defsOf(botDeck), { onDraw: !onDraw });
+      g.oppLife = botDeck.rows.some(r => r.commander) ? 40 : 20;
+      Game.log(g, `${note ? note + ' ' : ''}Playing against Opp with ${botDeck.name}. ${onDraw ? 'Opp goes first.' : 'You go first.'}`);
+    }
+    useNewGame(g, replace);
+    inLobby = false;
+    ui.onlineDeck = deckKey;
+    undoStack = [];
+    sample = null;
+    setTab('play');
+    saveSoon();
+    syncSoon();
+    if (botDeck && onDraw) oppTurn(false);
+    else if (botDeck) status(`${note ? note + ' ' : ''}You go first.`, 'ok');
+  }
+
+  // Fills in mana and life info for a game saved before those features existed.
+  async function upgradeSavedGame() {
+    const ids = Object.values(game.cards).map(c => c.id).filter(Boolean);
+    try {
+      await ensureDefs(ids, true);
+    } catch (e) {
+      return;
+    }
+    if (!game) return;
+    for (const inst of Object.values(game.cards)) {
+      const c = def(inst.id);
+      if (!c) continue;
+      if (inst.produces == null && Array.isArray(c.producedMana)) inst.produces = c.producedMana;
+      if (inst.cmc === undefined) { inst.cmc = c.cmc || 0; inst.cost = c.manaCost || ''; } // for sorting the hand
+      if (inst.enterLife === undefined) inst.enterLife = Game.enterLife(c.name, c.oracle);
+      if (inst.enterDraw === undefined) inst.enterDraw = Game.enterDraw(c.name, c.oracle);
+      if (inst.mana == null) { // lands keep only "{1}, {T}: Add {G}{W}" (older games have null for those)
+        const m = Game.manaAbility(c.name, c.oracle);
+        inst.mana = Game.isLand(inst) && !(m && m.filter) ? null : m;
+      }
+      if (!inst.entersTapped) inst.entersTapped = Game.entersTapped(c.name, c.oracle); // also picks up "enters tapped unless…" on older games
+      if (inst.loyalty === undefined) inst.loyalty = c.loyalty == null ? null : c.loyalty; // planeswalkers' starting loyalty
+      if (inst.doubles === undefined) inst.doubles = Game.doublesOf(c.oracle); // Doubling Season and the like
+    }
+    Game.sortHand(game);
+    // Opp's cards too, for "enters tapped unless…" lands in games saved before that was read.
+    for (const inst of Object.values(game.bot ? game.bot.s.cards : {})) {
+      const c = def(inst.id);
+      if (c && !inst.entersTapped) inst.entersTapped = Game.entersTapped(c.name, c.oracle);
+      if (c && inst.loyalty === undefined) inst.loyalty = c.loyalty == null ? null : c.loyalty;
+      if (c && inst.doubles === undefined) inst.doubles = Game.doublesOf(c.oracle);
+    }
+    afterChange();
+  }
+
+  const oracleOf = inst => (def(inst.id) || {}).oracle || '';
+
+  // What a spell from your hand or the command zone costs right now, or null if Auto-tap won't pay for it.
+  function castCost(inst, opts = {}) {
+    const fromHand = inst.zone === 'hand' || inst.zone === 'command';
+    if (!ui.autoTap || !fromHand || Game.isLand(inst) || opts.faceDown) return null;
+    const cost = (def(inst.id) || {}).manaCost || '';
+    const tax = inst.zone === 'command' && inst.commander ? (inst.castCount || 0) * 2 : 0;
+    const less = Game.discount(game, inst, oracleOf);
+    return { cost, tax, less, label: `${cost}${tax ? ` + ${tax} tax` : ''}${less ? ` − ${less}` : ''}` };
+  }
+
+  // Plays a card, but if Auto-tap can't cover its cost, asks first: cancel, or play it anyway
+  // and tap your mana yourself.
+  function tryPlay(iid, opts = {}) {
+    const inst = game && game.cards[iid];
+    if (!inst) return;
+    // One land a turn. Play anyway is there for "you may play an additional land" effects.
+    if (inst.zone === 'hand' && Game.isLand(inst) && !opts.faceDown && game.landPlayed && !opts.extraLand) {
+      openModal(`<div class="ask"><h3>Land already played</h3>
+        <p>You've already played a land this turn. Play ${esc(inst.name)} anyway (for an effect that lets you play an extra land)?</p>
+        <div class="toolbar end"><button type="button" class="btn ghost" data-xl="cancel">Cancel</button><button type="button" class="btn" data-xl="go">Play anyway</button></div></div>`);
+      const close = () => { modal.hidden = true; modalBox.innerHTML = ''; };
+      modalBox.querySelector('[data-xl=cancel]').onclick = close;
+      modalBox.querySelector('[data-xl=go]').onclick = () => { close(); tryPlay(iid, { ...opts, extraLand: true }); };
+      return;
+    }
+    const c = castCost(inst, opts);
+    if (!c || Game.autoPay(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less)) return act(() => playCard(iid, opts));
+    openModal(`<div class="ask"><h3>Not enough mana</h3>
+      <p>You don't have enough untapped mana to cast ${esc(inst.name)} (${esc(c.label)}).</p>
+      <div class="toolbar end"><button type="button" class="btn ghost" data-nm="cancel">Cancel</button><button type="button" class="btn" data-nm="go">Play anyway (tap mana manually)</button></div></div>`);
+    const done = () => { modal.hidden = true; modalBox.innerHTML = ''; };
+    modalBox.querySelector('[data-nm=cancel]').onclick = done;
+    modalBox.querySelector('[data-nm=go]').onclick = () => { done(); act(() => playCard(iid, { ...opts, manual: true })); };
+  }
+
+  // Plays a card from your hand or the command zone. With Auto-tap on, pays for spells first
+  // (commander tax included); with opts.manual (or if your untapped lands can't cover it), nothing is tapped.
+  function playCard(iid, opts = {}) {
+    const inst = game.cards[iid];
+    if (!inst) return;
+    const fromHand = inst.zone === 'hand' || inst.zone === 'command';
+    const aura = fromHand && Game.isAura(inst) && !opts.faceDown; // then you pick what it enchants
+    const c = castCost(inst, opts);
+    if (c) {
+      const { cost, less } = c;
+      const paid = !opts.manual && Game.autoPay(game, cost, c.tax - less);
+      if (!paid) {
+        Game.move(game, iid, 'battlefield', opts);
+        game.notice = `Played ${inst.name} without paying (${c.label}), so tap your mana for it yourself.${game.notice ? ' ' + game.notice : ''}`;
+        if (aura) setTimeout(() => startAttach(iid), 0);
+        return;
+      }
+      const spent = [...paid.sources];
+      if (paid.pool) spent.unshift(`${paid.pool} floating mana`);
+      if (paid.life) spent.push(`${paid.life} life`);
+      if (spent.length) Game.log(game, `Auto-tapped for ${inst.name}${less ? ` (${less} less)` : ''}: ${spent.join(', ')}.`);
+      else if (less) Game.log(game, `${inst.name} cost ${less} less, so it was free.`);
+    }
+    Game.move(game, iid, 'battlefield', opts);
+    if (aura) setTimeout(() => startAttach(iid), 0);
+  }
+
+  // Taps or untaps a card. A land or mana rock that makes more than one color asks which one to add.
+  // Creatures just tap (they're usually attacking); right-click one to tap it for mana.
+  function tapCard(iid, x, y) {
+    const inst = game.cards[iid];
+    if (!inst) return;
+    const colors = Game.isLand(inst) ? Game.producesOf(inst) : inst.mana && !Game.isCreature(inst) ? inst.mana.colors : [];
+    // "{1}, {T}: Add {G}{W}" (Sungrass Prairie): pays the {1} and adds both, no question to ask.
+    if (inst.tapped || inst.faceDown || colors.length < 2 || (inst.mana && inst.mana.filter)) return act(() => Game.setTapped(game, iid));
+    if (x == null) {
+      const r = (cardEls.get(iid) || document.body).getBoundingClientRect();
+      x = r.left + r.width / 2;
+      y = r.top + r.height / 2;
+    }
+    // Opened after this click finishes, or the same click would close it again.
+    setTimeout(() => showMenu(x, y, [
+      ...colors.map(c => ({ label: `Tap for ${MANA_NAMES[c]}`, hint: c, action: () => act(() => Game.setTapped(game, iid, true, c)) })),
+      { sep: true },
+      { label: 'Tap without adding mana', action: () => act(() => Game.setTapped(game, iid, true, null)) },
+    ]), 0);
+  }
+  const MANA_NAMES = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green', C: 'colorless' };
+
+  // ---------- tabs ----------
+
+  function setTab(tab) {
+    ui.tab = tab;
+    document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
+    view.classList.toggle('wide', tab === 'play');
+    document.body.classList.toggle('playing', tab === 'play');
+    // The page can't scroll while playing, so start at the top or the button bar (Draw…) is out of reach.
+    if (tab === 'play') { window.scrollTo(0, 0); fitTable(); }
+    if (tab === 'decks') { renderDecks(); refreshTracker(); }
+    else if (tab === 'play') renderPlay();
+    else if (tab === 'odds') renderOdds();
+    else renderHelp();
+  }
+
+  // The table fills the screen under the header, whose height changes with the screen width.
+  function fitTable() {
+    const head = document.querySelector('.topbar');
+    document.documentElement.style.setProperty('--head-h', (head ? head.offsetHeight : 53) + 'px');
+  }
+
+  // Re-reads the Tracker's decks (they may have changed there) and redraws the Decks tab.
+  let refreshing = false;
+  async function refreshTracker() {
+    if (refreshing) return;
+    refreshing = true;
+    try {
+      await connectTracker(true);
+    } finally {
+      refreshing = false;
+    }
+    // Don't redraw under someone typing a deck list.
+    if (ui.tab === 'decks' && !view.contains(document.activeElement)) renderDecks();
+  }
+
+  function renderLinkState() {
+    const el = $('#linkState');
+    if (tracker) {
+      el.innerHTML = `<span class="dot ok"></span>${tracker.source === 'file' ? 'Tracker backup loaded' : 'Linked to MTG Tracker'}`;
+    } else {
+      el.innerHTML = '<span class="dot"></span>MTG Tracker not linked';
+    }
+  }
+
+  // ---------- Decks tab ----------
+
+  function coverOf(deck) {
+    const row = deck.rows.find(r => r.commander) || deck.rows.find(r => def(r.id) && !Game.isLand(def(r.id))) || deck.rows[0];
+    const c = row && def(row.id);
+    return c ? c.art || c.image : null;
+  }
+
+  const deckCount = deck => deck.rows.reduce((n, r) => n + (r.qty || 1), 0);
+
+  function deckTile(deck, removable) {
+    const art = coverOf(deck);
+    const cmdr = deck.rows.filter(r => r.commander).map(r => r.name).join(' & ');
+    return `<div class="deck-tile">
+      <div class="deck-art" ${art ? `style="background-image:url('${esc(art)}')"` : ''}></div>
+      <div class="deck-body">
+        <b>${esc(deck.name)}</b>
+        <span class="muted small">${deckCount(deck)} cards${cmdr ? ' · ' + esc(cmdr) : ''}</span>
+        <div class="toolbar tight">
+          <button class="btn sm" data-act="play" data-key="${esc(deck.key)}">Play</button>
+          <button class="btn sm ghost" data-act="odds" data-key="${esc(deck.key)}">Odds</button>
+          ${removable ? `<button class="btn sm danger" data-act="delete-deck" data-key="${esc(deck.key)}" title="Delete this deck from the Simulator">Delete</button>` : ''}
+        </div>
+      </div>
+    </div>`;
+  }
+
+  function renderDecks() {
+    const prof = trackerProfile();
+    const trackerDecks = prof ? (prof.decks || []).map(d => TrackerLink.toDeck(d, prof)) : [];
+    view.innerHTML = `
+      ${gamesPanelHtml()}
+      <section class="panel bot-panel">${botPanelHtml()}</section>
+      <section class="panel online-panel" id="onlinePanel">${onlinePanelHtml()}</section>
+      <section class="panel">
+        <div class="page-head">
+          <div>
+            <h3>Decks from MTG Tracker</h3>
+            <div class="muted small">${tracker
+              ? tracker.source === 'file' ? 'From a Tracker backup file.' : 'Read straight from MTG Tracker in this browser. Changes you make in the Tracker show up when you click Refresh.'
+              : 'MTG Tracker data wasn\'t found in this browser.'}</div>
+          </div>
+          <div class="toolbar tight">
+            <button class="btn sm ghost" data-act="refresh">Refresh</button>
+            <label class="btn sm ghost">Load backup file…<input type="file" accept=".json,application/json" data-act="backup" hidden></label>
+          </div>
+        </div>
+        ${tracker
+          ? trackerDecks.length ? `<div class="deck-grid">${trackerDecks.map(d => deckTile(d)).join('')}</div>` : '<p class="muted">You have no decks yet. Import one in MTG Tracker, then click Refresh.</p>'
+          : `<p class="muted small">To link: open MTG Tracker in this same browser (Chrome or Edge) at least once, then click <b>Refresh</b>.
+             Or, in the Tracker, go to <b>Account &amp; backup → Download backup</b> and load that file here.</p>`}
+      </section>
+
+      <section class="panel">
+        <h3>Your Simulator decks</h3>
+        <p class="muted small">Decks you pasted here. You don't need to own any of the cards.</p>
+        ${local.decks.length ? `<div class="deck-grid">${local.decks.map(d => deckTile(d, true)).join('')}</div>` : '<p class="muted">None yet. Paste a list below.</p>'}
+      </section>
+
+      <section class="panel">
+        <h3>Paste a deck list</h3>
+        <p class="muted small">Works with Archidekt, Moxfield, MTG Arena and plain lists like <code>1 Sol Ring</code>.
+          Mark the commander with an <code>[Commander]</code> category, a <code>*CMDR*</code> tag, or put it under a <code>Commander</code> heading.</p>
+        <form id="pasteForm" class="paste">
+          <input name="name" placeholder="Deck name" required>
+          <textarea name="list" rows="10" placeholder="1 Atraxa, Praetors' Voice [Commander]&#10;1 Sol Ring&#10;35 Forest" required></textarea>
+          <div class="toolbar"><button class="btn">Import deck</button><span class="muted small" id="pasteMsg"></span></div>
+        </form>
+      </section>`;
+  }
+
+  // Every saved game. Each one keeps going until you end it, even after the app is closed.
+  function gamesPanelHtml() {
+    if (game) saveGame();
+    if (!games.length) return '';
+    const when = t => {
+      const d = new Date(t);
+      return d.toDateString() === new Date().toDateString() ? d.toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' }) : d.toLocaleDateString();
+    };
+    return `<section class="panel games-panel">
+      <h3>Your games <span class="muted small">(${games.length})</span></h3>
+      <p class="muted small">Games stay saved until you end them, even if you close the app. Start as many as you like and switch between them here.</p>
+      <ul class="games">${games.map(m => {
+        const current = m.id === gameId && game;
+        const online = m.online ? `<span class="pill">online · ${esc(m.online.code)}${m.online.players && m.online.players.length ? ` · vs ${esc(m.online.players.join(', '))}` : ''}</span>` : '';
+        const vs = m.vsBot ? `<span class="pill">vs computer · ${esc(m.vsBot)}</span>` : '';
+        return `<li class="${current ? 'current' : ''}">
+          <div><b>${esc(m.deckName)}</b> ${online}${vs}
+            <div class="muted small">Turn ${m.turn} · ${m.life} life · last played ${when(m.updatedAt || m.createdAt)}</div></div>
+          <div class="toolbar tight">
+            <button class="btn sm" data-act="resume-game" data-id="${esc(m.id)}">${current ? 'Back to the game' : 'Continue'}</button>
+            <button class="btn sm ghost danger" data-act="delete-game" data-id="${esc(m.id)}" title="Delete this saved game">Delete</button>
+          </div></li>`;
+      }).join('')}</ul></section>`;
+  }
+
+  // The deck you'll play online: the one in your current game, else the one you last picked.
+  function onlineDeckKey() {
+    const decks = allDecks();
+    const key = ui.onlineDeck || (game && game.deckKey);
+    return decks.some(d => d.key === key) ? key : decks.length ? decks[0].key : '';
+  }
+
+  function deckSelectHtml() {
+    const decks = allDecks();
+    if (!decks.length) return '<span class="muted small">No decks yet. Add one below.</span>';
+    const key = onlineDeckKey();
+    return `<label class="muted small">Your deck <select id="onlineDeck" data-act="online-deck">${decks.map(d => `<option value="${esc(d.key)}" ${d.key === key ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select></label>`;
+  }
+
+  function onlinePanelHtml() {
+    const st = Online.state();
+    const code = Online.code();
+    if (st === 'off') {
+      return `<h3>Play online</h3>
+        <p class="muted small">Play against up to ${Online.MAX_PLAYERS - 1} friends who also have MTG Tracker. One person hosts and gets a game code; everyone else types it in.
+          Each player plays their own deck on their own computer. Everyone needs internet.</p>
+        <div class="toolbar tight">
+          <label class="muted small">Your name <input id="onlineName" data-act="online-name" value="${esc(ui.playerName || '')}" maxlength="30" placeholder="Your name" style="width:150px"></label>
+          ${deckSelectHtml()}
+        </div>
+        <div class="toolbar tight" style="margin-top:.5rem">
+          <button class="btn" data-act="host">Host a game</button>
+          <span class="muted small">or</span>
+          <input id="joinCode" class="code-input" value="${esc(ui.joinCode || '')}" maxlength="13" placeholder="Game code">
+          <button class="btn ghost" data-act="join">Join</button>
+        </div>`;
+    }
+    if (st === 'starting') return '<h3>Play online</h3><p class="muted">Starting a game…</p>';
+    if (st === 'connecting') {
+      return `<h3>Play online</h3><div class="toolbar tight"><span>Joining game <b class="game-code">${esc(code)}</b>…</span>
+        <button class="btn sm ghost" data-act="leave">Cancel</button></div>`;
+    }
+    const isHost = Online.role() === 'host';
+    const players = Online.players();
+    const deckOf = p => {
+      if (p.pid === Online.id()) return game ? esc(game.deckName) : '<span class="muted">no deck yet</span>';
+      const peer = peers[p.pid];
+      return peer && peer.board ? esc(peer.board.deckName) : '<span class="muted">picking a deck…</span>';
+    };
+    return `<div class="page-head">
+        <div>
+          <h3>${st === 'lost' ? 'Connection lost' : 'Playing online'}</h3>
+          <div class="toolbar tight">
+            <span>Game code <b class="game-code">${esc(code)}</b></span>
+            ${isHost ? '<button class="btn sm ghost" data-act="copy-code">Copy</button>' : ''}
+            <span class="muted small">${isHost ? (st === 'waiting' ? 'Send this code to your friends. Waiting for them to join…' : `Friends can still join (up to ${Online.MAX_PLAYERS} players).`) : st === 'lost' ? 'The host may have closed the game.' : ''}</span>
+          </div>
+        </div>
+        <div class="toolbar tight">
+          ${st === 'lost' ? '<button class="btn sm" data-act="rejoin">Rejoin</button>' : ''}
+          <button class="btn sm danger" data-act="leave">Leave</button>
+        </div>
+      </div>
+      ${players.length ? `<ul class="players">${players.map((p, i) => `<li><span class="dot ok"></span><b>${esc(p.name)}</b>${p.pid === Online.id() ? ' (you)' : ''}${i === 0 ? ' <span class="pill">host</span>' : ''} <span class="small">· ${deckOf(p)}</span></li>`).join('')}</ul>` : ''}
+      <div class="toolbar tight">
+        ${deckSelectHtml()}
+        ${allDecks().length ? `<button class="btn sm" data-act="online-play">${game && game.deckKey === onlineDeckKey() ? 'Restart with this deck' : 'Play this deck'}</button>` : ''}
+        ${game ? '<button class="btn sm ghost" data-act="resume">Back to the game</button>' : ''}
+      </div>
+      <p class="muted small">${inLobby ? '<button class="btn sm" data-act="open-lobby">Go to the lobby</button> ' : ''}The host starts the game from the lobby on the Play tab. To start over later, use <b>More ▾ → Back to the lobby</b>.</p>`;
+  }
+
+  function refreshOnlinePanel() {
+    const el = $('#onlinePanel');
+    if (el && !el.contains(document.activeElement)) el.innerHTML = onlinePanelHtml();
+  }
+
+  // Splits a pasted list into sections (Commander / Deck / Sideboard headings) and parses each line.
+  function parseList(text) {
+    const entries = [];
+    const errors = [];
+    let section = 'deck';
+    for (const raw of text.split(/\r?\n/)) {
+      const line = raw.trim();
+      if (!line) continue;
+      const head = line.replace(/[:\s]+$/, '').replace(/\s*\(\d+\)$/, '').toLowerCase();
+      if (/^(commanders?|deck|main ?deck|mainboard|sideboard|maybeboard|companion|about|name .*)$/.test(head)) {
+        section = /^commander/.test(head) ? 'commander' : /side|maybe|companion|about|name/.test(head) ? 'skip' : 'deck';
+        continue;
+      }
+      if (section === 'skip') continue;
+      const cmdrTag = /\*CMDR\*/i.test(line);
+      const e = ArchidektParser.parseLine(line);
+      if (!e) continue;
+      if (e.error) { errors.push(line); continue; }
+      if (!e.inDeck) continue;
+      e.commander = section === 'commander' || cmdrTag || e.categories.some(c => c.toLowerCase() === 'commander');
+      entries.push(e);
+    }
+    return { entries, errors };
+  }
+
+  async function importPasted(name, text) {
+    const msg = $('#pasteMsg');
+    const { entries, errors } = parseList(text);
+    if (!entries.length) {
+      msg.textContent = 'No cards found in that list.';
+      return;
+    }
+    if (local.decks.some(d => d.name.toLowerCase() === name.toLowerCase())) {
+      msg.textContent = 'You already have a Simulator deck with that name.';
+      return;
+    }
+    msg.textContent = 'Looking up cards on Scryfall…';
+    const idents = entries.map(e => (e.set && e.cn ? { set: e.set, collector_number: e.cn } : { name: e.name.split(' // ')[0] }));
+    let res;
+    try {
+      res = await Scryfall.collection(idents, (d, t) => { msg.textContent = `Looking up cards on Scryfall… ${d}/${t}`; });
+    } catch (e) {
+      msg.textContent = 'Scryfall lookup failed: ' + e.message;
+      return;
+    }
+    const pick = e => res.found.find(c => (e.set && e.cn && c.set === e.set && c.cn === e.cn))
+      || res.found.find(c => c.names.includes(e.name.toLowerCase()) || c.names.includes(e.name.split(' // ')[0].toLowerCase()));
+    // Printings that weren't found by set + number get a second try by name.
+    const retry = entries.filter(e => !pick(e) && e.set);
+    if (retry.length) {
+      const again = await Scryfall.collection(retry.map(e => ({ name: e.name.split(' // ')[0] })));
+      res.found.push(...again.found);
+    }
+    const rows = new Map();
+    const missing = [...errors];
+    for (const e of entries) {
+      const c = pick(e);
+      if (!c) { missing.push(`${e.qty} ${e.name}`); continue; }
+      local.cards[c.id] = c;
+      const row = rows.get(c.id) || { id: c.id, name: c.name, qty: 0, categories: e.categories.filter(x => x.toLowerCase() !== 'commander'), commander: e.commander };
+      row.qty += e.qty;
+      rows.set(c.id, row);
+    }
+    const deck = { key: 'local:' + Date.now().toString(36), source: 'local', name, rows: [...rows.values()], createdAt: Date.now() };
+    local.decks.push(deck);
+    await saveLocal();
+    renderDecks();
+    status(`Imported ${name}: ${deckCount(deck)} cards.${missing.length ? ` Couldn't find: ${missing.slice(0, 8).join('; ')}${missing.length > 8 ? '…' : ''}` : ''}`, missing.length ? 'warn' : 'ok', missing.length > 0);
+  }
+
+  // ---------- Play tab ----------
+
+  const cardEls = new Map(); // iid -> element, reused so images don't reload on every change
+
+  function renderPlay() {
+    cardEls.clear();
+    oppEls.clear();
+    if (isOnline() && (inLobby || !game)) return renderLobby();
+    if (!game) {
+      view.innerHTML = `<div class="empty-play"><h3>No game going</h3><p class="muted">Pick a deck on the Decks tab and click Play.</p><button class="btn" data-tab-go="decks">Choose a deck</button></div>`;
+      return;
+    }
+    const online = isOnline();
+    const bot = hasBot();
+    const savedOnline = !online && gameMeta() && gameMeta().online;
+    view.innerHTML = `
+      <div class="table ${online || bot ? 'online' : ''}" id="table">
+        <div class="bar">
+          <div class="bar-group">
+            <b class="deck-name" title="${esc(game.deckName)}">${esc(game.deckName)}</b>
+            <span class="turn">Turn <b id="turnNo"></b></span>
+            ${online ? '<span class="turn-badge" id="turnBadge"></span>' : ''}
+            ${online
+              ? '<button class="btn sm" data-act="attack" id="attackBtn" title="Pick creatures and what each one attacks: a player or a planeswalker. They pick their blocks (A)">Attack…</button> <button class="btn sm" data-act="pass" title="End your turn. The next player untaps and draws automatically (N)">Pass turn ▸</button>'
+              : bot ? `<button class="btn sm" data-act="attack" title="Pick creatures to attack Opp with. Opp blocks and the damage is done for you (A)">Attack…</button>
+                 <button class="btn sm" data-act="next-turn" id="endTurnBtn" title="Opp takes its turn, then you untap and draw (N)">End turn ▸</button>`
+              : '<button class="btn sm" data-act="next-turn" title="Untap, then draw (N)">Next turn</button>'}
+            <button class="btn sm ghost" data-act="draw" title="Draw a card (D)">Draw</button>
+            <button class="btn sm ghost" data-act="untap" title="Untap everything (U)">Untap all</button>
+            ${appMode ? '' : '<button class="btn sm ghost" data-act="mulligan">Mulligan</button>'}
+            <button class="btn sm ghost" data-act="token">Token…</button>
+            <button class="btn sm ghost" data-act="scry" title="Look at the top cards of your library: scry, or put them in any order">Scry…</button>
+            ${appMode ? '' : `<button class="btn sm ghost" data-act="shuffle" title="Shuffle your library (S)">Shuffle</button>
+            <button class="btn sm ghost" data-act="d20" title="Roll a 20-sided die">Roll d20</button>`}
+            <button class="btn sm ghost" data-act="tools">More ▾</button>
+            <button class="btn sm ghost" data-act="undo" title="Undo (Ctrl+Z)">↶ Undo</button>
+            <button class="btn sm danger" data-act="reset" title="Start this deck over: new shuffle, new hand, life back to the start">↺ Reset</button>
+            <button class="btn sm danger" data-act="end-game" title="End this game and go back to the deck list">✕ End game</button>
+          </div>
+          <div class="bar-group">
+            <div class="life" title="Your life"><span>You</span><button data-act="life" data-d="-1">−</button><b id="lifeNo"></b><button data-act="life" data-d="1">+</button></div>
+            ${online || bot ? '' : '<div class="life goldfish" title="Opponent\'s life (for goldfishing)"><span>Opp</span><button data-act="opp" data-d="-1">−</button><b id="oppNo"></b><button data-act="opp" data-d="1">+</button></div>'}
+            <div class="life poison" title="Poison counters"><span>☠</span><button data-act="poison" data-d="-1">−</button><b id="poisonNo"></b><button data-act="poison" data-d="1">+</button></div>
+            <label class="toggle" title="When you play a spell, tap the lands it needs (uses floating mana first)"><input type="checkbox" data-act="autotap" ${ui.autoTap ? 'checked' : ''}> Auto-tap lands</label>
+            <label class="toggle" title="At the start of your turn, highlight cards with upkeep triggers until you click Done"><input type="checkbox" data-act="upkeephelp" ${ui.upkeepOff ? '' : 'checked'}> Upkeep reminders</label>
+            <label class="size" title="Card size"><span class="muted small">Size</span><input type="range" min="60" max="150" step="2" value="${ui.cardW}" data-act="size"></label>
+            ${appMode ? '' : '<span class="counter-dock" id="counterDock" hidden></span>'}
+            ${online ? `<span class="online-chip" title="Game code ${esc(Online.code())}"><span class="dot ${Online.connected() ? 'ok' : ''}"></span>Online · <b>${esc(Online.code())}</b><button class="link-btn" data-act="leave">Leave</button></span>`
+              : savedOnline ? `<span class="online-chip" title="This game was played online. Reconnect to keep playing with the others."><span class="dot"></span>Offline · <b>${esc(savedOnline.code)}</b><button class="link-btn" data-act="reconnect">Reconnect</button></span>` : ''}
+          </div>
+        </div>
+        <div class="board">
+          ${online || bot ? '<section class="opps" id="opps"></section>' : ''}
+          <aside class="piles">
+            <div class="pile-wrap"><div class="pile" data-pile="library" data-zone="library"></div><span class="pile-label">Library <b data-count="library"></b></span></div>
+            <div class="pile-wrap"><div class="pile" data-pile="graveyard" data-zone="graveyard"></div><span class="pile-label">Graveyard <b data-count="graveyard"></b></span></div>
+            <div class="pile-wrap"><div class="pile" data-pile="exile" data-zone="exile"></div><span class="pile-label">Exile <b data-count="exile"></b></span></div>
+            <div class="pile-wrap cmd"><div class="command" id="command" data-zone="command"></div><span class="pile-label">Command zone</span></div>
+          </aside>
+          <section class="battlefield" data-zone="battlefield" id="battlefield"></section>
+          <aside class="side">
+            <div class="preview" id="preview"><div class="muted small">Hover a card to see it here.</div></div>
+            <div class="info" id="info"></div>
+            <div class="upkeep-note" id="upkeep" hidden></div>
+            <div class="cmd-dmg" id="cmdDmg"></div>
+            <div class="mana" id="mana"></div>
+            <div class="log" id="log"></div>
+            ${online ? '<form id="chatForm" class="chat"><input name="msg" placeholder="Message everyone…" autocomplete="off" maxlength="500"></form>' : ''}
+          </aside>
+        </div>
+        <div class="hand" data-zone="hand" id="hand"></div>
+      </div>`;
+    renderBoard();
+    renderCounterDock();
+    if (bot && (game.bot.pending || game.bot.tapChoice) && modal.hidden) oppWaiting();
+  }
+
+  function cardImage(inst) {
+    const c = def(inst.id);
+    if (!c) return null;
+    if (inst.flipped && c.backImage) return c.backImage;
+    return c.image;
+  }
+
+  function faceHtml(inst, showBack) {
+    if (showBack || inst.faceDown) return '<div class="back"><span>MTG</span></div>';
+    const img = cardImage(inst);
+    if (img) return `<img src="${esc(img)}" alt="${esc(inst.name)}" draggable="false" loading="lazy">`;
+    const c = def(inst.id) || {};
+    const pt = inst.custom ? inst.custom.pt : c.power != null ? `${c.power}/${c.toughness}` : '';
+    return `<div class="text-face"><b>${esc(inst.name)}</b><span>${esc(inst.typeLine || c.typeLine || (inst.token ? 'Token' : ''))}</span>
+      ${inst.custom && inst.custom.text ? `<small>${esc(inst.custom.text)}</small>` : ''}${pt ? `<em>${esc(pt)}</em>` : ''}</div>`;
+  }
+
+  const FRESH_MS = 5000; // how long a card that just came into your hand stays outlined
+  const freshTimers = new Map();
+  const sign = n => (n >= 0 ? '+' + n : String(n));
+
+  // pid is set for another player's card: it can be looked at but not moved.
+  // Auras another player put on this creature (on yours), or that you put on it (on theirs).
+  const auraTags = inst => inst.yourAuras || Object.values(inst.boosts || {}).map(b => b && b.label).filter(Boolean);
+
+  function cardEl(inst, pid) {
+    const els = pid ? oppEls : cardEls;
+    const key = pid ? pid + '|' + inst.iid : inst.iid;
+    let el = els.get(key);
+    if (!el) {
+      el = document.createElement('div');
+      el.className = 'card';
+      if (pid) {
+        el.dataset.oiid = inst.iid;
+        el.dataset.opid = pid;
+      } else el.dataset.iid = inst.iid;
+      els.set(key, el);
+    }
+    const counters = Object.entries(inst.counters || {});
+    const tax = inst.commander && inst.castCount ? inst.castCount * 2 : 0;
+    const inCommand = pid ? inst.inCommand : inst.zone === 'command';
+    const sig = [inst.faceDown, inst.flipped, cardImage(inst), JSON.stringify(inst.counters), inst.token, inCommand ? tax : '', inst.chosenType || '', inst.regen || '', inst.pump ? inst.pump.pow + '/' + inst.pump.tou + (inst.pump.kw || []).join() : '', inst.anthem ? inst.anthem.pow + '/' + inst.anthem.tou : '', auraTags(inst).join()].join('|');
+    if (el.dataset.sig !== sig) {
+      el.dataset.sig = sig;
+      el.innerHTML = faceHtml(inst)
+        + (inst.token ? '<span class="tag token">TOKEN</span>' : '')
+        + (counters.length ? `<div class="counters">${counters.map(([k, n]) => pid
+          ? `<span class="counter">${esc(k)} <b>${n}</b></span>`
+          : `<button class="counter" data-counter="${esc(k)}" title="Click +1, right-click −1">${esc(k)} <b>${n}</b></button>`).join('')}</div>` : '')
+        + (inCommand && tax ? `<span class="tag tax" title="Commander tax">+${tax}</span>` : '')
+        + (inst.chosenType && !inst.faceDown ? `<span class="tag chosen" title="Chosen creature type">${esc(inst.chosenType)}</span>` : '')
+        + (inst.regen ? `<span class="tag regen" title="Regeneration shield until end of turn: the next time it would be destroyed, it's tapped instead">REGEN${inst.regen > 1 ? ' ×' + inst.regen : ''}</span>` : '')
+        + (inst.pump ? `<span class="tag pump" title="Until end of turn${inst.pump.kw && inst.pump.kw.length ? ': ' + esc(inst.pump.kw.join(', ')) : ''}">${inst.pump.pow || inst.pump.tou ? `${sign(inst.pump.pow)}/${sign(inst.pump.tou)}` : ''}${inst.pump.kw && inst.pump.kw.length ? `${inst.pump.pow || inst.pump.tou ? ' ' : ''}+${inst.pump.kw.length} kw` : ''}</span>` : '')
+        + (auraTags(inst).length ? `<span class="tag aura" title="${esc(auraTags(inst).join(', '))}">${esc(auraTags(inst).join(', '))}</span>` : '')
+        + (inst.anthem ? `<span class="tag anthem" title="From its own text or a lord, while it lasts">${sign(inst.anthem.pow)}/${sign(inst.anthem.tou)}</span>` : '');
+    }
+    el.classList.toggle('tapped', !!inst.tapped);
+    el.classList.toggle('upkeep', !pid && upkeepIids().includes(inst.iid));
+    // A card that just came into your hand gets a yellow outline for 5 seconds.
+    const left = !pid && inst.zone === 'hand' && inst.newAt ? FRESH_MS - (Date.now() - inst.newAt) : 0;
+    el.classList.toggle('fresh', left > 0);
+    if (left > 0) {
+      clearTimeout(freshTimers.get(key));
+      freshTimers.set(key, setTimeout(() => { freshTimers.delete(key); el.classList.remove('fresh'); }, left));
+    }
+    return el;
+  }
+
+  // Commander damage. Online: damage you've taken from each other player's commander (key
+  // "player|commander"), shared so they can see it. Offline: damage your commander has dealt to the
+  // goldfish opponent. 21 from one commander loses the game.
+  function renderCmdDamage() {
+    const box = $('#cmdDmg');
+    if (!box || !game) return;
+    const rows = [];
+    if (isOnline()) {
+      const taken = game.cmdDamage || {};
+      const keys = new Set(Object.keys(taken).filter(k => taken[k]));
+      for (const p of others()) {
+        const b = peers[p.pid] && peers[p.pid].board;
+        if (!b) continue;
+        ['command', 'battlefield', 'graveyard', 'exile'].forEach(z => b[z].forEach(c => { if (c.commander) keys.add(`${p.name}|${c.name}`); }));
+      }
+      for (const k of keys) {
+        const [who, name] = k.split('|');
+        rows.push({ act: 'cmd-dmg', key: k, label: `${who}'s ${name}`, n: taken[k] || 0 });
+      }
+    } else {
+      const dealt = game.cmdDealt || {};
+      const names = new Set(Object.values(game.cards).filter(c => c.commander).map(c => c.name));
+      for (const name of names) rows.push({ act: 'cmd-dealt', key: name, label: `${name} → Opp`, n: dealt[name] || 0 });
+      if (hasBot()) {
+        const taken = game.cmdDamage || {};
+        const theirs = new Set(Object.values(game.bot.s.cards).filter(c => c.commander).map(c => c.name));
+        for (const name of theirs) rows.push({ act: 'cmd-dmg', key: `Opp|${name}`, label: `Opp's ${name} → you`, n: taken[`Opp|${name}`] || 0 });
+      }
+    }
+    box.hidden = !rows.length;
+    box.innerHTML = rows.length ? `<div class="muted small">Commander damage${isOnline() ? ' to you' : ''}</div>${rows.map(r => `
+      <div class="cmd-row ${r.n >= 21 ? 'dead' : ''}" title="21 from one commander loses the game">
+        <span>${esc(r.label)}</span>
+        <span class="life"><button data-act="${r.act}" data-key="${esc(r.key)}" data-d="-1">−</button><b>${r.n}</b><button data-act="${r.act}" data-key="${esc(r.key)}" data-d="1">+</button></span>
+      </div>`).join('')}` : '';
+  }
+
+  // Changes commander damage by d. It's also life loss, so life moves with it.
+  function commanderDamage(field, key, d) {
+    act(() => {
+      const map = game[field] = game[field] || {};
+      const before = map[key] || 0;
+      const after = Math.max(0, before + d);
+      map[key] = after;
+      if (field === 'cmdDamage') game.life -= after - before;
+      else game.oppLife -= after - before;
+      if (before < 21 && after >= 21) {
+        const name = field === 'cmdDamage' ? key.replace('|', "'s ") : key;
+        game.notice = field === 'cmdDamage' ? `21 commander damage from ${name}: you lose this game.` : `${name} has dealt 21 commander damage: Opp loses.`;
+        Game.log(game, game.notice);
+      }
+    });
+  }
+
+  const oppEls = new Map(); // "pid|iid" -> element for other players' cards
+
+  let oppsFrame = 0;
+  function renderOppsSoon() {
+    if (oppsFrame) return;
+    oppsFrame = requestAnimationFrame(() => {
+      oppsFrame = 0;
+      renderOpps();
+      renderLog();
+      checkDeaths();
+    });
+  }
+
+  // The other players' tables across the top. Each is scaled to fit its space and turned
+  // around, so their lands are at the far edge like across a real table.
+  function renderOpps() {
+    const box = $('#opps');
+    const badge = $('#turnBadge');
+    if (badge) {
+      badge.textContent = !activePid ? '' : activePid === Online.id() ? 'Your turn' : `${nameOf(activePid)}'s turn`;
+      badge.className = 'turn-badge' + (activePid === Online.id() ? ' me' : '');
+      badge.hidden = !activePid;
+    }
+    updateTurnButtons();
+    if (!box) return;
+    const list = others();
+    if (!list.length && isOnline()) {
+      oppEls.clear();
+      const st = Online.state();
+      box.innerHTML = `<div class="opp-empty">${st === 'lost' ? 'Lost the connection to the host. <button class="btn sm" data-act="rejoin">Rejoin</button>'
+        : st === 'connecting' ? 'Connecting…'
+        : `Waiting for players to join. Game code: <b class="game-code">${esc(Online.code())}</b> <button class="btn sm ghost" data-act="copy-code">Copy</button>`}</div>`;
+      return;
+    }
+    // Reuse each player's panel so their card images don't reload.
+    const panels = list.map(p => {
+      let panel = box.querySelector(`.opp[data-pid="${CSS.escape(p.pid)}"]`);
+      if (!panel) {
+        panel = document.createElement('div');
+        panel.className = 'opp';
+        panel.dataset.pid = p.pid;
+        panel.innerHTML = '<div class="opp-head"></div><div class="opp-field"></div>';
+      }
+      return panel;
+    });
+    if (box.querySelector('.opp-empty')) box.innerHTML = '';
+    box.replaceChildren(...panels);
+    list.forEach((p, i) => renderOpp(p, panels[i]));
+    renderCmdDamage();
+  }
+
+  // Online, the Pass turn button says whose turn it is: "Pass to Bob ▸" on yours, "Bob's turn" otherwise.
+  function updateTurnButtons() {
+    const endBtn = view.querySelector('#endTurnBtn');
+    if (endBtn) endBtn.textContent = hasBot() && game.bot.tapChoice ? "Opp's combat: tap ▸" : hasBot() && game.bot.pending ? 'Opp is attacking: block ▸' : 'End turn ▸';
+    const attackBtn = view.querySelector('#attackBtn');
+    if (attackBtn) attackBtn.textContent = incoming.length ? `${nameOf(incoming[0].from)} is attacking: block ▸` : 'Attack…';
+    const passBtn = view.querySelector('[data-act="pass"]');
+    if (!passBtn) return;
+    const next = others()[0];
+    const theirs = activePid && activePid !== Online.id();
+    passBtn.textContent = theirs ? `${nameOf(activePid)}'s turn` : next ? `Pass to ${next.name} ▸` : 'Pass turn ▸';
+    passBtn.disabled = !!theirs;
+    passBtn.classList.toggle('waiting', !!theirs);
+    passBtn.title = theirs ? `It's ${nameOf(activePid)}'s turn. Yours starts automatically when they pass to you.`
+      : next ? `End your turn. ${next.name} untaps and draws automatically (N)` : 'No one else is here yet';
+  }
+
+  function renderOpp(p, panel) {
+    const peer = peerOf(p.pid);
+    const b = peer && peer.board;
+    panel.classList.toggle('active', activePid === p.pid);
+    const head = panel.querySelector('.opp-head');
+    const field = panel.querySelector('.opp-field');
+    if (!b) {
+      head.innerHTML = `<b class="opp-name">${esc(p.name)}</b>`;
+      field.innerHTML = `<div class="opp-empty">${esc(p.name)} is picking a deck…</div>`;
+      return;
+    }
+    const zoneBtn = (z, label) => `<button class="link-btn" data-act="opp-zone" data-pid="${esc(p.pid)}" data-z="${z}" ${b[z].length ? '' : 'disabled'}>${label} <b>${b[z].length}</b></button>`;
+    head.innerHTML = `
+      <b class="opp-name" title="${esc(b.deckName)}">${esc(p.name)}</b>${p.pid === BOT ? ` <span class="opp-stat" title="Opp's deck">${esc(b.deckName)}</span>` : ''}
+      ${activePid === p.pid ? '<span class="turn-badge">Their turn</span>' : ''}
+      <div class="life" title="${esc(p.name)}'s life. − and + change it for them."><span>♥</span><button data-act="hit" data-pid="${esc(p.pid)}" data-d="-1">−</button><b>${b.life}</b><button data-act="hit" data-pid="${esc(p.pid)}" data-d="1">+</button></div>
+      ${b.poison ? `<span class="opp-stat poison">☠ <b>${b.poison}</b></span>` : ''}
+      ${Object.entries(b.cmdDamage || {}).filter(([, n]) => n).map(([k, n]) => `<span class="opp-stat ${n >= 21 ? 'poison' : ''}" title="Commander damage ${esc(p.name)} has taken from ${esc(k.replace('|', "'s "))}">⚔ ${esc(k.split('|')[1])} <b>${n}</b></span>`).join('')}
+      <span class="opp-stat">T<b>${b.turn}</b></span>
+      <span class="opp-stat">Hand <b>${b.hand}</b></span>
+      <span class="opp-stat">Library <b>${b.library}</b></span>
+      ${zoneBtn('graveyard', 'Graveyard')} ${zoneBtn('exile', 'Exile')}
+      ${b.command.length ? `<span class="opp-cmd">${b.command.map(c => `<span class="pill" data-oiid="${esc(c.iid)}" data-opid="${esc(p.pid)}">${esc(c.name)}${c.castCount ? ` +${c.castCount * 2}` : ''}</span>`).join(' ')}</span>` : ''}`;
+
+    const CH = 1.396;
+    const cards = b.battlefield;
+    const maxX = Math.max(1, ...cards.map(c => c.x + (c.tapped ? CH : 1)));
+    const maxY = Math.max(CH, ...cards.map(c => c.y + CH));
+    const fw = field.clientWidth - 8;
+    const fh = field.clientHeight - 8;
+    const cw = Math.max(30, Math.min(ui.cardW, fw / maxX, fh / maxY));
+    const H = Math.max(fh / cw, maxY);
+    field.style.setProperty('--cw', cw + 'px');
+    if (field.querySelector('.opp-empty')) field.innerHTML = '';
+    field.replaceChildren(...cards.map((c, i) => {
+      const mine = game ? game.zones.battlefield.map(id => game.cards[id]).filter(a => a.enchanting && a.enchanting.pid === p.pid && a.enchanting.iid === c.iid) : [];
+      if (mine.length) c.yourAuras = mine.map(a => `Your ${a.name}`);
+      const el = cardEl(c, p.pid);
+      el.style.left = c.x * cw + 4 + 'px';
+      el.style.top = (H - c.y - CH) * cw + 4 + 'px';
+      el.style.zIndex = i + 1;
+      return el;
+    }));
+    // Forget elements for this player's cards that are gone.
+    for (const key of oppEls.keys()) if (key.startsWith(p.pid + '|') && !peer.cards[key.slice(p.pid.length + 1)]) oppEls.delete(key);
+  }
+
+  function openOppZone(pid, zone) {
+    const peer = peerOf(pid);
+    if (!peer || !peer.board) return;
+    const ids = [...peer.board[zone]].reverse();
+    openModal(`
+      <div class="page-head"><h3>${esc(nameOf(pid))}'s ${esc(Game.ZONE_NAMES[zone])} (${ids.length})</h3><button class="btn ghost sm" data-act="close-modal">Done</button></div>
+      <div class="viewer-grid">${ids.map(c => `<div class="viewer-card"><div class="card readonly" title="${esc(c.name)}">${faceHtml(c)}</div></div>`).join('') || '<p class="muted">Nothing here.</p>'}</div>`);
+  }
+
+  function renderPile(zone) {
+    const el = view.querySelector(`[data-pile="${zone}"]`);
+    const ids = game.zones[zone];
+    const top = zone === 'library' ? ids[0] : ids[ids.length - 1];
+    const key = top ? top + (zone === 'library' ? 'b' : '') : 'empty';
+    if (el.dataset.top !== key) {
+      el.dataset.top = key;
+      el.innerHTML = top ? faceHtml(game.cards[top], zone === 'library') : `<div class="pile-empty">${zone === 'library' ? 'Empty' : ''}</div>`;
+    }
+    view.querySelector(`[data-count="${zone}"]`).textContent = ids.length;
+  }
+
+  function measureLayout() {
+    const bf = $('#battlefield');
+    if (!bf) return;
+    Game.layout.cols = Math.max(3, Math.floor((bf.clientWidth - 8) / (ui.cardW * Game.CELL_W)));
+    Game.layout.rows = Math.max(2, Math.floor((bf.clientHeight - 8) / (ui.cardW * Game.CELL_H)));
+  }
+
+  function renderBoard() {
+    const table = $('#table');
+    if (!table || !game) return;
+    table.style.setProperty('--cw', ui.cardW + 'px');
+    measureLayout();
+    $('#turnNo').textContent = game.turn || '–'; // online, before your first turn
+    $('#lifeNo').textContent = game.life;
+    if ($('#oppNo')) $('#oppNo').textContent = game.oppLife;
+    $('#poisonNo').textContent = game.poison;
+
+    const bf = $('#battlefield');
+    // Equipment and auras are drawn just under the creature they're on.
+    const order = [];
+    for (const iid of game.zones.battlefield) {
+      if (game.cards[iid].attachedTo && game.cards[game.cards[iid].attachedTo]) continue;
+      order.push(...Game.attachmentsOf(game, iid), iid);
+    }
+    for (const iid of game.zones.battlefield) if (!order.includes(iid)) order.push(iid);
+    const bfEls = order.map((iid, i) => {
+      const inst = game.cards[iid];
+      const el = cardEl(inst);
+      el.style.left = inst.x * ui.cardW + 'px';
+      el.style.top = inst.y * ui.cardW + 'px';
+      el.style.zIndex = i + 1;
+      return el;
+    });
+    bf.replaceChildren(...bfEls);
+
+    const hand = $('#hand');
+    const handEls = game.zones.hand.map(iid => {
+      const el = cardEl(game.cards[iid]);
+      el.style.left = el.style.top = el.style.zIndex = '';
+      return el;
+    });
+    hand.replaceChildren(...handEls);
+    const room = hand.clientWidth - 24;
+    const need = handEls.length * (ui.cardW + 8);
+    hand.style.setProperty('--overlap', need > room && handEls.length > 1 ? `${-Math.min(ui.cardW * 0.75, (need - room) / (handEls.length - 1))}px` : '0px');
+
+    const cmd = $('#command');
+    cmd.replaceChildren(...game.zones.command.map(iid => {
+      const el = cardEl(game.cards[iid]);
+      el.style.left = el.style.top = el.style.zIndex = '';
+      return el;
+    }));
+    view.querySelector('.pile-wrap.cmd').hidden = !game.commander && !game.zones.command.length;
+
+    ['library', 'graveyard', 'exile'].forEach(renderPile);
+    // Forget elements for cards that no longer exist (tokens that left).
+    for (const iid of cardEls.keys()) if (!game.cards[iid]) cardEls.delete(iid);
+
+    const lands = game.zones.battlefield.filter(iid => Game.isLand(game.cards[iid]));
+    const untapped = lands.filter(iid => !game.cards[iid].tapped).length;
+    $('#info').innerHTML = `
+      <div><span>Hand</span><b>${game.zones.hand.length}</b></div>
+      <div><span>Lands</span><b>${lands.length}</b></div>
+      <div><span>Untapped lands</span><b>${untapped}</b></div>
+      <div><span>Land this turn</span><b class="${game.landPlayed ? 'ok' : 'muted'}">${game.landPlayed ? 'Played' : 'Not yet'}</b></div>
+      ${game.mulligans ? `<div><span>Mulligans</span><b>${game.mulligans}</b></div>` : ''}`;
+    const upkeep = upkeepIids();
+    $('#upkeep').hidden = !upkeep.length;
+    $('#upkeep').innerHTML = upkeep.length ? `<b>Upkeep</b> <span>${esc(upkeep.map(iid => game.cards[iid].name).join(', '))}</span> <button class="link-btn" data-act="upkeep-done">Done</button>` : '';
+    renderCmdDamage();
+    const pool = Game.MANA.reduce((n, k) => n + game.mana[k], 0);
+    const free = Game.available(game);
+    $('#mana').innerHTML = `
+      <div class="mana-head"><span class="muted small">Mana pool${pool ? ` · <b>${pool}</b>` : ''}</span>${pool ? '<button class="link-btn" data-act="clear-mana">Clear</button>' : ''}</div>
+      <div class="pips">${Game.MANA.map(k => `<button class="pip pip-${k} ${game.mana[k] ? 'has' : ''}" data-mana="${k}" title="${MANA_NAMES[k]}: click +1, right-click −1"><i>${k}</i><b>${game.mana[k]}</b></button>`).join('')}</div>
+      <div class="free small"><div class="muted">Free mana (untapped lands, rocks, dorks):</div><b>${free.total}</b>${free.total ? ` <span class="muted">· ${Game.MANA.filter(k => free.byColor[k]).map(k => `${k} ${free.byColor[k]}`).join(' · ')}</span>` : ''}</div>`;
+    renderLog();
+    renderOpps();
+    if (hoverIid && !game.cards[hoverIid]) showPreview(null);
+  }
+
+  // Your log; online, everyone's log and chat merged, newest first.
+  function renderLog() {
+    const el = $('#log');
+    if (!el || !game) return;
+    let lines = game.log.slice(0, 80).map(l => ({ at: l.at || 0, turn: l.turn, msg: l.msg }));
+    if (isOnline()) {
+      for (const [pid, peer] of Object.entries(peers)) {
+        if (peer.board) lines.push(...peer.board.log.map(l => ({ at: (l.at || 0) + peer.offset, turn: l.turn, msg: l.msg, who: pid })));
+      }
+      lines.push(...chat.map(c => ({ at: c.at, msg: c.msg, who: c.from, chat: true })));
+      lines = lines.sort((a, b) => b.at - a.at).slice(0, 150);
+    } else if (hasBot()) {
+      lines.push(...game.bot.s.log.slice(0, 80).map(l => ({ at: l.at || 0, turn: l.turn, msg: l.msg, who: BOT })));
+      lines = lines.sort((a, b) => b.at - a.at).slice(0, 150);
+    }
+    el.innerHTML = lines.map(l => (l.chat
+      ? `<div class="chat-line"><b>${esc(nameOf(l.who))}:</b> ${esc(l.msg)}</div>`
+      : `<div class="${l.who ? 'opp-line' : ''}"><span class="muted">T${l.turn}</span> ${l.who ? `<b>${esc(nameOf(l.who))}:</b> ` : ''}${esc(l.msg)}</div>`)).join('');
+  }
+
+  function showPreview(iid) {
+    hoverIid = iid;
+    hoverOpp = null;
+    const inst = iid && game && game.cards[iid];
+    if (!inst || inst.zone === 'library') return;
+    previewCard(inst);
+  }
+
+  function showOppPreview(pid, iid) {
+    hoverIid = null;
+    hoverOpp = pid + '|' + iid;
+    const peer = peerOf(pid);
+    const inst = peer && peer.cards[iid];
+    if (inst) previewCard(inst);
+  }
+
+  function previewCard(inst) {
+    const box = $('#preview');
+    if (box) box.innerHTML = previewHtml(inst);
+  }
+
+  // "On Grizzly Bears" / "Equipped: Bonesplitter" for the card preview (your cards only).
+  function attachedText(inst) {
+    if (!game || game.cards[inst.iid] !== inst) return '';
+    const host = inst.attachedTo && game.cards[inst.attachedTo];
+    const on = inst.zone === 'battlefield' ? Game.attachmentsOf(game, inst.iid).map(id => game.cards[id].name) : [];
+    const theirs = inst.enchanting ? `<div class="muted">On ${esc(nameOf(inst.enchanting.pid))}'s ${esc(inst.enchanting.name)}</div>` : '';
+    return theirs + (host ? `<div class="muted">On ${esc(host.name)}</div>` : '') + (on.length ? `<div class="muted">With ${esc(on.join(', '))}</div>` : '');
+  }
+
+  function previewHtml(inst) {
+    const c = def(inst.id);
+    const img = c && (inst.flipped && c.backImage ? c.backImage : c.imageLarge || c.image);
+    const other = c && c.backImage ? (inst.flipped ? c.image : c.backImage) : null;
+    const counters = Object.entries(inst.counters || {});
+    return (img ? `<img src="${esc(img)}" alt="${esc(inst.name)}">` : `<div class="text-face big">${faceHtml(inst)}</div>`)
+      + (other ? `<img class="other-face" src="${esc(other)}" alt="Other face">` : '')
+      + `<div class="small"><b>${esc(inst.name)}</b>${inst.faceDown ? ' <span class="muted">(face down)</span>' : ''}${inst.token ? ' <span class="pill">token</span>' : ''}
+        ${inst.commander ? ` <span class="pill">commander · tax +${(inst.castCount || 0) * 2}</span>` : ''}
+        ${inst.chosenType && !inst.faceDown ? ` <span class="pill">chosen type: ${esc(inst.chosenType)}</span>` : ''}
+        ${attachedText(inst)}
+        ${counters.length ? `<div class="muted">${counters.map(([k, n]) => `${esc(k)}: ${n}`).join(', ')}</div>` : ''}</div>`;
+  }
+
+  // ---------- menus for cards and piles ----------
+
+  const COMMON_COUNTERS = ['+1/+1', '-1/-1', 'loyalty', 'shield', 'stun', 'charge', 'lore', 'oil', 'time', 'finality', 'flying', 'deathtouch', 'lifelink', 'trample'];
+  // Other counters that cards use, for the suggestions while you type one.
+  const MORE_COUNTERS = ['acorn', 'age', 'aim', 'arrow', 'arrowhead', 'awakening', 'blaze', 'blood', 'bloodline', 'book', 'bounty', 'bribery',
+    'brick', 'burden', 'cage', 'carrion', 'coin', 'collection', 'component', 'contested', 'corpse', 'corruption', 'credit', 'croak', 'crystal',
+    'cube', 'currency', 'death', 'defense', 'delay', 'depletion', 'descent', 'despair', 'devotion', 'divinity', 'doom', 'dream', 'duty', 'echo',
+    'egg', 'elixir', 'ember', 'energy', 'enlightened', 'eon', 'experience', 'eyeball', 'eyestalk', 'fade', 'fate', 'feather', 'fellowship',
+    'fetch', 'filibuster', 'flame', 'flood', 'foreshadow', 'fungus', 'funk', 'fury', 'fuse', 'gem', 'ghostform', 'glyph', 'gold', 'growth',
+    'harmony', 'hatching', 'hatchling', 'healing', 'hit', 'hone', 'hope', 'hoofprint', 'hour', 'hourglass', 'hunger', 'husk', 'ice', 'impostor',
+    'incarnation', 'incubation', 'infection', 'influence', 'ingenuity', 'intel', 'intervention', 'invitation', 'isolation', 'javelin', 'judgment',
+    'ki', 'kick', 'knickknack', 'knowledge', 'landmark', 'level', 'loot', 'luck', 'magnet', 'manabond', 'manifestation', 'mannequin', 'matrix',
+    'memory', 'midway', 'mine', 'mining', 'mire', 'music', 'muster', 'necrodermis', 'net', 'night', 'omen', 'ore', 'page', 'pain', 'palliation',
+    'paralyzation', 'pause', 'petal', 'petrification', 'phylactery', 'phyresis', 'pin', 'plague', 'plot', 'poison', 'polyp', 'pressure', 'prey',
+    'pupa', 'quest', 'rad', 'rejection', 'reprieve', 'rev', 'ribbon', 'ritual', 'rope', 'rust', 'scream', 'scroll', 'shell', 'silver', 'slime',
+    'slumber', 'soot', 'soul', 'spark', 'spite', 'spore', 'stash', 'storage', 'story', 'strife', 'study', 'suspect', 'takeover', 'task', 'theft',
+    'tide', 'tower', 'training', 'trap', 'treasure', 'unity', 'unlock', 'valor', 'velocity', 'verse', 'vitality', 'void', 'volatile', 'vortex',
+    'vow', 'voyage', 'wage', 'winch', 'wind', 'wish', 'wreck',
+    '+1/+0', '+0/+1', '+1/+2', '+2/+2', '-0/-1', '-0/-2', '-1/-0', '-2/-1', '-2/-2'];
+  const COLOR_NAMES = ['white', 'blue', 'black', 'red', 'green'];
+  const KNOWN_COUNTERS = [...new Set([...COMMON_COUNTERS, ...Bot.KEYWORDS, ...MORE_COUNTERS, ...COLOR_NAMES.map(c => 'protection from ' + c)])];
+  // A counter name to keep: a keyword in its proper spelling, a +X/+Y one, or one cards use. Else null.
+  function realCounter(raw) {
+    const name = String(raw || '').trim().toLowerCase().replace(/\s+/g, ' ');
+    const kw = Bot.keywordCounter(name);
+    if (kw) return kw;
+    if (/^[+-]\d+\s*\/\s*[+-]\d+$/.test(name)) return name.replace(/\s/g, '');
+    return KNOWN_COUNTERS.includes(name) ? name : null;
+  }
+  // Suggestions for what you've typed: names that start with it, then ones with a word that does.
+  function counterSuggestions(typed) {
+    const t = typed.trim().toLowerCase();
+    if (!t) return [];
+    const starts = KNOWN_COUNTERS.filter(k => k.startsWith(t));
+    const words = KNOWN_COUNTERS.filter(k => !k.startsWith(t) && k.split(/[\s/]+/).some(w => w.startsWith(t)));
+    return [...starts, ...words].filter(k => k !== t).slice(0, 8);
+  }
+
+  // Counters you've used, newest first. The ones you've typed yourself (like +1/+0) are listed in the
+  // counter picker so you don't have to type them again; the newest 3 of any kind are in the top bar.
+  // Only real counter names are kept, so a typo doesn't become a shortcut.
+  const recentCounters = () => (ui.recentCounters || []).filter(k => !COMMON_COUNTERS.includes(k) && realCounter(k));
+  function rememberCounter(name) {
+    name = realCounter(name);
+    if (!name) return;
+    ui.recentCounters = [name, ...(ui.recentCounters || []).filter(k => k !== name && realCounter(k))].slice(0, 16);
+    saveSoon();
+    renderCounterDock();
+  }
+
+  // Desktop: your 3 newest counters in the top bar. Drag one onto a card to add one of it.
+  function renderCounterDock() {
+    const dock = $('#counterDock');
+    if (!dock) return;
+    const last = (ui.recentCounters || []).filter(k => realCounter(k)).slice(0, 3);
+    dock.hidden = !last.length;
+    dock.innerHTML = `<span class="muted small">Counters</span>${last.map(k => `<span class="pill chip mine" draggable="true" data-dock-counter="${esc(k)}" title="Drag onto one of your cards to add a ${esc(k)} counter">${esc(k)}</span>`).join('')}`;
+  }
+
+  // Adds one counter dropped from the dock. Keyword counters (flying, lifelink…) only once.
+  function dropCounter(iid, name) {
+    const inst = game && game.cards[iid];
+    if (!inst || inst.zone !== 'battlefield') return;
+    if (Bot.keywordCounter(name) && inst.counters[name]) return status(`${inst.name} already has a ${name} counter.`);
+    rememberCounter(name);
+    act(() => Game.counter(game, iid, name, 1, { effect: true }));
+  }
+  const COUNTER_DRAG = 'application/x-mtg-counter';
+  document.addEventListener('dragstart', e => {
+    const chip = e.target.closest && e.target.closest('[data-dock-counter]');
+    if (!chip) return;
+    e.dataTransfer.setData(COUNTER_DRAG, chip.dataset.dockCounter);
+    e.dataTransfer.effectAllowed = 'copy';
+  });
+  const counterTarget = e => (e.dataTransfer && [...e.dataTransfer.types].includes(COUNTER_DRAG) && e.target.closest ? e.target.closest('.card[data-iid]') : null);
+  const clearCounterDrop = () => document.querySelectorAll('.card.drop-over').forEach(n => n.classList.remove('drop-over'));
+  document.addEventListener('dragover', e => {
+    const card = counterTarget(e);
+    clearCounterDrop();
+    if (!card || !game || !game.cards[card.dataset.iid] || game.cards[card.dataset.iid].zone !== 'battlefield') return;
+    e.preventDefault();
+    e.dataTransfer.dropEffect = 'copy';
+    card.classList.add('drop-over');
+  });
+  document.addEventListener('dragend', clearCounterDrop);
+  document.addEventListener('drop', e => {
+    const card = counterTarget(e);
+    clearCounterDrop();
+    if (!card) return;
+    e.preventDefault();
+    dropCounter(card.dataset.iid, e.dataTransfer.getData(COUNTER_DRAG));
+  });
+
+  // Any counter you can name: click a saved or common one, or type your own, then pick how many.
+  function counterPrompt(iid) {
+    const inst = game.cards[iid];
+    if (!inst) return;
+    const mine = recentCounters();
+    openModal(`<form class="ask" id="counterForm"><h3>Add counters to ${esc(inst.faceDown ? 'face-down card' : inst.name)}</h3>
+      ${mine.length ? `<label class="small muted">Your counters <button type="button" class="link-btn" data-counter-clear>clear</button></label>
+      <div class="chips">${mine.map(k => `<button type="button" class="pill chip mine" data-counter-pick="${esc(k)}">${esc(k)}</button>`).join('')}</div>
+      <label class="small muted">Common</label>` : ''}
+      <div class="chips">${COMMON_COUNTERS.map(k => `<button type="button" class="pill chip" data-counter-pick="${esc(k)}">${esc(k)}</button>`).join('')}</div>
+      <label class="small muted">Counter name</label>
+      <div class="suggest-wrap"><input name="name" type="text" placeholder="Type any counter, e.g. +2/+2, quest, xx" maxlength="30" autocomplete="off">
+      <div class="suggest" data-suggest hidden></div></div>
+      <label class="small muted" data-counter-n>How many</label>
+      <input name="n" type="number" min="1" value="1" data-counter-n>
+      <div class="toolbar end"><button type="button" class="btn ghost" data-ask="cancel">Cancel</button><button class="btn">Add</button></div></form>`);
+    const form = $('#counterForm');
+    form.name.focus();
+    // Keyword counters (flying, lifelink…) are on or off, so there's no "how many": one click adds it.
+    const isKw = name => !!Bot.keywordCounter(name);
+    const addKw = name => {
+      const k = Bot.keywordCounter(name);
+      done();
+      if (inst.counters[k]) return status(`${inst.name} already has a ${k} counter.`);
+      rememberCounter(k);
+      act(() => Game.counter(game, iid, k, 1));
+    };
+    // What it thinks you mean, as you type: click one, or arrow down to it and press Enter or Tab.
+    const box = form.querySelector('[data-suggest]');
+    let sel = -1;
+    const showSuggest = () => {
+      const list = counterSuggestions(form.name.value);
+      sel = Math.min(sel, list.length - 1);
+      box.hidden = !list.length;
+      box.innerHTML = list.map((k, i) => `<button type="button" class="suggest-item${i === sel ? ' on' : ''}" data-suggest-pick="${esc(k)}">${esc(k)}</button>`).join('');
+      box.querySelectorAll('[data-suggest-pick]').forEach(b => {
+        b.onmousedown = e => e.preventDefault(); // keep the focus in the box
+        b.onclick = () => pickSuggest(b.dataset.suggestPick);
+      });
+    };
+    const pickSuggest = k => {
+      form.name.value = k;
+      sel = -1;
+      form.name.oninput();
+      box.hidden = true;
+      if (!isKw(k)) { form.n.focus(); form.n.select(); }
+    };
+    form.name.oninput = () => {
+      form.querySelectorAll('[data-counter-n]').forEach(el => { el.hidden = isKw(form.name.value); });
+      showSuggest();
+    };
+    form.name.onkeydown = e => {
+      const items = [...box.querySelectorAll('[data-suggest-pick]')];
+      if (box.hidden || !items.length) return;
+      if (e.key === 'ArrowDown' || e.key === 'ArrowUp') {
+        e.preventDefault();
+        const n = items.length + 1; // -1 is the box itself
+        sel = (((sel + 1 + (e.key === 'ArrowDown' ? 1 : -1)) % n) + n) % n - 1;
+        showSuggest();
+      } else if ((e.key === 'Enter' || e.key === 'Tab') && sel >= 0) {
+        e.preventDefault();
+        pickSuggest(items[sel].dataset.suggestPick);
+      } else if (e.key === 'Escape') {
+        e.preventDefault();
+        e.stopPropagation();
+        box.hidden = true;
+      }
+    };
+    form.name.onblur = () => { box.hidden = true; };
+    form.querySelectorAll('[data-counter-pick]').forEach(b => {
+      b.onclick = () => {
+        if (isKw(b.dataset.counterPick)) return addKw(b.dataset.counterPick);
+        form.name.value = b.dataset.counterPick;
+        form.name.oninput();
+        form.n.focus();
+        form.n.select();
+      };
+    });
+    const done = () => { modal.hidden = true; modalBox.innerHTML = ''; };
+    form.querySelector('[data-ask=cancel]').onclick = done;
+    const clear = form.querySelector('[data-counter-clear]');
+    if (clear) clear.onclick = () => { ui.recentCounters = []; saveSoon(); counterPrompt(iid); };
+    form.onsubmit = e => {
+      e.preventDefault();
+      const name = form.name.value.trim();
+      const n = Math.floor(Number(form.n.value));
+      if (!name) return form.name.focus();
+      if (isKw(name)) return addKw(name);
+      done();
+      if (n > 0) {
+        const real = realCounter(name);
+        rememberCounter(name);
+        act(() => Game.counter(game, iid, real || name, n, { effect: true }));
+      }
+    };
+  }
+
+  // The creature types in your deck, most common first (for "choose a creature type").
+  function deckCreatureTypes() {
+    const counts = {};
+    for (const inst of Object.values(game.cards)) {
+      if (inst.token || !Game.isCreature(inst)) continue;
+      const sub = String(inst.typeLine || '').split('//')[0].split('—')[1] || '';
+      sub.split(/\s+/).filter(Boolean).forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+    }
+    return Object.keys(counts).sort((a, b) => counts[b] - counts[a] || a.localeCompare(b));
+  }
+
+  // "As this enters, choose a creature type": click one from your deck or type any.
+  // A modal spell you cast: tick the modes. You may tick as many as it allows (Akroma's Will: one,
+  // or both while your commander is on the battlefield). Done, the spell goes to the graveyard.
+  function chooseModes(iid) {
+    const inst = game.cards[iid];
+    const info = inst && Bot.spellModes(inst, def);
+    if (!info) return;
+    const hasCommander = game.zones.battlefield.some(id => game.cards[id].commander);
+    const max = hasCommander ? info.commanderPick : info.pick;
+    const why = info.commanderPick > info.pick ? (hasCommander ? ' (your commander is out)' : ' (more with your commander out)') : '';
+    openModal(`<form class="ask" id="modeForm"><h3>${esc(inst.name)}</h3>
+      <p class="muted small">Choose ${max === info.modes.length && max > 1 ? (max === 2 ? 'one or both' : 'any number') : max === 1 ? 'one' : `up to ${max}`}${esc(why)}.</p>
+      <div class="block-picks">${info.modes.map((m, i) => `<label class="check"><input type="checkbox" value="${i}"> ${esc(m)}</label>`).join('')}</div>
+      <div class="toolbar end"><button type="button" class="btn ghost" data-ask="cancel" title="Leave it on the table and do it by hand">Cancel</button><button class="btn">Cast</button></div></form>`);
+    const form = $('#modeForm');
+    const boxes = [...form.querySelectorAll('input[type=checkbox]')];
+    // One allowed: ticking a mode unticks the other. More: the rest lock once you hit the limit.
+    boxes.forEach(b => {
+      b.onchange = () => {
+        if (max === 1 && b.checked) boxes.forEach(o => { if (o !== b) o.checked = false; });
+        const n = boxes.filter(o => o.checked).length;
+        if (max > 1) boxes.forEach(o => { o.disabled = !o.checked && n >= max; });
+      };
+    });
+    const done = () => { modal.hidden = true; modalBox.innerHTML = ''; };
+    form.querySelector('[data-ask=cancel]').onclick = done;
+    form.onsubmit = e => {
+      e.preventDefault();
+      const chosen = boxes.filter(o => o.checked).map(o => Number(o.value));
+      if (!chosen.length) return status('Tick a mode first.', 'warn');
+      done();
+      act(() => {
+        Bot.runModes(game, inst, def, chosen);
+        if (inst.zone === 'battlefield') Game.move(game, inst.iid, 'graveyard');
+      });
+    };
+  }
+
+  function chooseTypePrompt(iid) {
+    const inst = game.cards[iid];
+    if (!inst || inst.zone !== 'battlefield') return;
+    const types = deckCreatureTypes().slice(0, 16);
+    openModal(`<form class="ask" id="typeForm"><h3>Choose a creature type for ${esc(inst.name)}</h3>
+      ${types.length ? `<label class="small muted">In your deck</label>
+      <div class="chips">${types.map(t => `<button type="button" class="pill chip" data-type-pick="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
+      <label class="small muted">Creature type</label>
+      <input name="t" type="text" value="${esc(inst.chosenType || '')}" placeholder="e.g. Elf, Goblin, Dragon" maxlength="30" autocomplete="off">
+      <div class="toolbar end"><button type="button" class="btn ghost" data-ask="cancel">Cancel</button><button class="btn">Choose</button></div></form>`);
+    const form = $('#typeForm');
+    form.t.focus();
+    const done = () => { modal.hidden = true; modalBox.innerHTML = ''; };
+    const pick = raw => {
+      const t = raw.trim().replace(/^\w/, ch => ch.toUpperCase());
+      if (!t) return form.t.focus();
+      done();
+      act(() => {
+        inst.chosenType = t;
+        Game.log(game, `Chose ${t} for ${inst.name}.`);
+      });
+    };
+    form.querySelectorAll('[data-type-pick]').forEach(b => { b.onclick = () => pick(b.dataset.typePick); });
+    form.querySelector('[data-ask=cancel]').onclick = done;
+    form.onsubmit = e => { e.preventDefault(); pick(form.t.value); };
+  }
+
+  // How many copies to make, and whether they get the original's counters.
+  function copyPrompt(iid) {
+    const inst = game.cards[iid];
+    if (!inst) return;
+    const hasCounters = Object.keys(inst.counters || {}).length > 0;
+    openModal(`<form class="ask" id="copyForm"><h3>Copy ${esc(inst.faceDown ? 'face-down card' : inst.name)}</h3>
+      <p class="muted small">Copies are tokens on the battlefield.${inst.zone === 'battlefield' ? '' : ' The card itself stays where it is.'}</p>
+      <label class="small muted">How many</label>
+      <input name="n" type="number" min="1" max="50" value="1">
+      ${hasCounters ? '<label class="check small"><input type="checkbox" name="counters"> Copy its counters too</label>' : ''}
+      <div class="toolbar end"><button type="button" class="btn ghost" data-ask="cancel">Cancel</button><button class="btn">Make copies</button></div></form>`);
+    const form = $('#copyForm');
+    form.n.focus();
+    form.n.select();
+    const done = () => { modal.hidden = true; modalBox.innerHTML = ''; };
+    form.querySelector('[data-ask=cancel]').onclick = done;
+    form.onsubmit = e => {
+      e.preventDefault();
+      const n = Math.max(1, Math.min(50, Math.floor(Number(form.n.value)) || 1));
+      const withCounters = !!(form.counters && form.counters.checked);
+      done();
+      act(() => Game.copyAsToken(game, iid, { n, counters: withCounters }));
+    };
+  }
+
+  function moveItems(iid, here) {
+    const to = (label, zone, opts) => ({ label, action: () => act(() => Game.move(game, iid, zone, opts)) });
+    const inst = game.cards[iid];
+    const items = [];
+    if (here !== 'hand') items.push(to('To hand', 'hand'));
+    if (here !== 'battlefield') items.push(to('To battlefield', 'battlefield'));
+    if (here !== 'graveyard') items.push(to('To graveyard', 'graveyard'));
+    if (here !== 'battlefield' && here !== 'library') items.push({ label: 'Make a token copy…', action: () => copyPrompt(iid) });
+    if (here !== 'exile') items.push(to('To exile', 'exile'));
+    items.push(to('Top of library', 'library', { index: 0 }));
+    items.push(to('Bottom of library', 'library', { bottom: true }));
+    if (inst.commander && here !== 'command') items.push(to('To command zone', 'command'));
+    return items;
+  }
+
+  // ---------- abilities done for you ----------
+
+  // "Each opponent loses N life": Opp (or the goldfish Opp), or everyone else online.
+  const effectCtx = () => ({
+    hitOpps: n => {
+      if (isOnline()) others().forEach(p => { (game.oppHits = game.oppHits || []).push({ to: p.pid, d: -n }); });
+      else game.oppLife -= n;
+    },
+  });
+
+  // "When this creature dies, create a 2/1 black Cat creature token": on your table and Opp's.
+  Game.hooks.died = (s, inst) => {
+    if (s === game) Bot.died(game, inst, def, effectCtx());
+    else if (hasBot() && s === game.bot.s) Bot.died(s, inst, def, null);
+  };
+
+  // "Whenever a creature you control enters, …" (Ajani's Welcome) counts tokens too.
+  Game.hooks.tokenEntered = (s, inst) => {
+    Bot.enterTrigger(s, inst, def); // a token copy of Spider-Man
+    if (s === game) Bot.creatureEntered(game, inst, def, effectCtx());
+  };
+
+  // Landfall on your cards ("Whenever a land enters under your control, …").
+  Game.hooks.entered = (s, inst) => {
+    // "Modular 1", "enters with two +1/+1 counters on it": on your table and Opp's.
+    if (!inst.faceDown) {
+      for (const [kind, n] of Object.entries(Game.entersWithCounters(oracleOf(inst)))) {
+        const got = Game.counter(s, inst.iid, kind, n, { effect: true });
+        Game.log(s, `${inst.name} enters with ${got} ${kind} counter${got === 1 ? '' : 's'}.`);
+      }
+    }
+    // "When this enters, put a +1/+1 counter on each other creature you control" (Spider-Man): either table.
+    Bot.enterTrigger(s, inst, def);
+    if (s === game && Game.isLand(inst) && !inst.faceDown) Bot.landEntered(game, inst, def, effectCtx());
+    if (s === game) Bot.creatureEntered(game, inst, def, effectCtx());
+    // "Choose one —": you tick the modes (after the move finishes, like the type prompt below).
+    if (s === game && Bot.spellModes(inst, def)) return setTimeout(() => chooseModes(inst.iid), 0);
+    // "Creatures you control get +2/+2 until end of turn": done, so the spell goes to the graveyard.
+    if (s === game && Bot.spellPump(game, inst, def)) return Game.move(game, inst.iid, 'graveyard');
+    if (s === game && !inst.faceDown && /\binstant\b/i.test(inst.typeLine || '') && Game.isCounterspell(oracleOf(inst))) {
+      counterNewest(inst);
+      return Game.move(game, inst.iid, 'graveyard');
+    }
+    // Opened after the move finishes, so an aura's attach prompt or a menu click doesn't close it.
+    if (s === game && !inst.faceDown && Game.choosesType(oracleOf(inst))) setTimeout(() => chooseTypePrompt(inst.iid), 0);
+    // "When this enters, each player discards a card": Opp drops its worst card, and you're asked
+    // which of yours (afterChange opens the picker for game.mustDiscard).
+    const d = s === game && !inst.faceDown && Game.enterDiscard(inst.name, oracleOf(inst));
+    if (!d) return;
+    if (d.opp && hasBot()) Bot.oppDiscards(game, d.opp, d.random, inst.name);
+    else if (d.opp && isOnline()) Game.log(game, `${inst.name}: each opponent discards ${d.opp === 1 ? 'a card' : d.opp + ' cards'} (they do that on their side).`);
+    if (d.you && d.random) {
+      for (let i = 0; i < d.you && game.zones.hand.length; i++) Game.move(game, game.zones.hand[Game.randomInt(game.zones.hand.length)], 'graveyard');
+    } else if (d.you) game.mustDiscard = { n: ((game.mustDiscard || {}).n || 0) + d.you, why: inst.name };
+  };
+
+  // A counterspell you cast counters the newest spell on any table: yours, Opp's, or an online
+  // player's (sent to them, since their table is theirs to change). Mana spent on it stays spent.
+  function counterNewest(by) {
+    const picks = [];
+    if (game.lastCast) picks.push({ at: game.lastCast.at, s: game });
+    if (hasBot() && game.bot.s.lastCast) picks.push({ at: game.bot.s.lastCast.at, s: game.bot.s, opp: true });
+    if (isOnline()) {
+      others().forEach(p => {
+        const peer = peers[p.pid];
+        const last = peer && peer.board && peer.board.lastCast;
+        if (last) picks.push({ at: last.at + (peer.offset || 0), pid: p.pid, iid: last.iid });
+      });
+    }
+    const pick = picks.sort((a, b) => b.at - a.at)[0];
+    let msg;
+    if (!pick) msg = 'there was no spell to counter.';
+    else if (pick.pid) {
+      Online.send({ t: 'counter', iid: pick.iid, by: by.name }, pick.pid);
+      const card = peers[pick.pid].cards[pick.iid];
+      msg = `countered ${nameOf(pick.pid)}'s ${card ? card.name : 'last spell'}.`;
+    } else {
+      const done = Game.counterLast(pick.s);
+      msg = done ? (pick.opp ? `Opp's ${done}` : done) : 'the last spell already resolved, so undo what it did by hand.';
+    }
+    Game.log(game, `${by.name}: ${msg}`);
+    game.notice = `${by.name}: ${msg}${game.notice ? ' ' + game.notice : ''}`;
+  }
+
+  // Pays an activated ability's costs (mana, tapping, counters, life, sacrifice, discards), then does what it
+  // can of the effect. If a cost can't be paid, nothing happens. discards: the cards picked for a discard cost.
+  function activate(iid, ab, discards) {
+    const inst = game.cards[iid];
+    if (!inst || inst.zone !== 'battlefield') return;
+    if (ab.tap && inst.tapped) return status(`${inst.name} is already tapped.`, 'warn');
+    if (ab.remove && (inst.counters[ab.remove.kind] || 0) < ab.remove.n) {
+      return status(`${inst.name} needs ${ab.remove.n} ${ab.remove.kind} counters (it has ${inst.counters[ab.remove.kind] || 0}).`, 'warn', 8000);
+    }
+    const light = () => JSON.parse(JSON.stringify({ zones: game.zones, cards: game.cards, mana: game.mana, turn: game.turn, life: game.life, log: [] }));
+    if (ab.mana) {
+      const copy = light();
+      if (ab.tap) copy.cards[iid].tapped = true; // it can't tap for its own cost
+      if (!Game.autoPay(copy, ab.mana)) return status(`Not enough untapped mana for ${inst.name} (${ab.mana}), so nothing happened.`, 'warn', 8000);
+    }
+    // "Discard a card: …": pick what to discard first. Cancel and nothing happens.
+    if (ab.discard && !discards) {
+      if (game.zones.hand.length < ab.discard) return status(`${inst.name} needs you to discard ${ab.discard === 1 ? 'a card' : ab.discard + ' cards'}, and your hand is too small.`, 'warn', 8000);
+      return pickCards({
+        title: `Discard ${ab.discard === 1 ? 'a card' : ab.discard + ' cards'} for ${inst.name}`,
+        note: ab.text, ids: [...game.zones.hand], max: ab.discard, ok: 'Discard and activate', cancel: 'Cancel',
+      }, picks => activate(iid, ab, picks));
+    }
+    act(() => {
+      if (discards) {
+        discards.forEach(id => Game.move(game, id, 'graveyard'));
+        Game.log(game, `Discarded ${discards.map(id => game.cards[id].name).join(' and ')} for ${inst.name}.`);
+      }
+      if (ab.tap) inst.tapped = true;
+      const spent = [];
+      if (ab.mana) {
+        const paid = Game.autoPay(game, ab.mana);
+        spent.push(...(paid.pool ? [`${paid.pool} floating mana`] : []), ...paid.sources, ...(paid.life ? [`${paid.life} life`] : []));
+      }
+      if (ab.remove) Game.counter(game, iid, ab.remove.kind, -ab.remove.n);
+      if (ab.life) game.life -= ab.life;
+      const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst }, effectCtx()));
+      Game.log(game, `Activated ${inst.name}: ${ab.effect}${spent.length ? ` (paid with ${spent.join(', ')})` : ''}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+      if (ab.sacrifice) Game.move(game, iid, inst.commander ? 'command' : 'graveyard');
+    });
+  }
+
+  // ---------- equipment and auras ----------
+
+  let attaching = null; // iid of the equipment or aura waiting for you to pick a creature
+
+  const equipCostOf = inst => (Game.isAura(inst) ? null : Bot.equipCost((def(inst.id) || {}).oracle));
+
+  // Other players' creatures an aura can go on: [{ pid, card }].
+  const theirCreatures = () => others().flatMap(p => {
+    const peer = peerOf(p.pid);
+    return ((peer && peer.board && peer.board.battlefield) || []).filter(c => c.faceDown || /\bcreature\b/i.test(String(c.typeLine || '').split('//')[0])).map(card => ({ pid: p.pid, card }));
+  });
+
+  // Auras can go on anyone's creature (Arrest on an opponent's); equipment only on yours.
+  function startAttach(iid) {
+    const inst = game.cards[iid];
+    if (!inst) return;
+    const aura = Game.isAura(inst);
+    if (!Bot.yourCreatures(game, def).some(c => c.inst.iid !== iid) && !(aura && theirCreatures().length)) return status('There is no creature to attach it to.', 'warn');
+    attaching = iid;
+    document.body.classList.add('is-attaching');
+    status(`Tap the creature to attach ${inst.name} to${aura && others().length ? ' (yours or an opponent\'s)' : ''}. Tap anything else (or press Esc) to cancel.`, 'ok', 15000);
+  }
+
+  // An aura onto another player's creature. It stays on your side (you control it); their creature
+  // gets what it does (see syncAuras and receiveAuras), and it goes to your graveyard when that creature leaves.
+  function finishAttachTheirs(pid, oiid) {
+    const iid = attaching;
+    cancelAttach(true);
+    const inst = game.cards[iid];
+    if (!inst || inst.zone !== 'battlefield') return;
+    const target = theirCreatures().find(x => x.pid === pid && x.card.iid === oiid);
+    if (!Game.isAura(inst)) return status(`Attach cancelled: you can only equip your own creatures.`);
+    if (!target) return status('Attach cancelled: that isn\'t a creature.');
+    if (inst.enchanting && inst.enchanting.pid === pid && inst.enchanting.iid === oiid) return status(`${inst.name} is already on ${target.card.name}.`);
+    act(() => {
+      if (inst.attachedTo) Game.detach(game, iid, true);
+      inst.enchanting = { pid, iid: oiid, name: target.card.name, bonus: Bot.attachBonus(oracleOf(inst)) };
+      Game.log(game, `Attached ${inst.name} to ${nameOf(pid)}'s ${target.card.name}.`);
+    });
+  }
+
+  // Your auras on Opp's creatures (Bot.syncAuras); online, the other players read them from your table.
+  function syncAuras() {
+    if (game) Bot.syncAuras(game);
+  }
+
+  // Another player's table arrived: their auras on your creatures (Arrest) take effect, ones that
+  // are gone stop, and your auras on their creatures that left go to your graveyard.
+  function receiveAuras(from, board) {
+    if (!game) return;
+    const prefix = `p:${from}:`;
+    const field = (board && board.battlefield) || [];
+    const want = {};
+    for (const c of field) {
+      const e = c.enchanting;
+      const host = e && e.pid === Online.id() && game.cards[e.iid];
+      if (!host || host.zone !== 'battlefield') continue;
+      const b = e.bonus || {};
+      want[e.iid] = Object.assign(want[e.iid] || {}, {
+        [prefix + c.iid]: {
+          pow: Number(b.pow) || 0, tou: Number(b.tou) || 0,
+          kw: (Array.isArray(b.kw) ? b.kw : []).filter(k => typeof k === 'string' && k.length < 40).slice(0, 10),
+          cantAttack: !!b.cantAttack, cantBlock: !!b.cantBlock, noAbilities: !!b.noAbilities,
+          label: `${nameOf(from)}'s ${String(c.name || 'aura').slice(0, 80)}`,
+        },
+      });
+    }
+    let changed = false;
+    for (const inst of Object.values(game.cards)) {
+      const next = want[inst.iid] || {};
+      for (const k of Object.keys(inst.boosts || {})) {
+        if (k.startsWith(prefix) && !next[k]) { delete inst.boosts[k]; changed = true; }
+      }
+      for (const [k, v] of Object.entries(next)) {
+        const had = inst.boosts && inst.boosts[k];
+        if (had && JSON.stringify(had) === JSON.stringify(v)) continue;
+        if (!had) Game.log(game, `${v.label} is on your ${inst.name}.`);
+        inst.boosts = { ...inst.boosts, [k]: v };
+        changed = true;
+      }
+      if (inst.boosts && !Object.keys(inst.boosts).length) delete inst.boosts;
+    }
+    if (board) {
+      for (const iid of [...game.zones.battlefield]) {
+        const a = game.cards[iid];
+        if (!a.enchanting || a.enchanting.pid !== from || field.some(c => c.iid === a.enchanting.iid)) continue;
+        const was = a.enchanting.name;
+        Game.move(game, iid, 'graveyard');
+        Game.log(game, `${a.name} went to your graveyard: ${nameOf(from)}'s ${was} left the battlefield.`);
+        changed = true;
+      }
+    }
+    if (changed) afterChange();
+  }
+
+  function cancelAttach(quiet) {
+    if (!attaching) return;
+    attaching = null;
+    document.body.classList.remove('is-attaching');
+    if (!quiet) status('Attach cancelled.');
+  }
+
+  // Equipment pays its equip cost first (lands are tapped for it); if you can't pay, nothing happens.
+  // Auras just move: they were paid for when cast.
+  function finishAttach(hostIid) {
+    const iid = attaching;
+    cancelAttach(true);
+    const inst = game.cards[iid];
+    const host = hostIid && game.cards[hostIid];
+    if (!inst || inst.zone !== 'battlefield') return;
+    if (!host || host.zone !== 'battlefield' || !Game.isCreature(host) || host.faceDown || hostIid === iid) return status('Attach cancelled: that isn\'t one of your creatures.');
+    if (inst.attachedTo === hostIid) return status(`${inst.name} is already on ${host.name}.`);
+    const cost = equipCostOf(inst);
+    if (cost && !Game.autoPay(JSON.parse(JSON.stringify({ zones: game.zones, cards: game.cards, mana: game.mana, turn: game.turn, log: [] })), cost)) {
+      return status(`Not enough untapped mana to equip ${inst.name} (${cost}), so it wasn't attached.`, 'warn', 8000);
+    }
+    act(() => {
+      if (cost) {
+        const paid = Game.autoPay(game, cost);
+        const spent = [...paid.sources];
+        if (paid.pool) spent.unshift(`${paid.pool} floating mana`);
+        if (paid.life) spent.push(`${paid.life} life`);
+        Game.log(game, `Paid ${cost} to equip ${inst.name}${spent.length ? `: ${spent.join(', ')}` : ''}.`);
+      } else if (!Game.isAura(inst)) {
+        Game.log(game, `${inst.name}'s equip cost isn't mana, so pay it yourself.`);
+      }
+      delete inst.enchanting; // moved off another player's creature
+      Game.attach(game, iid, hostIid, Bot.attachBonus((def(inst.id) || {}).oracle));
+    });
+  }
+
+  function cardMenu(iid, x, y) {
+    const inst = game.cards[iid];
+    if (!inst) return;
+    const c = def(inst.id) || {};
+    let items = [];
+    if (inst.zone === 'battlefield') {
+      const manaDork = !inst.tapped && !inst.faceDown && inst.mana && Game.isCreature(inst) && !Game.isLand(inst) && !Bot.silenced(inst);
+      items = [
+        { label: inst.tapped ? 'Untap' : 'Tap', hint: 'click', action: () => tapCard(iid, x, y) },
+        ...(manaDork ? inst.mana.colors.map(k => ({ label: `Tap for ${MANA_NAMES[k]} mana`, hint: k, action: () => act(() => Game.setTapped(game, iid, true, k)) })) : []),
+        ...(c.backImage ? [{ label: inst.flipped ? 'Flip to front' : 'Flip / transform', hint: 'F', action: () => act(() => Game.toggle(game, iid, 'flipped')) }] : []),
+        { label: inst.faceDown ? 'Turn face up' : 'Turn face down', action: () => act(() => Game.toggle(game, iid, 'faceDown')) },
+        ...(Game.isAttachment(inst) && !inst.faceDown ? [{ sep: true }, {
+          label: inst.attachedTo ? 'Move to another creature…' : Game.isAura(inst) ? 'Attach to…' : `Equip…${equipCostOf(inst) ? ` (${equipCostOf(inst)})` : ''}`,
+          hint: 'E', action: () => startAttach(iid),
+        }] : []),
+        ...(inst.attachedTo ? [{ label: 'Unattach', action: () => act(() => Game.detach(game, iid)) }] : []),
+        ...(!inst.faceDown && Game.choosesType(c.oracle) ? [{ label: inst.chosenType ? `Change creature type (${inst.chosenType})…` : 'Choose creature type…', action: () => chooseTypePrompt(iid) }] : []),
+        ...(Game.isVehicle(inst) && !inst.faceDown && Bot.crewOf(inst, def) != null && !inst.crewed ? [{ label: `Crew ${Bot.crewOf(inst, def)}…`, action: () => openCrew(iid) }] : []),
+        ...(inst.crewed ? [{ label: 'Uncrew', action: () => act(() => Game.uncrew(game, iid)) }] : []),
+        ...(inst.faceDown ? [] : Bot.activatedAbilities(inst, def).map(ab => ({
+          label: `Activate: ${ab.text.length > 60 ? ab.text.slice(0, 57) + '…' : ab.text}`, action: () => activate(iid, ab),
+        }))),
+        { sep: true },
+        { label: 'Add +1/+1 counter', action: () => act(() => Game.counter(game, iid, '+1/+1', 1, { effect: true })) },
+        { label: 'Add -1/-1 counter', action: () => act(() => Game.counter(game, iid, '-1/-1', 1, { effect: true })) },
+        ...recentCounters().slice(0, 3).map(k => ({ label: `Add ${k} counter`, action: () => act(() => Game.counter(game, iid, k, 1, { effect: true })) })),
+        { label: 'Add any counter…', hint: 'C', action: () => counterPrompt(iid) },
+        ...(Object.keys(inst.counters).length ? [{ label: 'Remove all counters', action: () => act(() => { inst.counters = {}; }) }] : []),
+        { sep: true },
+        { label: 'Make a copy', action: () => act(() => Game.copyAsToken(game, iid)) },
+        { label: 'Make copies…', action: () => copyPrompt(iid) },
+        ...(inst.id ? [{ label: 'Tokens this card makes…', action: () => openTokens([inst.id]) }] : []),
+        { sep: true },
+        ...moveItems(iid, 'battlefield'),
+      ];
+    } else if (inst.zone === 'hand') {
+      items = [
+        { label: 'Play', hint: 'click', action: () => tryPlay(iid) },
+        { label: 'Play face down', action: () => act(() => Game.move(game, iid, 'battlefield', { faceDown: true })) },
+        { sep: true },
+        { label: 'Discard', action: () => act(() => Game.move(game, iid, 'graveyard')) },
+        ...moveItems(iid, 'hand').filter(i => !/hand|battlefield|graveyard/.test(i.label)),
+      ];
+    } else if (inst.zone === 'command') {
+      items = [{ label: 'Cast', hint: 'click', action: () => tryPlay(iid) }, { sep: true }, ...moveItems(iid, 'command')];
+    } else {
+      items = moveItems(iid, inst.zone);
+    }
+    showMenu(x, y, items);
+  }
+
+  async function libraryAction(kind) {
+    if (kind === 'draw') {
+      const n = await ask('Draw how many?', 2);
+      if (n) act(() => Game.drawCards(game, n));
+    } else if (kind === 'top') {
+      const n = await ask('Look at how many from the top?', 1);
+      if (n) {
+        viewer = { zone: 'library', top: n, ids: game.zones.library.slice(0, n), filter: '', shuffleOnClose: false };
+        act(() => Game.log(game, `Looked at the top ${n}.`));
+      }
+    } else if (kind === 'mill') {
+      const n = await ask('Mill how many?', 3);
+      if (n) act(() => Game.mill(game, n));
+    } else if (kind === 'search') {
+      viewer = { zone: 'library', top: null, filter: '', shuffleOnClose: true };
+      act(() => Game.log(game, 'Searched the library.'));
+    } else if (kind === 'reveal') {
+      const iid = game.zones.library[0];
+      if (iid) act(() => Game.move(game, iid, 'exile'));
+    }
+  }
+
+  function pileMenu(zone, x, y) {
+    if (zone === 'library') {
+      showMenu(x, y, [
+        { label: 'Draw', hint: 'D', action: () => act(() => Game.drawCards(game, 1)) },
+        { label: 'Draw several…', action: () => libraryAction('draw') },
+        { label: 'Look at top / scry…', action: () => libraryAction('top') },
+        { label: 'Search library…', action: () => libraryAction('search') },
+        { label: 'Mill…', action: () => libraryAction('mill') },
+        { label: 'Exile top card', action: () => libraryAction('reveal') },
+        { label: 'Play top card', action: () => { const t = game.zones.library[0]; if (t) act(() => Game.move(game, t, 'battlefield')); } },
+        { sep: true },
+        { label: 'Shuffle', hint: 'S', action: () => act(() => Game.shuffle(game)) },
+      ]);
+    } else {
+      showMenu(x, y, [
+        { label: `View ${Game.ZONE_NAMES[zone]}`, action: () => openViewer(zone) },
+        { label: `Shuffle ${Game.ZONE_NAMES[zone]} into library`, action: () => act(() => {
+          [...game.zones[zone]].forEach(iid => Game.move(game, iid, 'library', { bottom: true }));
+          Game.shuffle(game);
+        }) },
+      ]);
+    }
+  }
+
+  // Flips a coin (sides = 2) or rolls a die, and logs the result.
+  function roll(sides) {
+    act(() => {
+      const r = Game.randomInt(sides) + 1;
+      const msg = sides === 2 ? `Coin flip: ${r === 1 ? 'Heads' : 'Tails'}.` : `Rolled a d${sides}: ${r}.`;
+      Game.log(game, msg);
+      status(msg, 'ok');
+    });
+  }
+
+  // Playing alone: you and Opp each roll a d20 (ties roll again).
+  function rollForFirst() {
+    act(() => {
+      let you;
+      let opp;
+      do {
+        you = Game.randomInt(20) + 1;
+        opp = Game.randomInt(20) + 1;
+        Game.log(game, `d20 for first: you ${you}, Opp ${opp}${you === opp ? ' (tie, roll again)' : ''}.`);
+      } while (you === opp);
+      const msg = you > opp ? `You rolled ${you}, Opp rolled ${opp}: you go first.` : `You rolled ${you}, Opp rolled ${opp}: Opp goes first, so you're on the draw.`;
+      Game.log(game, msg);
+      status(msg, 'ok');
+    });
+  }
+
+  // Look at top / scry has its own button in the top bar. In the app, Mulligan, Shuffle and
+  // Roll a d20 live here too to keep the bar short.
+  function toolsMenu(x, y) {
+    showMenu(x, y, [
+      ...(appMode ? [{ label: 'Mulligan', action: () => act(() => Game.mulligan(game)) }] : []),
+      { label: 'Search library…', action: () => libraryAction('search') },
+      { label: 'Mill…', action: () => libraryAction('mill') },
+      ...(appMode ? [{ label: 'Shuffle library', action: () => act(() => Game.shuffle(game)) }] : []),
+      { sep: true },
+      ...(appMode ? [{ label: 'Roll a d20', action: () => roll(20) }] : []),
+      { label: 'Flip a coin', action: () => roll(2) },
+      { label: 'Roll a d6', action: () => roll(6) },
+      { sep: true },
+      { label: 'Restart on the play', action: () => confirmRestart(false) },
+      { label: 'Restart on the draw', action: () => confirmRestart(true) },
+      { label: 'See this deck\'s odds', action: () => { ui.oddsDeck = game.deckKey; setTab('odds'); } },
+      ...(isOnline() ? [
+        { label: 'Change deck…', action: () => setTab('decks') },
+        { label: 'Back to the lobby', action: () => { inLobby = true; renderPlay(); } },
+      ] : hasBot() ? [] : [{ label: 'Roll for first (you vs Opp)', action: rollForFirst }]),
+      { sep: true },
+      { label: 'Save and switch games', action: () => setTab('decks') },
+      { label: 'End game', action: endGame },
+    ]);
+  }
+
+  // Clears the table, deletes the saved game and goes back to the deck list. Online, you stay in the game with no deck.
+  function endGame(decided) {
+    if (!game) return;
+    if (decided !== true && !confirm(`End this game with ${game.deckName}? The table will be cleared and the saved game deleted.`)) return;
+    games = games.filter(g => g.id !== gameId);
+    if (gameId) Store.set('game:' + gameId, null);
+    game = null;
+    gameId = null;
+    undoStack = [];
+    viewer = null;
+    modal.hidden = true;
+    modalBox.innerHTML = '';
+    Store.set('games', games);
+    saveSoon();
+    syncSoon();
+    setTab('decks');
+    status('Game ended.', 'ok');
+  }
+
+  function confirmRestart(onDraw) {
+    if (confirm(`Reset and start ${game.deckName} over ${onDraw ? 'on the draw' : 'on the play'}? The current game will be lost.`)) startGame(game.deckKey, onDraw, true, hasBot() ? game.bot.s.deckKey : null);
+  }
+
+  // ---------- zone viewer (graveyard, exile, library search, top N) ----------
+
+  function openViewer(zone) {
+    viewer = { zone, top: null, filter: '', shuffleOnClose: false };
+    renderViewer();
+  }
+
+  function renderViewer() {
+    if (!viewer || !game) return;
+    const all = game.zones[viewer.zone];
+    // Top n shows only the cards you looked at, in library order; ones sent to the bottom drop out.
+    let ids = viewer.top ? all.filter(iid => viewer.ids.includes(iid)) : [...all];
+    const searching = viewer.zone === 'library' && !viewer.top;
+    if (searching) ids.sort((a, b) => game.cards[a].name.localeCompare(game.cards[b].name));
+    if (!searching && viewer.zone !== 'library') ids.reverse(); // newest first
+    const q = viewer.filter.toLowerCase();
+    if (q) ids = ids.filter(iid => game.cards[iid].name.toLowerCase().includes(q) || (game.cards[iid].typeLine || '').toLowerCase().includes(q));
+    const title = viewer.top ? `Top ${ids.length} of your library${viewer.bottomed ? ` · ${viewer.bottomed} sent to the bottom` : ''}` : searching ? 'Search your library' : `${Game.ZONE_NAMES[viewer.zone][0].toUpperCase() + Game.ZONE_NAMES[viewer.zone].slice(1)} (${all.length})`;
+    const keepFocus = document.activeElement && document.activeElement.id === 'viewerFilter';
+    modalBox.innerHTML = `
+      <div class="page-head"><h3>${esc(title)}</h3><button class="btn ghost sm" data-act="close-modal">Done</button></div>
+      <div class="toolbar">
+        <input type="search" id="viewerFilter" placeholder="Filter by name or type" value="${esc(viewer.filter)}">
+        ${searching ? `<label class="check small"><input type="checkbox" data-act="shuffle-close" ${viewer.shuffleOnClose ? 'checked' : ''}> Shuffle when done</label>` : ''}
+      </div>
+      ${viewer.top ? '<p class="muted small">Left is the top card. Use ◀ ▶ to reorder. Click a card for more options.</p>' : '<p class="muted small">Click a card to move it.</p>'}
+      <div class="viewer-grid">${ids.map((iid, i) => {
+        const inst = game.cards[iid];
+        return `<div class="viewer-card"><div class="card" data-viewer="${iid}">${faceHtml(inst)}</div>
+          ${viewer.top ? `<div class="toolbar tight center">
+              <button class="btn sm ghost" data-act="vmove" data-iid="${iid}" data-d="-1" ${i === 0 ? 'disabled' : ''}>◀</button>
+              <button class="btn sm ghost" data-act="vbottom" data-iid="${iid}">Bottom</button>
+              <button class="btn sm ghost" data-act="vmove" data-iid="${iid}" data-d="1" ${i === ids.length - 1 ? 'disabled' : ''}>▶</button></div>` : ''}
+        </div>`;
+      }).join('') || '<p class="muted">Nothing here.</p>'}</div>`;
+    modal.hidden = false;
+    if (keepFocus) {
+      const f = $('#viewerFilter');
+      f.focus();
+      f.setSelectionRange(f.value.length, f.value.length);
+    }
+  }
+
+  // ---------- tokens ----------
+
+  const QUICK_TOKENS = ['Treasure', 'Clue', 'Food', 'Soldier', 'Zombie', 'Spirit', 'Goblin', 'Saproling', 'Cat', 'Beast', 'Elf Warrior', 'Human'];
+
+  async function openTokens(fromIds) {
+    openModal(`
+      <div class="page-head"><h3>Create a token</h3><button class="btn ghost sm" data-act="close-modal">Close</button></div>
+      <div class="toolbar">
+        <input type="search" id="tokenQuery" placeholder="Search Scryfall tokens (e.g. Treasure, 2/2 Zombie, Angel)">
+        <label class="muted small">How many <input type="number" id="tokenQty" value="1" min="1" max="50" style="width:70px"></label>
+        <button class="btn sm ghost" data-act="deck-tokens">Tokens this deck makes</button>
+      </div>
+      <div class="chips">${QUICK_TOKENS.map(t => `<button class="pill chip" data-token-q="${esc(t)}">${esc(t)}</button>`).join('')}</div>
+      <div id="tokenResults" class="viewer-grid"><p class="muted small">Search above or pick a common token.</p></div>
+      <details class="custom-token"><summary>Make your own token</summary>
+        <form id="customToken" class="toolbar">
+          <input name="name" placeholder="Name (e.g. Construct)" required>
+          <input name="pt" placeholder="P/T (e.g. 3/3)" style="width:110px">
+          <input name="text" placeholder="Abilities (optional)" style="flex:1">
+          <button class="btn sm">Create</button>
+        </form>
+      </details>`);
+    if (fromIds) await showRelatedTokens(fromIds);
+    else $('#tokenQuery').focus();
+  }
+
+  let tokenResults = [];
+  function drawTokenResults(list, empty) {
+    tokenResults = list;
+    $('#tokenResults').innerHTML = list.length
+      ? list.map((c, i) => `<div class="viewer-card"><div class="card" data-token-i="${i}" title="${esc(c.name)}">${c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" draggable="false">` : `<div class="text-face"><b>${esc(c.name)}</b></div>`}</div></div>`).join('')
+      : `<p class="muted small">${esc(empty || 'No tokens found.')}</p>`;
+  }
+
+  async function searchTokens(q) {
+    $('#tokenResults').innerHTML = '<p class="muted small">Searching…</p>';
+    try {
+      const list = await Scryfall.searchTokens(q);
+      drawTokenResults(list, `No tokens match "${q}".`);
+    } catch (e) {
+      drawTokenResults([], 'Search failed: ' + e.message);
+    }
+  }
+
+  async function showRelatedTokens(ids) {
+    $('#tokenResults').innerHTML = '<p class="muted small">Finding tokens…</p>';
+    try {
+      await ensureDefs(ids, true);
+      const tokenIds = [...new Set(ids.flatMap(id => (def(id) && def(id).tokens || []).map(t => t.id)))];
+      await ensureDefs(tokenIds);
+      // Several printings of the same token (e.g. Treasure) show once; tokens with different stats stay separate.
+      const seen = new Set();
+      const list = tokenIds.map(def).filter(Boolean).filter(c => {
+        const k = `${c.name}|${c.typeLine}|${c.power}/${c.toughness}|${c.oracle}`;
+        return !seen.has(k) && seen.add(k);
+      });
+      drawTokenResults(list.sort((a, b) => a.name.localeCompare(b.name)), 'No tokens listed for these cards.');
+    } catch (e) {
+      drawTokenResults([], 'Lookup failed: ' + e.message);
+    }
+  }
+
+  function makeTokens(tokenDef) {
+    const qty = Math.max(1, Math.min(50, Number(($('#tokenQty') || {}).value) || 1));
+    if (tokenDef.id) {
+      local.cards[tokenDef.id] = tokenDef;
+      saveLocal();
+    }
+    let made;
+    act(() => {
+      made = Game.tokenCount(game, qty); // Doubling Season, Parallel Lives…
+      for (let i = 0; i < made.n; i++) Game.createToken(game, tokenDef, { quiet: i > 0 });
+      if (made.n > 1) Game.log(game, `(${made.n} ${tokenDef.name} tokens in total${made.by.length ? `, doubled by ${made.by.join(', ')}` : ''}.)`);
+    });
+    status(`Created ${made.n} ${tokenDef.name} token${made.n > 1 ? 's' : ''}${made.by.length ? ` (doubled by ${made.by.join(', ')})` : ''}.`, 'ok');
+  }
+
+  // ---------- drag and drop on the table ----------
+
+  let press = null; // { iid, pile, el, x, y, dx, dy, dragging }
+
+  function onPointerDown(e) {
+    if (e.button !== 0 || !game || ui.tab !== 'play' || !modal.hidden) return;
+    if (e.target.closest('.counter, button, input, select')) return;
+    const onTheirs = attaching && e.target.closest('[data-oiid]');
+    if (onTheirs) { e.preventDefault(); return finishAttachTheirs(onTheirs.dataset.opid, onTheirs.dataset.oiid); }
+    const theirs = appMode && e.pointerType !== 'mouse' && e.target.closest('[data-oiid]');
+    if (theirs) {
+      // Another player's card: hold to read it, nothing else.
+      const p = press = { el: theirs, dragging: false };
+      p.holdTimer = setTimeout(() => {
+        const peer = peerOf(theirs.dataset.opid);
+        const inst = peer && peer.cards[theirs.dataset.oiid];
+        if (press !== p || !inst) return;
+        p.held = true;
+        showZoom(previewHtml(inst));
+      }, 450);
+      e.preventDefault();
+      return;
+    }
+    const cardNode = e.target.closest('.table .card[data-iid]');
+    const pileNode = !cardNode && e.target.closest('[data-pile]');
+    if (!cardNode && !pileNode) return;
+    const zone = pileNode && pileNode.dataset.pile;
+    const iid = cardNode ? cardNode.dataset.iid : zone === 'library' ? game.zones.library[0] : game.zones[zone][game.zones[zone].length - 1];
+    const el = cardNode || pileNode;
+    const r = el.getBoundingClientRect();
+    press = { iid, pile: zone, el, x: e.clientX, y: e.clientY, dx: e.clientX - r.left, dy: e.clientY - r.top, dragging: false };
+    if (appMode && cardNode && e.pointerType !== 'mouse') {
+      press.touch = true;
+      const p = press;
+      p.holdTimer = setTimeout(() => {
+        if (press !== p || p.dragging) return;
+        p.held = true;
+        showZoom(previewHtml(game.cards[iid]));
+      }, 450);
+    }
+    e.preventDefault();
+  }
+
+  function onPointerMove(e) {
+    if (!press || press.held) return;
+    if (!press.dragging) {
+      if (!press.iid || Math.hypot(e.clientX - press.x, e.clientY - press.y) < 6) return;
+      press.dragging = true;
+      clearTimeout(press.holdTimer);
+      const inst = game.cards[press.iid];
+      if (inst.tapped) { press.dx = ui.cardW / 2; press.dy = ui.cardW * 0.7; }
+      ghost.innerHTML = faceHtml(inst, press.pile === 'library');
+      ghost.style.width = ui.cardW + 'px';
+      ghost.hidden = false;
+      if (!press.pile) press.el.classList.add('dragging');
+      document.body.classList.add('is-dragging');
+      hideMenu();
+    }
+    ghost.style.left = e.clientX - press.dx + 'px';
+    ghost.style.top = e.clientY - press.dy + 'px';
+    document.querySelectorAll('.drop-over').forEach(n => n.classList.remove('drop-over'));
+    const target = dropZoneAt(e.clientX, e.clientY);
+    if (target) target.classList.add('drop-over');
+  }
+
+  function dropZoneAt(x, y) {
+    ghost.hidden = true;
+    const el = document.elementFromPoint(x, y);
+    ghost.hidden = !(press && press.dragging);
+    return el && el.closest('[data-zone]');
+  }
+
+  function onPointerUp(e) {
+    if (!press) return;
+    const p = press;
+    press = null;
+    clearTimeout(p.holdTimer);
+    if (p.held) { zoom.hidden = true; return; }
+    if (!p.dragging) {
+      if (attaching) return finishAttach(p.pile ? null : p.iid);
+      if (!p.iid && !p.pile) return;
+      if (p.touch) touchTap(p.iid, e.clientX, e.clientY);
+      else clickAction(p, e);
+      return;
+    }
+    ghost.hidden = true;
+    p.el.classList.remove('dragging');
+    document.body.classList.remove('is-dragging');
+    document.querySelectorAll('.drop-over').forEach(n => n.classList.remove('drop-over'));
+    const target = dropZoneAt(e.clientX, e.clientY);
+    if (!target) return;
+    const zone = target.dataset.zone;
+    const inst = game.cards[p.iid];
+    if (!inst) return;
+    if (zone === 'battlefield') {
+      const r = target.getBoundingClientRect();
+      const x = (e.clientX - p.dx - r.left + target.scrollLeft) / ui.cardW;
+      const y = (e.clientY - p.dy - r.top + target.scrollTop) / ui.cardW;
+      tryPlay(p.iid, { x, y });
+    } else if (zone === 'hand') {
+      const others = game.zones.hand.filter(id => id !== p.iid).map(id => cardEls.get(id));
+      let index = others.findIndex(el => el && e.clientX < el.getBoundingClientRect().left + el.getBoundingClientRect().width / 2);
+      if (index < 0) index = others.length;
+      act(() => Game.move(game, p.iid, 'hand', { index }));
+    } else if (zone === 'library') {
+      if (inst.zone === 'library') return;
+      act(() => Game.move(game, p.iid, 'library', e.shiftKey ? { bottom: true } : { index: 0 }));
+    } else if (zone !== inst.zone) {
+      act(() => Game.move(game, p.iid, zone));
+    }
+  }
+
+  function clickAction(p, e) {
+    if (p.pile) {
+      if (p.pile === 'library') act(() => Game.drawCards(game, 1));
+      else openViewer(p.pile);
+      return;
+    }
+    const inst = game.cards[p.iid];
+    if (!inst) return;
+    if (inst.zone === 'battlefield') tapCard(p.iid, e.clientX, e.clientY);
+    else if (inst.zone === 'hand' || inst.zone === 'command') tryPlay(p.iid);
+  }
+
+  // Touchscreen in the app: tap a battlefield card for its menu, double tap to tap it,
+  // double tap a card in hand (or the command zone) to play it.
+  let lastTap = null; // { iid, at, timer }
+  function touchTap(iid, x, y) {
+    const inst = game.cards[iid];
+    if (!inst) return;
+    const now = Date.now();
+    const twice = lastTap && lastTap.iid === iid && now - lastTap.at < 300;
+    if (lastTap) clearTimeout(lastTap.timer);
+    lastTap = null;
+    if (twice) {
+      if (inst.zone === 'battlefield') tapCard(iid, x, y);
+      else if (inst.zone === 'hand' || inst.zone === 'command') tryPlay(iid);
+      return;
+    }
+    lastTap = { iid, at: now, timer: setTimeout(() => {
+      lastTap = null;
+      const card = game && game.cards[iid];
+      if (card && card.zone === 'battlefield') cardMenu(iid, x, y);
+    }, 300) };
+  }
+
+  // ---------- Odds tab ----------
+
+  function barChart(items, opts = {}) {
+    const max = opts.max || Math.max(...items.map(i => i.value), 0.0001);
+    return `<div class="bars" role="img" aria-label="${esc(opts.label || '')}">
+      ${items.map(i => `<div class="bar-col" data-tip="${esc(i.tip)}">
+        <span class="bar-val">${esc(i.text)}</span>
+        <div class="bar-track"><div class="bar-fill ${i.hot ? 'hot' : ''}" style="height:${Math.max(0, (i.value / max) * 100)}%"></div></div>
+        <span class="bar-x">${esc(i.x)}</span>
+      </div>`).join('')}
+    </div>${opts.axis ? `<div class="axis-label muted small">${esc(opts.axis)}</div>` : ''}`;
+  }
+
+  const oddsFetched = new Set(); // card ids the Odds tab already asked Scryfall for
+
+  function renderOdds() {
+    const decks = allDecks();
+    if (!decks.length) {
+      view.innerHTML = '<div class="empty-play"><h3>No decks yet</h3><p class="muted">Link MTG Tracker or paste a deck on the Decks tab.</p></div>';
+      return;
+    }
+    if (!findDeck(ui.oddsDeck)) ui.oddsDeck = (game && findDeck(game.deckKey) ? game.deckKey : decks[0].key);
+    const deck = findDeck(ui.oddsDeck);
+    // The color charts need each card's mana info; fetch it once for cards that lack it.
+    const missing = deck.rows.filter(r => !oddsFetched.has(r.id) && (!def(r.id) || !Array.isArray(def(r.id).producedMana))).map(r => r.id);
+    if (missing.length) {
+      missing.forEach(id => oddsFetched.add(id));
+      view.innerHTML = '<div class="empty">Getting card info…</div>';
+      ensureDefs(missing, true).then(() => ui.tab === 'odds' && renderOdds()).catch(e => status(e.message, 'error'));
+      return;
+    }
+    const lib = deck.rows.filter(r => !r.commander);
+    const N = lib.reduce((n, r) => n + r.qty, 0);
+    const typeOf = r => (def(r.id) || {}).typeLine || '';
+    const isLandRow = r => /\bland\b/i.test(typeOf(r).split('//')[0]);
+    const L = lib.filter(isLandRow).reduce((n, r) => n + r.qty, 0);
+    const mdfc = lib.filter(r => !isLandRow(r) && /\bland\b/i.test(typeOf(r))).reduce((n, r) => n + r.qty, 0);
+    const nonland = lib.filter(r => !isLandRow(r));
+    const avgCmc = nonland.length ? nonland.reduce((n, r) => n + ((def(r.id) || {}).cmc || 0) * r.qty, 0) / nonland.reduce((n, r) => n + r.qty, 0) : 0;
+    const onDraw = ui.oddsOnDraw;
+
+    const dist = Odds.handDistribution(N, L, 7);
+    const keep = dist.slice(2, 5).reduce((a, b) => a + b, 0);
+    const drops = Odds.landDrops(N, L, 8, onDraw);
+
+    const curve = new Array(8).fill(0);
+    nonland.forEach(r => { curve[Math.min(7, Math.floor((def(r.id) || {}).cmc || 0))] += r.qty; });
+
+    const cats = [...new Set(lib.flatMap(r => r.categories || []))].filter(c => !/^cards for this deck$/i.test(c)).sort();
+    if (ui.oddsCategory && !cats.includes(ui.oddsCategory)) ui.oddsCategory = '';
+    const pickedSet = new Set(ui.oddsPicked);
+    const groupRows = lib.filter(r => (ui.oddsCategory && (r.categories || []).includes(ui.oddsCategory)) || pickedSet.has(r.id));
+    const K = groupRows.reduce((n, r) => n + r.qty, 0);
+    const anyBy = Odds.anyBy(N, K, 10, onDraw);
+
+    // Card types. A card with two types (Artifact Creature) counts under both.
+    const TYPES = ['Creature', 'Instant', 'Sorcery', 'Artifact', 'Enchantment', 'Planeswalker', 'Battle', 'Land'];
+    const typeCounts = TYPES.map(t => ({ t, n: lib.filter(r => typeOf(r).split('//')[0].split(/[^A-Za-z]+/).includes(t)).reduce((n, r) => n + r.qty, 0) })).filter(x => x.n);
+
+    // Colored mana symbols in costs (hybrid counts for both colors) vs. lands that make each color.
+    const COLORS = ['W', 'U', 'B', 'R', 'G'];
+    const pips = Object.fromEntries(COLORS.map(c => [c, 0]));
+    nonland.forEach(r => {
+      for (const sym of ((def(r.id) || {}).manaCost || '').match(/\{[^}]+\}/g) || []) {
+        COLORS.forEach(c => { if (sym.includes(c)) pips[c] += r.qty; });
+      }
+    });
+    const sources = Object.fromEntries(COLORS.map(c => [c, 0]));
+    lib.filter(isLandRow).forEach(r => {
+      const made = (def(r.id) || {}).producedMana || [];
+      COLORS.forEach(c => { if (made.includes(c)) sources[c] += r.qty; });
+    });
+    const deckColors = COLORS.filter(c => pips[c] || sources[c]);
+
+    // Casting on curve: lands for turn t plus a spell that costs exactly t, by turn t.
+    const curvePlays = [1, 2, 3, 4, 5, 6, 7].map(t => ({ t, k: curve[t], p: curve[t] ? Odds.onCurve(N, L, curve[t], t, onDraw) : 0 }));
+
+    // Lands seen by your turn 4: too few is screw, too many is flood.
+    const t4 = Odds.seenBy(4, onDraw);
+    const byT4 = [];
+    for (let k = 0; k <= 8; k++) byT4.push(k < 8 ? Odds.exactly(N, L, t4, k) : Odds.atLeast(N, L, t4, 8));
+
+    view.innerHTML = `
+      <div class="page-head">
+        <div><h1>Draw odds</h1><div class="muted small">Exact math for a shuffled deck. Mulligans aren't included.</div></div>
+        <div class="toolbar tight">
+          <select data-act="odds-deck">${decks.map(d => `<option value="${esc(d.key)}" ${d.key === deck.key ? 'selected' : ''}>${esc(d.name)}${d.source === 'tracker' ? '' : ' (Simulator)'}</option>`).join('')}</select>
+          <div class="seg"><button data-act="odds-play" class="${onDraw ? '' : 'active'}">On the play</button><button data-act="odds-draw" class="${onDraw ? 'active' : ''}">On the draw</button></div>
+          <button class="btn sm" data-act="play" data-key="${esc(deck.key)}">Play this deck</button>
+        </div>
+      </div>
+      <div class="tiles">
+        <div class="tile"><b>${N}</b><span>cards in library${deck.rows.some(r => r.commander) ? ' (commander not counted)' : ''}</span></div>
+        <div class="tile"><b>${L}</b><span>lands (${N ? Math.round((L / N) * 100) : 0}%)${mdfc ? ` + ${mdfc} modal double-faced` : ''}</span></div>
+        <div class="tile"><b>${avgCmc.toFixed(2)}</b><span>average mana value (non-land)</span></div>
+        <div class="tile"><b>${pct(keep)}</b><span>chance of 2–4 lands in your opening 7</span></div>
+      </div>
+      <div class="two-col">
+        <section class="panel">
+          <h3>Lands in your opening hand</h3>
+          ${barChart(dist.map((p, k) => ({ x: String(k), value: p, text: pct(p), hot: k >= 2 && k <= 4, tip: `${k} land${k === 1 ? '' : 's'}: ${(p * 100).toFixed(1)}%` })), { label: 'Chance of each land count in opening hand', axis: 'Lands in hand' })}
+        </section>
+        <section class="panel">
+          <h3>Hitting every land drop</h3>
+          ${barChart(drops.map(d => ({ x: 'T' + d.turn, value: d.p, max: 1, text: pct(d.p), tip: `Turn ${d.turn}: ${(d.p * 100).toFixed(1)}% to have ${d.turn}+ lands (${d.seen} cards seen, ${d.expected.toFixed(1)} lands expected)` })), { max: 1, label: 'Chance to have hit every land drop by each turn', axis: 'Your turn' })}
+        </section>
+        <section class="panel">
+          <h3>Mana curve <span class="muted small">(non-land cards)</span></h3>
+          ${barChart(curve.map((n, i) => ({ x: i === 7 ? '7+' : String(i), value: n, text: n ? String(n) : '', tip: `Mana value ${i === 7 ? '7 or more' : i}: ${n} card${n === 1 ? '' : 's'}` })), { label: 'Cards by mana value', axis: 'Mana value' })}
+        </section>
+        <section class="panel">
+          <h3>Chance to draw a type of card</h3>
+          <div class="toolbar">
+            <select data-act="odds-cat"><option value="">${cats.length ? 'Pick a category…' : 'No categories in this deck'}</option>${cats.map(c => `<option ${c === ui.oddsCategory ? 'selected' : ''}>${esc(c)}</option>`).join('')}</select>
+            <button class="btn sm ghost" data-act="odds-pick">Pick cards…</button>
+            ${K ? `<span class="muted small"><b>${K}</b> card${K === 1 ? '' : 's'} chosen</span>` : ''}
+          </div>
+          ${K ? barChart(anyBy.map(d => ({ x: 'T' + d.turn, value: d.p, text: pct(d.p), tip: `By turn ${d.turn}: ${(d.p * 100).toFixed(1)}% to have drawn at least one` })), { max: 1, label: 'Chance to have drawn at least one chosen card', axis: 'Your turn' })
+            : '<p class="muted small">Choose a category from your Tracker deck (like Ramp or Removal) or pick cards to see the chance of drawing at least one by each turn.</p>'}
+        </section>
+        <section class="panel">
+          <h3>Lands by your turn 4 <span class="muted small">(${t4} cards seen)</span></h3>
+          ${barChart(byT4.map((p, k) => ({ x: k === 8 ? '8+' : String(k), value: p, text: pct(p), hot: k >= 3 && k <= 5, tip: `${k === 8 ? '8 or more' : k} land${k === 1 ? '' : 's'} by turn 4: ${(p * 100).toFixed(1)}%${k < 3 ? ' (short on lands)' : k > 5 ? ' (flooding)' : ''}` })), { label: 'Chance of each land count by turn 4', axis: 'Lands seen' })}
+          <p class="muted small">Short on lands (0–2): <b>${pct(byT4.slice(0, 3).reduce((a, b) => a + b, 0))}</b> · Flooding (6+): <b>${pct(byT4.slice(6).reduce((a, b) => a + b, 0))}</b></p>
+        </section>
+        <section class="panel">
+          <h3>Casting on curve</h3>
+          ${barChart(curvePlays.map(d => ({ x: d.t === 7 ? 'T7+' : 'T' + d.t, value: d.p, text: d.k ? pct(d.p) : '–', tip: d.k ? `Turn ${d.t}: ${(d.p * 100).toFixed(1)}% to have ${d.t}+ land${d.t === 1 ? '' : 's'} and one of your ${d.k} ${d.t === 7 ? '7+' : d.t}-drop${d.k === 1 ? '' : 's'} in hand` : `No ${d.t === 7 ? '7+' : d.t}-drops in this deck` })), { max: 1, label: 'Chance to have a spell to cast on curve each turn', axis: 'A land for each turn plus a spell that costs exactly that much' })}
+        </section>
+        <section class="panel">
+          <h3>Card types</h3>
+          ${barChart(typeCounts.map(x => ({ x: x.t, value: x.n, text: String(x.n), tip: `${x.t}: ${x.n} card${x.n === 1 ? '' : 's'} (${N ? Math.round((x.n / N) * 100) : 0}% of the library)` })), { label: 'Cards by type', axis: 'Cards with two types count under both' })}
+        </section>
+        <section class="panel">
+          <h3>Colored mana symbols <span class="muted small">(in non-land costs)</span></h3>
+          ${deckColors.length ? barChart(deckColors.map(c => ({ x: MANA_NAMES[c][0].toUpperCase() + MANA_NAMES[c].slice(1), value: pips[c], text: String(pips[c]), tip: `${MANA_NAMES[c]}: ${pips[c]} symbol${pips[c] === 1 ? '' : 's'} across the deck's costs` })), { label: 'Colored mana symbols by color', axis: 'How much each color is asked for' }) : '<p class="muted small">No colored costs in this deck.</p>'}
+        </section>
+        <section class="panel">
+          <h3>Lands that make each color</h3>
+          ${deckColors.length ? barChart(deckColors.map(c => ({ x: MANA_NAMES[c][0].toUpperCase() + MANA_NAMES[c].slice(1), value: sources[c], text: String(sources[c]), tip: `${MANA_NAMES[c]}: ${sources[c]} land${sources[c] === 1 ? '' : 's'} (${pct(Odds.atLeast(N, sources[c], Odds.seenBy(3, onDraw), 1))} to have one by turn 3)` })), { label: 'Lands that make each color', axis: 'Compare with the mana symbols chart' }) : '<p class="muted small">No colored lands in this deck.</p>'}
+          ${deckColors.filter(c => pips[c] && !sources[c]).length ? `<p class="muted small">No lands make ${deckColors.filter(c => pips[c] && !sources[c]).map(c => MANA_NAMES[c]).join(' or ')}.</p>` : ''}
+        </section>
+      </div>
+      <section class="panel">
+        <div class="page-head"><h3>Sample hand</h3><div class="toolbar tight">
+          <button class="btn sm" data-act="sample">Draw a new 7</button>
+          ${sample && sample.deckKey === deck.key ? '<button class="btn sm ghost" data-act="sample-more">Draw next card</button>' : ''}
+        </div></div>
+        <div class="sample">${sample && sample.deckKey === deck.key ? sample.order.slice(0, sample.shown).map(id => {
+          const c = def(id) || {};
+          return c.image ? `<img src="${esc(c.image)}" alt="${esc(c.name)}" title="${esc(c.name)}">` : `<div class="text-face"><b>${esc(c.name)}</b></div>`;
+        }).join('') : '<p class="muted small">See what a random opening hand looks like.</p>'}</div>
+      </section>`;
+  }
+
+  function openPicker() {
+    const deck = findDeck(ui.oddsDeck);
+    if (!deck) return;
+    const rows = deck.rows.filter(r => !r.commander).slice().sort((a, b) => a.name.localeCompare(b.name));
+    const picked = new Set(ui.oddsPicked);
+    openModal(`
+      <div class="page-head"><h3>Pick cards</h3><button class="btn sm" data-act="close-modal">Done</button></div>
+      <input type="search" id="pickFilter" placeholder="Filter" style="width:100%;margin-bottom:.6rem">
+      <div class="toolbar"><button class="btn sm ghost" data-act="pick-none">Clear</button></div>
+      <div class="pick-list">${rows.map(r => `<label class="check" data-name="${esc(r.name.toLowerCase())} ${esc(((def(r.id) || {}).typeLine || '').toLowerCase())}"><input type="checkbox" data-pick="${esc(r.id)}" ${picked.has(r.id) ? 'checked' : ''}> ${esc(r.name)}${r.qty > 1 ? ` <span class="muted">×${r.qty}</span>` : ''} <span class="muted small">${esc((def(r.id) || {}).typeLine || '')}</span></label>`).join('')}</div>`);
+  }
+
+  // ---------- Help tab ----------
+
+  function renderHelp() {
+    view.innerHTML = `
+      <section class="panel prose">
+        <h3>Getting your decks</h3>
+        <p><b>From MTG Tracker:</b> open MTG Tracker in the same browser you use for the Simulator (Chrome or Edge). Your Tracker decks appear on the <b>Decks</b> tab. Click <b>Refresh</b> after you change a deck in the Tracker. The Simulator only reads Tracker data; it never changes your collection.</p>
+        <p>If they don't appear (for example in Firefox, or on another computer), in the Tracker go to <b>Account &amp; backup → Download backup</b> and use <b>Load backup file…</b> here.</p>
+        <p><b>Any other deck:</b> paste a list on the Decks tab. You don't need to own the cards.</p>
+        <h3>Playing</h3>
+        <ul>
+          <li><b>Click</b> a card in your hand to play it. Lands go to the bottom of the table, everything else to the top.</li>
+          <li><b>Click</b> a card on the table to tap or untap it.</li>
+          <li><b>Drag</b> any card anywhere: around the table, back to your hand, onto the graveyard, exile or library (top; hold <b>Shift</b> for the bottom).</li>
+          <li><b>Right-click</b> a card for everything else: counters, flip, face down, token copies, move to a zone. Right-click the library for scry, search and mill.</li>
+          <li>Click the library to draw. Click the graveyard or exile to look through them.</li>
+          <li>Counters show on the card. Click a counter to add one, right-click to remove one. For any other kind of counter, right-click the card → <b>Add any counter…</b> (or hover it and press <b>C</b>) and type a name: suggestions show as you type (arrow keys and Enter, or click one). Real counter names you type are saved, so next time they're one click (your 3 latest are right in the right-click menu).</li>
+          <li><b>Copies:</b> right-click a card → <b>Make a copy</b>, or <b>Make copies…</b> for several (optionally with its counters). Works on tokens, and on cards in your hand, graveyard or exile (they stay put; a token copy goes on the battlefield).</li>
+          <li><b>✕ End game</b> clears the table and takes you back to your decks.</li>
+          <li><b>Mana:</b> tapping a land adds its mana to the pool (a land that makes several colors asks which). Untapping it takes the mana back out. <b>Free mana</b> shows what your untapped lands can still make. Mana rocks like Sol Ring and Arcane Signet work the same way. Creatures like Llanowar Elves just tap when clicked (for attacking); right-click → <b>Tap for … mana</b>. For anything else, click a symbol to add, right-click to remove. The pool empties on Next turn.</li>
+          <li><b>Auto-tap lands</b> (top bar): playing a spell taps what it needs: floating mana first, then lands (saving dual lands when it can), mana rocks, mana creatures (not ones that arrived this turn) and last Treasures, which get sacrificed. Commander tax is included. So are discounts from your permanents, like "Goblin spells you cast cost {1} less" or "creature spells of the chosen type cost {2} less" (only the generic part gets cheaper). If you can't pay, nothing is tapped.</li>
+          <li><b>Choose a creature type</b>: when a card like Urza's Incubator or Herald's Horn enters, pick the type from your deck's list or type one in. It shows on the card; right-click to change it.</li>
+          <li><b>Upkeep:</b> at the start of your turn, cards with "At the beginning of your upkeep" glow and are listed by your stats until you click <b>Done</b>. Turn this off with <b>Upkeep reminders</b> in the top bar.</li>
+          <li><b>Commander damage:</b> tracked under your stats. Online, it's damage to you from each friend's commander; playing alone, it's what your commander dealt to Opp. + also takes the life off. 21 from one commander and you're warned.</li>
+          <li><b>Draw triggers:</b> a card that says "When this enters, draw a card" (or two) draws automatically. "You may draw" and "if…" draws you do yourself.</li>
+          <li><b>Discarding</b>: when a card like Earsplitting Rats enters (yours or Opp's), you're asked which card to discard and Opp throws away its worst. Abilities that cost "Discard a card" ask which one too.</li>
+          <li><b>End step</b>: when you end your turn, cards like Ashcoat of the Shadow Swarm ask whether to mill and which cards to get back.</li>
+          <li><b>New cards</b> in your hand get a yellow outline for 5 seconds. On the draw, your first-turn card is drawn on top of your opening 7 (and again after a mulligan).</li>
+          <li><b>Hand size:</b> you can't end your turn with more than 7 cards unless you control something like Reliquary Tower. You're asked which cards to discard.</li>
+          <li>Lands that always enter tapped (like Scoured Barrens) come in tapped. "Enters tapped unless…" lands come in untapped, so tap them yourself if needed.</li>
+          <li><b>Life:</b> when a card enters with "you gain / you lose / each opponent loses N life", it happens automatically. Amounts like "X life" or "for each…" you do yourself. Undo reverses anything wrong.</li>
+          <li><b>Mulligan</b> shuffles your hand back and draws 7. Then right-click cards → <b>Bottom of library</b> for each mulligan.</li>
+          <li>Your commander starts in the command zone. Click it to cast; the tax is tracked for you.</li>
+          <li>Your game is saved, so you can close the page and pick up where you left off.</li>
+          <li><b>↺ Reset</b> starts the deck over: everything shuffled back, a new hand, life back to the start. <b>More ▾</b> lets you restart on the play or on the draw.</li>
+        </ul>
+        <h3>Playing against the computer</h3>
+        <ul>
+          <li>On the Decks tab, under <b>Play against the computer</b>, pick your deck, Opp's deck and who goes first, then click <b>Play</b>. Opp's table shows across the top.</li>
+          <li>Opp plays a land each turn and casts the biggest creatures, artifacts and enchantments it can afford. It also uses simple removal ("destroy target creature"), burn ("deals 3 damage to any target") and card draw. Other card text, like abilities and auras, is ignored.</li>
+          <li><b>Attack…</b> (or <kbd>A</kbd>): tick the creatures that attack and pick what each one goes after: Opp or one of Opp's planeswalkers. Opp picks its blocks and the damage is done for you. Opp can go after your planeswalkers too: the block screen shows what each attacker is aimed at. Flying, reach, first strike, double strike, deathtouch, trample, lifelink, menace, fear, intimidate, skulk, shadow, landwalk, vigilance and indestructible count, including keywords a lord gives ("Goblins you control have haste"). "Whenever this attacks or blocks, … get +X/+X" pumps happen too, until the end of the turn.</li>
+          <li><b>Regenerate</b>: activate an ability like "Discard a card: Regenerate" before combat (right-click → Activate). The card shows REGEN until the turn ends, and the next time it would be destroyed it's tapped instead. Opp regenerates its own creatures when they'd die, if it can pay.</li>
+          <li><b>End turn ▸</b> (or <kbd>N</kbd>): Opp takes its turn. When it attacks, you pick your blockers. Then your turn starts: you untap and draw.</li>
+          <li>Use − and + on Opp's life for anything the game doesn't do itself. Undo takes back Opp's turn one step at a time.</li>
+        </ul>
+        <h3>Playing online</h3>
+        <ul>
+          <li>Play against up to 3 friends. Everyone needs the MTG Tracker folder and internet.</li>
+          <li><b>To host:</b> on the Decks tab, type your name and click <b>Host a game</b>. Send the game code to your friends.</li>
+          <li><b>To join:</b> type the code and click <b>Join</b>.</li>
+          <li>Everyone then picks their own deck and clicks <b>Play</b>. Your friends' tables show across the top. Hover their cards to read them, and click their <b>Graveyard</b> or <b>Exile</b> to look through it. Nobody can see your hand or library.</li>
+          <li>Use − and + next to a friend's life to deal damage or give them life. "Each opponent loses N life" cards do this for you. Undo sends it back.</li>
+          <li><b>Next turn</b> tells everyone it's your turn. <b>Pass turn ▸</b> hands the turn to the next player.</li>
+          <li><b>Attack…</b> (or <kbd>A</kbd>): tick your attackers and pick who each one goes after: any player or one of their planeswalkers. Each player you attack sees what's aimed at them and picks blockers, then the damage is done on both tables (life, loyalty, and creatures that die). A creature can only attack once a turn.</li>
+          <li>Type in the box under the log to chat.</li>
+          <li>If the host leaves, the game connection ends for everyone, but everyone's table is kept. Host again and rejoin to carry on.</li>
+        </ul>
+        <h3>Keyboard</h3>
+        <table class="keys">
+          <tr><td><kbd>N</kbd></td><td>Next turn (untap and draw)</td></tr>
+          <tr><td><kbd>A</kbd></td><td>Attack Opp (playing against the computer)</td></tr>
+          <tr><td><kbd>D</kbd></td><td>Draw a card</td></tr>
+          <tr><td><kbd>U</kbd></td><td>Untap everything</td></tr>
+          <tr><td><kbd>S</kbd></td><td>Shuffle library</td></tr>
+          <tr><td><kbd>T</kbd></td><td>Tap/untap the card under the mouse</td></tr>
+          <tr><td><kbd>F</kbd></td><td>Flip the card under the mouse</td></tr>
+          <tr><td><kbd>Ctrl</kbd>+<kbd>Z</kbd></td><td>Undo</td></tr>
+        </table>
+      </section>`;
+  }
+
+  // ---------- events ----------
+
+  document.getElementById('tabs').addEventListener('click', e => {
+    const b = e.target.closest('button[data-tab]');
+    if (b) setTab(b.dataset.tab);
+  });
+
+  document.addEventListener('click', async e => {
+    if (!menu.hidden && !e.target.closest('#menu')) hideMenu();
+    if (e.target === modal) return closeModal();
+    const go = e.target.closest('[data-tab-go]');
+    if (go) return setTab(go.dataset.tabGo);
+
+    const tq = e.target.closest('[data-token-q]');
+    if (tq) { $('#tokenQuery').value = tq.dataset.tokenQ; return searchTokens(tq.dataset.tokenQ); }
+    const ti = e.target.closest('[data-token-i]');
+    if (ti) return makeTokens(tokenResults[Number(ti.dataset.tokenI)]);
+
+    const dc = e.target.closest('[data-discard]');
+    if (dc && game) return discardDown(dc.dataset.discard);
+
+    const vc = e.target.closest('[data-viewer]');
+    if (vc) {
+      const iid = vc.dataset.viewer;
+      const inst = game.cards[iid];
+      if (!inst) return;
+      return showMenu(e.clientX, e.clientY, moveItems(iid, inst.zone).filter(i => !(viewer && viewer.top && i.label === 'Top of library')));
+    }
+
+    const cb = e.target.closest('[data-iid] .counter');
+    if (cb && game) {
+      const iid = cb.closest('[data-iid]').dataset.iid;
+      return act(() => Game.counter(game, iid, cb.dataset.counter, 1));
+    }
+    const pip = e.target.closest('[data-mana]');
+    if (pip && game) return act(() => { game.mana[pip.dataset.mana]++; });
+
+    const b = e.target.closest('[data-act]');
+    if (!b) return;
+    const a = b.dataset.act;
+    if (b.tagName === 'SELECT' || b.tagName === 'INPUT' && b.type !== 'button') return;
+    switch (a) {
+      case 'play': return startGame(b.dataset.key, true); // turn 1's card is already drawn
+      case 'odds': ui.oddsDeck = b.dataset.key; saveSoon(); return setTab('odds');
+      case 'resume': return setTab('play');
+      case 'resume-game': return resumeGame(b.dataset.id);
+      case 'delete-game': return deleteGame(b.dataset.id);
+      case 'reconnect': return reconnectGame();
+      case 'refresh': await connectTracker(); return renderDecks();
+      case 'delete-deck': {
+        const d = local.decks.find(x => x.key === b.dataset.key);
+        if (d && confirm(`Delete "${d.name}" from the Simulator?`)) {
+          local.decks = local.decks.filter(x => x !== d);
+          await saveLocal();
+          renderDecks();
+        }
+        return;
+      }
+      case 'host': return startOnline('host');
+      case 'start-match': return startMatch();
+      case 'back-to-game': inLobby = false; return renderPlay();
+      case 'open-lobby': inLobby = true; return setTab('play');
+      case 'join': return startOnline('join');
+      case 'rejoin': return startOnline('rejoin');
+      case 'leave':
+        if (Online.state() === 'connected' && !confirm(Online.role() === 'host' ? 'Leave the online game? You are the host, so this ends it for everyone.' : 'Leave the online game?')) return;
+        Online.leave();
+        chat = [];
+        return;
+      case 'copy-code': return copyCode();
+      case 'online-play': {
+        const key = onlineDeckKey();
+        if (!key) return;
+        if (game && linkedOnline(gameMeta()) && !confirm(`Start over with ${findDeck(key).name}? Your current table in this online game will be lost.`)) return;
+        return startGame(key, false);
+      }
+      case 'pass': return passTurn();
+      case 'attack': return openAttack();
+      case 'attack-go': return attackGo();
+      case 'crew': return openCrew(b.dataset.iid, b.dataset.back);
+      case 'crew-go': return crewGo(b.dataset.iid, b.dataset.back);
+      case 'blocks-done': return blocksDone();
+      case 'taps-done': return tapsDone();
+      case 'blocks-online': return blocksOnlineDone();
+      case 'bot-play': return playBot();
+      case 'hit': {
+        const d = Number(b.dataset.d);
+        if (b.dataset.pid === BOT) return act(() => { game.oppLife += d; });
+        return act(() => { (game.oppHits = game.oppHits || []).push({ to: b.dataset.pid, d }); });
+      }
+      case 'opp-zone': return openOppZone(b.dataset.pid, b.dataset.z);
+      case 'next-turn': return nextTurn();
+      case 'draw': return act(() => Game.drawCards(game, 1));
+      case 'untap': return act(() => Game.untapAll(game));
+      case 'mulligan': return act(() => Game.mulligan(game));
+      case 'undo': return undo();
+      case 'clear-mana': return act(() => { Game.MANA.forEach(k => { game.mana[k] = 0; }); });
+      case 'reset': return confirmRestart(game.onDraw);
+      case 'end-game': return endGame();
+      case 'token': return openTokens();
+      case 'scry': return libraryAction('top');
+      case 'shuffle': return act(() => Game.shuffle(game));
+      case 'd20': return roll(20);
+      case 'tools': { const r = b.getBoundingClientRect(); return toolsMenu(r.left, r.bottom + 4); }
+      case 'life': return act(() => { game.life += Number(b.dataset.d); });
+      case 'opp': return act(() => { game.oppLife += Number(b.dataset.d); });
+      case 'poison': return act(() => { game.poison = Math.max(0, game.poison + Number(b.dataset.d)); });
+      case 'cmd-dmg': return commanderDamage('cmdDamage', b.dataset.key, Number(b.dataset.d));
+      case 'cmd-dealt': return commanderDamage('cmdDealt', b.dataset.key, Number(b.dataset.d));
+      case 'upkeep-done': return act(() => { game.upkeep = null; });
+      case 'close-modal': return closeModal();
+      case 'vmove': {
+        const lib = game.zones.library;
+        const shown = lib.filter(iid => viewer.ids.includes(iid));
+        const k = shown.indexOf(b.dataset.iid) + Number(b.dataset.d);
+        if (k < 0 || k >= shown.length) return;
+        const i = lib.indexOf(b.dataset.iid);
+        const j = lib.indexOf(shown[k]);
+        return act(() => { [lib[i], lib[j]] = [lib[j], lib[i]]; });
+      }
+      case 'vbottom':
+        viewer.ids = viewer.ids.filter(iid => iid !== b.dataset.iid);
+        viewer.bottomed = (viewer.bottomed || 0) + 1;
+        return act(() => Game.move(game, b.dataset.iid, 'library', { bottom: true }));
+      case 'deck-tokens': {
+        const deck = findDeck(game ? game.deckKey : ui.oddsDeck);
+        return deck ? showRelatedTokens(deck.rows.map(r => r.id)) : null;
+      }
+      case 'odds-play': ui.oddsOnDraw = false; saveSoon(); return renderOdds();
+      case 'odds-draw': ui.oddsOnDraw = true; saveSoon(); return renderOdds();
+      case 'odds-pick': return openPicker();
+      case 'pick-none': ui.oddsPicked = []; modalBox.querySelectorAll('[data-pick]').forEach(x => { x.checked = false; }); return renderOdds();
+      case 'sample': {
+        const deck = findDeck(ui.oddsDeck);
+        const order = Game.shuffleArray(deck.rows.filter(r => !r.commander).flatMap(r => new Array(r.qty).fill(r.id)));
+        sample = { deckKey: deck.key, order, shown: 7 };
+        return renderOdds();
+      }
+      case 'sample-more': if (sample) sample.shown = Math.min(sample.order.length, sample.shown + 1); return renderOdds();
+    }
+  });
+
+  document.addEventListener('change', async e => {
+    const t = e.target;
+    const a = t.dataset.act;
+    if (a === 'backup' && t.files[0]) {
+      try {
+        tracker = TrackerLink.fromBackup(await t.files[0].text());
+        status('Loaded the Tracker backup.', 'ok');
+      } catch (err) {
+        status(err.message, 'error');
+      }
+      renderLinkState();
+      renderDecks();
+    } else if (a === 'size') { ui.cardW = Number(t.value); saveSoon(); renderBoard(); }
+    else if (a === 'online-deck') {
+      ui.onlineDeck = t.value;
+      saveSoon();
+      sendPick();
+      if ($('#onlinePanel')) $('#onlinePanel').innerHTML = onlinePanelHtml();
+      else if (ui.tab === 'play' && inLobby) renderLobby();
+    }
+    else if (a === 'online-name') { ui.playerName = t.value.trim() || 'Player'; saveSoon(); Online.setName(ui.playerName); }
+    else if (a === 'odds-deck') { ui.oddsDeck = t.value; ui.oddsCategory = ''; ui.oddsPicked = []; saveSoon(); renderOdds(); }
+    else if (a === 'odds-cat') { ui.oddsCategory = t.value; renderOdds(); }
+    else if (a === 'shuffle-close') viewer.shuffleOnClose = t.checked;
+    else if (t.dataset.pick) {
+      const set = new Set(ui.oddsPicked);
+      if (t.checked) set.add(t.dataset.pick); else set.delete(t.dataset.pick);
+      ui.oddsPicked = [...set];
+      renderOdds();
+    }
+  });
+
+  document.addEventListener('input', e => {
+    if (e.target.dataset.act === 'size') { ui.cardW = Number(e.target.value); renderBoard(); }
+    if (e.target.dataset.act === 'autotap') { ui.autoTap = e.target.checked; saveSoon(); status(ui.autoTap ? 'Auto-tap is on: playing a spell taps the lands it needs.' : 'Auto-tap is off.'); }
+    if (e.target.dataset.act === 'upkeephelp') {
+      ui.upkeepOff = !e.target.checked;
+      saveSoon();
+      if (ui.upkeepOff && game && game.upkeep) act(() => { game.upkeep = null; });
+      status(ui.upkeepOff ? 'Upkeep reminders are off.' : 'Upkeep reminders are on: upkeep triggers get highlighted at the start of your turn.');
+    }
+    if (e.target.id === 'viewerFilter' && viewer) { viewer.filter = e.target.value; renderViewer(); }
+    if (e.target.id === 'pickFilter') {
+      const q = e.target.value.toLowerCase();
+      modalBox.querySelectorAll('.pick-list label').forEach(l => { l.hidden = q && !l.dataset.name.includes(q); });
+    }
+  });
+
+  document.addEventListener('submit', async e => {
+    if (e.target.id === 'pasteForm') {
+      e.preventDefault();
+      const f = e.target;
+      const btn = f.querySelector('button');
+      btn.disabled = true;
+      try { await importPasted(f.elements.name.value.trim(), f.elements.list.value); } catch (err) { status('Import failed: ' + err.message, 'error'); } finally { btn.disabled = false; }
+    } else if (e.target.id === 'chatForm') {
+      e.preventDefault();
+      const input = e.target.elements.msg;
+      const msg = input.value.trim();
+      if (!msg) return;
+      if (!Online.connected()) return status('No one else is in the game yet.');
+      Online.send({ t: 'chat', msg });
+      chat.unshift({ at: Date.now(), from: Online.id(), msg });
+      input.value = '';
+      renderLog();
+    } else if (e.target.id === 'customToken') {
+      e.preventDefault();
+      const f = e.target;
+      const el = f.elements;
+      makeTokens({ custom: true, id: null, name: el.name.value.trim(), pt: el.pt.value.trim(), text: el.text.value.trim(), typeLine: 'Token' });
+    }
+  });
+
+  document.addEventListener('keydown', e => {
+    if (e.key === 'Enter' && e.target.id === 'tokenQuery') { e.preventDefault(); searchTokens(e.target.value); return; }
+    if (e.key === 'Enter' && e.target.id === 'joinCode') { e.preventDefault(); startOnline('join'); return; }
+    if (e.key === 'Escape') {
+      if (press && press.dragging) { press.el.classList.remove('dragging'); ghost.hidden = true; document.body.classList.remove('is-dragging'); press = null; return; }
+      hideMenu();
+      cancelAttach();
+      if (!modal.hidden) closeModal();
+      return;
+    }
+    if (ui.tab !== 'play' || !game || !modal.hidden || /INPUT|TEXTAREA|SELECT/.test(e.target.tagName)) return;
+    if ((e.ctrlKey || e.metaKey) && e.key.toLowerCase() === 'z') { e.preventDefault(); undo(); return; }
+    if (e.ctrlKey || e.metaKey || e.altKey) return;
+    const k = e.key.toLowerCase();
+    const hovered = hoverIid && game.cards[hoverIid];
+    if (k === 'n') nextTurn();
+    else if (k === 'a' && (hasBot() || isOnline())) openAttack();
+    else if (k === 'd') act(() => Game.drawCards(game, 1));
+    else if (k === 'u') act(() => Game.untapAll(game));
+    else if (k === 's') act(() => Game.shuffle(game));
+    else if (k === 't' && hovered && hovered.zone === 'battlefield') tapCard(hoverIid);
+    else if (k === 'c' && hovered && hovered.zone === 'battlefield') counterPrompt(hoverIid);
+    else if (k === 'e' && hovered && hovered.zone === 'battlefield' && Game.isAttachment(hovered)) startAttach(hoverIid);
+    else if (k === 'f' && hovered && def(hovered.id) && def(hovered.id).backImage) act(() => Game.toggle(game, hoverIid, 'flipped'));
+  });
+
+  let lastPointer = 'mouse';
+  document.addEventListener('pointerdown', e => { lastPointer = e.pointerType; }, true);
+
+  document.addEventListener('contextmenu', e => {
+    if (ui.tab !== 'play' || !game) return;
+    if (appMode && lastPointer !== 'mouse' && e.target.closest('.table .card[data-iid], [data-oiid]')) { e.preventDefault(); return; }
+    const cb = e.target.closest('[data-iid] .counter');
+    if (cb) {
+      e.preventDefault();
+      const iid = cb.closest('[data-iid]').dataset.iid;
+      return act(() => Game.counter(game, iid, cb.dataset.counter, -1));
+    }
+    const pip = e.target.closest('[data-mana]');
+    if (pip) { e.preventDefault(); return act(() => { game.mana[pip.dataset.mana] = Math.max(0, game.mana[pip.dataset.mana] - 1); }); }
+    const card = e.target.closest('.table .card[data-iid]');
+    if (card) { e.preventDefault(); return cardMenu(card.dataset.iid, e.clientX, e.clientY); }
+    const pile = e.target.closest('[data-pile]');
+    if (pile) { e.preventDefault(); return pileMenu(pile.dataset.pile, e.clientX, e.clientY); }
+    if (e.target.closest('.battlefield')) {
+      e.preventDefault();
+      showMenu(e.clientX, e.clientY, [
+        { label: 'Create token…', action: () => openTokens() },
+        { label: 'Untap everything', hint: 'U', action: () => act(() => Game.untapAll(game)) },
+        { label: 'Next turn', hint: 'N', action: nextTurn },
+      ]);
+    }
+  });
+
+  view.addEventListener('mouseover', e => {
+    const card = e.target.closest('.table .card[data-iid]');
+    if (card && card.dataset.iid !== hoverIid) showPreview(card.dataset.iid);
+    const theirs = e.target.closest('[data-oiid]');
+    if (theirs && theirs.dataset.opid + '|' + theirs.dataset.oiid !== hoverOpp) showOppPreview(theirs.dataset.opid, theirs.dataset.oiid);
+  });
+  // Hovering a card in the block popup shows it in the preview pane, lifted above the popup's shade.
+  modalBox.addEventListener('mouseover', e => {
+    const peek = e.target.closest('[data-peek]');
+    const inst = peek && blockPreviews[peek.dataset.peek];
+    if (inst) previewCard(inst);
+    document.body.classList.toggle('peek', !!inst);
+  });
+  modalBox.addEventListener('mouseleave', () => document.body.classList.remove('peek'));
+  // Closing or hiding the app saves the game first. Leaving the online game doesn't end
+  // your saved game: reopen it from the Decks tab and click Reconnect.
+  window.addEventListener('beforeunload', () => { saveNow(); if (Online.active()) Online.leave(); });
+  window.addEventListener('pagehide', saveNow);
+  // Back from MTG Tracker (or another app): pick up any decks changed there.
+  window.addEventListener('pageshow', e => { if (e.persisted && ui.tab === 'decks') refreshTracker(); });
+  document.addEventListener('visibilitychange', () => { if (!document.hidden && ui.tab === 'decks') refreshTracker(); });
+  document.addEventListener('visibilitychange', () => { if (document.hidden) saveNow(); });
+
+  // Hover tooltips for chart bars.
+  const tip = document.createElement('div');
+  tip.className = 'tip';
+  tip.hidden = true;
+  document.body.appendChild(tip);
+  document.addEventListener('mousemove', e => {
+    const t = e.target.closest && e.target.closest('[data-tip]');
+    if (!t) { tip.hidden = true; return; }
+    tip.textContent = t.dataset.tip;
+    tip.hidden = false;
+    tip.style.left = Math.min(e.clientX + 14, window.innerWidth - tip.offsetWidth - 8) + 'px';
+    tip.style.top = e.clientY + 16 + 'px';
+  });
+
+  view.addEventListener('pointerdown', onPointerDown);
+  window.addEventListener('pointermove', onPointerMove);
+  window.addEventListener('pointerup', onPointerUp);
+  window.addEventListener('pointercancel', () => {
+    if (!press) return;
+    clearTimeout(press.holdTimer);
+    zoom.hidden = true;
+    ghost.hidden = true;
+    press.el.classList.remove('dragging');
+    document.body.classList.remove('is-dragging');
+    press = null;
+  });
+  window.addEventListener('resize', () => { if (ui.tab === 'play') { fitTable(); renderBoard(); } });
+
+  // ---------- start ----------
+
+  (async () => {
+    try {
+      local.decks = (await Store.get('decks')) || [];
+      local.cards = (await Store.get('cards')) || {};
+      Object.assign(ui, (await Store.get('ui')) || {});
+      games = (await Store.get('games')) || [];
+      // Saved before there could be more than one game.
+      const old = await Store.get('game');
+      if (old) {
+        const id = newGameId();
+        games.unshift({ id, deckName: old.deckName, deckKey: old.deckKey, turn: old.turn, life: old.life, createdAt: Date.now(), updatedAt: Date.now(), online: null });
+        await Store.set('game:' + id, old);
+        await Store.set('games', games);
+        await Store.set('game', null);
+        ui.gameId = id;
+      }
+      gameId = games.some(g => g.id === ui.gameId) ? ui.gameId : null;
+      game = gameId ? (await Store.get('game:' + gameId)) || null : null;
+      if (!game) gameId = null;
+      const m = gameMeta();
+      activePid = (m && m.online && m.online.activePid) || null;
+    } catch (e) {
+      status('Browser storage is unavailable, so nothing will be saved: ' + e.message, 'error');
+    }
+    // Show the page right away; the Tracker's decks fill in as soon as they're read.
+    setTab('decks'); // your saved games are listed there; Continue picks one back up
+    if (game) upgradeSavedGame();
+    // Offline support (../sw.js). Needs a web address; a double-clicked file skips it.
+    if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('../sw.js').catch(() => {});
+  })();
+})();
