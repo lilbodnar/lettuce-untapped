@@ -11,13 +11,13 @@ Track your Magic: The Gathering collection and decks, see which cards you alread
 - **Works offline**: install it on your phone or computer like an app, and browse your cards without internet
 - **Export**: download your collection, wishlist or any deck as a spreadsheet (CSV)
 
-**Use it online: [lilbodnar.github.io/mtg-tracker](https://lilbodnar.github.io/mtg-tracker/)**. There's nothing to download, and it works on phones too.
+**Use it online: [lilbodnar.github.io/lettuce-untapped](https://lilbodnar.github.io/lettuce-untapped/)**. There's nothing to download, and it works on phones too.
 
 Card data, images and prices come from [Scryfall](https://scryfall.com) (free, no account needed).
 
 ## Getting started
 
-The easiest way is to open **[lilbodnar.github.io/mtg-tracker](https://lilbodnar.github.io/mtg-tracker/)** and bookmark it, or install it (see [Using it offline](#using-it-offline-and-installing-it)). Your cards are saved in that browser, so log in to an account on **Account & backup** to use them on another device.
+The easiest way is to open **[lilbodnar.github.io/lettuce-untapped](https://lilbodnar.github.io/lettuce-untapped/)** and bookmark it, or install it (see [Using it offline](#using-it-offline-and-installing-it)). Your cards are saved in that browser, so log in to an account on **Account & backup** to use them on another device.
 
 To run it from your own computer instead:
 
