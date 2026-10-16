@@ -206,6 +206,23 @@ test('A lord gives +1/+1 and keywords to the others, not to itself', () => {
   assert.equal(Bot.stats(elf, defs.elf).pow, 1);
 });
 
+test("Elesh Norn: +2/+2 to your others, -2/-2 to Opp's creatures, and the 2-toughness ones die", () => {
+  const norn = { id: 'norn', name: 'Elesh Norn, Grand Cenobite', typeLine: 'Legendary Creature — Phyrexian Praetor', manaCost: '{5}{W}{W}', cmc: 7, power: '4', toughness: '7', oracle: 'Vigilance\nOther creatures you control get +2/+2.\nCreatures your opponents control get -2/-2.' };
+  const all = Object.assign({ norn }, defs);
+  const game = Game.create(deck('You', [{ id: 'norn', qty: 1 }, { id: 'bear', qty: 29 }]), all);
+  game.bot = Bot.create(deck('Opp', [{ id: 'bear', qty: 10 }, { id: 'ashcoat', qty: 10 }]), all, { onDraw: false });
+  const o = game.bot.s;
+  const mine = put(game, 'bear');
+  const theirBear = put(o, 'bear');
+  const theirAsh = put(o, 'ashcoat');
+  put(game, 'norn');
+  Bot.refreshGrants(game, id => all[id]);
+  assert.equal(Bot.stats(mine, defs.bear).tou, 4);
+  assert.equal(theirBear.zone, 'graveyard'); // 2/2 − 2/2
+  assert.equal(theirAsh.zone, 'battlefield');
+  assert.deepEqual(theirAsh.anthem, { pow: -2, tou: -2 });
+});
+
 test('Kutzil draws a card when a pumped creature hits Opp, not an unpumped one', () => {
   defs.kutzil = { id: 'kutzil', name: 'Kutzil, Malamet Exemplar', typeLine: 'Legendary Creature — Cat Warrior', manaCost: '{1}{G}{W}', cmc: 3, power: '3', toughness: '3', oracle: "Your opponents can't cast spells during your turn.\nWhenever one or more creatures you control each with power greater than its base power deal combat damage to a player, draw a card." };
   const game = Game.create(deck('You', [{ id: 'kutzil', qty: 1 }, { id: 'bear', qty: 30 }]), defs);

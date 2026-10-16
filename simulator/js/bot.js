@@ -1167,10 +1167,49 @@ const Bot = (() => {
   // Rats you control have menace") and +X/+X ("Other Elves you control get +1/+1 and have
   // trample", "Pride Sovereign gets +1/+1 for each other Cat you control"). Stored on each
   // creature as granted and anthem (stats adds them); run after anything that changes a battlefield.
+  // "Creatures your opponents control get -2/-2" (Elesh Norn) reaches the other table. Then a
+  // creature left with 0 or less toughness goes to the graveyard, which can change the lords again.
   function refreshGrants(game, defOf) {
+    const tables = [game, game.bot && game.bot.s].filter(Boolean);
+    for (let i = 0; i < 10; i++) {
+      grantsOnce(tables, defOf);
+      if (!zeroToughness(tables, defOf)) return;
+    }
+  }
+
+  // Puts each creature with 0 or less toughness into its owner's graveyard (its commander into the
+  // command zone). Indestructible doesn't help. One whose toughness is "*" and that nothing here
+  // works out is left alone. Returns true if any died.
+  function zeroToughness(tables, defOf) {
+    let any = false;
+    for (const s of tables) {
+      for (const c of creatures(s)) {
+        const card = c.bot || defOf(c.id) || {};
+        const printed = c.custom && c.custom.pt ? String(c.custom.pt).split('/')[1] : card.toughness;
+        if (!/^-?\d+$/.test(String(printed == null ? '' : printed).trim()) && !c.cda) continue;
+        if (stats(c, card).tou > 0) continue;
+        G.log(s, `${c.name} has 0 or less toughness.`);
+        G.move(s, c.iid, c.commander ? 'command' : 'graveyard');
+        any = true;
+      }
+    }
+    return any;
+  }
+
+  function grantsOnce(tables, defOf) {
     const kwList = text => text.toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
-    for (const s of [game, game.bot && game.bot.s].filter(Boolean)) {
-      const lords = [];
+    // "Creatures your opponents control get -2/-2": from each table, for the other ones.
+    const hostile = [];
+    for (const s of tables) {
+      for (const src of permanents(s)) {
+        for (const line of oracleLines(src, defOf)) {
+          const m = /^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.exec(line);
+          if (m && !m[1].includes(':')) hostile.push({ from: s, what: m[1], pow: Number(m[2]), tou: Number(m[3]) });
+        }
+      }
+    }
+    for (const s of tables) {
+      const lords = hostile.filter(h => h.from !== s).map(h => ({ src: null, other: false, what: h.what, kws: [], pow: h.pow, tou: h.tou }));
       const each = []; // "This gets +1/+1 for each other Cat you control"
       for (const src of permanents(s)) {
         for (const line of oracleLines(src, defOf)) {
