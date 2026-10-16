@@ -7,7 +7,7 @@ Track your Magic: The Gathering collection and decks, see which cards you alread
 - **Decks**: save as many decks as you like and see what % of each deck you already own, plus what's missing and what it costs to finish. Each deck is checked against its format's rules (Commander, Modern, Standard and more)
 - **Prices**: collection value over time, your most valuable cards, and the biggest price changes
 - **Accounts**: log in to have the same collection and decks on your phone and computer, and share your collection file with friends
-- **Simulator**: playtest any of your decks on a virtual table and see your draw odds, even decks you don't own the cards for
+- **Simulator**: playtest any of your decks on a virtual table and see your draw odds, even decks you don't own the cards for. Let the computer play a deck hundreds of times to see how fast it is, or two decks against each other. Games you finish there show up on the deck's page as its win/loss record
 - **Works offline**: install it on your phone or computer like an app, and browse your cards without internet
 - **Export**: download your collection, wishlist or any deck as a spreadsheet (CSV)
 

@@ -478,6 +478,17 @@ body.peek .side { position: relative; z-index: 51; }
 /* Playing against the computer: block and attack pickers */
 .block-list { display: grid; gap: .6rem; max-height: 60vh; overflow: auto; margin-bottom: .8rem; }
 .block-row { display: grid; grid-template-columns: 96px 1fr; gap: .8rem; align-items: center; }
+/* Auto-test results */
+.stat-tiles { display: grid; grid-template-columns: repeat(auto-fill, minmax(140px, 1fr)); gap: .6rem; margin: .6rem 0 1rem; }
+.stat-tile { background: var(--panel); border: 1px solid var(--line, rgba(127,127,127,.25)); border-radius: 8px; padding: .5rem .7rem; display: flex; flex-direction: column; gap: .15rem; }
+.stat-tile b { font-size: 1.35rem; }
+/* Picking a target, and Opp's spell waiting for your answer */
+.target-list { display: grid; grid-template-columns: repeat(auto-fill, minmax(96px, 1fr)); gap: .6rem; margin: .6rem 0; max-height: 60vh; overflow: auto; }
+.target-pick { display: flex; flex-direction: column; align-items: center; gap: .2rem; background: none; border: 2px solid transparent; border-radius: 8px; padding: 2px; cursor: pointer; color: inherit; }
+.target-pick:hover, .target-pick:focus-visible { border-color: var(--accent); }
+.target-pick .card, .respond-card .card { position: relative; width: 100%; height: auto; aspect-ratio: 5 / 7; --cw: 96px; }
+.respond-card { width: 160px; margin: .4rem auto; }
+.respond-card .card { --cw: 160px; }
 .block-row .viewer-card .card { --cw: 96px; cursor: default; }
 .block-row select { margin-top: .4rem; max-width: 100%; }
 .block-picks { display: grid; gap: .2rem; margin-top: .35rem; }

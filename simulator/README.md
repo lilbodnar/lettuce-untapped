@@ -84,10 +84,16 @@ Opp plays with simple rules:
 
 - It keeps a hand with 2 to 5 lands, otherwise it mulligans once.
 - Each turn it plays a land (one that adds a color it needs) and casts the biggest creatures, artifacts and enchantments it can afford. Its commander too, with tax.
-- It casts simple removal ("Destroy target creature", "Exile target creature") on your best creature, burn ("deals 3 damage to any target") on a creature it can kill or at you, and simple card draw ("Draw two cards").
+- It casts simple removal ("Destroy target creature", "Exile target creature", "Return target creature to its owner's hand") on your best creature, burn ("deals 3 damage to any target") on a creature it can kill or at you, and simple card draw ("Draw two cards"). Its "When this enters, destroy target creature an opponent controls" (Ravenous Chupacabra) and similar triggers pick their own targets.
+- **On your turn** (with **Responses** ticked in the top bar): it holds instant removal for when you attack (on your attacker, before blocks) or your end step, and it counters your spells that cost 3 or more (or your commander) with "Counter target spell" cards. For "unless its controller pays {3}", Auto-tap pays for you if it can.
+- **Answering Opp:** when Opp casts a spell and you have an instant (or a flash card) you can pay for, the spell waits. **Answer it** closes the message so you can cast your instant (a counterspell counters Opp's spell); **Let it resolve** (or **End turn ▸**) lets it go on. If its target is gone by then, it does nothing.
 - It attacks when none of your untapped creatures could block and kill an attacker without dying, or when attacking with everything would be lethal. It keeps creatures home if you could swing back for lethal.
 - It blocks when it can kill your attacker and survive, trade for something at least as good, or stop the damage. It chump blocks only to stay alive.
 - Everything else (activated abilities, auras, planeswalkers, X spells, other text) is ignored. "When this enters" life and card draw work the same as for you.
+
+**Targets:** your cards that say "destroy / exile target …", "return target … to its owner's hand", "deals N damage to any target", "tap target …", "target creature gets +3/+3 until end of turn" or "put a +1/+1 counter on target creature" ask you to pick the target, on any table (or a player, for damage), and then do it. That covers instants and sorceries, "When this enters" triggers and activated abilities. Online, a friend's card you target is changed on their side. Hexproof and shroud are respected.
+
+**Your record:** when a game ends (someone at 0 life, 10 poison or 21 commander damage), closing the message saves a win or loss for your deck. **More ▾ → Record a win / loss** saves one by hand (a concession, a game the Simulator couldn't call). Decks show their record on the Decks tab, and MTG Tracker shows it on the deck's page with the latest games.
 
 | To do this | Do this |
 |---|---|
@@ -151,6 +157,15 @@ The game doesn't enforce the rules. It's like playing at a kitchen table: everyo
 
 **If it won't connect:** some work and school networks block this kind of connection. Try home Wi-Fi or a phone hotspot. If some people use a downloaded copy instead of the online version, make sure everyone has the same version, or just have everyone use the online one.
 
+## Auto-test
+
+The computer plays your decks by itself, many games in a row, with Opp's rules. It takes a few seconds for 100 games.
+
+- **Play a deck by itself**: the deck plays alone against an empty table that never blocks. You see, by turn, how many lands and creatures it has, how often it made its land drop, how much damage it has dealt, and how often it would already have won. Also the usual kill turn (40 damage in Commander, 20 otherwise) and when the commander comes out.
+- **Matchup**: two decks play each other, taking turns going first. You see how often each won, how long games take, how they ended (life, poison, commander damage, an empty library) and how much going first helped.
+
+It's the same simple Opp as above playing both sides, so it's good for comparing versions of a deck or seeing which deck is faster, not for predicting a game against a real player. Auto-test games aren't saved and don't count toward a deck's record.
+
 ## Odds
 
 Pick a deck and **On the play** or **On the draw**. The numbers are exact math, not random trials. Mulligans aren't counted.
@@ -181,6 +196,7 @@ js/app.js            screens, drag and drop, menus, odds charts
 js/game.js           the game: zones, moving cards, turns, tokens
 js/odds.js           draw-odds math
 js/bot.js            the computer opponent: what it casts, attacks and blocks with
+js/autoplay.js       the Auto-test tab's games: a deck alone, or two decks against each other
 js/online.js         playing online: connecting to friends, what they see of your table
 js/tracker-link.js   reads decks from MTG Tracker (read-only)
 ```

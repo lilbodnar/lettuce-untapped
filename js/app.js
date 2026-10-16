@@ -1419,6 +1419,7 @@
       </div>
       ${deckSharePanel(deck)}
       ${deckCheckPanel(deck)}
+      ${simRecordPanel(deck)}
       ${marks ? deckSelectionBar() : `<p class="muted small">Showing ${esc(compare.name)}'s cards. Switch back to your own collection to mark cards as Official or Proxy.</p>`}
       <form class="add-card" data-form="addDeckCard">
         <input name="name" list="acList" placeholder="Add a card to this deck by name… (or drag one in from Scryfall)" autocomplete="off" data-input="autocomplete" required>
@@ -2861,6 +2862,49 @@
       </div>`;
   }
 
+  // ---------- Simulator results ----------
+
+  // Games finished in the Simulator, from its own database (read only; the Simulator saves them).
+  // [{ at, deckKey: 'tracker:<profile id>:<deck id>', result: 'win' | 'loss' | 'draw', opponents, mode, turns, why }]
+  let simResults = [];
+  function loadSimResults() {
+    let req;
+    try { req = indexedDB.open('mtg-simulator'); } catch (e) { return; }
+    req.onupgradeneeded = () => req.transaction.abort(); // no Simulator data yet: don't create its database
+    req.onerror = () => {};
+    req.onsuccess = () => {
+      const db = req.result;
+      if (!db.objectStoreNames.contains('kv')) { db.close(); return; }
+      const get = db.transaction('kv', 'readonly').objectStore('kv').get('results');
+      get.onsuccess = () => {
+        const list = Array.isArray(get.result) ? get.result : [];
+        const changed = list.length !== simResults.length;
+        simResults = list;
+        db.close();
+        if (changed && ui.tab === 'decks' && ui.deckId) render();
+      };
+      get.onerror = () => db.close();
+    };
+  }
+
+  // The deck's record from Simulator games, with its latest games.
+  function simRecordPanel(deck) {
+    const key = `tracker:${profile().id}:${deck.id}`;
+    const games = simResults.filter(r => r.deckKey === key);
+    if (!games.length) return '';
+    const n = k => games.filter(g => g.result === k).length;
+    const [w, l, d] = [n('win'), n('loss'), n('draw')];
+    const when = at => new Date(at).toLocaleDateString(undefined, { month: 'short', day: 'numeric' });
+    const label = { win: 'Won', loss: 'Lost', draw: 'Draw' };
+    return `<details class="panel"><summary>Simulator record: <b>${w}–${l}${d ? `–${d}` : ''}</b> (${Math.round(w / games.length * 100)}% won)</summary>
+      <table class="list compact"><tbody>${games.slice(-10).reverse().map(g => `<tr>
+        <td>${esc(when(g.at))}</td><td class="${g.result === 'win' ? 'ok' : g.result === 'loss' ? 'bad' : ''}">${label[g.result] || esc(g.result)}</td>
+        <td>${esc((g.opponents || []).join(', ') || (g.mode === 'solo' ? 'alone' : ''))}</td>
+        <td class="muted">${g.turns ? `turn ${g.turns}` : ''}${g.why ? ` · ${esc(g.why)}` : ''}</td></tr>`).join('')}</tbody></table>
+      ${games.length > 10 ? `<p class="muted small">The latest 10 of ${games.length} games.</p>` : ''}
+    </details>`;
+  }
+
   async function start() {
     try {
       await load();
@@ -2876,6 +2920,8 @@
     render();
     Store.persist();
     setUpOffline();
+    loadSimResults();
+    document.addEventListener('visibilitychange', () => { if (!document.hidden) loadSimResults(); }); // back from the Simulator
     if (account) pull();
     if (navigator.onLine && Date.now() - (state.settings.lastPriceRefresh || 0) > PRICE_REFRESH_MS) refreshPrices(true);
   }

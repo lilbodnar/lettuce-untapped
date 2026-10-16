@@ -39,6 +39,9 @@
   // Saved games, newest first: [{ id, deckName, deckKey, turn, life, createdAt, updatedAt,
   //   online: { role, code, myId, activePid, players: [names] } | null }]. Each game's table is stored as 'game:<id>'.
   let games = [];
+  // Finished games, newest last: [{ at, deckKey, deckName, mode, opponents, result: 'win' | 'loss' | 'draw', turns, why }].
+  // Saved under 'results'; MTG Tracker reads them to show each deck's record (it never writes them).
+  let results = [];
   let gameId = null; // which saved game `game` is
   let undoStack = [];
   let viewer = null; // { zone, top: n|null, ids (the cards looked at, for top n), filter, shuffleOnClose }
@@ -301,6 +304,7 @@
     if (!game) return;
     delete game.oppHits;
     game.opponents = isOnline() ? others().length || null : hasBot() ? 1 : null; // for "enters tapped unless you have two or more opponents"
+    if (hasBot()) game.bot.respond = ui.respond !== false; // Opp answers on your turn, and waits for your answers
     const entry = { json: JSON.stringify(game), remote: remoteLife, hits: null };
     undoStack.push(entry);
     if (undoStack.length > 200) undoStack.shift();
@@ -333,6 +337,7 @@
     if (game && game.mustDiscard) setTimeout(mustDiscardPrompt, 0); // after any modal this action opens
     if (game && game.mustDestroy) setTimeout(mustDestroyPrompt, 0);
     if (game && game.mustSacrifice) setTimeout(mustSacrificePrompt, 0);
+    if (game && game.mustTarget && game.mustTarget.length) setTimeout(mustTargetPrompt, 0);
     syncAuras(); // your Arrest on Opp's creature
     if (game) Bot.refreshGrants(game, def); // "Goblins you control have haste" and the like
     if (ui.tab === 'play') renderBoard();
@@ -376,8 +381,31 @@
     else if (!alive.length) title = 'Everyone is out: it\'s a draw.';
     else title = `${fresh.map(p => p.name).join(' and ')} ${fresh.length === 1 && fresh[0].key !== 'me' ? 'is' : 'are'} out. Play continues.`;
     Game.log(game, `${lines.join(' ')} ${title}`);
-    showGameOver(title, lines, alive.length > 1);
+    // Your result, saved when you close the message (not if you Undo instead).
+    const me = fresh.find(p => p.key === 'me');
+    let outcome = null;
+    if (!alive.length) outcome = { result: 'draw', why: lines.join(' ') };
+    else if (me) outcome = { result: 'loss', why: me.why };
+    else if (alive.length === 1 && alive[0].key === 'me') outcome = { result: 'win', why: fresh.map(p => p.why).join(', ') };
+    showGameOver(title, lines, alive.length > 1, outcome);
   }
+
+  // Saves how this game went for you (once per game), for the deck's record here and in MTG Tracker.
+  async function recordResult(result, why) {
+    if (!game || game.recordedResult) return;
+    game.recordedResult = result;
+    const opponents = hasBot() ? [`Opp (${game.bot.s.deckName || 'computer'})`]
+      : others().map(p => { const b = peers[p.pid] && peers[p.pid].board; return b && b.deckName ? `${p.name} (${b.deckName})` : p.name; });
+    results.push({ at: Date.now(), deckKey: game.deckKey, deckName: game.deckName, mode: hasBot() ? 'bot' : isOnline() ? 'online' : 'solo',
+      opponents, result, turns: game.turn, why: String(why || '').slice(0, 200) });
+    if (results.length > 2000) results.splice(0, results.length - 2000);
+    saveSoon();
+    try { await Store.set('results', results); } catch (e) { status(`Couldn't save the result (${e.message}).`, 'warn'); }
+    status(`Saved a ${result} for ${game ? game.deckName : 'this deck'}. MTG Tracker shows it on the deck's page.`, 'ok');
+  }
+
+  // This deck's record from saved results: { win, loss, draw }.
+  const recordOf = key => results.filter(r => r.deckKey === key).reduce((o, r) => { o[r.result] = (o[r.result] || 0) + 1; return o; }, { win: 0, loss: 0, draw: 0 });
 
   const gameOver = document.createElement('div');
   gameOver.className = 'game-over';
@@ -385,7 +413,9 @@
   document.body.appendChild(gameOver);
 
   // When the game is decided, OK ends it (so it leaves "Your games"); Undo takes back the last action instead.
-  function showGameOver(title, lines, goesOn) {
+  let pendingOutcome = null; // saved with recordResult when the game-over message is closed
+  function showGameOver(title, lines, goesOn, outcome) {
+    pendingOutcome = outcome || null;
     gameOver.innerHTML = `<div class="game-over-box">
         <h2>${esc(title)}</h2>
         ${lines.map(l => `<p>${esc(l)}</p>`).join('')}
@@ -398,7 +428,10 @@
     const b = e.target.closest('[data-go]');
     if (!b) return;
     gameOver.hidden = true;
-    if (b.dataset.go === 'undo') undo();
+    const outcome = pendingOutcome;
+    pendingOutcome = null;
+    if (b.dataset.go === 'undo') return undo();
+    if (outcome) recordResult(outcome.result, outcome.why);
     if (b.dataset.go === 'end') endGame(true);
   });
 
@@ -528,6 +561,111 @@
     }));
   }
 
+  // "Destroy target creature", "deals 3 damage to any target"… from your cards: pick the target
+  // (a permanent on any table, or a player), or Skip.
+  const ACTIONS = { destroy: 'Destroy', exile: 'Exile', bounce: 'Return to hand', damage: 'Damage', tap: 'Tap', untap: 'Untap', pump: 'Pump', counter: 'Put counters on' };
+  function mustTargetPrompt() {
+    const list = game && game.mustTarget;
+    if (!list || !list.length || !modal.hidden) return;
+    const [req] = list;
+    const eff = req.eff;
+    const f = Bot.targetFilter(eff.what);
+    const next = () => { game.mustTarget = game.mustTarget.slice(1); if (!game.mustTarget.length) delete game.mustTarget; };
+    const opts = []; // { label, who, card, apply }
+    const perm = (inst, st, mine, who, apply) => { if (Bot.canTarget(eff, inst, st, mine, false)) opts.push({ label: inst.name, who, card: inst, apply }); };
+    game.zones.battlefield.map(iid => game.cards[iid]).forEach(inst => perm(inst, Bot.stats(inst, def(inst.id)), true, 'You', () => Bot.applyTarget(game, game, inst, eff, req.src, def)));
+    if (hasBot()) {
+      const s = game.bot.s;
+      s.zones.battlefield.map(iid => s.cards[iid]).forEach(inst => perm(inst, Bot.botStats(inst), false, 'Opp', () => Bot.applyTarget(game, s, inst, eff, req.src, def)));
+    }
+    if (isOnline()) {
+      for (const p of others()) {
+        const b = peers[p.pid] && peers[p.pid].board;
+        ((b && b.battlefield) || []).forEach(card => perm({ ...card, zone: 'battlefield' }, Bot.stats(card, def(card.id)), false, p.name, () => {
+          Online.send({ t: 'target', iid: card.iid, eff, by: req.src }, p.pid);
+          Game.log(game, `${req.src}: ${ACTIONS[eff.action] || eff.action} ${p.name}'s ${card.name} (done on their side).`);
+        }));
+      }
+    }
+    const players = [];
+    if (f && f.players && eff.action === 'damage') {
+      if (f.players === 'any') players.push({ label: 'You', apply: () => Bot.damagePlayer(game, 'you', eff.n, req.src) });
+      for (const p of others()) {
+        players.push({ label: p.name, apply: () => {
+          if (p.pid === BOT) Bot.damagePlayer(game, 'opp', eff.n, req.src);
+          else { (game.oppHits = game.oppHits || []).push({ to: p.pid, d: -eff.n }); Game.log(game, `${req.src}: ${eff.n} damage to ${p.name}.`); }
+        } });
+      }
+    }
+    if (!opts.length && !players.length) {
+      return act(() => { next(); Game.log(game, `${req.src}: no target for "${req.part}".`); });
+    }
+    openModal(`<div class="page-head"><h3>${esc(req.src)}: pick a target</h3></div>
+      <p class="small">${esc(req.part)}.</p>
+      ${players.length ? `<div class="toolbar tight">${players.map((p, i) => `<button class="btn sm" data-tg="p${i}">${esc(p.label)}</button>`).join('')}</div>` : ''}
+      <div class="target-list">${opts.map((o, i) => `<button class="target-pick" data-tg="c${i}" title="${esc(o.who)}: ${esc(o.label)}"><div class="card readonly">${faceHtml(o.card)}</div><span class="small">${esc(o.who === 'You' ? 'Yours' : o.who)}</span></button>`).join('')}</div>
+      <div class="toolbar end"><button class="btn ghost" data-tg="skip">Skip</button></div>`);
+    modalBox.querySelectorAll('[data-tg]').forEach(b => {
+      b.onclick = () => {
+        const k = b.dataset.tg;
+        modal.hidden = true;
+        modalBox.innerHTML = '';
+        const pick = k === 'skip' ? null : k[0] === 'p' ? players[Number(k.slice(1))] : opts[Number(k.slice(1))];
+        act(() => { next(); if (pick) pick.apply(); else Game.log(game, `${req.src}: skipped "${req.part}".`); });
+      };
+    });
+  }
+
+  // A friend's card targeted one of yours ("Destroy target creature"): it's done here, on your table.
+  function receiveTarget(from, m) {
+    const inst = game && game.cards[String(m.iid || '')];
+    const e = m.eff && typeof m.eff === 'object' ? m.eff : {};
+    if (!inst || inst.zone !== 'battlefield' || !ACTIONS[e.action]) return;
+    const num = v => Math.max(-99, Math.min(99, Math.trunc(Number(v)) || 0));
+    const eff = { action: e.action, what: 'permanent', n: num(e.n), pow: num(e.pow), tou: num(e.tou),
+      kw: (Array.isArray(e.kw) ? e.kw : []).map(String).filter(k => Bot.KEYWORDS.includes(k)), kind: String(e.kind || '+1/+1').slice(0, 30) };
+    act(() => { game.notice = Bot.applyTarget(game, game, inst, eff, `${nameOf(from)}'s ${String(m.by || 'card').slice(0, 80)}`, def); });
+  }
+
+  // Opp's spell waits on the stack because you could answer it: answer now, or let it resolve.
+  function openRespond() {
+    const st = game.bot.s.stack;
+    if (!st) return;
+    const inst = game.bot.s.cards[st.iid];
+    const tgt = st.target === 'face' ? 'at you' : st.target && game.cards[st.target] ? `on your ${game.cards[st.target].name}` : '';
+    openModal(`<div class="page-head"><h3>Opp is casting ${esc(inst.name)}</h3></div>
+      <div class="respond-card"><div class="card readonly">${faceHtml(inst)}</div></div>
+      <p>${tgt ? `Opp casts it ${esc(tgt)}. ` : ''}You have an instant you can cast: answer it now (a counterspell counters it), or let it resolve.</p>
+      <div class="toolbar end"><button class="btn ghost" data-rs="answer">Answer it</button><button class="btn" data-rs="go">Let it resolve</button></div>`);
+    modalBox.querySelector('[data-rs=answer]').onclick = () => {
+      modal.hidden = true;
+      modalBox.innerHTML = '';
+      status(`Opp's ${inst.name} is waiting. Cast your instant, then press End turn (or N) to let Opp carry on.`, 'warn', true);
+      renderOpps();
+    };
+    modalBox.querySelector('[data-rs=go]').onclick = () => { modal.hidden = true; modalBox.innerHTML = ''; respondDone(); };
+  }
+
+  // Opp's waiting spell resolves (unless you countered it) and its turn carries on.
+  function respondDone() {
+    const w = game.bot.wait || {};
+    let res;
+    act(() => {
+      res = Bot.resumeTurn(game, def);
+      if (game.bot.wait) Object.assign(game.bot.wait, { yoursNext: w.yoursNext, before: w.before });
+      if (game.bot.tapChoice) game.bot.tapChoice.yoursNext = w.yoursNext;
+      if (game.bot.pending) game.bot.pending.yoursNext = w.yoursNext;
+    });
+    if (game.bot.s.stack) return openRespond();
+    if (w.phase === 'main2') {
+      if (w.yoursNext) startNextTurn();
+      const msg = [w.before, res.notes.length ? `Opp ${res.notes.join(', ')}.` : ''].filter(Boolean).join(' ') || 'Opp ended its turn.';
+      return status(msg + outcome(), 'ok', 10000);
+    }
+    if (res.tapChoice) return openTapChoice();
+    afterOppMain(res, w.yoursNext);
+  }
+
   // The monarch draws at their end step. Online, the newest claim wins (clocks lined up with each peer's offset).
   function amMonarch() {
     if (!game || !game.monarch) return false;
@@ -578,7 +716,7 @@
   function nextTurn() {
     if (isOnline()) return passTurn();
     if (hasBot()) {
-      if (game.bot.pending || game.bot.tapChoice) return oppWaiting();
+      if (game.bot.pending || game.bot.tapChoice || game.bot.s.stack) return oppWaiting();
       return endStep(() => checkHandSize(() => oppTurn(true)));
     }
     endStep(() => checkHandSize(startNextTurn));
@@ -708,6 +846,7 @@
         }
         return;
       case 'life': return receiveLife(from, Number(m.d));
+      case 'target': return receiveTarget(from, m);
       case 'counter': {
         // Another player's counterspell: only your newest spell can be countered.
         if (!game || !game.lastCast || game.lastCast.iid !== m.iid) return;
@@ -885,7 +1024,9 @@
       res = Bot.beginTurn(game, def);
       if (game.bot.tapChoice) game.bot.tapChoice.yoursNext = yoursNext;
       if (game.bot.pending) game.bot.pending.yoursNext = yoursNext;
+      if (game.bot.wait) game.bot.wait.yoursNext = yoursNext;
     });
+    if (res.waiting) return openRespond();
     if (res.tapChoice) return openTapChoice();
     afterOppMain(res, yoursNext);
   }
@@ -898,6 +1039,7 @@
 
   // Opp waiting on you: your Sentinel's target at its beginning of combat, or your blocks.
   function oppWaiting() {
+    if (game.bot.s.stack) return openRespond();
     if (game.bot.tapChoice) return openTapChoice();
     if (game.bot.pending) return openBlocks();
   }
@@ -940,7 +1082,11 @@
 
   function finishOppTurn(yoursNext, before) {
     let notes;
-    act(() => { notes = Bot.endTurn(game, def); });
+    act(() => {
+      notes = Bot.endTurn(game, def);
+      if (game.bot.wait) Object.assign(game.bot.wait, { yoursNext, before });
+    });
+    if (game.bot.s.stack) return openRespond();
     if (yoursNext) startNextTurn();
     const msg = [before, notes.length ? `Opp ${notes.join(', ')}.` : ''].filter(Boolean).join(' ') || 'Opp didn\'t do anything this turn.';
     status(msg + outcome(), 'ok', 10000);
@@ -1079,7 +1225,7 @@
   // Against Opp, it blocks and the damage is done; online, each player you attack blocks.
   function openAttack() {
     if (!game || !(hasBot() || isOnline())) return;
-    if (hasBot() && (game.bot.pending || game.bot.tapChoice)) return oppWaiting();
+    if (hasBot() && (game.bot.pending || game.bot.tapChoice || game.bot.s.stack)) return oppWaiting();
     if (incoming.length) return openIncoming();
     if (isOnline() && activePid && activePid !== Online.id()) return status(`It's ${nameOf(activePid)}'s turn, not yours.`);
     const all = attackTargets();
@@ -1651,6 +1797,7 @@
     if (tab === 'decks') { renderDecks(); refreshTracker(); }
     else if (tab === 'play') renderPlay();
     else if (tab === 'odds') renderOdds();
+    else if (tab === 'test') renderTest();
     else renderHelp();
   }
 
@@ -1696,11 +1843,14 @@
   function deckTile(deck, removable) {
     const art = coverOf(deck);
     const cmdr = deck.rows.filter(r => r.commander).map(r => r.name).join(' & ');
+    const rec = recordOf(deck.key);
+    const played = rec.win + rec.loss + rec.draw;
     return `<div class="deck-tile">
       <div class="deck-art" ${art ? `style="background-image:url('${esc(art)}')"` : ''}></div>
       <div class="deck-body">
         <b>${esc(deck.name)}</b>
         <span class="muted small">${deckCount(deck)} cards${cmdr ? ' · ' + esc(cmdr) : ''}</span>
+        ${played ? `<span class="small" title="Games you finished with this deck in the Simulator">Record: <b>${rec.win}–${rec.loss}${rec.draw ? `–${rec.draw}` : ''}</b> (${Math.round(rec.win / played * 100)}% won)</span>` : ''}
         <div class="toolbar tight">
           <button class="btn sm" data-act="play" data-key="${esc(deck.key)}">Play</button>
           <button class="btn sm ghost" data-act="odds" data-key="${esc(deck.key)}">Odds</button>
@@ -1967,6 +2117,7 @@
             <span class="opp-stat" id="monarchNo" title="You're the monarch: you draw a card at the end of your turn. A player whose creature deals you combat damage takes it." hidden>👑 Monarch</span>
             <label class="toggle" title="When you play a spell, tap the lands it needs (uses floating mana first)"><input type="checkbox" data-act="autotap" ${ui.autoTap ? 'checked' : ''}> Auto-tap lands</label>
             <label class="toggle" title="At the start of your turn, highlight cards with upkeep triggers until you click Done"><input type="checkbox" data-act="upkeephelp" ${ui.upkeepOff ? '' : 'checked'}> Upkeep reminders</label>
+            ${bot ? `<label class="toggle" title="Opp's spells wait while you could answer them with an instant, and Opp counters and removes things on your turn"><input type="checkbox" data-act="respondhelp" ${ui.respond === false ? '' : 'checked'}> Responses</label>` : ''}
             <label class="size" title="Card size"><span class="muted small">Size</span><input type="range" min="60" max="150" step="2" value="${ui.cardW}" data-act="size"></label>
             ${appMode ? '' : '<span class="counter-dock" id="counterDock" hidden></span>'}
             ${online ? `<span class="online-chip" title="Game code ${esc(Online.code())}"><span class="dot ${Online.connected() ? 'ok' : ''}"></span>Online · <b>${esc(Online.code())}</b><button class="link-btn" data-act="leave">Leave</button></span>`
@@ -1996,7 +2147,7 @@
       </div>`;
     renderBoard();
     renderCounterDock();
-    if (bot && (game.bot.pending || game.bot.tapChoice) && modal.hidden) oppWaiting();
+    if (bot && (game.bot.pending || game.bot.tapChoice || game.bot.s.stack) && modal.hidden) oppWaiting();
   }
 
   function cardImage(inst) {
@@ -2207,6 +2358,7 @@
       ${activePid === p.pid ? '<span class="turn-badge">Their turn</span>' : ''}
       <div class="life" title="${esc(p.name)}'s life. − and + change it for them."><span>♥</span><button data-act="hit" data-pid="${esc(p.pid)}" data-d="-1">−</button><b>${b.life}</b><button data-act="hit" data-pid="${esc(p.pid)}" data-d="1">+</button></div>
       ${b.poison ? `<span class="opp-stat poison">☠ <b>${b.poison}</b></span>` : ''}
+      ${p.pid === BOT && game.bot.s.stack && game.bot.s.cards[game.bot.s.stack.iid] ? `<button class="opp-stat poison" data-act="respond-open" title="Waiting for your answer. Click to let it resolve or answer it.">Casting ${esc(game.bot.s.cards[game.bot.s.stack.iid].name)}…</button>` : ''}
       ${(p.pid === BOT ? Bot.monarchOf(game) === 'opp' : b.monarch) ? '<span class="opp-stat" title="The monarch draws a card at the end of their turn. Deal them combat damage to take it.">👑 Monarch</span>' : ''}
       ${Object.entries(b.cmdDamage || {}).filter(([, n]) => n).map(([k, n]) => `<span class="opp-stat ${n >= 21 ? 'poison' : ''}" title="Commander damage ${esc(p.name)} has taken from ${esc(k.replace('|', "'s "))}">⚔ ${esc(k.split('|')[1])} <b>${n}</b></span>`).join('')}
       <span class="opp-stat">T<b>${b.turn}</b></span>
@@ -2724,7 +2876,20 @@
       if (isOnline()) (game.oppHits = game.oppHits || []).push({ to: 'target', d: -n });
       else game.oppLife -= n;
     },
+    // "Destroy target creature", "deals 3 damage to any target": you're asked which (mustTargetPrompt).
+    target: (eff, part, src) => { (game.mustTarget = game.mustTarget || []).push({ eff, part, src: src ? src.name : 'Effect' }); },
   });
+
+  // Opp counters your spell as you cast it (its counterspells; see Bot.oppCounters).
+  Game.hooks.casting = (s, inst) => s === game && hasBot() && Bot.oppCounters(game, inst, def);
+
+  // Opp's spells wait for your answer when you have an instant (or flash card) you can pay for.
+  Bot.setResponder((g, spell) => g === game && hasBot() && ui.respond !== false && game.zones.hand.some(iid => {
+    const c = game.cards[iid];
+    if (Game.isLand(c) || !Bot.isInstantSpeed(c, def)) return false;
+    const cost = castCost(c);
+    return !cost || !!Game.autoPay(JSON.parse(JSON.stringify(game)), cost.cost, cost.tax - cost.less);
+  }));
 
   // "When this creature dies, create a 2/1 black Cat creature token": on your table and Opp's.
   // Also undying, persist, afterlife and "whenever a creature dies" (Blood Artist) on either table.
@@ -2760,6 +2925,8 @@
     }
     // "When this enters, put a +1/+1 counter on each other creature you control" (Spider-Man): either table.
     Bot.enterTrigger(s, inst, def);
+    // "When this enters, destroy target creature an opponent controls", "… create two 1/1 tokens": you pick targets; Opp picks its own.
+    if (s === game || (hasBot() && s === game.bot.s)) Bot.enterEffects(game, s, inst, def, effectCtx());
     if (s === game && Game.isLand(inst) && !inst.faceDown) Bot.landEntered(game, inst, def, effectCtx());
     if (s === game) Bot.creatureEntered(game, inst, def, effectCtx());
     // "Choose one —": you tick the modes (after the move finishes, like the type prompt below).
@@ -2786,6 +2953,13 @@
   // A counterspell you cast counters the newest spell on any table: yours, Opp's, or an online
   // player's (sent to them, since their table is theirs to change). Mana spent on it stays spent.
   function counterNewest(by) {
+    // Opp's spell waiting on the stack for your answer is the newest.
+    if (hasBot() && game.bot.s.stack) {
+      const name = Bot.counterStack(game);
+      Game.log(game, `${by.name}: countered Opp's ${name}.`);
+      game.notice = `${by.name} countered Opp's ${name}. Click Let it resolve (or End turn) to let Opp carry on.${game.notice ? ' ' + game.notice : ''}`;
+      return;
+    }
     const picks = [];
     if (game.lastCast) picks.push({ at: game.lastCast.at, s: game });
     if (hasBot() && game.bot.s.lastCast) picks.push({ at: game.bot.s.lastCast.at, s: game.bot.s, opp: true });
@@ -3133,6 +3307,11 @@
         { label: 'Back to the lobby', action: () => { inLobby = true; renderPlay(); } },
       ] : hasBot() ? [] : [{ label: 'Roll for first (you vs Opp)', action: rollForFirst }]),
       { sep: true },
+      // For games the Simulator can't call itself (a concession, a kitchen-table game).
+      ...(game.recordedResult ? [] : [
+        { label: 'Record a win for this deck', action: () => recordResult('win', 'recorded by hand') },
+        { label: 'Record a loss for this deck', action: () => recordResult('loss', 'recorded by hand') },
+      ]),
       { label: 'Save and switch games', action: () => setTab('decks') },
       { label: 'End game', action: endGame },
     ]);
@@ -3427,6 +3606,151 @@
     }, 300) };
   }
 
+  // ---------- Auto-test tab: automatic games (autoplay.js) ----------
+
+  let autoRun = null; // the run going on now: { kind: 'gf' | 'mu', done, total, list, errors, stop }
+  const autoLast = { gf: null, mu: null }; // the latest finished results of each kind
+
+  function renderTest() {
+    const decks = allDecks();
+    if (!decks.length) {
+      view.innerHTML = '<div class="empty-play"><h3>No decks yet</h3><p class="muted">Link MTG Tracker or paste a deck on the Decks tab.</p></div>';
+      return;
+    }
+    const pick = k => (findDeck(ui[k]) ? ui[k] : decks[0].key);
+    const deckSel = (id, key) => `<select id="${id}">${decks.map(d => `<option value="${esc(d.key)}" ${d.key === key ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select>`;
+    const numSel = (id, val, list) => `<select id="${id}">${list.map(n => `<option ${n === val ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
+    const busy = autoRun ? 'disabled' : '';
+    view.innerHTML = `
+      <section class="panel">
+        <h3>Play a deck by itself</h3>
+        <p class="muted small">The computer plays the deck alone, many times over, with Opp's rules: a land each turn, the biggest spells it can afford, and an attack every turn.
+          Nobody blocks or removes anything, so this shows how fast the deck gets going: lands, creatures, your commander, and the turn it would have dealt ${'40 (Commander) or 20'} damage.</p>
+        <div class="toolbar tight">
+          <label class="muted small">Deck ${deckSel('gfDeck', pick('gfDeck'))}</label>
+          <label class="muted small">Games ${numSel('gfN', ui.gfN || 50, [25, 50, 100, 250])}</label>
+          <label class="muted small">Turns ${numSel('gfT', ui.gfT || 10, [6, 8, 10, 12, 15])}</label>
+          <label class="check small"><input type="checkbox" id="gfDraw" ${ui.gfDraw ? 'checked' : ''}> On the draw</label>
+          <button class="btn" data-act="auto-run" data-kind="gf" ${busy}>Run</button>
+        </div>
+        <div id="gfOut">${autoOut('gf')}</div>
+      </section>
+      <section class="panel">
+        <h3>Matchup: deck against deck</h3>
+        <p class="muted small">The computer plays both decks against each other with Opp's rules, taking turns going first. It attacks, blocks, and casts removal the way Opp does,
+          so it's a rough guide to which deck is faster or bigger, not what a good player would do.</p>
+        <div class="toolbar tight">
+          <label class="muted small">Deck ${deckSel('muA', pick('muA'))}</label>
+          <label class="muted small">against ${deckSel('muB', findDeck(ui.muB) ? ui.muB : (decks[1] || decks[0]).key)}</label>
+          <label class="muted small">Games ${numSel('muN', ui.muN || 50, [10, 25, 50, 100])}</label>
+          <button class="btn" data-act="auto-run" data-kind="mu" ${busy}>Run</button>
+        </div>
+        <div id="muOut">${autoOut('mu')}</div>
+      </section>`;
+  }
+
+  const tile =(big, small) => `<div class="stat-tile"><b>${esc(big)}</b><span class="muted small">${esc(small)}</span></div>`;
+
+  function autoOut(kind) {
+    if (autoRun && autoRun.kind === kind) return `<p class="muted">Playing game ${Math.min(autoRun.done + 1, autoRun.total)} of ${autoRun.total}… <button class="link-btn" data-act="auto-stop">Stop</button></p>`;
+    const r = autoLast[kind];
+    if (!r) return '';
+    const errs = r.errors ? `<p class="muted small">${r.errors} game${r.errors === 1 ? '' : 's'} stopped with an error and ${r.errors === 1 ? "isn't" : "aren't"} counted.</p>` : '';
+    return (kind === 'gf' ? goldfishHtml(r) : matchupHtml(r)) + errs;
+  }
+
+  function goldfishHtml(r) {
+    const s = r.sum;
+    const last = s.per[s.per.length - 1];
+    const t4 = s.per[Math.min(3, s.per.length - 1)];
+    const missedBy4 = s.per.slice(0, 4).reduce((n, p) => n + (1 - p.landDrop), 0);
+    return `<p class="small"><b>${esc(r.deck)}</b>, ${s.games} games ${r.onDraw ? 'on the draw' : 'on the play'}:</p>
+      <div class="stat-tiles">
+        ${tile(s.kill.median != null ? `Turn ${s.kill.median}` : '–', `usual kill turn (won in ${pct(s.kill.rate)} by turn ${last.turn})`)}
+        ${s.commander ? tile(`Turn ${s.commander.avg.toFixed(1)}`, `commander out on average (${pct(s.commander.cast)} of games)`) : ''}
+        ${tile(t4.lands.toFixed(1), 'lands on turn 4')}
+        ${tile(missedBy4.toFixed(1), 'land drops missed by turn 4')}
+        ${tile(t4.creatures.toFixed(1), 'creatures on turn 4')}
+      </div>
+      <h4>Damage dealt by each turn (average)</h4>
+      ${barChart(s.per.map(p => ({ x: `T${p.turn}`, value: p.damage, text: String(Math.round(p.damage)), tip: `Turn ${p.turn}: ${p.damage.toFixed(1)} damage so far, already won in ${pct(p.won)}` })), { label: 'Damage by turn' })}
+      <table class="list compact"><thead><tr><th>Turn</th><th class="num">Lands</th><th class="num">Land drop made</th><th class="num">Creatures</th><th class="num">Damage so far</th><th class="num">Already won</th></tr></thead>
+        <tbody>${s.per.map(p => `<tr><td>${p.turn}</td><td class="num">${p.lands.toFixed(1)}</td><td class="num">${pct(p.landDrop)}</td><td class="num">${p.creatures.toFixed(1)}</td><td class="num">${p.damage.toFixed(1)}</td><td class="num">${pct(p.won)}</td></tr>`).join('')}</tbody></table>`;
+  }
+
+  const WHY = { life: 'life to 0', poison: '10 poison', 'commander damage': '21 commander damage', 'empty library': 'drew from an empty library', 'turn limit': 'no winner by turn 25', 'both at once': 'both lost at once' };
+  function matchupHtml(r) {
+    const t = r.tally;
+    const n = t.games || 1;
+    return `<p class="small"><b>${esc(r.a)}</b> against <b>${esc(r.b)}</b>, ${t.games} games:</p>
+      <div class="stat-tiles">
+        ${tile(pct(t.a / n), `${r.a} won (${t.a})`)}
+        ${tile(pct(t.b / n), `${r.b} won (${t.b})`)}
+        ${t.draws ? tile(String(t.draws), 'no winner') : ''}
+        ${tile(t.avgTurns.toFixed(1), 'turns per game (each)')}
+        ${tile(pct(t.firstWins / Math.max(1, t.a + t.b)), 'won by whoever went first')}
+      </div>
+      <p class="muted small">How games ended: ${Object.entries(t.why).map(([k, v]) => `${esc(WHY[k] || k)} ${v}`).join(', ')}.</p>`;
+  }
+
+  async function runAuto(kind) {
+    if (autoRun) return;
+    const val = id => $('#' + id).value;
+    let decks;
+    if (kind === 'gf') {
+      Object.assign(ui, { gfDeck: val('gfDeck'), gfN: Number(val('gfN')), gfT: Number(val('gfT')), gfDraw: $('#gfDraw').checked });
+      decks = [findDeck(ui.gfDeck)];
+    } else {
+      Object.assign(ui, { muA: val('muA'), muB: val('muB'), muN: Number(val('muN')) });
+      decks = [findDeck(ui.muA), findDeck(ui.muB)];
+    }
+    saveSoon();
+    if (decks.some(d => !d)) return status('That deck is no longer available.', 'error');
+    autoRun = { kind, done: 0, total: kind === 'gf' ? ui.gfN : ui.muN, list: [], errors: 0, stop: false };
+    renderTest();
+    try {
+      await ensureDefs(decks.flatMap(d => d.rows.map(r => r.id)), true);
+    } catch (e) {
+      autoRun = null;
+      if (ui.tab === 'test') renderTest();
+      return status(`Could not get the card info from Scryfall (${e.message}).`, 'error');
+    }
+    const defs = {};
+    decks.forEach(d => d.rows.forEach(r => { if (def(r.id)) defs[r.id] = def(r.id); }));
+    // A few games at a time, so the page stays responsive.
+    const step = () => {
+      const run = autoRun;
+      if (!run) return;
+      const t0 = performance.now();
+      while (!run.stop && run.done < run.total && performance.now() - t0 < 60) {
+        try {
+          run.list.push(kind === 'gf'
+            ? Autoplay.goldfish(decks[0], defs, { maxTurns: ui.gfT, onDraw: ui.gfDraw })
+            : Autoplay.match(decks[0], decks[1], defs, { aFirst: run.done % 2 === 0 }));
+        } catch (e) {
+          run.errors++;
+          console.error(e);
+        }
+        run.done++;
+      }
+      if (!run.stop && run.done < run.total) {
+        const out = $(kind === 'gf' ? '#gfOut' : '#muOut');
+        if (out && ui.tab === 'test') out.innerHTML = autoOut(kind);
+        setTimeout(step, 0);
+        return;
+      }
+      autoRun = null;
+      if (run.list.length) {
+        autoLast[kind] = kind === 'gf'
+          ? { deck: decks[0].name, sum: Autoplay.summarize(run.list, ui.gfT), errors: run.errors, onDraw: ui.gfDraw }
+          : { a: decks[0].name, b: decks[1].name, tally: Autoplay.tally(run.list), errors: run.errors };
+      }
+      if (ui.tab === 'test') renderTest();
+      status(run.list.length ? `Played ${run.list.length} game${run.list.length === 1 ? '' : 's'}.` : 'Stopped.', 'ok');
+    };
+    setTimeout(step, 0);
+  }
+
   // ---------- Odds tab ----------
 
   function barChart(items, opts = {}) {
@@ -3638,7 +3962,12 @@
           <li><b>Regenerate</b>: activate an ability like "Discard a card: Regenerate" before combat (right-click → Activate). The card shows REGEN until the turn ends, and the next time it would be destroyed it's tapped instead. Opp regenerates its own creatures when they'd die, if it can pay.</li>
           <li><b>End turn ▸</b> (or <kbd>N</kbd>): Opp takes its turn. When it attacks, you pick your blockers. Then your turn starts: you untap and draw.</li>
           <li>Use − and + on Opp's life for anything the game doesn't do itself. Undo takes back Opp's turn one step at a time.</li>
+          <li><b>Responses</b> (top bar): Opp holds instant removal for when you attack or your end step, and counters your spells that cost 3 or more. When Opp casts something and you have an instant you can pay for, its spell waits: <b>Answer it</b> to cast yours (a counterspell counters it), or <b>Let it resolve</b>.</li>
+          <li><b>Targets:</b> your cards that destroy, exile, bounce, burn, tap, pump or put counters on a target ask you to pick it. Opp picks its own.</li>
+          <li><b>Your record:</b> when a game ends, closing the message saves a win or loss for your deck (or use <b>More ▾ → Record a win / loss</b>). It shows on the Decks tab and on the deck's page in MTG Tracker.</li>
         </ul>
+        <h3>Auto-test</h3>
+        <p>The computer plays a deck by itself many times (how fast it gets going), or two decks against each other (who wins how often). It plays like Opp, so treat it as a rough guide.</p>
         <h3>Playing online</h3>
         <ul>
           <li>Play against up to 3 friends. Everyone needs the MTG Tracker folder and internet.</li>
@@ -3748,6 +4077,9 @@
       case 'crew-go': return crewGo(b.dataset.iid, b.dataset.back);
       case 'blocks-done': return blocksDone();
       case 'taps-done': return tapsDone();
+      case 'respond-open': return openRespond();
+      case 'auto-run': return runAuto(b.dataset.kind);
+      case 'auto-stop': if (autoRun) autoRun.stop = true; return;
       case 'blocks-online': return blocksOnlineDone();
       case 'bot-play': return playBot();
       case 'hit': {
@@ -3842,6 +4174,11 @@
   document.addEventListener('input', e => {
     if (e.target.dataset.act === 'size') { ui.cardW = Number(e.target.value); renderBoard(); }
     if (e.target.dataset.act === 'autotap') { ui.autoTap = e.target.checked; saveSoon(); status(ui.autoTap ? 'Auto-tap is on: playing a spell taps the lands it needs.' : 'Auto-tap is off.'); }
+    if (e.target.dataset.act === 'respondhelp') {
+      ui.respond = e.target.checked;
+      saveSoon();
+      status(ui.respond ? 'Opp now waits for your answer when you could respond, and answers on your turn too.' : 'Opp no longer waits for your answers, and casts everything on its own turn.');
+    }
     if (e.target.dataset.act === 'upkeephelp') {
       ui.upkeepOff = !e.target.checked;
       saveSoon();
@@ -3993,6 +4330,7 @@
       local.cards = (await Store.get('cards')) || {};
       Object.assign(ui, (await Store.get('ui')) || {});
       games = (await Store.get('games')) || [];
+      results = (await Store.get('results')) || [];
       // Saved before there could be more than one game.
       const old = await Store.get('game');
       if (old) {

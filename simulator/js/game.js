@@ -20,7 +20,8 @@ const Game = (() => {
   // hooks.tokenEntered(s, inst) when a token is created; hooks.died(s, inst, { counters, to }) when one
   // goes from the battlefield to the graveyard ("When this dies, …", undying); hooks.cast(s, inst)
   // after a spell cast from hand or the command zone arrives (prowess).
-  const hooks = { entered: null, tokenEntered: null, died: null, cast: null };
+  // hooks.casting(s, inst) returns true when the spell being cast is countered (Opp's counterspell).
+  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -859,6 +860,13 @@ const Game = (() => {
     const inst = s.cards[iid];
     if (!inst) return;
     const from = inst.zone;
+    // Countered as it's cast (hooks.casting, Opp's counterspell): it never arrives. Its mana stays spent.
+    if (to === 'battlefield' && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown && hooks.casting && hooks.casting(s, inst)) {
+      if (from !== 'command') return move(s, iid, 'graveyard');
+      inst.castCount = (inst.castCount || 0) + 1; // the tax still goes up
+      log(s, `${inst.name} was countered and stays in the command zone.`);
+      return;
+    }
     const list = s.zones[from];
     const at = list.indexOf(iid);
     if (at >= 0) list.splice(at, 1);
