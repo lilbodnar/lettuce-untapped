@@ -487,7 +487,11 @@ body.peek .side { position: relative; z-index: 51; }
 .change-boxes textarea { width: 100%; font: inherit; }
 @media (max-width: 600px) { .change-boxes { grid-template-columns: 1fr; } }
 .table-scroll { overflow-x: auto; max-width: 100%; }
-table.gauntlet th, table.gauntlet td { white-space: nowrap; }
+table.gauntlet { border-collapse: collapse; }
+table.gauntlet th, table.gauntlet td { white-space: nowrap; padding: .35rem .8rem; text-align: center; }
+table.gauntlet th:first-child, table.gauntlet td:first-child { text-align: left; }
+table.gauntlet thead th { border-bottom: 1px solid var(--line); vertical-align: bottom; }
+table.gauntlet td:last-child, table.gauntlet th:last-child { border-left: 1px solid var(--line); }
 td.ok, th.ok { color: var(--ok); }
 td.bad, th.bad, p.bad, span.bad { color: var(--bad); }
 tr.best td { background: color-mix(in srgb, var(--ok) 15%, transparent); font-weight: 600; }

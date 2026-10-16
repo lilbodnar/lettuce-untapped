@@ -3817,6 +3817,7 @@
             return `<td class="num ${shade(v)}" title="${c ? `${c.w} wins in ${c.g} games` : ''}">${v == null ? '–' : pct(v)}</td>`;
           }).join('')}<td class="num"><b>${overall && overall.rate != null ? pct(overall.rate) : '–'}</b></td></tr>`;
         }).join('')}</tbody></table></div>
+      <p class="muted small">Each cell is how often the row's deck beat the column's. A pair can add up to less than 100% when some games had no winner by turn 25.</p>
       ${r.focus == null ? `<h4>Ranking</h4><ol>${rank.map(x => `<li><b>${esc(x.name)}</b> ${pct(x.rate)} of ${x.g} games won</li>`).join('')}</ol>`
         : (() => {
           const worst = cols.map(j => ({ j, c: cell(r.focus, j) })).filter(x => x.c && x.c.g).sort((a, b) => a.c.w / a.c.g - b.c.w / b.c.g)[0];
