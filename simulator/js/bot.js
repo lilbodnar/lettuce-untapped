@@ -1612,6 +1612,8 @@ const Bot = (() => {
   function spellCast(game, s, spell, defOf, ctx) {
     if (s.spellTurn !== s.turn) { s.spellTurn = s.turn; s.spellsThisTurn = 0; }
     s.spellsThisTurn++;
+    // Automatic games keep the turn each card was first cast, for the Auto-test card impact table.
+    if (s.trackCasts && spell.id && !(spell.id in (s.casts = s.casts || {}))) s.casts[spell.id] = s.turn;
     if (!G.isCreature(spell)) {
       const prowess = creatures(s, c => c !== spell && stats(c, c.bot || defOf(c.id)).kw.has('prowess'));
       prowess.forEach(c => pumpBy(c, 1, 1));
@@ -1848,13 +1850,23 @@ const Bot = (() => {
     return m ? permanents(s).filter(c => isA(c, m[1])).length : null;
   }
   // Also "create a number of 2/2 white Knight creature tokens with vigilance equal to the number of
-  // opponents you have" (or "… of Elves you control").
-  const TOKEN_TEXT = /^create (a number of|\w+) (\d+)\/(\d+) ([a-z ,'-]+?) creature tokens?(?: with ([^.]+?))?(?: that(?: are|'s| is) (?:(tapped and )?(attacking)|(blocking) that creature))?(?: equal to the number of (.+?))?\.?$/i;
+  // opponents you have" (or "… of Elves you control"), and X: "create X 1/1 white Soldier creature
+  // tokens that are tapped and attacking, where X is the number of opponents you have", "create an
+  // X/X green Ooze creature token, where X is the number of creatures you control".
+  const TOKEN_TEXT = /^create (a number of|\w+) (\d+|x)\/(\d+|x) ([a-z ,'-]+?) creature tokens?(?: with ([^.]+?))?(?: that(?: are|'s| is) (?:(tapped and )?(attacking)|(blocking) that creature))?(?: equal to the number of (.+?))?(?:,? where x is (?:the number of )?(.+?))?\.?$/i;
   function triggerTokens(s, inst, text, event) {
     const m = TOKEN_TEXT.exec(text);
-    if (m && /^a number of$/i.test(m[1]) !== !!m[9]) return null;
-    const made = m && (m[9] ? numberOf(s, m[9]) : toNumber(m[1]));
-    if (m && m[9] && made === 0) { G.log(s, `${inst.name} ${event}: no tokens to make (the number of ${m[9]} is 0).`); return []; }
+    if (!m) return null;
+    if (/^a number of$/i.test(m[1]) !== !!m[9]) return null;
+    const usesX = [m[1], m[2], m[3]].some(v => /^x$/i.test(v));
+    if (usesX !== !!m[10]) return null; // an X with nothing saying what it is (or the other way round)
+    const x = m[10] ? numberOf(s, m[10]) : 0;
+    if (m[10] && x == null) return null; // an X it can't count
+    const val = v => (/^x$/i.test(v) ? x : /^\d+$/.test(v) ? Number(v) : toNumber(v));
+    const made = m[9] ? numberOf(s, m[9]) : val(m[1]);
+    const pow = val(m[2]);
+    const tou = val(m[3]);
+    if ((m[9] || /^x$/i.test(m[1])) && made === 0) { G.log(s, `${inst.name} ${event}: no tokens to make (X is 0).`); return []; }
     if (!made) return null;
     const { n, by } = G.tokenCount(s, made); // Doubling Season, Parallel Lives…
     const words = m[4].replace(/,/g, ' ').split(/\s+/).filter(w => w && w.toLowerCase() !== 'and');
@@ -1866,13 +1878,13 @@ const Bot = (() => {
     const tapped = joins && !!m[6];
     const out = [];
     for (let i = 0; i < n; i++) {
-      const tok = G.createToken(s, { custom: true, name: type, typeLine: `Token Creature — ${type}`, pt: `${m[2]}/${m[3]}`, text: abilities }, { quiet: true });
-      if (inst.bot) tok.bot = { cost: '', cmc: 0, power: m[2], toughness: m[3], kw, colors, spell: null }; // Opp's: the facts botStats reads
+      const tok = G.createToken(s, { custom: true, name: type, typeLine: `Token Creature — ${type}`, pt: `${pow}/${tou}`, text: abilities }, { quiet: true });
+      if (inst.bot) tok.bot = { cost: '', cmc: 0, power: String(pow), toughness: String(tou), kw, colors, spell: null }; // Opp's: the facts botStats reads
       if (tapped) { tok.tapped = true; tok.tappedFor = null; }
       if (joins) out.push(tok.iid);
     }
     const how = !joins ? '' : event === 'blocks' ? ', blocking the same creature' : tapped ? ', tapped and attacking' : ', attacking';
-    G.log(s, `${inst.name} ${event}: created ${n} ${m[2]}/${m[3]} ${type} token${n === 1 ? '' : 's'}${kw.length ? ` with ${kw.join(', ')}` : ''}${how}${by.length ? ` (doubled by ${by.join(', ')})` : ''}.`);
+    G.log(s, `${inst.name} ${event}: created ${n} ${pow}/${tou} ${type} token${n === 1 ? '' : 's'}${kw.length ? ` with ${kw.join(', ')}` : ''}${how}${by.length ? ` (doubled by ${by.join(', ')})` : ''}.`);
     return out;
   }
 

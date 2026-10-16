@@ -49,3 +49,40 @@ test('Opp targets with an enters trigger in an automatic game', () => {
   const r = Autoplay.match(black, green, defs, { aFirst: true, maxTurns: 12 });
   assert.ok(['A', 'B', null].includes(r.winner));
 });
+
+test('card impact, opening hands and the kill-turn histogram from games alone', () => {
+  const games = Array.from({ length: 40 }, () => Autoplay.goldfish(red, defs, { maxTurns: 10 }));
+  const sum = Autoplay.summarize(games, 10);
+  assert.equal(sum.kill.hist.reduce((a, b) => a + b, 0) + sum.kill.never, 40);
+  assert.ok(sum.byOpen.length >= 1);
+  assert.equal(sum.byOpen.reduce((n, b) => n + b.games, 0), 40);
+  assert.ok(games.every(g => g.cards && typeof g.cards.cast === 'object'));
+  const isLand = id => /land/i.test(defs[id].typeLine);
+  const rows = Autoplay.cardImpact(games.map(g => ({ cards: g.cards, kill: g.killTurn })), red, isLand, 'alone', 10);
+  assert.deepEqual(rows.map(r => r.id).sort(), ['goblin', 'ogre']);
+  const goblin = rows.find(r => r.id === 'goblin');
+  assert.ok(goblin.castRate > 0.5 && goblin.drawnRate > 0.5);
+});
+
+test('matchups are split by who went first and keep each deck\'s cards', () => {
+  const results = Array.from({ length: 8 }, (_, i) => Autoplay.match(red, green, defs, { aFirst: i % 2 === 0 }));
+  const t = Autoplay.tally(results);
+  assert.equal(t.aFirst.games, 4);
+  assert.equal(t.bFirst.games, 4);
+  assert.ok(results.every(r => r.cardsA && r.cardsB && r.openA != null));
+});
+
+test('deck variants: more or fewer lands, and cards swapped', () => {
+  const isLand = id => /land/i.test(defs[id].typeLine);
+  const isBasic = id => /basic/i.test(defs[id].typeLine);
+  const count = (d, f) => d.rows.filter(r => f(r.id)).reduce((n, r) => n + r.qty, 0);
+  assert.equal(count(Autoplay.withLands(red, 2, isLand, isBasic), isLand), 19);
+  assert.equal(count(Autoplay.withLands(red, -4, isLand, isBasic), isLand), 13);
+  assert.equal(count(red, isLand), 17); // the deck itself isn't changed
+  const { deck, missing } = Autoplay.withChanges(red, [{ id: 'ogre', name: 'Hill Giant', qty: 2 }, { name: 'Nothing Here', qty: 1 }], [{ id: 'bear', name: 'Grizzly Bears', qty: 2 }]);
+  assert.equal(deck.rows.find(r => r.id === 'ogre').qty, 6);
+  assert.equal(deck.rows.find(r => r.id === 'bear').qty, 2);
+  assert.deepEqual(missing, ['Nothing Here']);
+  assert.notEqual(deck.key, red.key);
+  assert.equal(red.rows.find(r => r.id === 'ogre').qty, 8);
+});

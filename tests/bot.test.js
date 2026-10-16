@@ -61,7 +61,9 @@ test('Opp plays lands and spells and attacks an empty board', () => {
     Bot.endTurn(game, defOf);
   }
   const s = game.bot.s;
-  assert.ok(s.zones.battlefield.filter(iid => Game.isLand(s.cards[iid])).length >= 4);
+  // A land each turn: every land it drew is out, up to 4 (a land-light draw has fewer).
+  const drawn = Object.values(s.cards).filter(c => Game.isLand(c) && c.zone !== 'library').length;
+  assert.ok(s.zones.battlefield.filter(iid => Game.isLand(s.cards[iid])).length >= Math.min(4, drawn));
   assert.ok(s.zones.battlefield.filter(iid => Game.isCreature(s.cards[iid])).length >= 3);
   assert.ok(game.life < 20, 'hasty goblins should have hit you');
   assert.ok(s.zones.hand.length <= 7);

@@ -161,8 +161,13 @@ The game doesn't enforce the rules. It's like playing at a kitchen table: everyo
 
 The computer plays your decks by itself, many games in a row, with Opp's rules. It takes a few seconds for 100 games.
 
-- **Play a deck by itself**: the deck plays alone against an empty table that never blocks. You see, by turn, how many lands and creatures it has, how often it made its land drop, how much damage it has dealt, and how often it would already have won. Also the usual kill turn (40 damage in Commander, 20 otherwise) and when the commander comes out.
-- **Matchup**: two decks play each other, taking turns going first. You see how often each won, how long games take, how they ended (life, poison, commander damage, an empty library) and how much going first helped.
+- **Play a deck by itself**: the deck plays alone against an empty table that never blocks. You see, by turn, how many lands and creatures it has, how often it made its land drop, how much damage it has dealt, and how often it would already have won. Also the usual kill turn (40 damage in Commander, 20 otherwise) with a chart of how many games were won on each turn, when the commander comes out, and how often it stalled (under 3 lands on turn 4) or flooded (2 or more lands stuck in hand on turn 6).
+  - **Opening hands**: the same games grouped by lands in the hand it kept (0–1, 2, 3, 4, 5+), with the kill turn and how often each stalled or flooded. A data-backed mulligan guide.
+  - **Card impact**: for every nonland card, how often it was drawn and cast, the kill turn in games where it was cast against games where it wasn't, and how often it sat in hand uncast. The top and bottom cards are called out as "pulling their weight" and "could be cut".
+- **Matchup**: two decks play each other, taking turns going first. You see how often each won, how long games take, how they ended (life, poison, commander damage, an empty library), each deck's win rate when it went first and when it didn't, and card impact for the first deck (win rate with each card cast, and without).
+- **Gauntlet**: one deck against each of your other decks, or every deck against every other. A table of win rates (green is good for the row's deck, red is bad), an overall win rate per deck, and a ranking (or the hardest matchup for the one deck).
+- **Try a change**: write cards to take out and put in (one per line, like `2 Shock`), and the old and new versions play side by side: kill turn, land drops, stalls and floods, and optionally the win rate against one of your other decks. Cards you put in are looked up on Scryfall. Your deck isn't changed.
+- **How many lands?**: the deck plays alone with 4 and 2 fewer lands, as it is, and with 2 and 4 more (basic lands are added or taken out). The table compares kill turns, missed land drops, stalls and floods, and highlights the count that did best.
 
 It's the same simple Opp as above playing both sides, so it's good for comparing versions of a deck or seeing which deck is faster, not for predicting a game against a real player. Auto-test games aren't saved and don't count toward a deck's record.
 

@@ -254,3 +254,34 @@ test('decayed attackers are sacrificed after combat', () => {
   assert.equal(game.oppLife, 18);
   assert.equal(z.zone, 'graveyard');
 });
+
+test('attack triggers that make X tokens tapped and attacking', () => {
+  const mk = (id, name, oracle) => ({ id, name, typeLine: 'Creature — Human Soldier', manaCost: '{3}', cmc: 3, power: '3', toughness: '3', oracle });
+  const all = Object.assign({
+    hero: mk('hero', 'Hero of Bladehold', 'Battle cry\nWhenever Hero of Bladehold attacks, create two 1/1 white Soldier creature tokens that are tapped and attacking.'),
+    xs: mk('xs', 'X Captain', 'Whenever X Captain attacks, create X 1/1 white Soldier creature tokens that are tapped and attacking, where X is the number of opponents you have.'),
+    ooze: mk('ooze', 'Ooze Caller', "Whenever Ooze Caller attacks, create an X/X green Ooze creature token that's tapped and attacking, where X is the number of creatures you control."),
+  }, defs);
+  const run = (id, opponents) => {
+    const g = Game.create(deck('You', [{ id, qty: 3 }, { id: 'bear', qty: 2 }, { id: 'forest', qty: 30 }]), all);
+    g.bot = Bot.create(deck('Opp', [{ id: 'forest', qty: 40 }]), all, { onDraw: true });
+    g.oppLife = 40;
+    g.opponents = opponents;
+    const a = Object.values(g.cards).find(x => x.id === id);
+    Game.move(g, a.iid, 'battlefield');
+    a.enteredTurn = -1;
+    const b = Object.values(g.cards).find(x => x.id === 'bear');
+    Game.move(g, b.iid, 'battlefield');
+    Bot.resolveYourAttack(g, [a.iid], id2 => all[id2]);
+    return { g, tokens: g.zones.battlefield.map(i => g.cards[i]).filter(x => x.token) };
+  };
+  let r = run('hero', 1);
+  assert.equal(r.tokens.length, 2);
+  assert.ok(r.tokens.every(t => t.tapped && t.attackedTurn === r.g.turn));
+  assert.equal(r.g.oppLife, 40 - 3 - 2 - 2); // battle cry: each Soldier is 2/1
+  r = run('xs', 3);
+  assert.equal(r.tokens.length, 3);
+  r = run('ooze', 1);
+  assert.equal(r.tokens.length, 1);
+  assert.equal(r.tokens[0].custom.pt, '2/2'); // Ooze Caller and the Bears
+});

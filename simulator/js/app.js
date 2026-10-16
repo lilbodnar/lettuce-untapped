@@ -1265,6 +1265,7 @@
         Then ${who}, the damage is done and creatures that die go to the graveyard (commanders to the command zone).
         "Whenever this attacks" pumps (like Ashcoat's) and tokens that enter attacking (like Leonin Warleader's and Brimaz's) are counted; pump spells and other abilities aren't, so use counters first, or Undo if it should have gone differently.</p>
       ${notes.map(n => `<p class="small"><b>${esc(n)}</b></p>`).join('')}
+      ${targets.length && canAttack ? `<div class="toolbar tight"><button class="btn sm ghost" data-act="attack-all" data-on="1">Select all that can attack</button><button class="btn sm ghost" data-act="attack-all" data-on="">Clear</button></div>` : ''}
       ${!targets.length ? '<p class="muted">There\'s no one you can attack this combat.</p>' : rows.length ? `<div class="attack-list">${rows.join('')}</div>` : '<p class="muted">You have no creatures on the battlefield.</p>'}
       ${vehicles.length ? `<h4>Vehicles</h4><p class="muted small">Crew a Vehicle by tapping creatures with enough total power. It's a creature until the turn ends, and then it can attack.</p><div class="attack-list">${vehicles.join('')}</div>` : ''}
       <div class="toolbar"><button class="btn" data-act="attack-go" ${canAttack && targets.length ? '' : 'disabled'}>Attack</button></div>`);
@@ -3607,9 +3608,13 @@
   }
 
   // ---------- Auto-test tab: automatic games (autoplay.js) ----------
+  // Kinds of run: gf (a deck alone), mu (matchup), gt (gauntlet), tc (try a change), lc (land count).
 
-  let autoRun = null; // the run going on now: { kind: 'gf' | 'mu', done, total, list, errors, stop }
-  const autoLast = { gf: null, mu: null }; // the latest finished results of each kind
+  let autoRun = null; // the run going on now: { kind, done, total, errors, stop }
+  const autoLast = {}; // the latest finished results of each kind
+
+  const isLandId = id => Game.isLand(def(id) || {});
+  const isBasicId = id => /\bbasic\b/i.test(((def(id) || {}).typeLine || '').split('//')[0]) && isLandId(id);
 
   function renderTest() {
     const decks = allDecks();
@@ -3617,71 +3622,160 @@
       view.innerHTML = '<div class="empty-play"><h3>No decks yet</h3><p class="muted">Link MTG Tracker or paste a deck on the Decks tab.</p></div>';
       return;
     }
-    const pick = k => (findDeck(ui[k]) ? ui[k] : decks[0].key);
-    const deckSel = (id, key) => `<select id="${id}">${decks.map(d => `<option value="${esc(d.key)}" ${d.key === key ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select>`;
+    const pick = (k, i = 0) => (findDeck(ui[k]) ? ui[k] : (decks[i] || decks[0]).key);
+    const deckSel = (id, key, extra = '') => `<select id="${id}">${extra}${decks.map(d => `<option value="${esc(d.key)}" ${d.key === key ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select>`;
     const numSel = (id, val, list) => `<select id="${id}">${list.map(n => `<option ${n === val ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
-    const busy = autoRun ? 'disabled' : '';
+    const run = kind => `<button class="btn" data-act="auto-run" data-kind="${kind}" ${autoRun ? 'disabled' : ''}>Run</button>`;
+    const out = kind => `<div id="out-${kind}">${autoOut(kind)}</div>`;
     view.innerHTML = `
+      <p class="muted small">The computer plays your decks with Opp's rules: a land each turn, the biggest spells it can afford, attacks that look safe, and Opp's removal and blocks.
+        It's a rough guide for comparing decks and versions of a deck, not what a good player would do. Nothing here changes your decks or counts toward their record.</p>
       <section class="panel">
         <h3>Play a deck by itself</h3>
-        <p class="muted small">The computer plays the deck alone, many times over, with Opp's rules: a land each turn, the biggest spells it can afford, and an attack every turn.
-          Nobody blocks or removes anything, so this shows how fast the deck gets going: lands, creatures, your commander, and the turn it would have dealt ${'40 (Commander) or 20'} damage.</p>
+        <p class="muted small">The deck plays alone against an empty table that never blocks: how fast it gets going, when it would have dealt ${'40 (Commander) or 20'} damage, which opening hands work, and which cards help.</p>
         <div class="toolbar tight">
           <label class="muted small">Deck ${deckSel('gfDeck', pick('gfDeck'))}</label>
-          <label class="muted small">Games ${numSel('gfN', ui.gfN || 50, [25, 50, 100, 250])}</label>
+          <label class="muted small">Games ${numSel('gfN', ui.gfN || 100, [25, 50, 100, 250, 500])}</label>
           <label class="muted small">Turns ${numSel('gfT', ui.gfT || 10, [6, 8, 10, 12, 15])}</label>
           <label class="check small"><input type="checkbox" id="gfDraw" ${ui.gfDraw ? 'checked' : ''}> On the draw</label>
-          <button class="btn" data-act="auto-run" data-kind="gf" ${busy}>Run</button>
+          ${run('gf')}
         </div>
-        <div id="gfOut">${autoOut('gf')}</div>
+        ${out('gf')}
       </section>
       <section class="panel">
         <h3>Matchup: deck against deck</h3>
-        <p class="muted small">The computer plays both decks against each other with Opp's rules, taking turns going first. It attacks, blocks, and casts removal the way Opp does,
-          so it's a rough guide to which deck is faster or bigger, not what a good player would do.</p>
+        <p class="muted small">Two decks play each other, taking turns going first.</p>
         <div class="toolbar tight">
           <label class="muted small">Deck ${deckSel('muA', pick('muA'))}</label>
-          <label class="muted small">against ${deckSel('muB', findDeck(ui.muB) ? ui.muB : (decks[1] || decks[0]).key)}</label>
-          <label class="muted small">Games ${numSel('muN', ui.muN || 50, [10, 25, 50, 100])}</label>
-          <button class="btn" data-act="auto-run" data-kind="mu" ${busy}>Run</button>
+          <label class="muted small">against ${deckSel('muB', pick('muB', 1))}</label>
+          <label class="muted small">Games ${numSel('muN', ui.muN || 50, [10, 25, 50, 100, 250])}</label>
+          ${run('mu')}
         </div>
-        <div id="muOut">${autoOut('mu')}</div>
+        ${out('mu')}
+      </section>
+      <section class="panel">
+        <h3>Gauntlet</h3>
+        <p class="muted small">One deck against each of your other decks, or every deck against every other: a table of win rates and a ranking.</p>
+        <div class="toolbar tight">
+          <label class="muted small">Deck ${deckSel('gtDeck', ui.gtDeck === '*' ? '' : pick('gtDeck'), `<option value="*" ${ui.gtDeck === '*' ? 'selected' : ''}>Every deck against every deck</option>`)}</label>
+          <label class="muted small">Games per pairing ${numSel('gtN', ui.gtN || 20, [10, 20, 50, 100])}</label>
+          ${run('gt')}
+        </div>
+        <p class="muted small">${decks.length - 1} other deck${decks.length === 2 ? '' : 's'}. Every deck against every deck is ${decks.length * (decks.length - 1) / 2} pairings.</p>
+        ${out('gt')}
+      </section>
+      <section class="panel">
+        <h3>Try a change</h3>
+        <p class="muted small">Take cards out and put others in, then play the old and new versions side by side. Your deck isn't changed.
+          Write one card per line, like <code>2 Shock</code> or <code>Grizzly Bears</code>.</p>
+        <div class="toolbar tight">
+          <label class="muted small">Deck ${deckSel('tcDeck', pick('tcDeck'))}</label>
+          <label class="muted small">Also against ${deckSel('tcOpp', findDeck(ui.tcOpp) ? ui.tcOpp : '', `<option value="" ${findDeck(ui.tcOpp) ? '' : 'selected'}>nobody (alone only)</option>`)}</label>
+          <label class="muted small">Games ${numSel('tcN', ui.tcN || 100, [25, 50, 100, 250])}</label>
+        </div>
+        <div class="change-boxes">
+          <label class="muted small">Take out<textarea id="tcOut" rows="4" placeholder="2 Shock">${esc(ui.tcOut || '')}</textarea></label>
+          <label class="muted small">Put in<textarea id="tcIn" rows="4" placeholder="2 Grizzly Bears">${esc(ui.tcIn || '')}</textarea></label>
+        </div>
+        <div class="toolbar tight">${run('tc')}</div>
+        ${out('tc')}
+      </section>
+      <section class="panel">
+        <h3>How many lands?</h3>
+        <p class="muted small">The deck plays alone with 4 and 2 fewer lands, as it is, and with 2 and 4 more (basic lands are added or taken out, so the deck gets a little smaller or bigger).
+          You see missed land drops, flooding and the kill turn for each, and which count did best.</p>
+        <div class="toolbar tight">
+          <label class="muted small">Deck ${deckSel('lcDeck', pick('lcDeck'))}</label>
+          <label class="muted small">Games each ${numSel('lcN', ui.lcN || 100, [50, 100, 250])}</label>
+          ${run('lc')}
+        </div>
+        ${out('lc')}
       </section>`;
   }
 
-  const tile =(big, small) => `<div class="stat-tile"><b>${esc(big)}</b><span class="muted small">${esc(small)}</span></div>`;
+  const tile = (big, small) => `<div class="stat-tile"><b>${esc(big)}</b><span class="muted small">${esc(small)}</span></div>`;
+  const turnText = t => (t == null ? '–' : `Turn ${Number.isInteger(t) ? t : t.toFixed(1)}`);
 
   function autoOut(kind) {
     if (autoRun && autoRun.kind === kind) return `<p class="muted">Playing game ${Math.min(autoRun.done + 1, autoRun.total)} of ${autoRun.total}… <button class="link-btn" data-act="auto-stop">Stop</button></p>`;
     const r = autoLast[kind];
     if (!r) return '';
     const errs = r.errors ? `<p class="muted small">${r.errors} game${r.errors === 1 ? '' : 's'} stopped with an error and ${r.errors === 1 ? "isn't" : "aren't"} counted.</p>` : '';
-    return (kind === 'gf' ? goldfishHtml(r) : matchupHtml(r)) + errs;
+    const html = { gf: goldfishHtml, mu: matchupHtml, gt: gauntletHtml, tc: changeHtml, lc: landsHtml }[kind](r);
+    return html + errs;
+  }
+
+  // Kill turns as bars: games won on each turn, and how many never did.
+  function killChart(s) {
+    const items = s.kill.hist.map((n, i) => ({ x: `T${i + 1}`, value: n, text: n ? String(n) : '', tip: `Won on turn ${i + 1}: ${n} of ${s.games} games (${pct(n / s.games)})` }));
+    if (s.kill.never) items.push({ x: 'Later', value: s.kill.never, text: String(s.kill.never), tip: `Not won by the last turn: ${s.kill.never} games`, hot: true });
+    return barChart(items, { label: 'Kill turns' });
   }
 
   function goldfishHtml(r) {
     const s = r.sum;
     const last = s.per[s.per.length - 1];
     const t4 = s.per[Math.min(3, s.per.length - 1)];
-    const missedBy4 = s.per.slice(0, 4).reduce((n, p) => n + (1 - p.landDrop), 0);
     return `<p class="small"><b>${esc(r.deck)}</b>, ${s.games} games ${r.onDraw ? 'on the draw' : 'on the play'}:</p>
       <div class="stat-tiles">
-        ${tile(s.kill.median != null ? `Turn ${s.kill.median}` : '–', `usual kill turn (won in ${pct(s.kill.rate)} by turn ${last.turn})`)}
-        ${s.commander ? tile(`Turn ${s.commander.avg.toFixed(1)}`, `commander out on average (${pct(s.commander.cast)} of games)`) : ''}
+        ${tile(turnText(s.kill.median), `usual kill turn (won in ${pct(s.kill.rate)} by turn ${last.turn})`)}
+        ${s.commander ? tile(turnText(s.commander.avg), `commander out on average (${pct(s.commander.cast)} of games)`) : ''}
         ${tile(t4.lands.toFixed(1), 'lands on turn 4')}
-        ${tile(missedBy4.toFixed(1), 'land drops missed by turn 4')}
-        ${tile(t4.creatures.toFixed(1), 'creatures on turn 4')}
+        ${tile(s.missedBy4.toFixed(1), 'land drops missed by turn 4')}
+        ${tile(pct(s.stall), 'stalled (under 3 lands on turn 4)')}
+        ${tile(pct(s.flood), 'flooded (2+ lands stuck in hand on turn 6)')}
       </div>
+      <h4>Kill turns</h4>
+      ${killChart(s)}
       <h4>Damage dealt by each turn (average)</h4>
       ${barChart(s.per.map(p => ({ x: `T${p.turn}`, value: p.damage, text: String(Math.round(p.damage)), tip: `Turn ${p.turn}: ${p.damage.toFixed(1)} damage so far, already won in ${pct(p.won)}` })), { label: 'Damage by turn' })}
-      <table class="list compact"><thead><tr><th>Turn</th><th class="num">Lands</th><th class="num">Land drop made</th><th class="num">Creatures</th><th class="num">Damage so far</th><th class="num">Already won</th></tr></thead>
-        <tbody>${s.per.map(p => `<tr><td>${p.turn}</td><td class="num">${p.lands.toFixed(1)}</td><td class="num">${pct(p.landDrop)}</td><td class="num">${p.creatures.toFixed(1)}</td><td class="num">${p.damage.toFixed(1)}</td><td class="num">${pct(p.won)}</td></tr>`).join('')}</tbody></table>`;
+      <details><summary>Turn by turn</summary>
+        <table class="list compact"><thead><tr><th>Turn</th><th class="num">Lands</th><th class="num">Land drop made</th><th class="num">Creatures</th><th class="num">Damage so far</th><th class="num">Already won</th></tr></thead>
+          <tbody>${s.per.map(p => `<tr><td>${p.turn}</td><td class="num">${p.lands.toFixed(1)}</td><td class="num">${pct(p.landDrop)}</td><td class="num">${p.creatures.toFixed(1)}</td><td class="num">${p.damage.toFixed(1)}</td><td class="num">${pct(p.won)}</td></tr>`).join('')}</tbody></table>
+      </details>
+      ${openingHtml(s)}
+      ${impactHtml(r.impact, 'alone')}`;
+  }
+
+  // The mulligan guide: games grouped by lands in the opening hand.
+  function openingHtml(s) {
+    if (!s.byOpen.length) return '';
+    return `<details open><summary>Opening hands</summary>
+      <p class="muted small">Games grouped by how many lands were in the hand it kept${s.mulligan ? ` (it mulliganed ${pct(s.mulligan)} of the time; Opp keeps 2 to 5 lands)` : ''}. A hand that stalls or floods often is one to mulligan.</p>
+      <table class="list compact"><thead><tr><th>Lands in hand</th><th class="num">Games</th><th class="num">Usual kill turn</th><th class="num">Won by the last turn</th><th class="num">Stalled</th><th class="num">Flooded</th></tr></thead>
+        <tbody>${s.byOpen.map(b => `<tr><td>${esc(b.lands)}</td><td class="num">${b.games} (${pct(b.share)})</td><td class="num">${turnText(b.killMedian)}</td><td class="num">${pct(b.killRate)}</td><td class="num ${b.stall >= 0.4 ? 'bad' : ''}">${pct(b.stall)}</td><td class="num ${b.flood >= 0.4 ? 'bad' : ''}">${pct(b.flood)}</td></tr>`).join('')}</tbody></table>
+    </details>`;
+  }
+
+  // Card impact: what casting each card did for the deck (alone: kill turn; matchup: wins).
+  function impactHtml(rows, mode) {
+    if (!rows || !rows.length) return '';
+    const fmt = v => (v == null ? '–' : mode === 'alone' ? `T${v.toFixed(1)}` : pct(v));
+    const lift = v => (v == null ? '–' : mode === 'alone' ? `${v >= 0 ? '' : '+'}${(-v).toFixed(1)} turns` : `${v >= 0 ? '+' : ''}${Math.round(v * 100)} pts`);
+    const enough = rows.filter(r => r.castGames >= 3 && r.lift != null);
+    const best = enough.slice(0, 3).filter(r => r.lift > 0);
+    const worst = enough.slice(-3).reverse().filter(r => r.lift < 0);
+    const dead = rows.filter(r => r.stuck != null && r.stuck >= 0.5 && r.drawnRate >= 0.2).slice(0, 5);
+    return `<details><summary>Card impact</summary>
+      <p class="muted small">For each nonland card: how often it was drawn and cast, and how the deck did ${mode === 'alone' ? '(usual kill turn; lower is faster)' : '(how often it won)'} in games where it was cast compared with games where it wasn't.
+        Cards drawn early get cast more in fast games, so treat small differences as noise, especially with few games.</p>
+      ${best.length ? `<p class="small">Pulling their weight: ${best.map(r => `<b>${esc(r.name)}</b> (${lift(r.lift)})`).join(', ')}.</p>` : ''}
+      ${worst.length ? `<p class="small">Could be cut: ${worst.map(r => `<b>${esc(r.name)}</b> (${lift(r.lift)})`).join(', ')}.</p>` : ''}
+      ${dead.length ? `<p class="small">Often stuck in hand: ${dead.map(r => `<b>${esc(r.name)}</b> (${pct(r.stuck)} of the times it was drawn)`).join(', ')}.</p>` : ''}
+      <table class="list compact"><thead><tr><th>Card</th><th class="num">Drawn</th><th class="num">Cast</th><th class="num">Cast on turn</th><th class="num">With it cast</th><th class="num">Without</th><th class="num">Difference</th><th class="num">Stuck in hand</th></tr></thead>
+        <tbody>${rows.map(r => `<tr><td>${esc(r.name)}${r.qty > 1 ? ` <span class="muted">×${r.qty}</span>` : ''}${r.commander ? ' <span class="muted">(commander)</span>' : ''}</td>
+          <td class="num">${pct(r.drawnRate)}</td><td class="num">${pct(r.castRate)}</td><td class="num">${r.avgTurn == null ? '–' : r.avgTurn.toFixed(1)}</td>
+          <td class="num">${fmt(r.withIt)}</td><td class="num">${fmt(r.without)}</td>
+          <td class="num ${r.lift == null ? '' : r.lift > 0 ? 'ok' : r.lift < 0 ? 'bad' : ''}">${lift(r.lift)}</td>
+          <td class="num">${r.stuck == null ? '–' : pct(r.stuck)}</td></tr>`).join('')}</tbody></table>
+    </details>`;
   }
 
   const WHY = { life: 'life to 0', poison: '10 poison', 'commander damage': '21 commander damage', 'empty library': 'drew from an empty library', 'turn limit': 'no winner by turn 25', 'both at once': 'both lost at once' };
   function matchupHtml(r) {
     const t = r.tally;
     const n = t.games || 1;
+    const side = (x, who) => (x.games ? `${pct(x.a / x.games)} for ${esc(r.a)} (${x.a} of ${x.games})` : '–');
     return `<p class="small"><b>${esc(r.a)}</b> against <b>${esc(r.b)}</b>, ${t.games} games:</p>
       <div class="stat-tiles">
         ${tile(pct(t.a / n), `${r.a} won (${t.a})`)}
@@ -3690,65 +3784,237 @@
         ${tile(t.avgTurns.toFixed(1), 'turns per game (each)')}
         ${tile(pct(t.firstWins / Math.max(1, t.a + t.b)), 'won by whoever went first')}
       </div>
-      <p class="muted small">How games ended: ${Object.entries(t.why).map(([k, v]) => `${esc(WHY[k] || k)} ${v}`).join(', ')}.</p>`;
+      <h4>Who went first</h4>
+      ${barChart([
+        { x: `${r.a} first`, value: t.aFirst.games ? t.aFirst.a / t.aFirst.games : 0, text: t.aFirst.games ? pct(t.aFirst.a / t.aFirst.games) : '–', tip: `${r.a} went first: ${side(t.aFirst)}` },
+        { x: `${r.b} first`, value: t.bFirst.games ? t.bFirst.a / t.bFirst.games : 0, text: t.bFirst.games ? pct(t.bFirst.a / t.bFirst.games) : '–', tip: `${r.b} went first: ${side(t.bFirst)}` },
+      ], { max: 1, label: `${r.a} win rate by who went first`, axis: `How often ${r.a} won` })}
+      <p class="muted small">How games ended: ${Object.entries(t.why).map(([k, v]) => `${esc(WHY[k] || k)} ${v}`).join(', ')}.</p>
+      ${impactHtml(r.impact, 'match')}`;
   }
 
-  async function runAuto(kind) {
-    if (autoRun) return;
-    const val = id => $('#' + id).value;
-    let decks;
-    if (kind === 'gf') {
-      Object.assign(ui, { gfDeck: val('gfDeck'), gfN: Number(val('gfN')), gfT: Number(val('gfT')), gfDraw: $('#gfDraw').checked });
-      decks = [findDeck(ui.gfDeck)];
-    } else {
-      Object.assign(ui, { muA: val('muA'), muB: val('muB'), muN: Number(val('muN')) });
-      decks = [findDeck(ui.muA), findDeck(ui.muB)];
+  // Gauntlet: a win-rate table (row deck's wins against the column deck) and a ranking.
+  function gauntletHtml(r) {
+    const names = r.decks;
+    const cell = (i, j) => r.pairs[`${i}|${j}`];
+    const rank = names.map((name, i) => {
+      let w = 0;
+      let g = 0;
+      names.forEach((_, j) => { const c = cell(i, j); if (c) { w += c.w; g += c.g; } });
+      return { name, i, rate: g ? w / g : null, g };
+    }).filter(x => x.g).sort((a, b) => b.rate - a.rate);
+    const cols = r.focus == null ? names.map((_, j) => j) : names.map((_, j) => j).filter(j => j !== r.focus);
+    const rows = r.focus == null ? rank.map(x => x.i) : [r.focus];
+    const shade = v => (v == null ? '' : v >= 0.6 ? 'ok' : v <= 0.4 ? 'bad' : '');
+    return `<p class="small">${r.focus == null ? 'Every deck against every deck' : `<b>${esc(names[r.focus])}</b> against your other decks`}, ${r.per} games per pairing:</p>
+      <div class="table-scroll"><table class="list compact gauntlet"><thead><tr><th>Wins of ↓ against →</th>${cols.map(j => `<th class="num">${esc(names[j])}</th>`).join('')}<th class="num">Overall</th></tr></thead>
+        <tbody>${rows.map(i => {
+          const overall = rank.find(x => x.i === i);
+          return `<tr><td><b>${esc(names[i])}</b></td>${cols.map(j => {
+            if (i === j) return '<td class="num muted">–</td>';
+            const c = cell(i, j);
+            const v = c && c.g ? c.w / c.g : null;
+            return `<td class="num ${shade(v)}" title="${c ? `${c.w} wins in ${c.g} games` : ''}">${v == null ? '–' : pct(v)}</td>`;
+          }).join('')}<td class="num"><b>${overall && overall.rate != null ? pct(overall.rate) : '–'}</b></td></tr>`;
+        }).join('')}</tbody></table></div>
+      ${r.focus == null ? `<h4>Ranking</h4><ol>${rank.map(x => `<li><b>${esc(x.name)}</b> ${pct(x.rate)} of ${x.g} games won</li>`).join('')}</ol>`
+        : (() => {
+          const worst = cols.map(j => ({ j, c: cell(r.focus, j) })).filter(x => x.c && x.c.g).sort((a, b) => a.c.w / a.c.g - b.c.w / b.c.g)[0];
+          return worst ? `<p class="small">Hardest matchup: <b>${esc(names[worst.j])}</b> (${pct(worst.c.w / worst.c.g)} won).</p>` : '';
+        })()}`;
+  }
+
+  // Try a change: the two versions side by side.
+  function changeHtml(r) {
+    const row = (label, f) => `<tr><td>${label}</td><td class="num">${f(r.before)}</td><td class="num">${f(r.after)}</td></tr>`;
+    const t4 = s => s.per[Math.min(3, s.per.length - 1)];
+    const better = (a, b, lowIsGood) => (a == null || b == null || a === b ? '' : (lowIsGood ? b < a : b > a) ? 'ok' : 'bad');
+    const killA = r.before.sum.kill.median;
+    const killB = r.after.sum.kill.median;
+    return `<p class="small">${r.changes.map(esc).join('; ')}${r.missing.length ? ` <span class="bad">(not in the deck: ${r.missing.map(esc).join(', ')})</span>` : ''}</p>
+      <table class="list compact"><thead><tr><th></th><th class="num">As it is</th><th class="num">Changed</th></tr></thead><tbody>
+        ${row('Usual kill turn (alone)', x => turnText(x.sum.kill.median))}
+        ${row('Won alone by the last turn', x => pct(x.sum.kill.rate))}
+        ${r.before.sum.commander ? row('Commander out on average', x => (x.sum.commander ? turnText(x.sum.commander.avg) : '–')) : ''}
+        ${row('Lands on turn 4', x => t4(x.sum).lands.toFixed(1))}
+        ${row('Land drops missed by turn 4', x => x.sum.missedBy4.toFixed(1))}
+        ${row('Stalled', x => pct(x.sum.stall))}
+        ${row('Flooded', x => pct(x.sum.flood))}
+        ${r.opp ? row(`Won against ${esc(r.opp)}`, x => (x.match ? pct(x.match.a / Math.max(1, x.match.games)) : '–')) : ''}
+      </tbody></table>
+      <p class="small ${better(killA, killB, true)}">${killA === killB ? 'About the same speed alone.' : killB < killA ? 'The change makes the deck faster alone.' : 'The change makes the deck slower alone.'}${r.opp && r.before.match && r.after.match
+        ? ` Against ${esc(r.opp)} it wins ${pct(r.after.match.a / Math.max(1, r.after.match.games))} instead of ${pct(r.before.match.a / Math.max(1, r.before.match.games))}.` : ''}</p>`;
+  }
+
+  // How many lands: each count side by side, and the one that did best.
+  function landsHtml(r) {
+    const best = r.variants.reduce((a, b) => (score(b) < score(a) ? b : a));
+    // Average kill turn (games not won count as one turn past the end), nudged by missed drops and floods.
+    function score(v) {
+      const s = v.sum;
+      const kill = (s.kill.avg == null ? r.turns + 1 : s.kill.avg * s.kill.rate + (r.turns + 1) * (1 - s.kill.rate));
+      return kill + s.missedBy4 * 0.3 + s.flood * 0.5;
     }
-    saveSoon();
-    if (decks.some(d => !d)) return status('That deck is no longer available.', 'error');
-    autoRun = { kind, done: 0, total: kind === 'gf' ? ui.gfN : ui.muN, list: [], errors: 0, stop: false };
+    return `<p class="small"><b>${esc(r.deck)}</b>, ${r.per} games for each land count:</p>
+      <table class="list compact"><thead><tr><th>Lands</th><th class="num">Usual kill turn</th><th class="num">Average kill turn</th><th class="num">Won by turn ${r.turns}</th><th class="num">Land drops missed by turn 4</th><th class="num">Stalled</th><th class="num">Flooded</th></tr></thead>
+        <tbody>${r.variants.map(v => `<tr class="${v === best ? 'best' : ''}"><td>${v.lands}${v.delta ? ` <span class="muted">(${v.delta > 0 ? '+' : ''}${v.delta})</span>` : ' <span class="muted">(as it is)</span>'}</td>
+          <td class="num">${turnText(v.sum.kill.median)}</td><td class="num">${v.sum.kill.avg == null ? '–' : v.sum.kill.avg.toFixed(2)}</td><td class="num">${pct(v.sum.kill.rate)}</td><td class="num">${v.sum.missedBy4.toFixed(1)}</td>
+          <td class="num">${pct(v.sum.stall)}</td><td class="num">${pct(v.sum.flood)}</td></tr>`).join('')}</tbody></table>
+      <p class="small"><b>${best.delta ? `About ${best.lands} lands looks best` : `${best.lands} lands, as it is, looks right`}</b>: the fastest usual kill with the fewest missed land drops and floods.
+        Differences of a turn or less can be chance; run more games to be sure.</p>`;
+  }
+
+  // Plays the games one after another, a few at a time so the page stays responsive. jobs: functions
+  // that each play one game and return its result. finish(results) gets the ones that didn't fail.
+  function runJobs(kind, jobs, finish) {
+    const run = autoRun = { kind, done: 0, total: jobs.length, errors: 0, stop: false, list: [] };
     renderTest();
-    try {
-      await ensureDefs(decks.flatMap(d => d.rows.map(r => r.id)), true);
-    } catch (e) {
-      autoRun = null;
-      if (ui.tab === 'test') renderTest();
-      return status(`Could not get the card info from Scryfall (${e.message}).`, 'error');
-    }
-    const defs = {};
-    decks.forEach(d => d.rows.forEach(r => { if (def(r.id)) defs[r.id] = def(r.id); }));
-    // A few games at a time, so the page stays responsive.
     const step = () => {
-      const run = autoRun;
-      if (!run) return;
+      if (autoRun !== run) return;
       const t0 = performance.now();
       while (!run.stop && run.done < run.total && performance.now() - t0 < 60) {
-        try {
-          run.list.push(kind === 'gf'
-            ? Autoplay.goldfish(decks[0], defs, { maxTurns: ui.gfT, onDraw: ui.gfDraw })
-            : Autoplay.match(decks[0], decks[1], defs, { aFirst: run.done % 2 === 0 }));
-        } catch (e) {
-          run.errors++;
-          console.error(e);
-        }
+        try { run.list.push(jobs[run.done]()); } catch (e) { run.errors++; console.error(e); }
         run.done++;
       }
       if (!run.stop && run.done < run.total) {
-        const out = $(kind === 'gf' ? '#gfOut' : '#muOut');
-        if (out && ui.tab === 'test') out.innerHTML = autoOut(kind);
+        const el = $(`#out-${kind}`);
+        if (el && ui.tab === 'test') el.innerHTML = autoOut(kind);
         setTimeout(step, 0);
         return;
       }
       autoRun = null;
       if (run.list.length) {
-        autoLast[kind] = kind === 'gf'
-          ? { deck: decks[0].name, sum: Autoplay.summarize(run.list, ui.gfT), errors: run.errors, onDraw: ui.gfDraw }
-          : { a: decks[0].name, b: decks[1].name, tally: Autoplay.tally(run.list), errors: run.errors };
+        autoLast[kind] = finish(run.list);
+        autoLast[kind].errors = run.errors;
       }
       if (ui.tab === 'test') renderTest();
-      status(run.list.length ? `Played ${run.list.length} game${run.list.length === 1 ? '' : 's'}.` : 'Stopped.', 'ok');
+      status(run.stop ? `Stopped after ${run.list.length} game${run.list.length === 1 ? '' : 's'}.` : `Played ${run.list.length} game${run.list.length === 1 ? '' : 's'}.`, 'ok');
     };
     setTimeout(step, 0);
+  }
+
+  // Card info for these decks (from Scryfall when it isn't saved yet), as autoplay.js wants it.
+  async function defsFor(decks) {
+    await ensureDefs(decks.flatMap(d => d.rows.map(r => r.id)), true);
+    const defs = {};
+    decks.forEach(d => d.rows.forEach(r => { if (def(r.id)) defs[r.id] = def(r.id); }));
+    return defs;
+  }
+
+  // "2 Shock" lines to cards: [{ id, name, qty }] (Scryfall finds the ones the Simulator doesn't know).
+  async function cardsFromLines(text) {
+    const { entries } = parseList(text);
+    if (!entries.length) return { cards: [], unknown: [] };
+    const known = Object.values(local.cards).concat(tracker ? Object.values(tracker.cards) : []);
+    const byName = name => known.find(c => c && c.names && c.names.includes(name.toLowerCase().split(' // ')[0]));
+    const need = entries.filter(e => !byName(e.name));
+    if (need.length) {
+      const res = await Scryfall.collection(need.map(e => ({ name: e.name.split(' // ')[0] })));
+      res.found.forEach(c => { local.cards[c.id] = c; });
+      if (res.found.length) saveLocal();
+    }
+    const cards = [];
+    const unknown = [];
+    for (const e of entries) {
+      const c = byName(e.name) || Object.values(local.cards).find(x => x.names && x.names.includes(e.name.toLowerCase().split(' // ')[0]));
+      if (c) cards.push({ id: c.id, name: c.name, qty: e.qty });
+      else unknown.push(e.name);
+    }
+    return { cards, unknown };
+  }
+
+  // Card impact for one deck from its games: [{ cards, won, kill }].
+  const impactOf = (deck, games, mode, maxTurns) => Autoplay.cardImpact(games, deck, isLandId, mode, maxTurns);
+
+  async function runAuto(kind) {
+    if (autoRun) return;
+    const val = id => $('#' + id).value;
+    const fail = e => { autoRun = null; if (ui.tab === 'test') renderTest(); status(`Could not get the card info from Scryfall (${e.message}).`, 'error'); };
+    try {
+      if (kind === 'gf') {
+        Object.assign(ui, { gfDeck: val('gfDeck'), gfN: Number(val('gfN')), gfT: Number(val('gfT')), gfDraw: $('#gfDraw').checked });
+        saveSoon();
+        const deck = findDeck(ui.gfDeck);
+        if (!deck) return status('That deck is no longer available.', 'error');
+        const defs = await defsFor([deck]);
+        const { gfT: turns, gfDraw: onDraw } = ui;
+        runJobs('gf', Array.from({ length: ui.gfN }, () => () => Autoplay.goldfish(deck, defs, { maxTurns: turns, onDraw })), list => ({
+          deck: deck.name, onDraw, sum: Autoplay.summarize(list, turns),
+          impact: impactOf(deck, list.map(g => ({ cards: g.cards, kill: g.killTurn })), 'alone', turns),
+        }));
+      } else if (kind === 'mu') {
+        Object.assign(ui, { muA: val('muA'), muB: val('muB'), muN: Number(val('muN')) });
+        saveSoon();
+        const a = findDeck(ui.muA);
+        const b = findDeck(ui.muB);
+        if (!a || !b) return status('That deck is no longer available.', 'error');
+        const defs = await defsFor([a, b]);
+        runJobs('mu', Array.from({ length: ui.muN }, (_, i) => () => Autoplay.match(a, b, defs, { aFirst: i % 2 === 0 })), list => ({
+          a: a.name, b: b.name, tally: Autoplay.tally(list),
+          impact: impactOf(a, list.map(m => ({ cards: m.cardsA, won: m.winner === 'A' })), 'match'),
+        }));
+      } else if (kind === 'gt') {
+        Object.assign(ui, { gtDeck: val('gtDeck'), gtN: Number(val('gtN')) });
+        saveSoon();
+        const decks = allDecks();
+        const focus = ui.gtDeck === '*' ? null : decks.findIndex(d => d.key === ui.gtDeck);
+        if (decks.length < 2) return status('Add at least two decks for a gauntlet.', 'warn');
+        const pairs = [];
+        if (focus == null) decks.forEach((_, i) => decks.forEach((__, j) => { if (j > i) pairs.push([i, j]); }));
+        else decks.forEach((_, j) => { if (j !== focus) pairs.push([focus, j]); });
+        const defs = await defsFor(decks.filter((_, i) => pairs.some(p => p.includes(i))));
+        const jobs = pairs.flatMap(([i, j]) => Array.from({ length: ui.gtN }, (_, k) => () => ({ i, j, r: Autoplay.match(decks[i], decks[j], defs, { aFirst: k % 2 === 0 }) })));
+        runJobs('gt', jobs, list => {
+          const cells = {};
+          const add = (x, y, won) => { const c = cells[`${x}|${y}`] = cells[`${x}|${y}`] || { w: 0, g: 0 }; c.g++; if (won) c.w++; };
+          list.forEach(({ i, j, r }) => { add(i, j, r.winner === 'A'); add(j, i, r.winner === 'B'); });
+          return { decks: decks.map(d => d.name), pairs: cells, focus, per: ui.gtN };
+        });
+      } else if (kind === 'tc') {
+        Object.assign(ui, { tcDeck: val('tcDeck'), tcOpp: val('tcOpp'), tcN: Number(val('tcN')), tcOut: val('tcOut'), tcIn: val('tcIn') });
+        saveSoon();
+        const deck = findDeck(ui.tcDeck);
+        const opp = ui.tcOpp ? findDeck(ui.tcOpp) : null;
+        if (!deck) return status('That deck is no longer available.', 'error');
+        if (!ui.tcOut.trim() && !ui.tcIn.trim()) return status('Write the cards to take out or put in first.', 'warn');
+        status('Looking up the cards…');
+        const out = await cardsFromLines(ui.tcOut);
+        const add = await cardsFromLines(ui.tcIn);
+        if (add.unknown.length) return status(`Couldn't find these cards: ${add.unknown.join(', ')}.`, 'warn');
+        const changed = Autoplay.withChanges(deck, out.cards.concat(out.unknown.map(name => ({ name, qty: 1 }))), add.cards);
+        const defs = await defsFor([deck, changed.deck, ...(opp ? [opp] : [])]);
+        const n = ui.tcN;
+        const turns = 10;
+        const jobs = [];
+        for (const [side, d] of [['before', deck], ['after', changed.deck]]) {
+          for (let k = 0; k < n; k++) jobs.push(() => ({ side, kind: 'alone', r: Autoplay.goldfish(d, defs, { maxTurns: turns }) }));
+          if (opp) for (let k = 0; k < Math.max(10, Math.round(n / 2)); k++) jobs.push(() => ({ side, kind: 'match', r: Autoplay.match(d, opp, defs, { aFirst: k % 2 === 0 }) }));
+        }
+        const changes = [...out.cards.map(c => `−${c.qty} ${c.name}`), ...add.cards.map(c => `+${c.qty} ${c.name}`)];
+        runJobs('tc', jobs, list => {
+          const part = (side, kind) => list.filter(x => x.side === side && x.kind === kind).map(x => x.r);
+          const sideOf = side => ({ sum: Autoplay.summarize(part(side, 'alone'), turns), match: opp ? Autoplay.tally(part(side, 'match')) : null });
+          return { changes, missing: changed.missing, opp: opp ? opp.name : null, before: sideOf('before'), after: sideOf('after') };
+        });
+      } else if (kind === 'lc') {
+        Object.assign(ui, { lcDeck: val('lcDeck'), lcN: Number(val('lcN')) });
+        saveSoon();
+        const deck = findDeck(ui.lcDeck);
+        if (!deck) return status('That deck is no longer available.', 'error');
+        const defs = await defsFor([deck]);
+        const variants = [-4, -2, 0, 2, 4].map(delta => ({ delta, deck: delta ? Autoplay.withLands(deck, delta, isLandId, isBasicId) : deck })).filter(v => v.deck);
+        if (variants.length < 2) return status('This deck has no lands to add or take out.', 'warn');
+        const landCount = d => d.rows.filter(r => isLandId(r.id)).reduce((s, r) => s + (r.qty || 1), 0);
+        const turns = 10;
+        const jobs = variants.flatMap((v, vi) => Array.from({ length: ui.lcN }, () => () => ({ vi, r: Autoplay.goldfish(v.deck, defs, { maxTurns: turns }) })));
+        runJobs('lc', jobs, list => ({
+          deck: deck.name, per: ui.lcN, turns,
+          variants: variants.map((v, vi) => ({ delta: v.delta, lands: landCount(v.deck), sum: Autoplay.summarize(list.filter(x => x.vi === vi).map(x => x.r), turns) })),
+        }));
+      }
+    } catch (e) {
+      fail(e);
+    }
   }
 
   // ---------- Odds tab ----------
@@ -4073,6 +4339,9 @@
       case 'pass': return passTurn();
       case 'attack': return openAttack();
       case 'attack-go': return attackGo();
+      case 'attack-all': // tick (or untick) every creature that can attack
+        modalBox.querySelectorAll('[data-attacker]:not(:disabled)').forEach(x => { x.checked = !!b.dataset.on; });
+        return;
       case 'crew': return openCrew(b.dataset.iid, b.dataset.back);
       case 'crew-go': return crewGo(b.dataset.iid, b.dataset.back);
       case 'blocks-done': return blocksDone();
