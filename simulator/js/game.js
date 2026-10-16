@@ -17,9 +17,10 @@ const Game = (() => {
   const CELL_H = 1.5; // card widths per battlefield row
   const layout = { cols: 10, rows: 4 }; // set by app.js from the battlefield's size
   // app.js: hooks.entered(s, inst) runs when a card arrives on a battlefield (landfall);
-  // hooks.tokenEntered(s, inst) when a token is created; hooks.died(s, inst) when one goes from
-  // the battlefield to the graveyard ("When this dies, …").
-  const hooks = { entered: null, tokenEntered: null, died: null };
+  // hooks.tokenEntered(s, inst) when a token is created; hooks.died(s, inst, { counters, to }) when one
+  // goes from the battlefield to the graveyard ("When this dies, …", undying); hooks.cast(s, inst)
+  // after a spell cast from hand or the command zone arrives (prowess).
+  const hooks = { entered: null, tokenEntered: null, died: null, cast: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -880,10 +881,11 @@ const Game = (() => {
 
     // A commander sent to the command zone instead of the graveyard still died.
     const died = from === 'battlefield' && (to === 'graveyard' || (to === 'command' && inst.commander)) && !inst.faceDown;
+    const info = { counters: Object.assign({}, inst.counters), to }; // for undying and persist
     if (inst.token && to !== 'battlefield') {
       delete s.cards[iid];
       log(s, `${inst.name} token left the battlefield and is gone.`);
-      if (died && hooks.died) hooks.died(s, inst);
+      if (died && hooks.died) hooks.died(s, inst, info);
       return;
     }
 
@@ -902,6 +904,9 @@ const Game = (() => {
       }
       s.zones.battlefield.push(iid); // last = drawn on top
       if (from !== 'battlefield') { inst.enteredTurn = s.turn; delete inst.attackedTurn; startLoyalty(s, inst); }
+      // A spell cast or a nontoken permanent put onto the battlefield on this player's own turn
+      // (s.offTurn is set while someone else's turn is on), for Arboria.
+      if (from !== 'battlefield' && !inst.token && !s.offTurn) s.actedTurn = s.turn;
       if (from !== 'battlefield' && tapsOnEntry(s, inst)) {
         inst.tapped = true;
         inst.tappedFor = null;
@@ -928,11 +933,13 @@ const Game = (() => {
     if (from === 'hand' && to === 'battlefield') msg = `Played ${name}${inst.tapped && inst.entersTapped && !inst.tappedFor ? ' (enters tapped)' : ''}.`;
     if (from === 'command' && to === 'battlefield') msg = `Cast ${name} from the command zone (cast #${inst.castCount}).`;
     log(s, msg);
-    if (died && hooks.died) hooks.died(s, inst);
+    if (died && hooks.died) hooks.died(s, inst, info);
     if (to === 'battlefield') {
       applyEnterLife(s, inst);
       applyEnterDraw(s, inst);
       if (hooks.entered) hooks.entered(s, inst);
+      // Cast from your hand or the command zone (or for free, like cascade): prowess and "whenever you cast".
+      if ((from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !inst.faceDown && hooks.cast) hooks.cast(s, inst);
       // A spell cast from your hand or the command zone, for counterspells (see counterLast). Not one
       // that's already gone, like a resolved counterspell, unless its pump can still be taken back.
       if ((from === 'hand' || from === 'command') && !isLand(inst) && s.cards[iid] && (inst.zone === 'battlefield' || inst.undoPump)) s.lastCast = { iid, at: Date.now() };

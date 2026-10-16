@@ -96,7 +96,32 @@ Opp plays with simple rules:
 | Block | When Opp attacks, pick a blocker for each attacker and click **Done blocking**. **Later** closes it so you can look at the table first; **End turn ▸** brings it back |
 | Fix anything | − and + on Opp's life, or **Undo**, which takes back Opp's turn one step at a time |
 
-Combat counts power and toughness (with +1/+1 and -1/-1 counters), flying, reach, first strike, double strike, deathtouch, trample, lifelink, menace, vigilance and indestructible. Creatures that die go to the graveyard, and commanders go back to the command zone. Commander damage is tracked both ways.
+Combat counts power and toughness (with +1/+1 and -1/-1 counters), flying, reach, first strike, double strike, deathtouch, trample, lifelink, menace (also the older "can't be blocked except by two or more creatures"), vigilance and indestructible.
+
+Some cards that change the rules of combat work too, for you, for Opp and online:
+
+- **Arboria**: nobody can attack a player who didn't cast a spell or put a nontoken permanent onto the battlefield during their last turn (their planeswalkers can still be attacked). Only what a player did on their own turn counts.
+- **Mirri, Weatherlight Duelist**: while she's tapped, only one creature can attack her controller. When she attacks, each opponent can block with only one creature. **Silent Arbiter**'s "no more than one creature can attack / block each combat" works the same way.
+- **Brave the Sands** ("each creature you control can block an additional creature"): tick the same creature under two attackers. Its damage goes to each attacker in turn, enough to kill it, the rest to the last, and the damage it takes adds up.
+- Creatures whose power and toughness are \*/\* "equal to the number of creatures (or Elves…) you control", like **Silverwing Squadron**, show their size on the card and fight with it.
+- "Create a number of 2/2 … tokens equal to the number of opponents you have" (Silverwing Squadron's attack) makes the right number.
+- **Ghostly Prison / Propaganda**: attacking that player costs {2} per creature. The Attack screen pays it with Auto-tap (or tells you that you can't), and Opp only attacks with what it can pay for.
+
+More abilities that are done for you, on your cards and Opp's (Undo if one goes wrong):
+
+| Kind | What happens |
+|---|---|
+| Combat keywords | **Exalted** (+1/+1 for each exalted when a creature attacks alone), **battle cry**, **infect** (poison counters to players, -1/-1 counters to creatures), **wither**, **toxic N**, **annihilator N** (Opp sacrifices its least useful permanents; you're asked to pick yours), **bushido N**, **flanking**, **rampage N**, **decayed** (can't block, sacrificed after it attacks), and "can't be blocked" |
+| Dying | **Undying** and **persist** bring the creature back with its counter. **Afterlife N** makes 1/1 flying Spirits. "Whenever Blood Artist or another creature dies…", "Whenever a creature you control dies…" (Zulaport Cutthroat) drain on either table |
+| Casting spells | **Prowess**. "Whenever you cast a noncreature / instant or sorcery / creature spell…" (Young Pyromancer, magecraft): tokens, pumps, life, cards. **Cascade** reveals until a cheaper nonland card and casts it free. **Storm** tells you how many copies to make (or makes them, if the spell is simple) |
+| Simple spells | An instant or sorcery made only of things the Simulator knows ("Draw two cards.", "Each opponent loses 3 life.", "Proliferate.", Relentless Assault) resolves by itself and goes to the graveyard. Opp casts them too |
+| Life | "Whenever you gain life, …" (Ajani's Pridemate, "that many"). "Players can't gain life" (Sulfuric Vortex) and "Your opponents can't gain life" (Erebos) take the gain back |
+| Costs | "Noncreature spells cost {1} more" (Thalia) and "Spells your opponents cast cost {1} more" are added to Auto-tap, for you and Opp |
+| Counters | **Proliferate** (also in **More ▾**): one more of each counter on your permanents (not -1/-1), and one more poison and -1/-1 on Opp's. "Enters with a +1/+1 counter for each other creature you control" |
+| The monarch | "You become the monarch" (Palace Jailer). The monarch draws at the end of their turn, and loses it to a player whose creature deals them combat damage. 👑 shows who has it. **More ▾ → Become the monarch** to set it by hand |
+| Extra combat | "Untap all creatures you control", "After this main phase, there is an additional combat phase". **More ▾ → Extra combat** lets creatures that attacked attack again |
+
+Online these work the same for everyone's cards: poison and -1/-1 counters from combat, the monarch, taxes and "can't gain life" are passed along. Annihilator against a friend only goes in the log: they pick their own sacrifices. Creatures that die go to the graveyard, and commanders go back to the command zone. Commander damage is tracked both ways.
 
 ## Playing online with friends
 

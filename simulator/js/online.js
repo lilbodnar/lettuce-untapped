@@ -313,6 +313,7 @@ const Online = (() => {
       turn: game.turn,
       life: game.life,
       poison: game.poison,
+      monarch: game.monarch || 0, // when this player became the monarch (the newest one is)
       cmdDamage: game.cmdDamage || {},
       hand: game.zones.hand.length,
       lastCast: game.lastCast || null, // so another player's counterspell can find it

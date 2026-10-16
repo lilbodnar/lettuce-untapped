@@ -339,6 +339,7 @@ body.peek .side { position: relative; z-index: 51; }
 .tag.regen { bottom: 16px; background: var(--warn); color: #000; }
 .tag.pump { bottom: 29px; background: var(--accent); color: var(--accent-ink); font-size: 11px; }
 .tag.anthem { bottom: 43px; background: var(--ok); color: #0c1a12; font-size: 11px; }
+.tag.cda { bottom: 57px; background: var(--ok); color: #0c1a12; font-size: 11px; }
 .tag.aura { top: 18px; background: var(--bad); color: #fff; font-size: 10px; max-width: 90%; overflow: hidden; text-overflow: ellipsis; white-space: nowrap; }
 .counters { position: absolute; left: 3px; right: 3px; top: 38%; display: flex; flex-direction: column; align-items: center; gap: 2px; }
 .counter {

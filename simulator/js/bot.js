@@ -15,14 +15,19 @@ const Bot = (() => {
   const KEYWORDS = ['flying', 'reach', 'vigilance', 'haste', 'deathtouch', 'trample', 'lifelink', 'first strike',
     'double strike', 'menace', 'defender', 'indestructible', 'hexproof', 'shroud', 'ward',
     'plainswalk', 'islandwalk', 'swampwalk', 'mountainwalk', 'forestwalk', 'fear', 'intimidate', 'skulk', 'shadow',
-    'protection from each color'];
+    'protection from each color',
+    // Done in combat, on death or when you cast a spell (see "more abilities" below):
+    'prowess', 'exalted', 'battle cry', 'infect', 'wither', 'toxic', 'annihilator', 'flanking', 'bushido', 'rampage',
+    'undying', 'persist', 'afterlife', 'decayed', 'cascade', 'storm', 'unblockable'];
+  // Keywords with a number ("Toxic 2", "Annihilator 2", "Bushido 1"): stats keeps the numbers in st.n.
+  const NUMBERED = ['toxic', 'annihilator', 'bushido', 'rampage', 'afterlife'];
 
   // Other keywords that share a line with the ones above ("Flying, lifelink, ward {2}"). Opp
   // ignores what they do, but they mustn't hide the keywords next to them.
-  const OTHER_KEYWORDS = ['protection', 'flash', 'prowess', 'toxic', 'infect', 'wither', 'partner', 'changeling',
-    'devoid', 'exalted', 'persist', 'undying', 'afflict', 'annihilator', 'bushido', 'cascade', 'convoke', 'crew', 'cycling',
-    'echo', 'evolve', 'extort', 'flanking', 'horsemanship', 'rampage', 'riot',
-    'mentor', 'training', 'myriad', 'battle cry', 'backup', 'enlist', 'decayed', 'afterlife', 'fabricate', 'dethrone',
+  const OTHER_KEYWORDS = ['protection', 'flash', 'partner', 'changeling',
+    'devoid', 'afflict', 'convoke', 'crew', 'cycling',
+    'echo', 'evolve', 'extort', 'horsemanship', 'riot',
+    'mentor', 'training', 'myriad', 'backup', 'enlist', 'fabricate', 'dethrone',
     'ravenous', 'squad', 'unearth', 'dash', 'blitz', 'escape', 'evoke', 'kicker', 'madness', 'ninjutsu', 'mutate',
     'disturb', 'daybound', 'nightbound', 'for mirrodin!', 'living weapon', 'equip', 'reconfigure', 'bestow', 'morph',
     'megamorph', 'outlast', 'renown', 'soulbond', 'split second', 'storm', 'suspend', 'vanishing', 'fading', 'modular',
@@ -62,6 +67,10 @@ const Bot = (() => {
 
   const isKeyword = (p, list) => list.some(k => p === k || p.startsWith(k + ' ') || p.startsWith(k + '—'));
 
+  // "This creature can't be blocked except by two or more creatures." about itself (not "creatures you control …").
+  const OLD_MENACE = /^(?!(?:other|enchanted|equipped|each|all|creatures?)\b)(?!.*\byou control\b).+? can't be blocked except by two or more creatures\.?$/i;
+  const UNBLOCKABLE = /^(?!(?:other|enchanted|equipped|each|all|creatures?|target)\b)(?!.*\byou control\b)[^,.]+? can't be blocked\.?$/i;
+
   // Keywords a card has on its own lines ("Flying, vigilance"), not ones it gives other cards.
   function keywords(oracle) {
     const found = new Set();
@@ -72,7 +81,24 @@ const Bot = (() => {
       parts.forEach(p => KEYWORDS.forEach(k => { if (p === k || p.startsWith(k + ' ')) found.add(k); }));
       parts.forEach(p => { const pro = protectionKw(p); if (pro) found.add(pro); });
     }
+    const lines = String(oracle || '').split('\n').map(l => l.replace(/\([^)]*\)/g, '').trim());
+    // Menace in older words: "Goblin Glory Chaser can't be blocked except by two or more creatures."
+    if (lines.some(l => OLD_MENACE.test(l))) found.add('menace');
+    if (lines.some(l => UNBLOCKABLE.test(l))) found.add('unblockable'); // "This creature can't be blocked."
     return [...found];
+  }
+
+  // The numbers of a card's numbered keywords: "Toxic 2\nAfterlife 1" → { toxic: 2, afterlife: 1 }.
+  function keywordNumbers(oracle) {
+    const out = {};
+    for (const raw of String(oracle || '').split('\n')) {
+      const line = raw.replace(/\([^)]*\)/g, '').trim().toLowerCase().replace(/\.$/, '');
+      for (const part of line.split(/,\s*|;\s*/)) {
+        const m = /^([a-z ]+?) (\d+)$/.exec(part.trim());
+        if (m && NUMBERED.includes(m[1])) out[m[1]] = (out[m[1]] || 0) + Number(m[2]);
+      }
+    }
+    return out;
   }
 
   // What an equipment or aura gives the creature it's on, from lines like "Equipped creature gets
@@ -88,6 +114,8 @@ const Bot = (() => {
       if (/\bcan't attack\b/i.test(m[1])) out.cantAttack = true;
       if (/\bcan't (?:attack or )?block\b/i.test(m[1])) out.cantBlock = true;
       if (/\bactivated abilities can't be activated\b/i.test(m[1])) out.noAbilities = true;
+      if (/\bcan't be blocked except by two or more creatures\b/i.test(m[1])) out.kw.push('menace');
+      else if (/\bcan't be blocked$/i.test(m[1])) out.kw.push('unblockable');
       const pt = /\bgets ([+-]\d+)\/([+-]\d+)/i.exec(m[1]);
       if (pt) { out.pow += Number(pt[1]); out.tou += Number(pt[2]); }
       const has = /\bhas (.+)$/i.exec(m[1]);
@@ -153,6 +181,7 @@ const Bot = (() => {
       if (m && n) { pow += Number(m[1]) * n; tou += Number(m[2]) * n; }
     }
     if (inst.pump) { pow += inst.pump.pow; tou += inst.pump.tou; } // "gets +X/+X until end of turn"
+    if (inst.cda && !pt) { pow += inst.cda.pow; tou += inst.cda.tou; } // */* from its own text, see refreshGrants
     if (inst.anthem) { pow += inst.anthem.pow; tou += inst.anthem.tou; } // from lords, see refreshGrants
     const kw = new Set(card.kw || keywords(card.oracle || (inst.custom && inst.custom.text)));
     for (const [name, n] of Object.entries(c)) { const k = n > 0 && counterKw(name); if (k) kw.add(k); }
@@ -166,8 +195,12 @@ const Bot = (() => {
       if (b.cantAttack) kw.add("can't attack");
       if (b.cantBlock) kw.add("can't block");
     }
-    return { pow, tou, kw, cmc: card.cmc || 0, colors: colorsOf(card), artifact: /\bartifact\b/i.test(front(inst.typeLine)) };
+    const n = card.n || keywordNumbers(card.oracle || (inst.custom && inst.custom.text));
+    return { pow, tou, kw, n, cmc: card.cmc || 0, colors: colorsOf(card), artifact: /\bartifact\b/i.test(front(inst.typeLine)) };
   }
+
+  // A numbered keyword's number ("Toxic 2" → 2), 1 if it has the keyword some other way (a lord), or 0.
+  const kwN = (st, k) => (st.kw.has(k) ? (st.n && st.n[k]) || 1 : 0);
 
   // A card's colors: from its mana cost (hybrid counts as both), or its color identity when it
   // has no cost (tokens). card is the Scryfall card or Opp's stored facts.
@@ -202,7 +235,9 @@ const Bot = (() => {
   const noAttack = st => st.kw.has('defender') || st.kw.has("can't attack");
   // "Its activated abilities can't be activated" (Arrest): no abilities, mana ones included.
   const silenced = inst => Object.values(inst.boosts || {}).some(b => b && b.noAbilities);
-  const canBlock = (blocker, attacker, defender) => !blocker.kw.has("can't block") && !walksPast(attacker, defender) && !shielded(attacker, blocker)
+  // Decayed creatures can't block; "can't be blocked" ones (unblockable) aren't.
+  const canBlock = (blocker, attacker, defender) => !blocker.kw.has("can't block") && !blocker.kw.has('decayed') && !attacker.kw.has('unblockable')
+    && !walksPast(attacker, defender) && !shielded(attacker, blocker)
     && (!attacker.kw.has('flying') || blocker.kw.has('flying') || blocker.kw.has('reach'))
     && (!attacker.kw.has('fear') || blocker.artifact || (blocker.colors || []).includes('B'))
     && (!attacker.kw.has('intimidate') || blocker.artifact || shares(blocker, attacker))
@@ -257,6 +292,81 @@ const Bot = (() => {
     return { a: A, b: B, player };
   }
 
+  // A whole combat: list [{ st, blockers: [{ key, st }] }], one per attacker. A creature blocking more
+  // than one attacker (Brave the Sands) splits its damage: lethal to each one in turn, the rest to the
+  // last. The damage it takes adds up over its fights, and whether it dies is only set on its last
+  // one. Returns combat()'s result for each attacker, in order.
+  // Before damage, the "becomes blocked" keywords: flanking (each blocker without flanking gets
+  // -1/-1), bushido N (+N/+N to an attacker that's blocked and to a blocker), rampage N (+N/+N for
+  // each blocker past the first). Works on copies of the stats.
+  function blockedStep(list) {
+    const pump = (st, p, t) => ({ ...st, pow: st.pow + p, tou: st.tou + t });
+    return list.map(x => {
+      if (!x.blockers.length) return x;
+      const n = x.blockers.length;
+      const a = pump(x.st, kwN(x.st, 'bushido') + kwN(x.st, 'rampage') * (n - 1), kwN(x.st, 'bushido') + kwN(x.st, 'rampage') * (n - 1));
+      const blockers = x.blockers.map(b => {
+        const flank = x.st.kw.has('flanking') && !b.st.kw.has('flanking') ? -1 : 0;
+        const bush = kwN(b.st, 'bushido');
+        return flank || bush ? { ...b, st: pump(b.st, flank + bush, flank + bush) } : b;
+      });
+      return { ...x, st: a, blockers };
+    });
+  }
+
+  function combatAll(list) {
+    list = blockedStep(list);
+    const fights = new Map(); // blocker key → indexes of the attackers it blocks
+    list.forEach((x, i) => x.blockers.forEach(b => fights.set(b.key, [...(fights.get(b.key) || []), i])));
+    const shared = key => fights.get(key).length > 1;
+    const powFor = new Map(); // `${key}|${i}` → the shared blocker's damage to attacker i
+    for (const [key, idx] of fights) {
+      if (idx.length < 2) continue;
+      const b = list[idx[0]].blockers.find(y => y.key === key).st;
+      let left = Math.max(0, b.pow);
+      idx.forEach((i, k) => {
+        const lethal = b.kw.has('deathtouch') ? 1 : Math.max(0, list[i].st.tou);
+        const n = k === idx.length - 1 ? left : Math.min(left, lethal);
+        powFor.set(`${key}|${i}`, n);
+        left -= n;
+      });
+    }
+    const taken = new Map(); // shared blocker key → { dmg, dt }
+    return list.map((x, i) => {
+      const bsts = x.blockers.map(b => (shared(b.key)
+        ? { ...b.st, pow: powFor.get(`${b.key}|${i}`), tou: Math.max(1, b.st.tou - (taken.get(b.key) || { dmg: 0 }).dmg) }
+        : b.st));
+      const r = combat(x.st, bsts);
+      x.blockers.forEach((b, j) => {
+        if (!shared(b.key)) return;
+        const t = taken.get(b.key) || { dmg: 0, dt: false };
+        t.dmg += r.b[j].dmg;
+        t.dt = t.dt || r.b[j].dt;
+        taken.set(b.key, t);
+        const idx = fights.get(b.key);
+        r.b[j].dead = idx[idx.length - 1] === i && !b.st.kw.has('indestructible') && (t.dt || t.dmg >= b.st.tou);
+      });
+      return r;
+    });
+  }
+
+  // How many attackers a creature on table s can block: 1, plus "Each creature you control can block
+  // an additional creature each combat" (Brave the Sands) or "This creature can block an additional
+  // creature each combat"; "can block any number of creatures" is no limit (Infinity).
+  const EXTRA_BLOCK = /^(each creature you control|.+?) can block (any number of creatures|an additional (?:(\w+) )?creatures?)(?: each combat)?\.?$/i;
+  function blocksAllowed(s, inst, defOf) {
+    let n = 1;
+    for (const src of permanents(s)) {
+      for (const line of oracleLines(src, defOf)) {
+        const m = EXTRA_BLOCK.exec(line);
+        if (!m || !(/^each creature you control$/i.test(m[1]) || (src === inst && isSelf(m[1], inst)))) continue;
+        if (/^any number/i.test(m[2])) return Infinity;
+        n += m[3] ? toNumber(m[3]) || 1 : 1;
+      }
+    }
+    return n;
+  }
+
   // One attacker against one blocker. Returns { a: { dead, dealt }, b: { dead, dealt }, player }.
   function fight(a, b) {
     const r = combat(a, [b]);
@@ -291,15 +401,23 @@ const Bot = (() => {
       toughness: card.toughness,
       loyalty: card.loyalty,
       kw: keywords(card.oracle),
+      n: keywordNumbers(card.oracle),
       colors: colorsOf(card),
-      spell: /\b(instant|sorcery)\b/i.test(front(card.typeLine)) ? spellEffect(card.oracle) : null,
+      spell: /\b(instant|sorcery)\b/i.test(front(card.typeLine)) ? spellEffect(card.oracle) || plainSpell(card.oracle) : null,
     };
+  }
+
+  // An instant or sorcery runEffect can do all of ("Each opponent loses 3 life.", "Proliferate."): { effect: text }, or null.
+  function plainSpell(oracle) {
+    const text = String(oracle || '').split('\n').map(l => l.replace(/\([^)]*\)/g, '').trim()).filter(l => l && !keywords(l).length).join(' ');
+    return text && canRunAll(text, { hitOpps: true, other: true }) ? { effect: text } : null;
   }
 
   // deck: { name, key, rows }, defs: { scryfallId: card }. onDraw: Opp goes second.
   function create(deck, defs, opts = {}) {
     const s = G.create(deck, defs, { onDraw: !!opts.onDraw });
     s.opponents = 1; // you
+    s.offTurn = true; // until its first turn
     s.log = [];
     for (const inst of Object.values(s.cards)) inst.bot = facts(defs[inst.id] || {});
     G.log(s, `Opp is playing ${deck.name}${s.onDraw ? ' (on the draw)' : ' (on the play)'}.`);
@@ -400,6 +518,8 @@ const Bot = (() => {
     const s = game.bot.s;
     const you = yourCreatures(game, defOf);
     const options = [];
+    // Thalia and the like, on either table.
+    const taxes = [{ rules: tableRules(s, defOf), own: true }, { rules: tableRules(game, defOf), own: false }];
     for (const zone of ['command', 'hand']) {
       for (const iid of s.zones[zone]) {
         const inst = s.cards[iid];
@@ -409,7 +529,7 @@ const Bot = (() => {
         const isSpell = /\b(instant|sorcery)\b/i.test(type);
         if (isSpell && !f.spell) continue;
         if (!isSpell && !/\b(creature|artifact|enchantment)\b/i.test(type)) continue;
-        const tax = zone === 'command' ? (inst.castCount || 0) * 2 : 0;
+        const tax = (zone === 'command' ? (inst.castCount || 0) * 2 : 0) + spellTax(taxes, inst, defOf);
         if (!affordable(s, f.cost, tax - G.discount(s, inst, oracleOf(defOf)))) continue;
         let target = null;
         let priority = f.cmc + (G.isCreature(inst) ? 0.5 : 0);
@@ -435,6 +555,7 @@ const Bot = (() => {
     onOpp(game, () => G.autoPay(s, f.cost, tax - G.discount(s, inst, oracleOf(defOf))));
     if (!f.spell) {
       onOpp(game, () => G.move(s, iid, 'battlefield'));
+      spellCast(game, s, inst, defOf, null); // prowess, "whenever you cast", cascade
       if (G.choosesType(oracleOf(defOf)(inst))) {
         inst.chosenType = commonType(s);
         if (inst.chosenType) G.log(s, `Chose ${inst.chosenType} for ${inst.name}.`);
@@ -465,8 +586,12 @@ const Bot = (() => {
       G.log(s, `Cast ${inst.name} and drew ${f.spell.draw}.`);
       G.drawCards(s, f.spell.draw, true);
       notes.push(`cast ${inst.name}`);
+    } else if (f.spell.effect) {
+      runFor(game, s, inst, f.spell.effect, 'cast');
+      notes.push(`cast ${inst.name}`);
     }
-    G.move(s, iid, 'graveyard');
+    spellCast(game, s, inst, defOf, null);
+    if (inst.zone !== 'graveyard') G.move(s, iid, 'graveyard');
     return true;
   }
 
@@ -500,29 +625,44 @@ const Bot = (() => {
   const isSelf = (words, inst) => {
     const w = words.toLowerCase().trim();
     const name = (inst.name || '').split(' // ')[0].toLowerCase();
-    return w === name || w === name.split(',')[0] || w === 'it' || /^this (creature|artifact|enchantment|permanent|land|card)$/.test(w)
+    return w === name || w === name.split(',')[0] || w === 'it' || /^this (creature|artifact|enchantment|permanent|land|card|token|spell)$/.test(w)
       || (w.length >= 4 && name.startsWith(w + ' ') && /\blegendary\b/i.test(inst.typeLine || '')); // "Ashcoat" for Ashcoat of the Shadow Swarm
   };
 
-  // Does the easy parts of an ability's effect for you: drawing, life, and counters on the card
-  // itself. ctx: { self, hitOpps(n) } where hitOpps takes life from each opponent.
-  // Returns the parts it couldn't do (for you to do by hand), or [].
+  // The effects runEffect knows: [pattern, do(table, match, ctx), can(match, ctx) if it needs more than the words].
+  const EFFECTS = [
+    [new RegExp(`^(?:you )?draw ${COUNT} cards?$`, 'i'), (g, m) => G.drawCards(g, toNumber(m[1]))],
+    [new RegExp(`^you gain ${COUNT} life$`, 'i'), (g, m) => { g.life += toNumber(m[1]); }],
+    [new RegExp(`^you lose ${COUNT} life$`, 'i'), (g, m) => { g.life -= toNumber(m[1]); }],
+    [new RegExp(`^each opponent loses ${COUNT} life$`, 'i'), (g, m, ctx) => ctx.hitOpps(toNumber(m[1])), (m, ctx) => !!ctx.hitOpps],
+    // Blood Artist's "target player loses 1 life": an opponent, picked by you online.
+    [new RegExp(`^target (?:player|opponent) loses ${COUNT} life$`, 'i'), (g, m, ctx) => (ctx.hitTarget || ctx.hitOpps)(toNumber(m[1])), (m, ctx) => !!(ctx.hitTarget || ctx.hitOpps)],
+    [new RegExp(`^put ${COUNT} ([\\w+/-]+) counters? on (.+)$`, 'i'), (g, m, ctx) => G.counter(g, ctx.self.iid, m[2].toLowerCase(), toNumber(m[1]), { effect: true }),
+      (m, ctx) => !!ctx.self && isSelf(m[3], ctx.self)],
+    [/^regenerate (.+)$/i, (g, m, ctx) => { ctx.self.regen = (ctx.self.regen || 0) + 1; }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self)], // used up by regenerates()
+    [/^proliferate$/i, (g, m, ctx) => proliferate(g, ctx.other)],
+    [/^you become the monarch$/i, g => becomeMonarch(g)],
+    [/^untap all creatures you control$/i, g => creatures(g).forEach(c => { c.tapped = false; c.tappedFor = null; })],
+    [/^untap all creatures that attacked this turn$/i, g => creatures(g, c => c.attackedTurn === g.turn).forEach(c => { c.tapped = false; c.tappedFor = null; })],
+    [/^after this (?:main )?phase, there is an additional combat phase(?: followed by an additional main phase)?$/i, g => extraCombat(g)],
+    [/^create .+$/i, (g, m, ctx) => triggerTokens(g, ctx.self || { name: 'Effect' }, m[0], 'effect') !== null, m => TOKEN_TEXT.test(m[0])],
+  ];
+  const effectParts = text => String(text).replace(/\([^)]*\)/g, '').trim().replace(/\.$/, '')
+    .split(/\.\s+|,?\s+and\s+(?=you |draw |each |put |target )|,\s+then\s+/i).map(p => p.trim()).filter(Boolean);
+  const effectFor = (part, ctx) => EFFECTS.find(([re, , can]) => { const m = re.exec(part); return m && (!can || can(m, ctx)); });
+  // Can runEffect do all of this text? (Then a spell made of it can resolve on its own.)
+  const canRunAll = (text, ctx) => { const parts = effectParts(text); return parts.length > 0 && parts.every(p => effectFor(p, ctx)); };
+
+  // Does the easy parts of an ability's effect: drawing, life, counters on the card itself,
+  // tokens, proliferate, the monarch, untapping and extra combats. game: the table it happens on.
+  // ctx: { self, hitOpps(n), hitTarget(n), other } where hitOpps takes life from each opponent
+  // and other is the opponent's table (for proliferate). Returns the parts it couldn't do (for you to do by hand), or [].
   function runEffect(game, text, ctx, times = 1) {
     const left = [];
-    const parts = String(text).replace(/\([^)]*\)/g, '').trim().replace(/\.$/, '')
-      .split(/\.\s+|,?\s+and\s+(?=you |draw |each |put )|,\s+then\s+/i).map(p => p.trim()).filter(Boolean);
-    for (const part of parts) {
-      let m;
+    for (const part of effectParts(text)) {
       for (let i = 0; i < times; i++) {
-        if ((m = new RegExp(`^(?:you )?draw ${COUNT} cards?$`, 'i').exec(part))) G.drawCards(game, toNumber(m[1]));
-        else if ((m = new RegExp(`^you gain ${COUNT} life$`, 'i').exec(part))) game.life += toNumber(m[1]);
-        else if ((m = new RegExp(`^you lose ${COUNT} life$`, 'i').exec(part))) game.life -= toNumber(m[1]);
-        else if ((m = new RegExp(`^each opponent loses ${COUNT} life$`, 'i').exec(part)) && ctx.hitOpps) ctx.hitOpps(toNumber(m[1]));
-        else if ((m = new RegExp(`^put ${COUNT} ([\\w+/-]+) counters? on (.+)$`, 'i').exec(part)) && ctx.self && isSelf(m[3], ctx.self)) {
-          G.counter(game, ctx.self.iid, m[2].toLowerCase(), toNumber(m[1]), { effect: true });
-        } else if ((m = /^regenerate (.+)$/i.exec(part)) && ctx.self && isSelf(m[1], ctx.self)) {
-          ctx.self.regen = (ctx.self.regen || 0) + 1; // used up by regenerates()
-        } else { left.push(part); break; }
+        const found = effectFor(part, ctx);
+        if (!found || found[1](game, found[0].exec(part), ctx) === false) { left.push(part); break; }
       }
     }
     return left;
@@ -708,7 +848,9 @@ const Bot = (() => {
       const each = []; // "This gets +1/+1 for each other Cat you control"
       for (const src of permanents(s)) {
         for (const line of oracleLines(src, defOf)) {
-          let m = /^(other )?(.+?) you control (?:get ([+-]\d+)\/([+-]\d+)(?: and have (.+?))?|have (.+?))\.?$/i.exec(line);
+          let m = /^(other )?(.+?) you control can't be blocked except by two or more creatures\.?$/i.exec(line);
+          if (m) { lords.push({ src, other: !!m[1], what: m[2], kws: ['menace'], pow: 0, tou: 0 }); continue; } // menace, older words
+          m = /^(other )?(.+?) you control (?:get ([+-]\d+)\/([+-]\d+)(?: and have (.+?))?|have (.+?))\.?$/i.exec(line);
           if (m && m[2].includes(':')) continue; // an activated ability ("{2}: Elves you control get …"), not always on
           if (m) {
             const kws = kwList(m[5] || m[6] || '').filter(k => KEYWORDS.includes(k)); // "protection from Dogs" is left to you
@@ -718,7 +860,10 @@ const Bot = (() => {
             continue;
           }
           m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control\.?$/i.exec(line);
-          if (m && isSelf(m[1], src)) each.push({ src, pow: Number(m[2]), tou: Number(m[3]), other: !!m[4], what: m[5] });
+          if (m && isSelf(m[1], src)) { each.push({ src, pow: Number(m[2]), tou: Number(m[3]), other: !!m[4], what: m[5] }); continue; }
+          // "Silverwing Squadron's power and toughness are each equal to the number of creatures you control."
+          m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) you control\.?$/i.exec(line);
+          if (m && isSelf(m[1], src)) each.push({ src, pow: /power/i.test(m[2]) ? 1 : 0, tou: /toughness/i.test(m[2]) ? 1 : 0, other: !!m[3], what: m[4], cda: true });
         }
       }
       const all = permanents(s);
@@ -732,11 +877,15 @@ const Bot = (() => {
           pow += l.pow;
           tou += l.tou;
         });
+        const cda = { pow: 0, tou: 0 };
         each.filter(e => e.src === c).forEach(e => {
           const n = all.filter(p => !(e.other && p === c) && isA(p, e.what)).length;
+          if (e.cda) { cda.pow += e.pow * n; cda.tou += e.tou * n; return; }
           pow += e.pow * n;
           tou += e.tou * n;
         });
+        if (each.some(e => e.src === c && e.cda)) c.cda = cda;
+        else delete c.cda;
         if (got.size) c.granted = [...got];
         else delete c.granted;
         if (pow || tou) c.anthem = { pow, tou };
@@ -931,6 +1080,16 @@ const Bot = (() => {
     for (const line of oracleLines(inst, defOf)) {
       const m = /^when(?:ever)? (.+?) enters(?: the battlefield)?(?: or [^,]+)?, (.+)$/i.exec(line);
       if (m && isSelf(m[1], inst)) counterEach(s, inst, m[2], 'enters');
+      if (m && isSelf(m[1], inst) && /^you become the monarch\.?$/i.test(m[2].trim())) becomeMonarch(s);
+      // "This creature enters with a +1/+1 counter on it for each other creature you control." or
+      // "… enters with X +1/+1 counters on it, where X is the number of Elves you control." (it doesn't count itself)
+      const c = /^(.+?) enters(?: the battlefield)? with (?:an? ([\w+/-]+) counter on it for each (?:other )?(.+?)|x ([\w+/-]+) counters on it, where x is the number of (?:other )?(.+?)) you control\.?$/i.exec(line);
+      if (c && isSelf(c[1], inst)) {
+        const kind = (c[2] || c[4]).toLowerCase();
+        const n = permanents(s).filter(p => p !== inst && isA(p, c[3] || c[5])).length;
+        if (n) G.counter(s, inst.iid, kind, n, { effect: true });
+        G.log(s, `${inst.name} enters with ${n} ${kind} counter${n === 1 ? '' : 's'}.`);
+      }
     }
   }
 
@@ -963,6 +1122,380 @@ const Bot = (() => {
       .map(([t, c]) => { const msg = `Opp's ${t.name} tapped your ${c.name} at the beginning of combat.`; G.log(s, msg); return msg; });
   }
 
+  // ---------- more abilities: attacking, dying, casting, gaining life ----------
+
+  const oracleText = (inst, defOf) => (defOf(inst.id) || {}).oracle || '';
+  const kwOf = (inst, defOf) => new Set(inst.bot ? inst.bot.kw || [] : keywords(oracleText(inst, defOf)));
+  const pumpBy = (c, pow, tou) => { c.pump = { ...c.pump, pow: (c.pump ? c.pump.pow : 0) + pow, tou: (c.pump ? c.pump.tou : 0) + tou }; };
+  const isOpps = (game, s) => !!(game.bot && s === game.bot.s);
+
+  // Runs an effect for whoever controls src: on your table (ctx as for runEffect), or on Opp's with
+  // your life as its opponent's. Logs it, with what's left to do by hand. Returns what's left.
+  function runFor(game, s, src, text, what, ctx, times = 1) {
+    if (isOpps(game, s)) {
+      const left = onOpp(game, t => runEffect(t, text, { self: src, hitOpps: n => { t.oppLife -= n; }, other: game }, times));
+      G.log(s, `${src.name}: ${what}${times > 1 ? ` (×${times})` : ''}.${left.length ? ` Not done: ${left.join('; ')}.` : ''}`);
+      return left;
+    }
+    const left = runEffect(s, text, Object.assign({ self: src, other: game.bot ? game.bot.s : null }, ctx), times);
+    G.log(s, `${src.name}: ${what}${times > 1 ? ` (×${times})` : ''}.${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+    return left;
+  }
+
+  // Proliferate on table s: one more of each kind of counter on its permanents (not -1/-1), and on
+  // the opponent's table (other, if there is one) one more -1/-1 counter and poison counter.
+  function proliferate(s, other) {
+    let n = 0;
+    for (const c of permanents(s)) {
+      for (const [kind, k] of Object.entries(c.counters || {})) if (k > 0 && kind !== '-1/-1') { G.counter(s, c.iid, kind, 1, { effect: true }); n++; }
+    }
+    if (other) {
+      for (const c of permanents(other)) if ((c.counters || {})['-1/-1'] > 0) { G.counter(other, c.iid, '-1/-1', 1, { effect: true }); n++; }
+      if (other.poison > 0) { other.poison++; n++; }
+    }
+    G.log(s, `Proliferated: ${n} counter${n === 1 ? '' : 's'} added.`);
+  }
+
+  // The monarch draws a card at the end of their turn, and loses it to a player whose creature
+  // deals them combat damage. Each table keeps when it became the monarch (s.monarch); the newest wins.
+  function becomeMonarch(s) {
+    s.monarch = Date.now();
+    G.log(s, 'Became the monarch.');
+  }
+  // Playing against Opp: 'you', 'opp' or null.
+  function monarchOf(game) {
+    const a = game.monarch || 0;
+    const b = (game.bot && game.bot.s.monarch) || 0;
+    if (!a && !b) return null;
+    return a >= b ? 'you' : 'opp';
+  }
+  // who ('you' or 'opp') dealt combat damage to the other: they take the crown if the other had it.
+  function takeMonarch(game, who) {
+    const holder = monarchOf(game);
+    if (!holder || holder === who) return;
+    const [to, from] = who === 'you' ? [game, game.bot.s] : [game.bot.s, game];
+    to.monarch = Math.max(Date.now(), (from.monarch || 0) + 1);
+    delete from.monarch;
+    G.log(to, `${who === 'you' ? 'You' : 'Opp'} dealt combat damage to the monarch and became the monarch.`);
+  }
+
+  // "After this main phase, there is an additional combat phase": creatures that attacked can attack again.
+  function extraCombat(s) {
+    creatures(s).forEach(c => { delete c.attackedTurn; });
+    delete s.combatTapTurn;
+    G.log(s, 'An additional combat phase: creatures that attacked can attack again (once untapped).');
+  }
+
+  // Attackers are declared on table s: "whenever this attacks" triggers (combatTrigger), exalted (a
+  // creature attacking alone gets +1/+1 for each exalted), battle cry (each other attacker gets
+  // +1/+0) and annihilator N (opts.sacrifice(n, why) makes the defending player sacrifice).
+  // Returns [[attackerIid, tokenIid]] for tokens that entered attacking.
+  function declareAttack(s, insts, defOf, opts = {}) {
+    insts = insts.filter(i => i && i.zone === 'battlefield');
+    const joined = [];
+    insts.forEach(inst => combatTrigger(s, inst, 'attacks', defOf).forEach(iid => joined.push([inst.iid, iid])));
+    const stOf = inst => stats(inst, inst.bot || defOf(inst.id));
+    if (insts.length === 1) {
+      const n = permanents(s).filter(p => (G.isCreature(p) ? stOf(p).kw.has('exalted') : kwOf(p, defOf).has('exalted'))).length;
+      if (n) {
+        pumpBy(insts[0], n, n);
+        G.log(s, `Exalted: ${insts[0].name} attacks alone and gets +${n}/+${n} until end of turn.`);
+      }
+    }
+    const all = [...insts, ...joined.map(([, iid]) => s.cards[iid]).filter(Boolean)];
+    for (const inst of insts) {
+      const st = stOf(inst);
+      if (st.kw.has('battle cry')) {
+        all.filter(c => c !== inst).forEach(c => pumpBy(c, 1, 0));
+        G.log(s, `${inst.name} (battle cry): each other attacking creature gets +1/+0.`);
+      }
+      const an = kwN(st, 'annihilator');
+      if (an && opts.sacrifice) opts.sacrifice(an, `${inst.name} (annihilator ${an})`);
+    }
+    return joined;
+  }
+
+  // End of combat: decayed creatures that attacked are sacrificed.
+  function endOfCombat(s, attackers, defOf) {
+    for (const inst of attackers) {
+      if (!inst || inst.zone !== 'battlefield' || !stats(inst, inst.bot || defOf(inst.id)).kw.has('decayed')) continue;
+      G.log(s, `${inst.name} (decayed) is sacrificed at end of combat.`);
+      G.move(s, inst.iid, inst.commander ? 'command' : 'graveyard');
+    }
+  }
+
+  // Opp sacrifices n permanents: tokens first, then its cheapest cards, lands last (unless it has plenty).
+  function oppSacrifices(game, n, why) {
+    const s = game.bot.s;
+    const lands = permanents(s).filter(G.isLand).length;
+    const cost = c => (c.token ? -10 : G.isLand(c) ? (lands >= 6 ? 0 : 50) : (c.bot ? c.bot.cmc : 0) + 1);
+    const gone = permanents(s).sort((a, b) => cost(a) - cost(b)).slice(0, n);
+    gone.forEach(c => moveOpps(s, c));
+    if (gone.length) G.log(game, `${why}: Opp sacrificed ${andList(gone.map(c => c.name))}.`);
+  }
+  // You sacrifice n permanents: you pick them (app.js shows game.mustSacrifice).
+  function youSacrifice(game, n, why) {
+    if (!permanents(game).length) return;
+    game.mustSacrifice = { n: ((game.mustSacrifice || {}).n || 0) + n, why };
+  }
+
+  // "Whenever Blood Artist or another creature dies", "Whenever a creature you control dies",
+  // "… or another creature or planeswalker you control dies", "a nontoken creature", "a creature an opponent controls".
+  const DIES_WATCH = /^whenever (?:(.+?) or )?(another |an? )(nontoken )?(.+?)( you control| an opponent controls| your opponents control)? dies, (?:you may )?(.+)$/i;
+
+  // Something died on table s (info: { counters it had, to: where it went }). Undying and persist
+  // bring it back; afterlife leaves Spirits; Blood Artist and friends on any table trigger.
+  function afterDeath(game, s, inst, info, defOf, ctx) {
+    const kw = kwOf(inst, defOf);
+    const had = info.counters || {};
+    if (!inst.token && !inst.faceDown && inst.zone === 'graveyard' && s.cards[inst.iid]) {
+      const back = (kw.has('undying') && !(had['+1/+1'] > 0) && '+1/+1') || (kw.has('persist') && !(had['-1/-1'] > 0) && '-1/-1');
+      if (back) {
+        G.move(s, inst.iid, 'battlefield');
+        G.counter(s, inst.iid, back, 1, { effect: true });
+        G.log(s, `${inst.name} (${back === '+1/+1' ? 'undying' : 'persist'}) came back with a ${back} counter.`);
+      }
+    }
+    const spirits = (inst.bot ? (inst.bot.n || {}).afterlife : keywordNumbers(oracleText(inst, defOf)).afterlife) || 0;
+    if (spirits) triggerTokens(s, inst, `create ${spirits} 1/1 white and black Spirit creature tokens with flying`, 'dies');
+    if (!G.isCreature(inst) && !isPlaneswalker(inst)) return;
+    for (const t of [game, game.bot && game.bot.s].filter(Boolean)) {
+      const watchers = permanents(t).filter(w => w !== inst);
+      if (t === s) watchers.push(inst); // "Blood Artist or another creature dies" sees itself die
+      for (const w of watchers) {
+        for (const line of oracleLines(w, defOf)) {
+          const m = DIES_WATCH.exec(line);
+          if (!m) continue;
+          // The one that died sees itself only with "Blood Artist or another creature".
+          if (w === inst && !(m[1] && isSelf(m[1], w))) continue;
+          if (m[3] && inst.token) continue;
+          if (!m[4].split(/\s+or\s+/).some(x => isA(inst, x))) continue;
+          if (m[5] && (/you control/i.test(m[5]) ? t !== s : t === s)) continue;
+          runFor(game, t, w, m[6], `${inst.name} died`, t === game ? ctx : null);
+        }
+      }
+    }
+  }
+
+  // "Whenever you cast a noncreature spell", "Magecraft — Whenever you cast or copy an instant or sorcery spell", …
+  const CAST_WATCH = /^(?:magecraft\s*[—-]\s*)?whenever you cast (?:or copy )?(?:an? )?(.*?)\s*spells?, (?:you may )?(.+)$/i;
+
+  // A spell was cast on table s (a permanent spell is already on the battlefield, an instant or
+  // sorcery may be too): prowess, "whenever you cast" triggers, cascade and storm. ctx: as for runEffect, for yours.
+  function spellCast(game, s, spell, defOf, ctx) {
+    if (s.spellTurn !== s.turn) { s.spellTurn = s.turn; s.spellsThisTurn = 0; }
+    s.spellsThisTurn++;
+    if (!G.isCreature(spell)) {
+      const prowess = creatures(s, c => c !== spell && stats(c, c.bot || defOf(c.id)).kw.has('prowess'));
+      prowess.forEach(c => pumpBy(c, 1, 1));
+      if (prowess.length) G.log(s, `Prowess: ${andList(prowess.map(c => c.name))} get${prowess.length === 1 ? 's' : ''} +1/+1 until end of turn.`);
+    }
+    for (const w of permanents(s)) {
+      if (w === spell) continue;
+      for (const line of oracleLines(w, defOf)) {
+        const m = CAST_WATCH.exec(line);
+        if (!m || /\b(first|second)\b/i.test(line) || !spellFits(spell, m[1], defOf)) continue;
+        const effect = m[2].trim();
+        const p = /^(.+?) gets? ([+-]\d+)\/([+-]\d+) until end of turn\.?$/i.exec(effect);
+        if (p && isSelf(p[1], w)) {
+          pumpBy(w, Number(p[2]), Number(p[3]));
+          G.log(s, `${w.name}: you cast ${spell.name}, so it gets ${p[2]}/${p[3]} until end of turn.`);
+        } else if (!pumpSentence(s, w, effect)) runFor(game, s, w, effect, `you cast ${spell.name}`, isOpps(game, s) ? null : ctx);
+      }
+    }
+    const lines = oracleLines(spell, defOf);
+    if (lines.some(l => /^cascade\b/i.test(l))) cascade(game, s, spell, defOf, ctx);
+    if (lines.some(l => /^storm\b/i.test(l)) && s.spellsThisTurn > 1) {
+      const n = s.spellsThisTurn - 1;
+      const text = spellText(spell, defOf);
+      if (canRunAll(text, Object.assign({ other: true, hitOpps: true }, ctx))) runFor(game, s, spell, text, `storm copies`, ctx, n);
+      else {
+        G.log(s, `${spell.name} (storm): copy it ${n} time${n === 1 ? '' : 's'}. Do the copies by hand.`);
+        if (!isOpps(game, s)) s.notice = `${spell.name} has storm: copy it ${n} time${n === 1 ? '' : 's'} (do the copies by hand).`;
+      }
+    }
+  }
+
+  // An instant or sorcery's rules text without its keyword lines (Storm, Cascade).
+  const spellText = (spell, defOf) => oracleLines(spell, defOf).filter(l => l && !keywords(l).length).join(' ');
+
+  // Your instant or sorcery whose whole text runEffect can do ("Draw two cards.", "Each opponent
+  // loses 3 life.", "Proliferate.", Relentless Assault): it's done and goes to the graveyard.
+  // Returns true if it did that.
+  function spellResolve(game, s, spell, defOf, ctx) {
+    if (!spell || spell.faceDown || spell.zone !== 'battlefield' || !/\b(instant|sorcery)\b/i.test(front(spell.typeLine))) return false;
+    const text = spellText(spell, defOf);
+    if (!canRunAll(text, Object.assign({ self: spell, other: true }, ctx))) return false;
+    runFor(game, s, spell, text, 'resolved', ctx);
+    if (spell.zone === 'battlefield') G.move(s, spell.iid, 'graveyard');
+    return true;
+  }
+
+  // Cascade: cards come off the top of the library until a nonland card that costs less; that one
+  // is cast for free, the rest go on the bottom in a random order. Opp's instants and sorceries are
+  // done only if runEffect can do all of them.
+  function cascade(game, s, spell, defOf, ctx) {
+    const cmcOf = c => (c.bot ? c.bot.cmc : (defOf(c.id) || {}).cmc) || 0;
+    const cmc = cmcOf(spell);
+    const k = s.zones.library.findIndex(iid => !G.isLand(s.cards[iid]) && cmcOf(s.cards[iid]) < cmc);
+    const shown = s.zones.library.splice(0, k < 0 ? s.zones.library.length : k);
+    G.shuffleArray(shown);
+    if (k < 0) {
+      s.zones.library.push(...shown);
+      G.log(s, `${spell.name} (cascade): no card that costs less than ${cmc}.`);
+      return;
+    }
+    const hit = s.cards[s.zones.library[0]];
+    s.zones.library.push(...shown);
+    G.log(s, `${spell.name} (cascade): revealed ${shown.length + 1} and cast ${hit.name} for free.`);
+    const opps = isOpps(game, s);
+    if (opps && /\b(instant|sorcery)\b/i.test(front(hit.typeLine))) {
+      const text = spellText(hit, defOf);
+      if (canRunAll(text, { hitOpps: true, other: true })) runFor(game, s, hit, text, 'cast by cascade');
+      G.move(s, hit.iid, 'graveyard');
+      return;
+    }
+    G.move(s, hit.iid, 'battlefield', { cast: true }); // yours: game.js tells app.js it was cast
+    if (opps) spellCast(game, s, hit, defOf, null);
+  }
+
+  // After an action: life gained ("Whenever you gain life, put a +1/+1 counter on Ajani's
+  // Pridemate", "… that many …"), unless a card says that player can't gain life (Sulfuric Vortex),
+  // in which case the gain is taken back. before: { you, opp } life totals before the action.
+  // friends: online, the other players' tableRules (their Erebos counts too).
+  function lifeChanged(game, before, defOf, ctx, friends = []) {
+    const tables = [{ t: game, key: 'life', was: before.you }];
+    if (game.bot && before.opp != null) tables.push({ t: game.bot.s, key: 'oppLife', was: before.opp });
+    const rules = tables.map(x => tableRules(x.t, defOf)).concat(friends.map(r => ({ noGain: r.noGain || {} })));
+    tables.forEach((x, i) => {
+      const gained = game[x.key] - x.was;
+      if (!(gained > 0)) return;
+      const blocked = rules.some((r, j) => r.noGain.all || (r.noGain.opps && j !== i) || (r.noGain.self && j === i));
+      if (blocked) {
+        game[x.key] = x.was;
+        G.log(x.t, `${x.t === game ? 'You' : 'Opp'} can't gain life, so the ${gained} life is taken back.`);
+        return;
+      }
+      for (const w of permanents(x.t)) {
+        for (const line of oracleLines(w, defOf)) {
+          const m = /^whenever you gain life( for the first time each turn)?, (?:you may )?(.+)$/i.exec(line);
+          if (!m) continue;
+          if (m[1] && x.t.gainTurn === x.t.turn) continue;
+          runFor(game, x.t, w, m[2].replace(/\bthat much life\b/gi, `${gained} life`).replace(/\bthat many\b/gi, String(gained)), `gained ${gained} life`, x.t === game ? ctx : null);
+        }
+      }
+      x.t.gainTurn = x.t.turn;
+    });
+  }
+
+  // ---------- rules that limit attacks and blocks ----------
+
+  // Arboria: "Creatures can't attack a player unless that player cast a spell or put a nontoken
+  // permanent onto the battlefield during their last turn." (game.js keeps s.actedTurn.)
+  const ARBORIA = /^creatures can't attack a player unless that player cast a spell or put a nontoken permanent onto the battlefield during (?:his or her|their) last turn\.?$/i;
+  // Mirri, Weatherlight Duelist: "As long as Mirri is tapped, no more than one creature can attack
+  // you each combat." Silent Arbiter: "No more than one creature can attack each combat."
+  const ATTACK_CAP = /^(?:as long as (.+?) is (un)?tapped, )?no more than (\w+) creatures? can attack( you)?(?: each combat)?\.?$/i;
+  const BLOCK_CAP = /^(?:as long as (.+?) is (un)?tapped, )?no more than (\w+) creatures? can block(?: each combat)?\.?$/i;
+  // Mirri: "Whenever Mirri attacks, each opponent can't block with more than one creature this combat."
+  const ATTACK_BLOCK_CAP = /^whenever (.+?) attacks, (?:each opponent|defending player) can't block with more than (\w+) creatures? this combat\.?$/i;
+  // Ghostly Prison, Propaganda: "Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you."
+  const ATTACK_TAX = /^creatures can't attack you(?: or planeswalkers you control)? unless their controller pays \{(\d+)\} for each (?:creature they control that's attacking you|of those creatures)\.?$/i;
+  // Thalia: "Noncreature spells cost {1} more to cast." Also "… spells your opponents cast cost {1} more to cast."
+  const SPELL_TAX = /^(?:(.+?) )?spells( your opponents cast)? cost \{(\d+)\} more to cast\.?$/i;
+  // Sulfuric Vortex, Erebos: "Players can't gain life." / "Your opponents can't gain life."
+  // (Sulfuric Vortex's own words: "If a player would gain life, that player gains no life instead.")
+  const NO_GAIN = /^(?:(players|your opponents|you) can't gain life|if (a player|an opponent) would gain life, that player gains no life instead)\.?$/i;
+  const holds = (who, untapped, inst) => !who || (isSelf(who, inst) && !inst.tapped === !!untapped);
+  const lower = (a, n) => (a == null ? n : Math.min(a, n));
+
+  // What one table's own cards say about combat: { arboria: it has one, acted: this player cast a
+  // spell or put a nontoken permanent onto the battlefield during their latest turn, attackCap: the
+  // most creatures that can attack this player, allAttackCap: … that can attack at all, blockCap }
+  // (null: no limit). Online, each player sends theirs with their table.
+  // attackTax: what each creature attacking this player costs (Ghostly Prison). spellTaxes: [{ what,
+  // n, opps }] (Thalia; opps: only other players' spells). noGain: { all, opps, self }, who can't gain life.
+  const NO_GAIN_WHO = { players: 'all', 'a player': 'all', 'your opponents': 'opps', 'an opponent': 'opps', you: 'self' };
+  function tableRules(s, defOf) {
+    const out = { arboria: false, acted: s.actedTurn === s.turn, attackCap: null, allAttackCap: null, blockCap: null, attackTax: 0, spellTaxes: [], noGain: {} };
+    for (const inst of permanents(s)) {
+      for (const line of oracleLines(inst, defOf)) {
+        let m;
+        if ((m = ATTACK_TAX.exec(line))) out.attackTax += Number(m[1]);
+        else if ((m = SPELL_TAX.exec(line)) && !/\btarget/i.test(line)) out.spellTaxes.push({ what: (m[1] || '').trim(), n: Number(m[3]), opps: !!m[2] });
+        else if ((m = NO_GAIN.exec(line))) out.noGain[NO_GAIN_WHO[(m[1] || m[2]).toLowerCase()]] = true;
+        else if (ARBORIA.test(line)) out.arboria = true;
+        else if ((m = ATTACK_CAP.exec(line)) && holds(m[1], m[2], inst) && toNumber(m[3])) {
+          if (m[4]) out.attackCap = lower(out.attackCap, toNumber(m[3]));
+          else out.allAttackCap = lower(out.allAttackCap, toNumber(m[3]));
+        } else if ((m = BLOCK_CAP.exec(line)) && holds(m[1], m[2], inst) && toNumber(m[3])) out.blockCap = lower(out.blockCap, toNumber(m[3]));
+      }
+    }
+    return out;
+  }
+
+  // Attacking one player. all: every table's tableRules; defender: that player's.
+  // Returns { cap: the most creatures that can attack them (0: none, Infinity: no limit), why,
+  // tax: mana to pay for each one (Ghostly Prison) }.
+  function attackRules(all, defender) {
+    const tax = defender.attackTax || 0;
+    if (!defender.acted && all.some(r => r.arboria)) return { cap: 0, tax, why: "Arboria: they didn't cast a spell or put a nontoken permanent onto the battlefield during their last turn" };
+    let cap = defender.attackCap == null ? Infinity : defender.attackCap;
+    let why = cap < Infinity ? `no more than ${cap} creature${cap === 1 ? '' : 's'} can attack them each combat` : '';
+    const all1 = all.reduce((n, r) => lower(n, r.allAttackCap), null);
+    if (all1 != null && all1 < cap) { cap = all1; why = `no more than ${cap} creature${cap === 1 ? '' : 's'} can attack each combat`; }
+    if (tax) why = `${why ? why + '; ' : ''}attacking them costs {${tax}} for each creature`;
+    return { cap, why, tax };
+  }
+
+  // Does a spell fit words like "noncreature", "creature", "instant or sorcery", "multicolored"? ('' fits any.)
+  // Words it doesn't know ("kicked", "with mana value 4 or greater") never fit.
+  function spellFits(spell, what, defOf) {
+    if (!what) return true;
+    const types = typeWords(spell);
+    const card = (spell.bot && Array.isArray(spell.bot.colors) ? spell.bot : null) || defOf(spell.id) || {};
+    const colors = colorsOf(card);
+    const word = w => {
+      if (w === 'multicolored') return colors.length > 1;
+      if (w === 'monocolored') return colors.length === 1;
+      if (w === 'colorless') return !colors.length;
+      if (PRO_COLORS[w]) return colors.includes(PRO_COLORS[w]);
+      const not = /^non-?(.+)$/.exec(w);
+      if (not) return !types.includes(singular(not[1]));
+      return /^[a-z]+$/.test(w) && types.includes(singular(w));
+    };
+    return what.toLowerCase().replace(/,/g, '').split(/\s+(?:and\/or|or|and)\s+/)
+      .some(alt => alt.split(/\s+/).filter(Boolean).every(word));
+  }
+
+  // The extra a spell costs because of Thalia and the like. all: [{ rules, own }], own being the
+  // table of whoever casts it.
+  const spellTax = (all, spell, defOf) => all.reduce((n, t) => n + t.rules.spellTaxes
+    .filter(x => (!x.opps || !t.own) && spellFits(spell, x.what, defOf)).reduce((m, x) => m + x.n, 0), 0);
+
+  // The most creatures a player can block with this combat: from any table (Silent Arbiter) and from
+  // the attackers themselves (Mirri attacking). attackers: [inst] on table s. Returns { cap, why } (cap Infinity: no limit).
+  function blockRules(all, attackers, defOf) {
+    let cap = all.reduce((n, r) => lower(n, r.blockCap), null);
+    let why = cap != null ? `no more than ${cap} creature${cap === 1 ? '' : 's'} can block each combat` : '';
+    for (const inst of attackers) {
+      if (!inst || inst.faceDown) continue;
+      for (const line of oracleLines(inst, defOf)) {
+        const m = ATTACK_BLOCK_CAP.exec(line);
+        const n = m && isSelf(m[1], inst) && toNumber(m[2]);
+        if (n && (cap == null || n < cap)) { cap = n; why = `${inst.name} attacked: no blocking with more than ${n} creature${n === 1 ? '' : 's'}`; }
+      }
+    }
+    return { cap: cap == null ? Infinity : cap, why };
+  }
+
+  // Both tables' rules when playing against Opp: { you, opp, all }.
+  const botRules = (game, defOf) => {
+    const you = tableRules(game, defOf);
+    const opp = tableRules(game.bot.s, defOf);
+    return { you, opp, all: [you, opp] };
+  };
+
   // Runs "whenever this blocks" triggers for blocks { attackerIid: [blockerIid, …] } (a single iid
   // works too), before any damage. Tokens made "blocking that creature" are added to that attacker's
   // blockers. s: the blockers' table. Returns the blocks, with every list an array.
@@ -980,9 +1513,21 @@ const Bot = (() => {
   // "create …". Returns the iids of tokens that join the combat ([] if none do), or null if the
   // text isn't a token like that.
   const COLOR_WORDS = { white: 'W', blue: 'U', black: 'B', red: 'R', green: 'G', colorless: null };
+  // "opponents you have" or "Elves you control" on table s, or null if it's something else.
+  function numberOf(s, phrase) {
+    const p = phrase.trim().toLowerCase();
+    if (/^opponents you have$/.test(p)) return s.opponents || 1;
+    const m = /^(.+?) you control$/.exec(p);
+    return m ? permanents(s).filter(c => isA(c, m[1])).length : null;
+  }
+  // Also "create a number of 2/2 white Knight creature tokens with vigilance equal to the number of
+  // opponents you have" (or "… of Elves you control").
+  const TOKEN_TEXT = /^create (a number of|\w+) (\d+)\/(\d+) ([a-z ,'-]+?) creature tokens?(?: with ([^.]+?))?(?: that(?: are|'s| is) (?:(tapped and )?(attacking)|(blocking) that creature))?(?: equal to the number of (.+?))?\.?$/i;
   function triggerTokens(s, inst, text, event) {
-    const m = /^create (\w+) (\d+)\/(\d+) ([a-z ,'-]+?) creature tokens?(?: with ([^.]+?))?(?: that(?: are|'s| is) (?:(tapped and )?(attacking)|(blocking) that creature))?\.?$/i.exec(text);
-    const made = m && toNumber(m[1]);
+    const m = TOKEN_TEXT.exec(text);
+    if (m && /^a number of$/i.test(m[1]) !== !!m[9]) return null;
+    const made = m && (m[9] ? numberOf(s, m[9]) : toNumber(m[1]));
+    if (m && m[9] && made === 0) { G.log(s, `${inst.name} ${event}: no tokens to make (the number of ${m[9]} is 0).`); return []; }
     if (!made) return null;
     const { n, by } = G.tokenCount(s, made); // Doubling Season, Parallel Lives…
     const words = m[4].replace(/,/g, ' ').split(/\s+/).filter(w => w && w.toLowerCase() !== 'and');
@@ -1040,7 +1585,23 @@ const Bot = (() => {
 
   // Which of Opp's creatures attack. Ones that a blocker of yours could kill without dying stay
   // home, unless the whole team would be lethal. Enough stay home to survive your swing back.
+  // Arboria and Mirri (see attackRules) can keep some or all of them home.
   function chooseAttackers(game, defOf) {
+    const rules = botRules(game, defOf);
+    let { cap } = attackRules(rules.all, rules.you);
+    const { tax } = attackRules(rules.all, rules.you);
+    if (tax) { // Ghostly Prison: only as many as it can pay for
+      let n = 0;
+      while (n < 20 && affordable(game.bot.s, `{${tax * (n + 1)}}`, 0)) n++;
+      cap = Math.min(cap, n);
+    }
+    const picked = pickAttackers(game, defOf);
+    if (picked.length <= cap) return picked;
+    const s = game.bot.s;
+    return picked.map(iid => s.cards[iid]).sort((a, b) => value(botStats(b)) - value(botStats(a))).slice(0, cap).map(c => c.iid);
+  }
+
+  function pickAttackers(game, defOf) {
     const s = game.bot.s;
     const you = yourCreatures(game, defOf);
     const blockers = you.filter(c => !c.inst.tapped).map(c => c.st);
@@ -1106,6 +1667,8 @@ const Bot = (() => {
     const bot = game.bot;
     const s = bot.s;
     const notes = [];
+    game.offTurn = true; // what you play now isn't on your turn (Arboria)
+    delete s.offTurn;
     G.endCrew(game); // your turn is over: your Vehicles stop being creatures
     G.endOfTurn(game); // and "until end of turn" pumps and regeneration shields wear off
     G.endOfTurn(s);
@@ -1156,8 +1719,15 @@ const Bot = (() => {
       notes.push(`had its ${c.name} tapped by your ${t.name}`);
     }
     const attackers = chooseAttackers(game, defOf);
+    // Your Ghostly Prison or Propaganda: Opp pays for each attacker (chooseAttackers kept it affordable).
+    const { tax } = attackRules(botRules(game, defOf).all, botRules(game, defOf).you);
+    if (tax && attackers.length) {
+      const paid = onOpp(game, () => G.autoPay(s, `{${tax * attackers.length}}`));
+      if (paid) G.log(s, `Opp paid {${tax * attackers.length}} to attack you (${paid.sources.join(', ') || 'floating mana'}).`);
+    }
     attackers.forEach(iid => { if (!botStats(s.cards[iid]).kw.has('vigilance')) s.cards[iid].tapped = true; });
-    [...attackers].forEach(iid => attackers.push(...combatTrigger(s, s.cards[iid], 'attacks', defOf))); // tokens that enter attacking join in
+    // "Whenever this attacks" triggers, exalted, battle cry, annihilator; tokens that enter attacking join in.
+    attackers.push(...declareAttack(s, attackers.map(iid => s.cards[iid]), defOf, { sacrifice: (n, why) => youSacrifice(game, n, why) }).map(([, iid]) => iid));
     bot.pending = attackers.length ? { attackers, targets: chooseTargets(game, attackers, defOf) } : null;
     return { attackers, notes };
   }
@@ -1178,6 +1748,26 @@ const Bot = (() => {
     blockers: bsts.reduce((n, st, i) => n + (st.kw.has('lifelink') ? r.b[i].dealt : 0), 0),
   });
 
+  // Combat damage n to a player from a creature: infect gives poison counters instead of life loss,
+  // toxic N adds N poison counters too. Returns { life, poison }.
+  const playerHit = (st, n) => ({
+    life: n > 0 && !st.kw.has('infect') ? n : 0,
+    poison: n > 0 ? (st.kw.has('infect') ? n : 0) + kwN(st, 'toxic') : 0,
+  });
+
+  // Damage from infect or wither to creatures is -1/-1 counters, which stay after the turn.
+  // Returns how many go on the attacker (a) and on each blocker (b), for the ones that live.
+  const witherCounters = (ast, bsts, r) => ({
+    a: bsts.reduce((n, st, i) => n + (st.kw.has('infect') || st.kw.has('wither') ? r.b[i].dealt : 0), 0),
+    b: bsts.map((st, i) => (ast.kw.has('infect') || ast.kw.has('wither') ? r.b[i].dmg : 0)),
+  });
+
+  // Puts those counters on the ones still on the battlefield. aT/bT: the attacker's and blockers' tables.
+  function applyWither(aT, a, bT, bl, w) {
+    if (w.a && a.zone === 'battlefield') G.counter(aT, a.iid, '-1/-1', w.a, { effect: true });
+    bl.forEach((b, i) => { if (w.b[i] && b.zone === 'battlefield') G.counter(bT, b.iid, '-1/-1', w.b[i], { effect: true }); });
+  }
+
   // Opp's attack after you've picked blockers. blocks: { attackerIid: [yourBlockerIid, …] } (a
   // single iid works too). Returns a short summary for a message.
   function resolveOppAttack(game, blocks, defOf) {
@@ -1189,19 +1779,23 @@ const Bot = (() => {
     // "Whenever this blocks" triggers happen before any damage.
     blockTriggers(game, blocks, defOf);
     let dmg = 0;
+    let poison = 0;
     const oppHits = []; // Opp's creatures that dealt combat damage to you, for oppCombatDamage
     const lines = [];
     const own = n => `your ${n}`;
     const theirs = n => n;
     const oppDies = a => { if (!regenerates(game, a, defOf, true)) moveOpps(s, a); };
     const yoursDies = b => { if (!regenerates(game, b, defOf, false)) moveYours(game, b, 'graveyard'); };
-    for (const iid of pending.attackers) {
-      const a = s.cards[iid];
-      if (!a || a.zone !== 'battlefield') continue;
-      const ast = botStats(a);
-      const bl = [].concat(blocks[iid] || []).map(id => game.cards[id]).filter(b => b && b.zone === 'battlefield');
-      const bsts = bl.map(b => stats(b, defOf(b.id)));
-      const r = combat(ast, bsts);
+    // Everyone's stats first: a creature of yours can block more than one (Brave the Sands).
+    const plan = pending.attackers.map(iid => s.cards[iid]).filter(a => a && a.zone === 'battlefield').map(a => {
+      const bl = [].concat(blocks[a.iid] || []).map(id => game.cards[id]).filter(b => b && b.zone === 'battlefield');
+      return { a, st: botStats(a), bl, blockers: bl.map(b => ({ key: b.iid, st: stats(b, defOf(b.id)) })) };
+    });
+    const results = combatAll(plan);
+    for (const [i, { a, st: ast, bl, blockers }] of plan.entries()) {
+      const iid = a.iid;
+      const bsts = blockers.map(b => b.st);
+      const r = results[i];
       const hit = r.player;
       const gain = lifelinkGain(ast, bsts, r);
       game.oppLife += gain.attacker;
@@ -1216,11 +1810,14 @@ const Bot = (() => {
         lines.push(what + ll);
         if (r.a.dead) oppDies(a);
         bl.forEach((b, i) => { if (r.b[i].dead) yoursDies(b); });
+        applyWither(s, a, game, bl, witherCounters(ast, bsts, r));
         if (pw && (pw.counters || {}).loyalty <= 0) moveYours(game, pw, 'graveyard');
         continue;
       }
+      const ph = playerHit(ast, hit);
+      if (ph.poison) { game.poison = (game.poison || 0) + ph.poison; poison += ph.poison; }
       if (hit) {
-        dmg += hit;
+        dmg += ph.life;
         oppHits.push({ inst: a, st: ast, card: a.bot });
         if (a.commander) {
           const key = `Opp|${a.name}`;
@@ -1228,16 +1825,20 @@ const Bot = (() => {
           game.cmdDamage[key] = (game.cmdDamage[key] || 0) + hit;
         }
       }
-      if (!bl.length) { lines.push(`${a.name} hits you for ${hit}${ll}`); continue; }
-      lines.push(`${a.name} is blocked by ${blockText(a.name, bl.map(b => b.name), r, own, theirs)}${hit ? `, ${hit} tramples over` : ''}${ll}`);
+      const px = ph.poison ? ` (${ph.poison} poison)` : '';
+      if (!bl.length) { lines.push(`${a.name} hits you for ${hit}${px}${ll}`); continue; }
+      lines.push(`${a.name} is blocked by ${blockText(a.name, bl.map(b => b.name), r, own, theirs)}${hit ? `, ${hit} tramples over${px}` : ''}${ll}`);
       if (r.a.dead) oppDies(a);
       bl.forEach((b, i) => { if (r.b[i].dead) yoursDies(b); });
+      applyWither(s, a, game, bl, witherCounters(ast, bsts, r));
     }
     game.life -= dmg;
-    const msg = `Attacked: ${lines.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}`;
+    const msg = `Attacked: ${lines.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}${poison ? ` You got ${poison} poison (now ${game.poison}).` : ''}`;
     dealtDamage(game, dmg, defOf);
     G.log(s, msg); // shown in your log as Opp's line
     oppCombatDamage(game, oppHits, defOf);
+    if (oppHits.length) takeMonarch(game, 'opp'); // combat damage to the monarch takes it
+    endOfCombat(s, plan.map(x => x.a), defOf);
     return msg;
   }
 
@@ -1256,10 +1857,16 @@ const Bot = (() => {
       G.log(s, `${t.inst.name}: Opp milled ${t.mill}${back.length ? ` and returned ${names} to its hand` : ''}.`);
       notes.push(`milled ${t.mill} with ${t.inst.name}${back.length ? ` and got back ${names}` : ''}`);
     }
+    if (monarchOf(game) === 'opp') {
+      G.drawCards(s, 1, true);
+      G.log(s, 'Opp is the monarch and drew a card.');
+    }
     while (s.zones.hand.length > 7) G.move(s, worstInHand(s), 'graveyard');
     G.MANA.forEach(k => { s.mana[k] = 0; });
     G.endOfTurn(s);
     G.endOfTurn(game);
+    delete game.offTurn;
+    s.offTurn = true;
     G.log(s, 'Opp ended its turn.');
     return notes;
   }
@@ -1269,22 +1876,39 @@ const Bot = (() => {
   function resolveYourAttack(game, attacks, defOf) {
     const s = game.bot.s;
     refreshGrants(game, defOf);
-    // "Whenever this attacks" triggers; tokens that enter attacking go after the same player or planeswalker.
-    const joined = [];
-    attacks.forEach(x => {
-      const a = typeof x === 'string' ? { iid: x } : x;
-      const inst = game.cards[a.iid];
-      if (inst && inst.zone === 'battlefield') combatTrigger(game, inst, 'attacks', defOf).forEach(iid => joined.push({ iid, pw: a.pw }));
-    });
-    attacks = attacks.concat(joined);
+    // "Whenever this attacks" triggers, exalted, battle cry, annihilator; tokens that enter attacking
+    // go after the same player or planeswalker.
+    const list = attacks.map(x => (typeof x === 'string' ? { iid: x } : x));
+    const joined = declareAttack(game, list.map(a => game.cards[a.iid]), defOf, { sacrifice: (n, why) => oppSacrifices(game, n, why) })
+      .map(([from, iid]) => ({ iid, pw: (list.find(a => a.iid === from) || {}).pw }));
+    attacks = list.concat(joined);
     const attackers = attacks.map(x => (typeof x === 'string' ? { iid: x } : x))
       .map(x => ({ inst: game.cards[x.iid], pw: x.pw && s.cards[x.pw] && s.cards[x.pw].zone === 'battlefield' ? s.cards[x.pw] : null }))
       .filter(a => a.inst && a.inst.zone === 'battlefield')
       .map(a => Object.assign(a, { st: stats(a.inst, defOf(a.inst.id)) }))
       .sort((a, b) => b.st.pow - a.st.pow);
-    const free = creatures(s, c => !c.tapped).map(inst => ({ inst, st: botStats(inst) }));
+    // uses: how many attackers it can still block (Brave the Sands gives each one more).
+    const free = creatures(s, c => !c.tapped).map(inst => ({ inst, st: botStats(inst), uses: blocksAllowed(s, inst, defOf) }));
     const blocks = new Map(); // your attacker -> Opp's blockers
-    const take = (a, picks) => { if (picks && picks.length) { blocks.set(a, picks); picks.forEach(p => free.splice(free.indexOf(p), 1)); } };
+    // Mirri attacking (or Silent Arbiter): only so many of Opp's creatures can block.
+    const limit = blockRules(botRules(game, defOf).all, attackers.map(a => a.inst), defOf);
+    let room = limit.cap;
+    const take = (a, picks) => {
+      const fresh = (picks || []).filter(p => !p.used).length;
+      if (!picks || !picks.length || fresh > room) return;
+      room -= fresh;
+      blocks.set(a, picks);
+      // One that can block again does so with what it has left: its power after killing this
+      // attacker, its toughness after the damage it takes.
+      const r = combat(a.st, picks.map(p => p.st));
+      picks.forEach((p, i) => {
+        p.used = true;
+        p.uses--;
+        if (p.uses > 0 && !r.b[i].dead) p.st = { ...p.st, pow: Math.max(0, p.st.pow - Math.max(0, a.st.tou)), tou: p.st.tou - r.b[i].dmg };
+        else free.splice(free.indexOf(p), 1);
+      });
+    };
+    if (limit.why) G.log(game, `${limit.why[0].toUpperCase()}${limit.why.slice(1)}.`);
     const byValue = list => [...list].sort((x, y) => value(x.st) - value(y.st));
     const lostIn = (group, r) => group.filter((b, i) => r.b[i].dead).reduce((n, b) => n + value(b.st), 0);
     for (const a of attackers) {
@@ -1326,15 +1950,17 @@ const Bot = (() => {
     const oppDies = b => { if (!regenerates(game, b, defOf, true)) moveOpps(s, b); };
     const yoursDies = a => { if (!regenerates(game, a, defOf, false)) moveYours(game, a, 'graveyard'); };
     let dmg = 0;
+    let poison = 0;
     const lines = [];
     const own = n => `your ${n}`;
     const theirs = n => n;
     const hits = []; // your creatures that dealt combat damage to Opp, for "whenever … deals combat damage" cards
-    for (const a of attackers) {
+    const results = combatAll(attackers.map(a => ({ st: a.st, blockers: (blocks.get(a) || []).map(b => ({ key: b.inst.iid, st: b.st })) })));
+    for (const [i, a] of attackers.entries()) {
       if (!a.st.kw.has('vigilance')) a.inst.tapped = true;
       a.inst.attackedTurn = game.turn; // one attack per creature per turn, even if it gets untapped
       const bl = blocks.get(a) || [];
-      const r = combat(a.st, bl.map(b => b.st));
+      const r = results[i];
       const hit = r.player;
       const gain = lifelinkGain(a.st, bl.map(b => b.st), r);
       game.life += gain.attacker;
@@ -1348,28 +1974,37 @@ const Bot = (() => {
         lines.push(what + ll);
         bl.forEach((b, i) => { if (r.b[i].dead) oppDies(b.inst); });
         if (r.a.dead) yoursDies(a.inst);
+        applyWither(game, a.inst, s, bl.map(b => b.inst), witherCounters(a.st, bl.map(b => b.st), r));
         if (!alreadyDead && (a.pw.counters || {}).loyalty <= 0) moveOpps(s, a.pw);
         continue;
       }
-      dmg += hit;
+      const ph = playerHit(a.st, hit);
+      if (ph.poison) { s.poison = (s.poison || 0) + ph.poison; poison += ph.poison; }
+      dmg += ph.life;
       if (hit) hits.push({ inst: a.inst, st: a.st, card: defOf(a.inst.id) });
       if (hit && a.inst.commander) {
         game.cmdDealt = game.cmdDealt || {};
         game.cmdDealt[a.inst.name] = (game.cmdDealt[a.inst.name] || 0) + hit;
       }
-      if (!bl.length) { lines.push(`${a.inst.name} hits Opp for ${hit}${ll}`); continue; }
-      lines.push(`${blockedBy()}${hit ? `, ${hit} tramples over` : ''}${ll}`);
+      const px = ph.poison ? ` (${ph.poison} poison)` : '';
+      if (!bl.length) { lines.push(`${a.inst.name} hits Opp for ${hit}${px}${ll}`); continue; }
+      lines.push(`${blockedBy()}${hit ? `, ${hit} tramples over${px}` : ''}${ll}`);
       bl.forEach((b, i) => { if (r.b[i].dead) oppDies(b.inst); });
       if (r.a.dead) yoursDies(a.inst);
+      applyWither(game, a.inst, s, bl.map(b => b.inst), witherCounters(a.st, bl.map(b => b.st), r));
     }
     game.oppLife -= dmg;
-    const msg = `You attacked: ${lines.join('; ')}.${dmg ? ` Opp took ${dmg} (now ${game.oppLife}).` : ''}`;
+    const msg = `You attacked: ${lines.join('; ')}.${dmg ? ` Opp took ${dmg} (now ${game.oppLife}).` : ''}${poison ? ` Opp got ${poison} poison (now ${s.poison}).` : ''}`;
     G.log(game, msg);
     combatDamage(game, hits.filter(h => h.inst.zone === 'battlefield' || h.inst.zone === 'graveyard'), defOf, { hitOpps: n => { game.oppLife -= n; } });
+    if (hits.length) takeMonarch(game, 'you');
+    endOfCombat(game, attackers.map(a => a.inst), defOf);
     return msg;
   }
 
-  return { KEYWORDS, keywordCounter, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
+  return { KEYWORDS, keywordCounter, tableRules, attackRules, blockRules, botRules, combatAll, blocksAllowed,
+    declareAttack, endOfCombat, afterDeath, spellCast, spellResolve, spellTax, lifeChanged, proliferate, monarchOf, takeMonarch,
+    extraCombat, playerHit, witherCounters, keywordNumbers, kwN, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
     yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker };
 })();
 

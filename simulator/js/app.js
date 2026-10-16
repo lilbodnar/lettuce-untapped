@@ -304,7 +304,13 @@
     const entry = { json: JSON.stringify(game), remote: remoteLife, hits: null };
     undoStack.push(entry);
     if (undoStack.length > 200) undoStack.shift();
+    const lifeBefore = { you: game.life, opp: hasBot() ? game.oppLife : null };
     fn();
+    if (!game) return;
+    // "Whenever you gain life" (Ajani's Pridemate) and "can't gain life" (Sulfuric Vortex), on either table.
+    Bot.lifeChanged(game, lifeBefore, def, effectCtx(), isOnline() ? Object.values(combatRules().byPid) : []);
+    // Only one monarch: the newest.
+    if (hasBot() && game.monarch && game.bot.s.monarch) delete (Bot.monarchOf(game) === 'you' ? game.bot.s : game).monarch;
     entry.hits = sendHits(game.oppHits);
     delete game.oppHits;
     if (game.notice) {
@@ -326,6 +332,7 @@
   function afterChange() {
     if (game && game.mustDiscard) setTimeout(mustDiscardPrompt, 0); // after any modal this action opens
     if (game && game.mustDestroy) setTimeout(mustDestroyPrompt, 0);
+    if (game && game.mustSacrifice) setTimeout(mustSacrificePrompt, 0);
     syncAuras(); // your Arrest on Opp's creature
     if (game) Bot.refreshGrants(game, def); // "Goblins you control have haste" and the like
     if (ui.tab === 'play') renderBoard();
@@ -416,7 +423,7 @@
     openModal(`
       <div class="page-head"><h3>Discard ${extra === 1 ? 'a card' : extra + ' cards'}</h3><button class="btn ghost sm" data-act="close-modal">Cancel</button></div>
       <p class="muted small">Your maximum hand size is ${MAX_HAND} and you have ${game.zones.hand.length}. Click ${extra === 1 ? 'the card' : 'the cards'} to discard, then your turn ends.</p>
-      <div class="viewer-grid">${game.zones.hand.map(iid => `<div class="viewer-card"><div class="card" data-discard="${iid}" title="Discard">${faceHtml((o.cards || game.cards)[iid])}</div></div>`).join('')}</div>`);
+      <div class="viewer-grid">${game.zones.hand.map(iid => `<div class="viewer-card"><div class="card" data-discard="${iid}" title="Discard">${faceHtml(game.cards[iid])}</div></div>`).join('')}</div>`);
   }
 
   function discardDown(iid) {
@@ -503,12 +510,41 @@
     }, done);
   }
 
+  // Annihilator: pick the permanents you sacrifice.
+  function mustSacrificePrompt() {
+    const m = game && game.mustSacrifice;
+    if (!m || !modal.hidden) return;
+    const ids = [...game.zones.battlefield];
+    const n = Math.min(m.n, ids.length);
+    if (!n) return act(() => { delete game.mustSacrifice; });
+    pickCards({
+      title: `${m.why}: sacrifice ${n === 1 ? 'a permanent' : n + ' permanents'}`,
+      note: `Click ${n === 1 ? 'the permanent' : `${n} permanents`} to sacrifice, then Sacrifice.`,
+      ids, min: n, max: n, ok: 'Sacrifice', cancel: 'Skip',
+      onCancel: () => act(() => { delete game.mustSacrifice; }),
+    }, picks => act(() => {
+      delete game.mustSacrifice;
+      picks.forEach(iid => { const c = game.cards[iid]; if (c) Game.move(game, iid, c.commander ? 'command' : 'graveyard'); });
+    }));
+  }
+
+  // The monarch draws at their end step. Online, the newest claim wins (clocks lined up with each peer's offset).
+  function amMonarch() {
+    if (!game || !game.monarch) return false;
+    if (hasBot()) return Bot.monarchOf(game) === 'you';
+    return Object.values(peers).every(p => !p.board || !p.board.monarch || p.board.monarch + (p.offset || 0) < game.monarch);
+  }
+
   // Your end step: "you may mill four cards. If you do, return up to two Rat creature cards from your
   // graveyard to your hand" (Ashcoat of the Shadow Swarm). Asks for each, then runs then().
   function endStep(then) {
     if (game.endStepDone === game.turn) return then(); // already asked (End turn pressed again)
     const todo = Bot.endStepTriggers(game, def);
-    const finish = () => { game.endStepDone = game.turn; then(); };
+    const finish = () => {
+      if (amMonarch()) act(() => { Game.drawCards(game, 1); Game.log(game, 'You are the monarch, so you drew a card at your end step.'); });
+      game.endStepDone = game.turn;
+      then();
+    };
     const next = i => {
       const t = todo[i];
       if (!t) return finish();
@@ -557,7 +593,7 @@
     endStep(() => checkHandSize(() => {
       activePid = next.pid;
       Online.send({ t: 'pass', next: next.pid });
-      act(() => { Game.endCrew(game); Game.endOfTurn(game); Game.log(game, `Passed the turn to ${next.name}.`); });
+      act(() => { Game.endCrew(game); Game.endOfTurn(game); game.offTurn = true; Game.log(game, `Passed the turn to ${next.name}.`); });
     }));
   }
 
@@ -581,7 +617,7 @@
   const upkeepIids = () => (game && game.upkeep && game.upkeep.turn === game.turn ? game.upkeep.iids.filter(iid => game.cards[iid] && game.cards[iid].zone === 'battlefield') : []);
 
   function startNextTurn() {
-    act(() => { Game.nextTurn(game); markUpkeep(); });
+    act(() => { delete game.offTurn; Game.nextTurn(game); markUpkeep(); });
     const upkeep = upkeepIids();
     if (upkeep.length) status(`Upkeep triggers: ${upkeep.map(iid => game.cards[iid].name).join(', ')}. They're highlighted until you click Done.`);
     if (Online.connected()) {
@@ -635,7 +671,8 @@
     if (!Online.connected()) return;
     if (!game) return Online.send({ t: 'state', none: true, now: Date.now() });
     const snap = Online.snapshot(game);
-    const ids = new Set([...snap.battlefield, ...snap.graveyard, ...snap.exile, ...snap.command].map(c => c.id).filter(Boolean));
+    snap.rules = Bot.tableRules(game, def); // Arboria, Mirri…: what limits attacks on you
+    const ids =new Set([...snap.battlefield, ...snap.graveyard, ...snap.exile, ...snap.command].map(c => c.id).filter(Boolean));
     const fresh = [...ids].filter(id => !sentDefs.has(id) && def(id));
     for (let i = 0; i < fresh.length; i += 40) {
       const chunk = fresh.slice(i, i + 40);
@@ -654,7 +691,11 @@
       case 'state': {
         const cards = {};
         if (!m.none) [...m.battlefield, ...m.graveyard, ...m.exile, ...m.command].forEach(c => { cards[c.iid] = c; });
+        if (!m.none) m.rules = cleanRules(m.rules);
+        if (!m.none) m.monarch = Number.isFinite(Number(m.monarch)) ? Number(m.monarch) : 0;
         peers[from] = { board: m.none ? null : m, offset: Date.now() - (m.now || Date.now()), cards, pick: peers[from] && peers[from].pick };
+        // Someone became the monarch after you did: you aren't any more.
+        if (game && game.monarch && m.monarch && m.monarch + peers[from].offset > game.monarch) { delete game.monarch; saveSoon(); }
         receiveAuras(from, peers[from].board);
         renderOppsSoon();
         if (ui.tab === 'decks') refreshOnlinePanel();
@@ -927,14 +968,42 @@
     return out;
   }
 
+  // A friend's table rules (see Bot.tableRules), checked. Older versions don't send them: no limits.
+  function cleanRules(r) {
+    const n = v => (Number.isInteger(v) && v >= 0 && v < 100 ? v : null);
+    r = r && typeof r === 'object' ? r : {};
+    const taxes = (Array.isArray(r.spellTaxes) ? r.spellTaxes : []).slice(0, 10).filter(x => x && typeof x === 'object')
+      .map(x => ({ what: String(x.what || '').slice(0, 60), n: n(x.n) || 0, opps: !!x.opps }));
+    const g = r.noGain && typeof r.noGain === 'object' ? r.noGain : {};
+    return { arboria: !!r.arboria, acted: r.acted !== false, attackCap: n(r.attackCap), allAttackCap: n(r.allAttackCap), blockCap: n(r.blockCap),
+      attackTax: n(r.attackTax) || 0, spellTaxes: taxes, noGain: { all: !!g.all, opps: !!g.opps, self: !!g.self } };
+  }
+
+  // Arboria, Mirri, Silent Arbiter: every table's combat rules. { mine, byPid, all }.
+  function combatRules() {
+    const mine = Bot.tableRules(game, def);
+    const byPid = {};
+    if (!isOnline() && hasBot()) byPid[BOT] = Bot.tableRules(game.bot.s, def);
+    else others().forEach(p => { const peer = peers[p.pid]; byPid[p.pid] = (peer && peer.board && peer.board.rules) || cleanRules(null); });
+    return { mine, byPid, all: [mine, ...Object.values(byPid)] };
+  }
+
+  const capText = why => why[0].toUpperCase() + why.slice(1);
+
   // Pick blockers for each attacker (more than one can block the same attacker; menace needs two).
-  // list: [{ key, card, st, aim }], aim being what it's going after.
+  // list: [{ key, card, st, aim }], aim being what it's going after. limit: { cap, why }, the most
+  // creatures you can block with this combat (Mirri).
   let blockPreviews = {}; // data-peek key → card, for hovering cards in the block popup
-  function openBlockModal(title, before, list, doneAct, laterTip) {
+  let blockLimit = { cap: Infinity, why: '' };
+  function openBlockModal(title, before, list, doneAct, laterTip, limit) {
+    blockLimit = limit && limit.cap < Infinity ? limit : { cap: Infinity, why: '' };
     const mine = Bot.yourCreatures(game, def).filter(c => !c.inst.tapped);
     blockPreviews = {};
     for (const x of list) blockPreviews['a' + x.key] = x.card;
     for (const c of mine) blockPreviews['b' + c.inst.iid] = c.inst;
+    // Brave the Sands: some can block more than one attacker.
+    const allowed = Object.fromEntries(mine.map(c => [c.inst.iid, Bot.blocksAllowed(game, c.inst, def)]));
+    const multi = mine.filter(c => allowed[c.inst.iid] > 1);
     const rows = list.map(x => {
       const can = mine.filter(c => Bot.canBlock(c.st, x.st, game));
       const menace = x.st.kw.has('menace');
@@ -943,7 +1012,7 @@
         <div><b>${esc(x.card.name)}</b> <span class="muted">${x.st.pow}/${x.st.tou}${esc(kwText(x.st))}</span>
           <div class="block-aim">→ ${esc(x.aim)}</div>
           ${menace ? '<div class="muted small">Menace: block it with two or more creatures, or none.</div>' : ''}
-          ${can.length ? `<div class="block-picks">${can.map(c => `<label class="check" data-peek="b${esc(c.inst.iid)}"><input type="checkbox" data-block="${esc(x.key)}" data-name="${esc(x.card.name)}" ${menace ? 'data-menace="1"' : ''} value="${esc(c.inst.iid)}"> ${esc(c.inst.name)} <span class="muted">(${c.st.pow}/${c.st.tou})</span></label>`).join('')}</div>`
+          ${can.length ? `<div class="block-picks">${can.map(c => `<label class="check" data-peek="b${esc(c.inst.iid)}"><input type="checkbox" data-block="${esc(x.key)}" data-name="${esc(x.card.name)}" ${menace ? 'data-menace="1"' : ''} data-max="${allowed[c.inst.iid] === Infinity ? 999 : allowed[c.inst.iid]}" value="${esc(c.inst.iid)}"> ${esc(c.inst.name)} <span class="muted">(${c.st.pow}/${c.st.tou})</span></label>`).join('')}</div>`
             : '<div class="muted small">None of your untapped creatures can block it.</div>'}
         </div></div>`;
     });
@@ -951,22 +1020,31 @@
       <div class="page-head"><h3>${esc(title)}</h3><button class="btn ghost sm" data-act="close-modal" title="${esc(laterTip)}">Later</button></div>
       ${before ? `<p class="small">${esc(before)}</p>` : ''}
       <p class="muted small">Tick the creatures that block each attacker. Each of your creatures can block one attacker, and several can block the same one (the attacker's damage goes to them in the order listed). Unblocked attackers hit whatever they're aimed at: you, or one of your planeswalkers.</p>
+      ${blockLimit.why ? `<p class="small"><b>${esc(capText(blockLimit.why))}.</b></p>` : ''}
+      ${multi.length ? `<p class="small">${multi.map(c => `<b>${esc(c.inst.name)}</b> can block ${allowed[c.inst.iid] === Infinity ? 'any number of' : allowed[c.inst.iid]} attackers`).join(', ')}. Its damage goes to each one in turn, enough to kill it, the rest to the last.</p>` : ''}
       <div class="block-list">${rows.join('')}</div>
       <div class="toolbar"><button class="btn" data-act="${doneAct}">Done blocking</button></div>`);
   }
 
-  // { attackerKey: [yourBlockerIid, …] }, or null (with a warning) if a creature blocks twice
-  // or a menace attacker has just one blocker.
+  // { attackerKey: [yourBlockerIid, …] }, or null (with a warning) if a creature blocks more
+  // attackers than it can or a menace attacker has just one blocker.
   function readBlocks() {
     const blocks = {};
-    const used = new Set();
+    const used = new Map(); // blocker → how many attackers it blocks
     const menace = {};
     for (const box of modalBox.querySelectorAll('[data-block]:checked')) {
-      if (used.has(box.value)) { status('Each of your creatures can only block one attacker.', 'warn'); return null; }
-      used.add(box.value);
+      const n = (used.get(box.value) || 0) + 1;
+      const max = Number(box.dataset.max) || 1;
+      if (n > max) {
+        const name = (game.cards[box.value] || {}).name || 'That creature';
+        status(max === 1 ? 'Each of your creatures can only block one attacker.' : `${name} can block only ${max} attackers.`, 'warn');
+        return null;
+      }
+      used.set(box.value, n);
       (blocks[box.dataset.block] = blocks[box.dataset.block] || []).push(box.value);
       if (box.dataset.menace) menace[box.dataset.block] = box.dataset.name;
     }
+    if (used.size > blockLimit.cap) { status(`${capText(blockLimit.why)}.`, 'warn'); return null; }
     for (const [key, name] of Object.entries(menace)) {
       if (blocks[key].length < 2) { status(`${name} has menace: block it with two or more creatures, or none.`, 'warn'); return null; }
     }
@@ -983,7 +1061,8 @@
       const pw = targets[a.iid] && game.cards[targets[a.iid]];
       return { key: a.iid, card: a, st: Bot.botStats(a), aim: pw && pw.zone === 'battlefield' ? `your ${pw.name}${loyaltyText(pw)}` : 'you' };
     });
-    openBlockModal('Opp attacks you', before, list, 'blocks-done', 'Look at the table first. The End turn button brings this back.');
+    const limit = Bot.blockRules(combatRules().all, list.map(x => x.card), def);
+    openBlockModal('Opp attacks you', before, list, 'blocks-done', 'Look at the table first. The End turn button brings this back.', limit);
   }
 
   function blocksDone() {
@@ -1003,8 +1082,12 @@
     if (hasBot() && (game.bot.pending || game.bot.tapChoice)) return oppWaiting();
     if (incoming.length) return openIncoming();
     if (isOnline() && activePid && activePid !== Online.id()) return status(`It's ${nameOf(activePid)}'s turn, not yours.`);
-    const targets = attackTargets();
-    if (!targets.length) return status('No one else is in the game yet.');
+    const all = attackTargets();
+    if (!all.length) return status('No one else is in the game yet.');
+    // Arboria keeps players who did nothing last turn safe (their planeswalkers can still be attacked).
+    const limits = attackLimits();
+    const targets = all.filter(t => t.pw || limits.byPid[t.pid].cap > 0);
+    const notes = Object.entries(limits.byPid).filter(([, l]) => l.why).map(([pid, l]) => `${nameOf(pid)}: ${l.why}.`);
     // Opp's Sentinel of the Eternal Watch taps one of your creatures at the beginning of your combat.
     if (hasBot() && game.combatTapTurn !== game.turn && Bot.combatTappers(game.bot.s, def).length) {
       let taps;
@@ -1035,9 +1118,20 @@
       <p class="muted small">Tick the creatures that attack and pick what each one goes after: a player or one of their planeswalkers.
         Then ${who}, the damage is done and creatures that die go to the graveyard (commanders to the command zone).
         "Whenever this attacks" pumps (like Ashcoat's) and tokens that enter attacking (like Leonin Warleader's and Brimaz's) are counted; pump spells and other abilities aren't, so use counters first, or Undo if it should have gone differently.</p>
-      ${rows.length ? `<div class="attack-list">${rows.join('')}</div>` : '<p class="muted">You have no creatures on the battlefield.</p>'}
+      ${notes.map(n => `<p class="small"><b>${esc(n)}</b></p>`).join('')}
+      ${!targets.length ? '<p class="muted">There\'s no one you can attack this combat.</p>' : rows.length ? `<div class="attack-list">${rows.join('')}</div>` : '<p class="muted">You have no creatures on the battlefield.</p>'}
       ${vehicles.length ? `<h4>Vehicles</h4><p class="muted small">Crew a Vehicle by tapping creatures with enough total power. It's a creature until the turn ends, and then it can attack.</p><div class="attack-list">${vehicles.join('')}</div>` : ''}
-      <div class="toolbar"><button class="btn" data-act="attack-go" ${canAttack ? '' : 'disabled'}>Attack</button></div>`);
+      <div class="toolbar"><button class="btn" data-act="attack-go" ${canAttack && targets.length ? '' : 'disabled'}>Attack</button></div>`);
+  }
+
+  // The limits on attacking each other player this combat (Arboria, Mirri, Silent Arbiter):
+  // { byPid: { pid: { cap, why } }, total: the most creatures that can attack at all }.
+  function attackLimits() {
+    const rules = combatRules();
+    const byPid = {};
+    for (const [pid, r] of Object.entries(rules.byPid)) byPid[pid] = Bot.attackRules(rules.all, r);
+    const total = rules.all.reduce((n, r) => (r.allAttackCap == null ? n : Math.min(n, r.allAttackCap)), Infinity);
+    return { byPid, total };
   }
 
   // Crew: tick untapped creatures whose total power is at least the Vehicle's crew number.
@@ -1079,18 +1173,36 @@
     const targets = new Map(attackTargets().map(t => [t.value, t]));
     const picks = [...modalBox.querySelectorAll('[data-attacker]:checked')].map(x => ({ iid: x.dataset.attacker, to: targets.get(aim[x.dataset.attacker]) })).filter(p => p.to);
     if (!picks.length) return status('Tick at least one creature to attack with.');
+    // Silent Arbiter caps every attacker; Mirri only the ones attacking her controller, not their planeswalkers.
+    const limits = attackLimits();
+    if (picks.length > limits.total) return status(`No more than ${limits.total} creature${limits.total === 1 ? '' : 's'} can attack each combat.`, 'warn');
+    for (const [pid, l] of Object.entries(limits.byPid)) {
+      const n = picks.filter(p => p.to.pid === pid && !p.to.pw).length;
+      if (n > l.cap) return status(`${nameOf(pid)}: ${l.why}. You picked ${n}.`, 'warn');
+    }
+    // Ghostly Prison, Propaganda: pay for each creature attacking that player.
+    const tax = Object.entries(limits.byPid).reduce((sum, [pid, l]) => sum + l.tax * picks.filter(p => p.to.pid === pid && !p.to.pw).length, 0);
+    if (tax && !Game.autoPay(JSON.parse(JSON.stringify(game)), `{${tax}}`)) return status(`Attacking with these costs {${tax}} (Ghostly Prison and the like), and your untapped mana can't pay it.`, 'warn');
+    const payTax = () => {
+      if (!tax) return;
+      const paid = Game.autoPay(game, `{${tax}}`);
+      Game.log(game, `Paid {${tax}} to attack${paid && paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`);
+    };
     closeModal();
     if (!isOnline()) {
       let msg;
-      act(() => { msg = Bot.resolveYourAttack(game, picks.map(p => ({ iid: p.iid, pw: p.to.pw || null })), def); });
+      act(() => { payTax(); msg = Bot.resolveYourAttack(game, picks.map(p => ({ iid: p.iid, pw: p.to.pw || null })), def); });
       return status(msg + outcome(), 'ok', 10000);
     }
     const byPlayer = new Map();
+    const attackers = picks.map(p => game.cards[p.iid]);
     act(() => {
+      payTax();
       const lines = [];
-      // "Whenever this attacks" pumps first, so the stats sent include them.
+      // "Whenever this attacks" pumps, exalted and battle cry first, so the stats sent include them.
       // Tokens that enter tapped and attacking (Leonin Warleader's Cats) go after the same player.
-      [...picks].forEach(p => { const inst = game.cards[p.iid]; if (inst && inst.zone === 'battlefield') Bot.combatTrigger(game, inst, 'attacks', def).forEach(iid => picks.push({ iid, to: p.to })); });
+      const sacrifice = (n, why) => Game.log(game, `${why}: the player it attacks sacrifices ${n} permanent${n === 1 ? '' : 's'} (they do that on their side).`);
+      Bot.declareAttack(game, attackers, def, { sacrifice }).forEach(([from, iid]) => picks.push({ iid, to: picks.find(p => p.iid === from).to }));
       for (const p of picks) {
         const inst = game.cards[p.iid];
         if (!inst || inst.zone !== 'battlefield') continue;
@@ -1098,12 +1210,16 @@
         if (!st.kw.has('vigilance')) inst.tapped = true;
         inst.attackedTurn = game.turn;
         if (!byPlayer.has(p.to.pid)) byPlayer.set(p.to.pid, []);
-        byPlayer.get(p.to.pid).push({ iid: inst.iid, id: inst.faceDown ? null : inst.id, name: inst.name, pow: st.pow, tou: st.tou, kw: [...st.kw], colors: st.colors, artifact: st.artifact, commander: !!inst.commander, pw: p.to.pw || null });
+        byPlayer.get(p.to.pid).push({ iid: inst.iid, id: inst.faceDown ? null : inst.id, name: inst.name, pow: st.pow, tou: st.tou, kw: [...st.kw], n: st.n, colors: st.colors, artifact: st.artifact, commander: !!inst.commander, pw: p.to.pw || null });
         lines.push(`${inst.name} → ${p.to.pw ? `${nameOf(p.to.pid)}'s ${p.to.pwName}` : nameOf(p.to.pid)}`);
       }
       Game.log(game, `Attacked: ${lines.join(', ')}.`);
     });
-    for (const [pid, attacks] of byPlayer) Online.send({ t: 'attack', attacks }, pid);
+    // Mirri attacking: they can block with only one creature.
+    const limit = Bot.blockRules([], attackers, def);
+    const cap = limit.cap < Infinity ? { blockCap: limit.cap, blockWhy: limit.why } : {};
+    for (const [pid, attacks] of byPlayer) Online.send({ t: 'attack', attacks, ...cap }, pid);
+    act(() => Bot.endOfCombat(game, attackers, def)); // decayed: sacrificed (their stats were already sent)
     status(`Attacking. Waiting for ${[...byPlayer.keys()].map(nameOf).join(' and ')} to block.`, 'ok', 10000);
   }
 
@@ -1116,9 +1232,12 @@
       pow: num(a.pow), tou: num(a.tou), kw: (Array.isArray(a.kw) ? a.kw : []).map(String).filter(k => k.length < 20).slice(0, 20),
       colors: (Array.isArray(a.colors) ? a.colors : []).map(String).filter(k => Game.MANA.includes(k)), artifact: !!a.artifact,
       commander: !!a.commander, pw: a.pw ? String(a.pw) : null,
+      // Numbered keywords (toxic 2, bushido 1…)
+      n: Object.fromEntries(Object.entries(a.n && typeof a.n === 'object' ? a.n : {}).slice(0, 10).map(([k, v]) => [String(k).slice(0, 20), Math.max(0, num(v))])),
     }));
     if (!attacks.length) return;
-    incoming.push({ from, attacks });
+    const cap = Number.isInteger(m.blockCap) && m.blockCap >= 0 ? m.blockCap : null;
+    incoming.push({ from, attacks, blockCap: cap, blockWhy: cap == null ? '' : String(m.blockWhy || `no blocking with more than ${cap} creatures`).slice(0, 160) });
     updateTurnButtons();
     if (modal.hidden) openIncoming();
     else status(`${nameOf(from)} is attacking you. Click the Block button to pick your blockers.`, 'warn', true);
@@ -1133,11 +1252,14 @@
       return {
         key: a.iid,
         card: (peer && peer.cards[a.iid]) || { iid: a.iid, id: a.id, name: a.name },
-        st: { pow: a.pow, tou: a.tou, kw: new Set(a.kw), cmc: 0, colors: a.colors || [], artifact: !!a.artifact },
+        st: { pow: a.pow, tou: a.tou, kw: new Set(a.kw), n: a.n || {}, cmc: 0, colors: a.colors || [], artifact: !!a.artifact },
         aim: pw && pw.zone === 'battlefield' ? `your ${pw.name}${loyaltyText(pw)}` : a.pw ? 'your planeswalker (already gone)' : 'you',
       };
     });
-    openBlockModal(`${nameOf(fight.from)} attacks you`, '', list, 'blocks-online', 'Look at the table first. The Block button brings this back.');
+    // Silent Arbiter on any table, and Mirri attacking (the attacker sends that one).
+    const limit = Bot.blockRules(combatRules().all, [], def);
+    if (fight.blockCap != null && fight.blockCap < limit.cap) Object.assign(limit, { cap: fight.blockCap, why: fight.blockWhy });
+    openBlockModal(`${nameOf(fight.from)} attacks you`, '', list, 'blocks-online', 'Look at the table first. The Block button brings this back.', limit);
   }
 
   // Your blocks against another player: the damage is done here, and they're told which of
@@ -1155,16 +1277,23 @@
     const hitIids = []; // their attackers that dealt combat damage to you, for their "deals combat damage to a player" triggers
     let gain = 0;
     let dmg = 0;
+    let poison = 0;
+    const wither = {}; // their attacker iid → -1/-1 counters from your infect or wither blockers
     const mine = [];
     const theirs = [];
     act(() => {
       // Your "whenever this blocks" triggers happen before any damage.
       Bot.blockTriggers(game, blocks, def);
-      for (const a of fight.attacks) {
-        const ast = { pow: a.pow, tou: a.tou, kw: new Set(a.kw), cmc: 0, colors: a.colors || [], artifact: !!a.artifact };
+      // Everyone's stats first: a creature of yours can block more than one (Brave the Sands).
+      const plan = fight.attacks.map(a => {
         const bl = (blocks[a.iid] || []).map(id => game.cards[id]).filter(b => b && b.zone === 'battlefield');
-        const bsts = bl.map(b => Bot.stats(b, def(b.id)));
-        const r = Bot.combat(ast, bsts);
+        return { st: { pow: a.pow, tou: a.tou, kw: new Set(a.kw), n: a.n || {}, cmc: 0, colors: a.colors || [], artifact: !!a.artifact }, bl, blockers: bl.map(b => ({ key: b.iid, st: Bot.stats(b, def(b.id)) })) };
+      });
+      const results = Bot.combatAll(plan);
+      for (const [i, a] of fight.attacks.entries()) {
+        const { st: ast, bl, blockers } = plan[i];
+        const bsts = blockers.map(b => b.st);
+        const r = results[i];
         const hit = r.player;
         const ll = Bot.lifelinkGain(ast, bsts, r);
         gain += ll.attacker;
@@ -1174,7 +1303,9 @@
         if (a.pw) {
           if (hit && pwLive) Bot.damagePlaneswalker(pw, def(pw.id), hit);
         } else if (hit) {
-          dmg += hit;
+          const ph = Bot.playerHit(ast, hit); // infect: poison instead of life; toxic: poison too
+          dmg += ph.life;
+          poison += ph.poison;
           hitIids.push(a.iid);
           if (a.commander) {
             const key = `${who}|${a.name}`;
@@ -1198,15 +1329,23 @@
         theirs.push(line(false));
         if (r.a.dead) dead.push(a.iid);
         bl.forEach((b, i) => { if (r.b[i].dead && !Bot.regenerates(game, b, def, false)) dies(b); });
+        // Infect and wither: -1/-1 counters on your blockers that live; theirs are put on by them.
+        const w = Bot.witherCounters(ast, bsts, r);
+        bl.forEach((b, i) => { if (w.b[i] && b.zone === 'battlefield') Game.counter(game, b.iid, '-1/-1', w.b[i], { effect: true }); });
+        if (w.a && !r.a.dead) wither[a.iid] = w.a;
         if (pwLive && (pw.counters || {}).loyalty <= 0) dies(pw);
       }
       game.life -= dmg;
-      Game.log(game, `${who} attacked: ${mine.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}`);
+      game.poison = (game.poison || 0) + poison;
+      Game.log(game, `${who} attacked: ${mine.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}${poison ? ` You got ${poison} poison (now ${game.poison}).` : ''}`);
       Bot.dealtDamage(game, dmg, def);
     });
-    const msg = `${me} blocked: ${theirs.join('; ')}.${dmg ? ` ${me} took ${dmg} (now ${game.life}).` : ''}${gain ? ` You gain ${gain} life.` : ''}`;
-    Online.send({ t: 'combat', dead, gain, msg, hit: hitIids }, fight.from);
-    status(`${who} attacked: ${mine.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}`, 'ok', 10000);
+    // Combat damage to the monarch: the attacker becomes the monarch.
+    const crown = hitIids.length > 0 && amMonarch();
+    if (crown) act(() => { delete game.monarch; Game.log(game, `${who} dealt you combat damage and became the monarch.`); });
+    const msg = `${me} blocked: ${theirs.join('; ')}.${dmg ? ` ${me} took ${dmg} (now ${game.life}).` : ''}${poison ? ` ${me} got ${poison} poison.` : ''}${gain ? ` You gain ${gain} life.` : ''}${crown ? ' You are the monarch now.' : ''}`;
+    Online.send({ t: 'combat', dead, gain, msg, hit: hitIids, wither, monarch: crown }, fight.from);
+    status(`${who} attacked: ${mine.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}${poison ? ` You got ${poison} poison.` : ''}`, 'ok', 10000);
     if (incoming.length) openIncoming();
   }
 
@@ -1220,6 +1359,13 @@
     const gain = Math.max(0, Math.min(1000, Math.trunc(Number(m.gain)) || 0));
     game.life += gain;
     remoteLife += gain; // kept through Undo, like other players' life changes
+    // Their infect or wither blockers: -1/-1 counters on your attackers that lived.
+    for (const [iid, n] of Object.entries(m.wither && typeof m.wither === 'object' ? m.wither : {})) {
+      const inst = game.cards[iid];
+      const k = Math.max(0, Math.min(99, Math.trunc(Number(n)) || 0));
+      if (inst && inst.zone === 'battlefield' && k) Game.counter(game, iid, '-1/-1', k, { effect: true });
+    }
+    if (m.monarch === true) game.monarch = Date.now(); // you dealt combat damage to the monarch
     const msg = String(m.msg || `${nameOf(from)} blocked.`).slice(0, 1500);
     Game.log(game, msg);
     // "Whenever one or more creatures you control … deal combat damage to a player" (Kutzil, Feline Sovereign).
@@ -1310,7 +1456,7 @@
     // Whoever goes first starts with turn 1's card already drawn. Everyone else draws when their turn comes.
     await startGame(key, first === Online.id());
     activePid = first;
-    if (first !== Online.id()) game.turn = 0;
+    if (first !== Online.id()) { game.turn = 0; game.offTurn = true; }
     const name = pid => (pid === Online.id() ? 'You' : nameOf(pid));
     rounds.forEach((round, i) => {
       const line = round.map(x => `${name(x.pid)} ${x.r}`).join(', ');
@@ -1410,9 +1556,13 @@
     const fromHand = inst.zone === 'hand' || inst.zone === 'command';
     if (!ui.autoTap || !fromHand || Game.isLand(inst) || opts.faceDown) return null;
     const cost = (def(inst.id) || {}).manaCost || '';
-    const tax = inst.zone === 'command' && inst.commander ? (inst.castCount || 0) * 2 : 0;
+    const cmdTax = inst.zone === 'command' && inst.commander ? (inst.castCount || 0) * 2 : 0;
+    // Thalia and the like, on any table.
+    const rules = combatRules();
+    const more = Bot.spellTax([{ rules: rules.mine, own: true }, ...Object.values(rules.byPid).map(r => ({ rules: r, own: false }))], inst, def);
+    const tax = cmdTax + more;
     const less = Game.discount(game, inst, oracleOf);
-    return { cost, tax, less, label: `${cost}${tax ? ` + ${tax} tax` : ''}${less ? ` − ${less}` : ''}` };
+    return { cost, tax, less, label: `${cost}${cmdTax ? ` + ${cmdTax} tax` : ''}${more ? ` + ${more} more` : ''}${less ? ` − ${less}` : ''}` };
   }
 
   // Plays a card, but if Auto-tap can't cover its cost, asks first: cancel, or play it anyway
@@ -1814,6 +1964,7 @@
             <div class="life" title="Your life"><span>You</span><button data-act="life" data-d="-1">−</button><b id="lifeNo"></b><button data-act="life" data-d="1">+</button></div>
             ${online || bot ? '' : '<div class="life goldfish" title="Opponent\'s life (for goldfishing)"><span>Opp</span><button data-act="opp" data-d="-1">−</button><b id="oppNo"></b><button data-act="opp" data-d="1">+</button></div>'}
             <div class="life poison" title="Poison counters"><span>☠</span><button data-act="poison" data-d="-1">−</button><b id="poisonNo"></b><button data-act="poison" data-d="1">+</button></div>
+            <span class="opp-stat" id="monarchNo" title="You're the monarch: you draw a card at the end of your turn. A player whose creature deals you combat damage takes it." hidden>👑 Monarch</span>
             <label class="toggle" title="When you play a spell, tap the lands it needs (uses floating mana first)"><input type="checkbox" data-act="autotap" ${ui.autoTap ? 'checked' : ''}> Auto-tap lands</label>
             <label class="toggle" title="At the start of your turn, highlight cards with upkeep triggers until you click Done"><input type="checkbox" data-act="upkeephelp" ${ui.upkeepOff ? '' : 'checked'}> Upkeep reminders</label>
             <label class="size" title="Card size"><span class="muted small">Size</span><input type="range" min="60" max="150" step="2" value="${ui.cardW}" data-act="size"></label>
@@ -1889,7 +2040,7 @@
     const counters = Object.entries(inst.counters || {});
     const tax = inst.commander && inst.castCount ? inst.castCount * 2 : 0;
     const inCommand = pid ? inst.inCommand : inst.zone === 'command';
-    const sig = [inst.faceDown, inst.flipped, cardImage(inst), JSON.stringify(inst.counters), inst.token, inCommand ? tax : '', inst.chosenType || '', inst.regen || '', inst.pump ? inst.pump.pow + '/' + inst.pump.tou + (inst.pump.kw || []).join() : '', inst.anthem ? inst.anthem.pow + '/' + inst.anthem.tou : '', auraTags(inst).join()].join('|');
+    const sig = [inst.faceDown, inst.flipped, cardImage(inst), JSON.stringify(inst.counters), inst.token, inCommand ? tax : '', inst.chosenType || '', inst.regen || '', inst.pump ? inst.pump.pow + '/' + inst.pump.tou + (inst.pump.kw || []).join() : '', inst.anthem ? inst.anthem.pow + '/' + inst.anthem.tou : '', inst.cda ? inst.cda.pow + '/' + inst.cda.tou : '', auraTags(inst).join()].join('|');
     if (el.dataset.sig !== sig) {
       el.dataset.sig = sig;
       el.innerHTML = faceHtml(inst)
@@ -1902,7 +2053,8 @@
         + (inst.regen ? `<span class="tag regen" title="Regeneration shield until end of turn: the next time it would be destroyed, it's tapped instead">REGEN${inst.regen > 1 ? ' ×' + inst.regen : ''}</span>` : '')
         + (inst.pump ? `<span class="tag pump" title="Until end of turn${inst.pump.kw && inst.pump.kw.length ? ': ' + esc(inst.pump.kw.join(', ')) : ''}">${inst.pump.pow || inst.pump.tou ? `${sign(inst.pump.pow)}/${sign(inst.pump.tou)}` : ''}${inst.pump.kw && inst.pump.kw.length ? `${inst.pump.pow || inst.pump.tou ? ' ' : ''}+${inst.pump.kw.length} kw` : ''}</span>` : '')
         + (auraTags(inst).length ? `<span class="tag aura" title="${esc(auraTags(inst).join(', '))}">${esc(auraTags(inst).join(', '))}</span>` : '')
-        + (inst.anthem ? `<span class="tag anthem" title="From its own text or a lord, while it lasts">${sign(inst.anthem.pow)}/${sign(inst.anthem.tou)}</span>` : '');
+        + (inst.anthem ? `<span class="tag anthem" title="From its own text or a lord, while it lasts">${sign(inst.anthem.pow)}/${sign(inst.anthem.tou)}</span>` : '')
+        + (inst.cda ? `<span class="tag cda" title="Its */* from its own text (like the number of creatures you control), before counters and pumps">=${inst.cda.pow}/${inst.cda.tou}</span>` : '');
     }
     el.classList.toggle('tapped', !!inst.tapped);
     el.classList.toggle('upkeep', !pid && upkeepIids().includes(inst.iid));
@@ -2055,6 +2207,7 @@
       ${activePid === p.pid ? '<span class="turn-badge">Their turn</span>' : ''}
       <div class="life" title="${esc(p.name)}'s life. − and + change it for them."><span>♥</span><button data-act="hit" data-pid="${esc(p.pid)}" data-d="-1">−</button><b>${b.life}</b><button data-act="hit" data-pid="${esc(p.pid)}" data-d="1">+</button></div>
       ${b.poison ? `<span class="opp-stat poison">☠ <b>${b.poison}</b></span>` : ''}
+      ${(p.pid === BOT ? Bot.monarchOf(game) === 'opp' : b.monarch) ? '<span class="opp-stat" title="The monarch draws a card at the end of their turn. Deal them combat damage to take it.">👑 Monarch</span>' : ''}
       ${Object.entries(b.cmdDamage || {}).filter(([, n]) => n).map(([k, n]) => `<span class="opp-stat ${n >= 21 ? 'poison' : ''}" title="Commander damage ${esc(p.name)} has taken from ${esc(k.replace('|', "'s "))}">⚔ ${esc(k.split('|')[1])} <b>${n}</b></span>`).join('')}
       <span class="opp-stat">T<b>${b.turn}</b></span>
       <span class="opp-stat">Hand <b>${b.hand}</b></span>
@@ -2122,6 +2275,7 @@
     $('#lifeNo').textContent = game.life;
     if ($('#oppNo')) $('#oppNo').textContent = game.oppLife;
     $('#poisonNo').textContent = game.poison;
+    if ($('#monarchNo')) $('#monarchNo').hidden = !amMonarch();
 
     const bf = $('#battlefield');
     // Equipment and auras are drawn just under the creature they're on.
@@ -2560,17 +2714,33 @@
   // ---------- abilities done for you ----------
 
   // "Each opponent loses N life": Opp (or the goldfish Opp), or everyone else online.
+  // "Target player loses N life" (Blood Artist): Opp, or online the player you pick with −.
   const effectCtx = () => ({
     hitOpps: n => {
       if (isOnline()) others().forEach(p => { (game.oppHits = game.oppHits || []).push({ to: p.pid, d: -n }); });
       else game.oppLife -= n;
     },
+    hitTarget: n => {
+      if (isOnline()) (game.oppHits = game.oppHits || []).push({ to: 'target', d: -n });
+      else game.oppLife -= n;
+    },
   });
 
   // "When this creature dies, create a 2/1 black Cat creature token": on your table and Opp's.
-  Game.hooks.died = (s, inst) => {
+  // Also undying, persist, afterlife and "whenever a creature dies" (Blood Artist) on either table.
+  Game.hooks.died = (s, inst, info) => {
     if (s === game) Bot.died(game, inst, def, effectCtx());
     else if (hasBot() && s === game.bot.s) Bot.died(s, inst, def, null);
+    else return;
+    Bot.afterDeath(game, s, inst, info || {}, def, effectCtx());
+  };
+
+  // A spell you cast: prowess, "whenever you cast …", cascade, storm, then instants and sorceries
+  // that are simple enough resolve on their own. Opp's spells are handled in bot.js.
+  Game.hooks.cast = (s, inst) => {
+    if (s !== game) return;
+    Bot.spellCast(game, game, inst, def, effectCtx());
+    if (!Bot.spellModes(inst, def)) Bot.spellResolve(game, game, inst, def, effectCtx());
   };
 
   // "Whenever a creature you control enters, …" (Ajani's Welcome) counts tokens too.
@@ -2950,6 +3120,10 @@
       ...(appMode ? [{ label: 'Roll a d20', action: () => roll(20) }] : []),
       { label: 'Flip a coin', action: () => roll(2) },
       { label: 'Roll a d6', action: () => roll(6) },
+      { sep: true },
+      { label: 'Extra combat (attack again)', action: () => act(() => Bot.extraCombat(game)) },
+      { label: 'Proliferate', action: () => act(() => Bot.proliferate(game, hasBot() ? game.bot.s : null)) },
+      { label: game.monarch ? 'Stop being the monarch' : 'Become the monarch', action: () => act(() => { if (game.monarch) { delete game.monarch; Game.log(game, 'No longer the monarch.'); } else { game.monarch = Date.now(); Game.log(game, 'Became the monarch.'); } }) },
       { sep: true },
       { label: 'Restart on the play', action: () => confirmRestart(false) },
       { label: 'Restart on the draw', action: () => confirmRestart(true) },
