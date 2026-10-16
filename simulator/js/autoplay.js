@@ -22,7 +22,7 @@ const Autoplay = (() => {
     const responder = B.getResponder();
     G.hooks.died = (s, inst, info) => {
       const v = view();
-      B.died(s, inst, defOf, null);
+      B.died(s, inst, defOf, null, v);
       if (v) B.afterDeath(v, s, inst, info || {}, defOf, null);
     };
     G.hooks.entered = (s, inst) => {
@@ -32,8 +32,16 @@ const Autoplay = (() => {
       B.enterTrigger(s, inst, defOf);
       const v = view();
       if (v && v.bot) B.enterEffects(v, s, inst, defOf, null);
+      if (v && v.bot && s === v.bot.s) {
+        if (G.isLand(inst) && !inst.faceDown) B.landEntered(v, inst, defOf, null, s);
+        B.creatureEntered(v, inst, defOf, null, s);
+      }
     };
-    G.hooks.tokenEntered = (s, inst) => B.enterTrigger(s, inst, defOf);
+    G.hooks.tokenEntered = (s, inst) => {
+      B.enterTrigger(s, inst, defOf);
+      const v = view();
+      if (v && v.bot && s === v.bot.s) B.creatureEntered(v, inst, defOf, null, s);
+    };
     G.hooks.cast = null;
     G.hooks.casting = null;
     B.setResponder(null);

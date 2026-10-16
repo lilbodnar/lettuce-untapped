@@ -70,6 +70,8 @@ const Bot = (() => {
   // "This creature can't be blocked except by two or more creatures." about itself (not "creatures you control …").
   const OLD_MENACE = /^(?!(?:other|enchanted|equipped|each|all|creatures?)\b)(?!.*\byou control\b).+? can't be blocked except by two or more creatures\.?$/i;
   const UNBLOCKABLE = /^(?!(?:other|enchanted|equipped|each|all|creatures?|target)\b)(?!.*\byou control\b)[^,.]+? can't be blocked\.?$/i;
+  // "This creature can't block.", "Goblin Roughrider can't attack or block." about itself.
+  const CANT = /^(?!(?:other|enchanted|equipped|each|all|creatures?|target)\b)(?!.*\byou control\b)[^,.]+? can't (attack|block|attack or block)\.?$/i;
 
   // Keywords a card has on its own lines ("Flying, vigilance"), not ones it gives other cards.
   function keywords(oracle) {
@@ -85,6 +87,10 @@ const Bot = (() => {
     // Menace in older words: "Goblin Glory Chaser can't be blocked except by two or more creatures."
     if (lines.some(l => OLD_MENACE.test(l))) found.add('menace');
     if (lines.some(l => UNBLOCKABLE.test(l))) found.add('unblockable'); // "This creature can't be blocked."
+    for (const l of lines) {
+      const c = CANT.exec(l);
+      if (c) c[1].toLowerCase().split(' or ').forEach(w => found.add(`can't ${w}`));
+    }
     return [...found];
   }
 
@@ -166,6 +172,16 @@ const Bot = (() => {
   const front = typeLine => String(typeLine || '').split('//')[0];
   const num = v => (/^-?\d+$/.test(String(v)) ? Number(v) : 0); // "*" counts as 0
 
+  // A two-faced card's text is kept as "Front name: …\n\nBack name: …" (scryfall.js). Its rules
+  // are the face that's up: the back once it's flipped (transformed), otherwise the front.
+  function faceOracle(oracle, name, flipped) {
+    const text = String(oracle || '');
+    const names = String(name || '').split(' // ');
+    if (names.length < 2 || !text.includes('\n\n')) return text;
+    const faces = text.split('\n\n').map((face, i) => (names[i] && face.startsWith(`${names[i]}: `) ? face.slice(names[i].length + 2) : face));
+    return faces[flipped ? 1 : 0] || faces[0];
+  }
+
   // Power, toughness and keywords of a creature right now, counters included.
   // card is the Scryfall card for your cards, or the facts stored on Opp's cards.
   function stats(inst, card) {
@@ -183,7 +199,7 @@ const Bot = (() => {
     if (inst.pump) { pow += inst.pump.pow; tou += inst.pump.tou; } // "gets +X/+X until end of turn"
     if (inst.cda && !pt) { pow += inst.cda.pow; tou += inst.cda.tou; } // */* from its own text, see refreshGrants
     if (inst.anthem) { pow += inst.anthem.pow; tou += inst.anthem.tou; } // from lords, see refreshGrants
-    const kw = new Set(card.kw || keywords(card.oracle || (inst.custom && inst.custom.text)));
+    const kw = new Set(card.kw || keywords(faceOracle(card.oracle, card.name, inst.flipped) || (inst.custom && inst.custom.text)));
     for (const [name, n] of Object.entries(c)) { const k = n > 0 && counterKw(name); if (k) kw.add(k); }
     (inst.granted || []).forEach(k => kw.add(k)); // from lords, see refreshGrants
     ((inst.pump && inst.pump.kw) || []).forEach(k => kw.add(k)); // "gain trample until end of turn"
@@ -195,7 +211,7 @@ const Bot = (() => {
       if (b.cantAttack) kw.add("can't attack");
       if (b.cantBlock) kw.add("can't block");
     }
-    const n = card.n || keywordNumbers(card.oracle || (inst.custom && inst.custom.text));
+    const n = card.n || keywordNumbers(faceOracle(card.oracle, card.name, inst.flipped) || (inst.custom && inst.custom.text));
     return { pow, tou, kw, n, cmc: card.cmc || 0, colors: colorsOf(card), artifact: /\bartifact\b/i.test(front(inst.typeLine)) };
   }
 
@@ -394,16 +410,17 @@ const Bot = (() => {
 
   // The facts Opp needs about each of its cards, stored on the card so they survive saving.
   function facts(card) {
+    const oracle = faceOracle(card.oracle, card.name, false); // Opp plays the front face
     return {
       cost: card.manaCost || '',
       cmc: card.cmc || 0,
       power: card.power,
       toughness: card.toughness,
       loyalty: card.loyalty,
-      kw: keywords(card.oracle),
-      n: keywordNumbers(card.oracle),
+      kw: keywords(oracle),
+      n: keywordNumbers(oracle),
       colors: colorsOf(card),
-      spell: /\b(instant|sorcery)\b/i.test(front(card.typeLine)) ? spellEffect(card.oracle) || counterSpell(card.oracle) || plainSpell(card.oracle) : null,
+      spell: /\b(instant|sorcery)\b/i.test(front(card.typeLine)) ? spellEffect(oracle) || counterSpell(oracle) || plainSpell(oracle) : null,
     };
   }
 
@@ -490,6 +507,21 @@ const Bot = (() => {
     G.move(s, pick, 'battlefield');
   }
 
+  // Opp's fetch lands ("{T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or
+  // Plains card, put it onto the battlefield, then shuffle") and Evolving Wilds: used right away,
+  // when it can pay and keeps more than 5 life.
+  function crackFetches(game, defOf) {
+    const s = game.bot.s;
+    for (const inst of permanents(s).filter(c => G.isLand(c) && !c.tapped)) {
+      const ab = activatedAbilities(inst, defOf).find(a => a.sacrifice && !a.discard && !a.remove && searchSpec(effectParts(a.effect)[0]));
+      if (!ab || (ab.life && game.oppLife - ab.life <= 5) || (ab.mana && !affordable(s, ab.mana, 0))) continue;
+      if (ab.mana) onOpp(game, () => G.autoPay(s, ab.mana));
+      if (ab.life) game.oppLife -= ab.life;
+      G.move(s, inst.iid, 'graveyard');
+      runFor(game, s, inst, ab.effect, 'activated', null, defOf);
+    }
+  }
+
   // Opp's best target among your creatures for removal: the most valuable one it can hit.
   function bestTarget(you, maxToughness) {
     return you
@@ -503,7 +535,7 @@ const Bot = (() => {
     return creatures(game).map(inst => ({ inst, st: stats(inst, defOf(inst.id)) }));
   }
 
-  const oracleOf = defOf => inst => (defOf(inst.id) || {}).oracle || '';
+  const oracleOf = defOf => inst => oracleText(inst, defOf);
 
   // Opp's most common creature type, for "choose a creature type".
   function commonType(s) {
@@ -713,6 +745,7 @@ const Bot = (() => {
     const s = game.bot.s;
     const cmc = (defOf(spell.id) || {}).cmc || 0;
     if (cmc < 3 && !spell.commander) return false;
+    if (/\bcan't be countered\b/i.test((defOf(spell.id) || {}).oracle || '')) return false; // "This spell can't be countered."
     const creature = G.isCreature(spell);
     const counter = s.zones.hand.map(iid => s.cards[iid]).find(c => {
       const k = c.bot && c.bot.spell && c.bot.spell.counter;
@@ -784,15 +817,109 @@ const Bot = (() => {
   const isSelf = (words, inst) => {
     const w = words.toLowerCase().trim();
     const name = (inst.name || '').split(' // ')[0].toLowerCase();
-    return w === name || w === name.split(',')[0] || w === 'it' || /^this (creature|artifact|enchantment|permanent|land|card|token|spell)$/.test(w)
+    return w === name || w === name.split(',')[0] || w === 'it'
+      || /^this (creature|artifact|enchantment|permanent|land|card|token|spell|aura|equipment|vehicle|saga|planeswalker|battle|class|case|room|siege|spacecraft)$/.test(w)
       || (w.length >= 4 && name.startsWith(w + ' ') && /\blegendary\b/i.test(inst.typeLine || '')); // "Ashcoat" for Ashcoat of the Shadow Swarm
   };
+
+  // ---------- your library: search, scry, surveil ----------
+
+  // "Search your library for a basic land card, put it onto the battlefield tapped" (", then shuffle"
+  // is a part of its own), "… for up to two basic land cards, reveal those cards, put one onto the
+  // battlefield tapped and the other into your hand" (Cultivate), "… for a card, put that card into
+  // your hand" (Demonic Tutor). Returns { n, what, to, tapped, rest: { to, tapped } | null } or null.
+  const SEARCH = new RegExp(`^search your library for (a|an|up to ${COUNT}) (.*?)\\s*cards?(?:, reveal (?:it|them|that card|those cards))?,? (?:and )?put (?:it|that card|them|those cards|(one)) (onto the battlefield|into your hand)( tapped)?(?: and the other (onto the battlefield|into your hand)( tapped)?)?$`, 'i');
+  const SEARCH_WORDS = /^(basic|nonbasic|land|creature|artifact|enchantment|instant|sorcery|planeswalker|legendary|snow|aura|equipment|[A-Z][a-z]+)$/;
+  function searchSpec(part) {
+    const m = SEARCH.exec(String(part).trim().replace(/\.$/, ''));
+    if (!m) return null;
+    const what = m[3].trim();
+    // Only words that name a type ("basic land", "Forest", "Plains or Island", "Dragon creature").
+    if (what && !what.split(/,\s*(?:or\s+)?|\s+or\s+|\s+/).filter(Boolean).every(w => SEARCH_WORDS.test(w))) return null;
+    const n = /^up to/i.test(m[1]) ? toNumber(m[2]) : 1;
+    if (!n) return null;
+    return { n: m[4] ? 1 + (m[7] ? 1 : 0) : n, what, to: /battlefield/i.test(m[5]) ? 'battlefield' : 'hand', tapped: !!m[6],
+      rest: m[7] ? { to: /battlefield/i.test(m[7]) ? 'battlefield' : 'hand', tapped: !!m[8] } : null };
+  }
+  // Does a card fit "basic land", "Plains or Island", "Dragon creature"? ('' fits any card.)
+  const searchFits = (inst, what) => !what || what.split(/,\s*(?:or\s+)?|\s+or\s+/).map(a => a.trim()).filter(Boolean)
+    .some(alt => alt.split(/\s+/).every(w => {
+      const basic = /\bbasic\b/i.test(front(inst.typeLine));
+      if (/^basic$/i.test(w)) return basic;
+      if (/^nonbasic$/i.test(w)) return !basic;
+      const tw = typeWords(inst);
+      return tw.includes(w.toLowerCase()) || tw.includes(singular(w)); // "Plains" is its own singular
+    }));
+  const searchable = (s, spec) => s.zones.library.filter(iid => searchFits(s.cards[iid], spec.what));
+  // Puts the found cards where the effect says: picks[0] first, the rest where "the other" goes.
+  function applySearch(s, spec, picks, src) {
+    picks.forEach((iid, i) => {
+      const dest = i > 0 && spec.rest ? spec.rest : spec;
+      G.move(s, iid, dest.to);
+      if (dest.to === 'battlefield' && dest.tapped) { s.cards[iid].tapped = true; s.cards[iid].tappedFor = null; }
+    });
+    const names = picks.map(iid => s.cards[iid] && s.cards[iid].name).filter(Boolean);
+    G.log(s, `${src}: searched the library${names.length ? ` for ${andList(names)}` : ' and found nothing'}.`);
+  }
+  // What Opp (or an automatic game) takes: lands that add colors its hand needs, else its priciest cards.
+  function autoSearch(s, spec, src, defOf) {
+    const have = new Set(s.zones.battlefield.flatMap(iid => G.producesOf(s.cards[iid])));
+    const wanted = new Set(s.zones.hand.flatMap(iid => String((s.cards[iid].bot || defOf(s.cards[iid].id) || {}).cost || (defOf(s.cards[iid].id) || {}).manaCost || '').match(/[WUBRG]/g) || []));
+    const score = iid => {
+      const c = s.cards[iid];
+      if (G.isLand(c)) return 10 + G.producesOf(c).filter(k => wanted.has(k) && !have.has(k)).length * 3 + G.producesOf(c).length;
+      return ((c.bot && c.bot.cmc) || (defOf(c.id) || {}).cmc || 0) + (G.isCreature(c) ? 0.5 : 0);
+    };
+    const picks = [...new Set(searchable(s, spec))].sort((a, b) => score(b) - score(a)).slice(0, spec.n);
+    applySearch(s, spec, picks, src);
+  }
+
+  // Scry N (unwanted cards to the bottom) or surveil N (to the graveyard), the way Opp does it: lands
+  // stay while it has fewer than five, spells it can soon cast stay.
+  function autoScry(s, n, kind, src, defOf) {
+    const top = s.zones.library.slice(0, n);
+    const lands = s.zones.battlefield.concat(s.zones.hand).filter(iid => G.isLand(s.cards[iid])).length;
+    const away = top.filter(iid => {
+      const c = s.cards[iid];
+      return G.isLand(c) ? lands >= 5 : ((c.bot && c.bot.cmc) || (defOf(c.id) || {}).cmc || 0) > lands + 2;
+    });
+    applyScry(s, kind, top, away, src);
+  }
+  // top: the cards looked at; away: the ones going to the bottom (scry) or the graveyard (surveil).
+  function applyScry(s, kind, top, away, src) {
+    away.forEach(iid => G.move(s, iid, kind === 'surveil' ? 'graveyard' : 'library', { bottom: true }));
+    G.log(s, `${src}: ${kind} ${top.length}, ${away.length} ${kind === 'surveil' ? 'into the graveyard' : 'on the bottom'}.`);
+  }
+
+  // The artifact tokens cards make by name, with the text they're printed with. Treasure taps for
+  // mana on its own (game.js reads its mana ability); the others you use by hand.
+  const ARTIFACT_TOKENS = {
+    treasure: '{T}, Sacrifice this artifact: Add one mana of any color.',
+    food: '{2}, {T}, Sacrifice this artifact: You gain 3 life.',
+    clue: '{2}, Sacrifice this artifact: Draw a card.',
+    blood: '{1}, {T}, Discard a card, Sacrifice this artifact: Draw a card.',
+    gold: 'Sacrifice this artifact: Add one mana of any color.',
+    map: '{1}, {T}, Sacrifice this artifact: Target creature you control explores. Activate only as a sorcery.',
+    powerstone: "{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.",
+  };
+  function artifactTokens(s, src, n, kind, tapped) {
+    const name = kind[0].toUpperCase() + kind.slice(1).toLowerCase();
+    const text = ARTIFACT_TOKENS[kind.toLowerCase()];
+    const { n: made, by } = G.tokenCount(s, n);
+    for (let i = 0; i < made; i++) {
+      const tok = G.createToken(s, { custom: true, name, typeLine: `Token Artifact — ${name}`, pt: '', text, oracle: text }, { quiet: true });
+      if (src && src.bot) tok.bot = facts({ typeLine: tok.typeLine, oracle: text });
+      if (tapped) tok.tapped = true;
+    }
+    G.log(s, `${src ? src.name : 'Effect'}: created ${made} ${name} token${made === 1 ? '' : 's'}${by.length ? ` (doubled by ${by.join(', ')})` : ''}.`);
+  }
+  const kwList = text => String(text || '').toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
 
   // The effects runEffect knows: [pattern, do(table, match, ctx), can(match, ctx) if it needs more than the words].
   const EFFECTS = [
     [new RegExp(`^(?:you )?draw ${COUNT} cards?$`, 'i'), (g, m) => G.drawCards(g, toNumber(m[1]))],
-    [new RegExp(`^you gain ${COUNT} life$`, 'i'), (g, m) => { g.life += toNumber(m[1]); }],
-    [new RegExp(`^you lose ${COUNT} life$`, 'i'), (g, m) => { g.life -= toNumber(m[1]); }],
+    [new RegExp(`^(?:you )?gain ${COUNT} life$`, 'i'), (g, m) => { g.life += toNumber(m[1]); }], // "you may gain 1 life" comes without its "you"
+    [new RegExp(`^(?:you )?lose ${COUNT} life$`, 'i'), (g, m) => { g.life -= toNumber(m[1]); }],
     [new RegExp(`^each opponent loses ${COUNT} life$`, 'i'), (g, m, ctx) => ctx.hitOpps(toNumber(m[1])), (m, ctx) => !!ctx.hitOpps],
     // Blood Artist's "target player loses 1 life": an opponent, picked by you online.
     [new RegExp(`^target (?:player|opponent) loses ${COUNT} life$`, 'i'), (g, m, ctx) => (ctx.hitTarget || ctx.hitOpps)(toNumber(m[1])), (m, ctx) => !!(ctx.hitTarget || ctx.hitOpps)],
@@ -805,6 +932,41 @@ const Bot = (() => {
     [/^untap all creatures that attacked this turn$/i, g => creatures(g, c => c.attackedTurn === g.turn).forEach(c => { c.tapped = false; c.tappedFor = null; })],
     [/^after this (?:main )?phase, there is an additional combat phase(?: followed by an additional main phase)?$/i, g => extraCombat(g)],
     [/^create .+$/i, (g, m, ctx) => triggerTokens(g, ctx.self || { name: 'Effect' }, m[0], 'effect') !== null, m => TOKEN_TEXT.test(m[0])],
+    // "Create a Treasure token", "create two Food tokens": the artifact tokens every set uses.
+    [new RegExp(`^create ${COUNT} (tapped )?(${Object.keys(ARTIFACT_TOKENS).join('|')}) tokens?$`, 'i'), (g, m, ctx) => artifactTokens(g, ctx.self, toNumber(m[1]), m[3], !!m[2])],
+    // "This creature gets +2/+0 until end of turn", "Ashcoat gains flying until end of turn" (itself).
+    [/^(.+?) gets ([+-]\d+)\/([+-]\d+)(?: and gains (.+?))? until end of turn$/i, (g, m, ctx) => {
+      pumpBy(ctx.self, Number(m[2]), Number(m[3]));
+      const kw = kwWords(m[4]);
+      if (kw.length) ctx.self.pump.kw = [...new Set([...(ctx.self.pump.kw || []), ...kw])];
+    }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self) && (!m[4] || kwWords(m[4]).length === kwList(m[4]).length)],
+    [/^(.+?) gains (.+?) until end of turn$/i, (g, m, ctx) => {
+      ctx.self.pump = { pow: 0, tou: 0, ...ctx.self.pump };
+      ctx.self.pump.kw = [...new Set([...(ctx.self.pump.kw || []), ...kwWords(m[2])])];
+    }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self) && kwWords(m[2]).length > 0 && kwWords(m[2]).length === kwList(m[2]).length],
+    // "Creatures you control get +1/+1 until end of turn", "Goblins you control gain haste until end of turn".
+    [/^.+? you control (?:get [+-]\d+\/[+-]\d+(?: and gain .+?)?|gain .+?) until end of turn$/i, (g, m, ctx) => pumpSentence(g, ctx.self || { name: 'Effect' }, m[0]),
+      m => !/\btarget\b/i.test(m[0])],
+    [new RegExp(`^mill ${COUNT} cards?$`, 'i'), (g, m) => { G.mill(g, toNumber(m[1])); }],
+    // Searching your library: you pick (ctx.search, app.js); Opp and automatic games pick for themselves.
+    [/^search your library .+$/i, (g, m, ctx) => {
+      const spec = searchSpec(m[0]);
+      const src = (ctx.self && ctx.self.name) || 'Effect';
+      if (!ctx.search) return autoSearch(g, spec, src, ctx.defOf || (() => null));
+      ctx.search(spec, src);
+      return 'pause';
+    }, m => !!searchSpec(m[0])],
+    [/^(?:then )?shuffle$/i, g => G.shuffle(g)],
+    [new RegExp(`^(scry|surveil) ${COUNT}$`, 'i'), (g, m, ctx) => {
+      const kind = m[1].toLowerCase();
+      const src = (ctx.self && ctx.self.name) || 'Effect';
+      if (!ctx.scry) return autoScry(g, toNumber(m[2]), kind, src, ctx.defOf || (() => null));
+      ctx.scry(toNumber(m[2]), kind, src);
+      return 'pause';
+    }],
+    [/^untap (.+)$/i, (g, m, ctx) => { ctx.self.tapped = false; ctx.self.tappedFor = null; }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self)],
+    // Limits on when an ability can be used: you keep to them; nothing to do.
+    [/^activate (?:this ability )?only (?:as a sorcery|once each turn|during your turn|during your upkeep|any time you could cast a sorcery)$/i, () => {}],
     // "Destroy target creature", "deals 3 damage to any target"…: ctx.target(effect) picks the target
     // (you're asked; Opp picks its own). See targetEffect.
     [/^.+$/, (g, m, ctx) => ctx.target(targetEffect(m[0]), m[0], ctx.self), (m, ctx) => !!ctx.target && !!targetEffect(m[0])],
@@ -977,25 +1139,39 @@ const Bot = (() => {
     .split(/\.\s+|,?\s+and\s+(?=you |draw |each |put |target )|,\s+then\s+/i).map(p => p.trim()).filter(Boolean);
   const effectFor = (part, ctx) => EFFECTS.find(([re, , can]) => { const m = re.exec(part); return m && (!can || can(m, ctx)); });
   // Can runEffect do all of this text? (Then a spell made of it can resolve on its own.)
-  const canRunAll = (text, ctx) => { const parts = effectParts(text); return parts.length > 0 && parts.every(p => effectFor(p, ctx)); };
+  const canRunAll = (text, ctx) => { const parts = effectParts(text); return parts.length > 0 && !/\bif you do\b/i.test(text) && parts.every(p => effectFor(p, ctx)); };
 
   // Does the easy parts of an ability's effect: drawing, life, counters on the card itself,
   // tokens, proliferate, the monarch, untapping and extra combats. game: the table it happens on.
   // ctx: { self, hitOpps(n), hitTarget(n), other } where hitOpps takes life from each opponent
   // and other is the opponent's table (for proliferate). Returns the parts it couldn't do (for you to do by hand), or [].
   function runEffect(game, text, ctx, times = 1) {
+    // "You may mill two cards. If you do, …": the first half is a choice the rest depends on, so it's all yours to do.
+    if (/\bif you do\b/i.test(text)) return effectParts(text);
     const left = [];
-    for (const part of effectParts(text)) {
+    const parts = effectParts(text);
+    for (const [k, part] of parts.entries()) {
       for (let i = 0; i < times; i++) {
         const found = effectFor(part, ctx);
-        if (!found || found[1](game, found[0].exec(part), ctx) === false) { left.push(part); break; }
+        const r = found ? found[1](game, found[0].exec(part), ctx) : false;
+        if (r === false) { left.push(part); break; }
+        // You're picking cards (a search, a scry): the rest of the effect waits until you have (ctx.later).
+        if (r === 'pause') {
+          const rest = parts.slice(k + 1);
+          if (rest.length && ctx.later) ctx.later(rest.join('. '), ctx.self);
+          else left.push(...rest);
+          return left;
+        }
       }
     }
     return left;
   }
 
   const yourPermanents = game => game.zones.battlefield.map(iid => game.cards[iid]).filter(c => c && !c.faceDown);
-  const oracleLines = (inst, defOf) => String((defOf(inst.id) || {}).oracle || '').split('\n').map(l => l.replace(/\([^)]*\)/g, '').trim());
+  // A rules line without reminder text or an ability word ("Raid — When …", "Landfall — Whenever …"),
+  // which only names the ability. Saga chapters ("I, II — …") keep theirs.
+  const plainLine = l => l.replace(/\([^)]*\)/g, '').trim().replace(/^(?![IVX]+(?:, [IVX]+)* —)[A-Z][A-Za-z'’ -]{1,40}? — (?=[A-Z{+−-])/, '');
+  const oracleLines = (inst, defOf) => oracleText(inst, defOf).split('\n').map(plainLine);
 
   // Runs one trigger and logs it. Parts it can't do are logged for you to do by hand.
   function fire(game, inst, what, effect, ctx, times = 1) {
@@ -1016,41 +1192,124 @@ const Bot = (() => {
     }
   }
 
+  // A trigger on table s: yours with ctx (fire), or Opp's (runFor, Opp picks its own targets).
+  const fireOn = (game, s, inst, what, effect, ctx, defOf, times = 1) => (isOpps(game, s)
+    ? runFor(game, s, inst, effect, what, null, defOf, times) : fire(s, inst, what, effect, ctx, times));
+
   // Landfall: "Whenever a land (you control) enters (the battlefield under your control), …".
-  function landEntered(game, land, defOf, ctx) {
-    for (const inst of yourPermanents(game)) {
+  // s: the table it entered on (yours unless given).
+  function landEntered(game, land, defOf, ctx, s = game) {
+    for (const inst of permanents(s)) {
       for (const line of oracleLines(inst, defOf)) {
         const m = /^(?:landfall\s*[—-]\s*)?whenever a land(?: you control)? enters(?: the battlefield)?(?: under your control)?, (?:you may )?(.+)$/i.exec(line);
-        if (m) fire(game, inst, `landfall (${land.name})`, m[1], ctx);
+        if (m) fireOn(game, s, inst, `landfall (${land.name})`, m[1], ctx, defOf);
       }
     }
   }
 
   // "Whenever a creature (you control) enters (the battlefield under your control), …" (Ajani's
-  // Welcome), also "another creature" and "nontoken creature". Face-down cards are creatures too.
-  // Ones that see every player's creatures (Soul Warden) are left to you.
-  function creatureEntered(game, creature, defOf, ctx) {
+  // Welcome), also "another creature", "nontoken creature", "a Dragon you control", "this creature or
+  // another Dragon you control", "a creature you control with flying / with power 4 or greater" and
+  // "… of the chosen type". Face-down cards are creatures too (of no type). Ones that see every
+  // player's creatures (Soul Warden) are left to you. s: the table it entered on.
+  const WATCH_HEAD = '^whenever (?:(.+?) or )?(an?|another) (nontoken )?(.+?)(?: you control)?( with flying| with power (\\d+) or greater)?( of the chosen type)?';
+  const ENTER_WATCH = new RegExp(`${WATCH_HEAD} enters(?: the battlefield)?(?: under your control)?(?: or attacks)?, (?:you may )?(.+)$`, 'i');
+  const ATTACK_WATCH = new RegExp(`${WATCH_HEAD}(?: enters(?: the battlefield)? or)? attacks, (?:you may )?(.+)$`, 'i');
+  // Does creature (on table s) fit a watcher's words? m: an ENTER_WATCH or ATTACK_WATCH match on inst's line.
+  function watched(m, inst, creature, defOf) {
+    const self = creature === inst;
+    if (self && !(m[1] && isSelf(m[1], inst)) && m[2].toLowerCase() === 'another') return false;
+    if (self && m[1] && isSelf(m[1], inst)) return true; // "Whenever this creature or another Dragon you control enters"
+    if (m[3] && creature.token) return false;
+    if (creature.faceDown) return /^creatures?$/i.test(m[4]) && !m[5] && !m[7];
+    if (!G.isCreature(creature) || !isA(creature, m[4])) return false;
+    if (m[7] && !(inst.chosenType && isA(creature, inst.chosenType))) return false;
+    if (m[5]) {
+      const st = stats(creature, creature.bot || defOf(creature.id));
+      if (m[6] ? st.pow < Number(m[6]) : !st.kw.has('flying')) return false;
+    }
+    return true;
+  }
+  // In "…, it gains haste" or "put a +1/+1 counter on that creature", "it" is the creature that
+  // entered or attacked, not the card watching. Returns which one the effect is about.
+  const subjectOf = (effect, watcher, creature) => (/\b(it|that creature|that token)\b/i.test(effect) && !/\bthis (creature|enchantment|artifact|permanent)\b/i.test(effect)
+    && !effect.toLowerCase().includes(watcher.name.split(',')[0].toLowerCase()) ? creature : watcher);
+  function creatureEntered(game, creature, defOf, ctx, s = game) {
     if (!creature.faceDown && !G.isCreature(creature)) return;
-    for (const inst of yourPermanents(game)) {
+    for (const inst of permanents(s)) {
       for (const line of oracleLines(inst, defOf)) {
-        const m = /^whenever (?:an? )?(another )?(nontoken )?creature(?: you control)? enters(?: the battlefield)?(?: under your control)?, (?:you may )?(.+)$/i.exec(line);
-        if (!m || !/you control|under your control/i.test(line.split(',')[0])) continue;
-        if (m[1] && inst === creature) continue;
-        if (m[2] && creature.token) continue;
-        fire(game, inst, `${creature.faceDown ? 'a creature' : creature.name} entered`, m[3], ctx);
+        const m = ENTER_WATCH.exec(line);
+        if (!m || !/you control|under your control/i.test(line.split(',')[0]) || !watched(m, inst, creature, defOf)) continue;
+        const effect = m[8];
+        const who = subjectOf(effect, inst, creature);
+        fireOn(game, s, who, `${creature.faceDown ? 'a creature' : creature.name} entered (${inst.name})`, effect, ctx, defOf);
+      }
+    }
+  }
+
+  // "At the beginning of your upkeep / end step / combat on your turn, …" and "… of each upkeep /
+  // each end step" on every table. phase: 'upkeep', 'end step' or 'combat'; active: the table whose
+  // turn it is. ctx: as for runEffect, for your cards. What can't be done is logged to do by hand.
+  // dry: just count them. Returns how many there were.
+  const PHASE_TRIGGER = /^at the beginning of (?:(your|each|each player's|each opponent's) )?(upkeep|end step|combat on your turn|combat)(?:,| on [^,]+,) (?:you may )?(.+)$/i;
+  function phaseTriggers(game, active, phase, defOf, ctx, dry) {
+    let n = 0;
+    for (const t of [game, game.bot && game.bot.s].filter(Boolean)) {
+      for (const inst of permanents(t)) {
+        for (const line of oracleLines(inst, defOf)) {
+          const m = PHASE_TRIGGER.exec(line);
+          if (!m || m[2].toLowerCase().replace(' on your turn', '') !== phase) continue;
+          // "At the beginning of combat on your turn" is yours; "… of each combat" is everyone's.
+          const whose = (m[1] || (/on your turn/i.test(m[2]) ? 'your' : 'each')).toLowerCase();
+          if (whose === 'your' && t !== active) continue;
+          if (whose === "each opponent's" && t === active) continue;
+          if (END_MILL.test(line)) continue; // Ashcoat's: endStepTriggers asks for it
+          n++;
+          if (dry) continue;
+          const yours = ctx || { hitOpps: k => { game.oppLife -= k; }, other: game.bot ? game.bot.s : null };
+          fireOn(game, t, inst, `beginning of ${phase === 'end step' ? 'the end step' : phase}`, m[3], t === game ? yours : null, defOf);
+        }
+      }
+    }
+    return n;
+  }
+
+  // Attackers were declared on table s: "Whenever you attack, …", "Whenever a Dragon you control
+  // attacks, …" (once for each one) and "Whenever one or more Dragons you control attack, …" (once;
+  // "that many" is how many attack). attackers: the attacking creatures.
+  function attackWatch(game, s, defOf, ctx, attackers = []) {
+    const list = attackers.filter(a => a && a.zone === 'battlefield');
+    for (const inst of permanents(s)) {
+      for (const line of oracleLines(inst, defOf)) {
+        let m = /^whenever you attack, (?:you may )?(.+)$/i.exec(line);
+        if (m) { fireOn(game, s, inst, 'you attacked', m[1], ctx, defOf); continue; }
+        m = /^whenever one or more (.+?) you control attack, (?:you may )?(.+)$/i.exec(line);
+        if (m) {
+          const n = list.filter(a => isA(a, m[1])).length;
+          if (n) fireOn(game, s, inst, `${n} ${m[1]} attacked`, m[2].replace(/\bthat many\b/gi, String(n)), ctx, defOf);
+          continue;
+        }
+        m = ATTACK_WATCH.exec(line);
+        if (!m || !/you control/i.test(line.split(',')[0])) continue;
+        for (const a of list) {
+          if (!watched(m, inst, a, defOf)) continue;
+          fireOn(game, s, subjectOf(m[8], inst, a), `${a.name} attacked (${inst.name})`, m[8], ctx, defOf);
+        }
       }
     }
   }
 
   // "When this creature dies, create a 2/1 black Cat creature token." (older wording: "is put into
   // a graveyard from play / the battlefield"). s: the table it died on. Tokens are made on either
-  // table; other effects run only on yours (ctx), and what's left is logged to do by hand.
-  function died(s, inst, defOf, ctx) {
+  // table; other effects run on yours (ctx) and on Opp's (game, when s is Opp's table), and what's
+  // left is logged to do by hand.
+  function died(s, inst, defOf, ctx, game) {
     for (const line of oracleLines(inst, defOf)) {
       const m = /^when(?:ever)? (.+?) (?:dies|is put into (?:a|your) graveyard from (?:the battlefield|play)), (?:you may )?(.+)$/i.exec(line);
       if (!m || !isSelf(m[1], inst)) continue;
       if (triggerTokens(s, inst, m[2].trim(), 'dies')) continue;
       if (ctx) fire(s, inst, 'dies', m[2], ctx);
+      else if (game && isOpps(game, s)) runFor(game, s, inst, m[2], 'died', null, defOf);
       else G.log(s, `${inst.name} died: ${m[2]}`);
     }
   }
@@ -1076,7 +1335,7 @@ const Bot = (() => {
   }
 
   // Opp's creatures hit you: its "…, destroy up to one target artifact or enchantment that player
-  // controls" takes your priciest one. Other triggers of this kind aren't done for Opp.
+  // controls" takes your priciest one; other effects ("draw a card") run as Opp's.
   function oppCombatDamage(game, hits, defOf) {
     if (!hits.length) return;
     const s = game.bot.s;
@@ -1084,6 +1343,7 @@ const Bot = (() => {
       for (const line of oracleLines(inst, defOf)) {
         const h = hitTrigger(line, inst, hits);
         const d = h && destroyTheirs(h.effect);
+        if (h && !d) runFor(game, s, inst, h.effect, 'combat damage to you', null, defOf, h.times);
         if (!d) continue;
         const pick = destroyable(game, d).sort((a, b) => ((defOf(b.id) || {}).cmc || 0) - ((defOf(a.id) || {}).cmc || 0))[0];
         if (!pick) continue;
@@ -1212,7 +1472,12 @@ const Bot = (() => {
       const lords = hostile.filter(h => h.from !== s).map(h => ({ src: null, other: false, what: h.what, kws: [], pow: h.pow, tou: h.tou }));
       const each = []; // "This gets +1/+1 for each other Cat you control"
       for (const src of permanents(s)) {
-        for (const line of oracleLines(src, defOf)) {
+        for (let line of oracleLines(src, defOf)) {
+          // Banners: "Creatures you control of the chosen type get +1/+1" reads as "Elf creatures you control get +1/+1".
+          if (/ of the chosen type\b/i.test(line)) {
+            if (!src.chosenType) continue;
+            line = line.replace(/ of the chosen type\b/i, '').replace(/^(other )?(\w+)/i, (all, o, w) => `${o || ''}${src.chosenType} ${w}`);
+          }
           let m = /^(other )?(.+?) you control can't be blocked except by two or more creatures\.?$/i.exec(line);
           if (m) { lords.push({ src, other: !!m[1], what: m[2], kws: ['menace'], pow: 0, tou: 0 }); continue; } // menace, older words
           m = /^(other )?(.+?) you control (?:get ([+-]\d+)\/([+-]\d+)(?: and have (.+?))?|have (.+?))\.?$/i.exec(line);
@@ -1489,7 +1754,10 @@ const Bot = (() => {
 
   // ---------- more abilities: attacking, dying, casting, gaining life ----------
 
-  const oracleText = (inst, defOf) => (defOf(inst.id) || {}).oracle || '';
+  function oracleText(inst, defOf) {
+    const card = defOf(inst.id) || {};
+    return faceOracle(card.oracle, card.name || inst.name, inst.flipped);
+  }
   const kwOf = (inst, defOf) => new Set(inst.bot ? inst.bot.kw || [] : keywords(oracleText(inst, defOf)));
   const pumpBy = (c, pow, tou) => { c.pump = { ...c.pump, pow: (c.pump ? c.pump.pow : 0) + pow, tou: (c.pump ? c.pump.tou : 0) + tou }; };
   const isOpps = (game, s) => !!(game.bot && s === game.bot.s);
@@ -1499,7 +1767,7 @@ const Bot = (() => {
   function runFor(game, s, src, text, what, ctx, defOf, times = 1) {
     if (isOpps(game, s)) {
       const target = eff => { oppTarget(game, src, eff, defOf); };
-      const left = onOpp(game, t => runEffect(t, text, { self: src, hitOpps: n => { t.oppLife -= n; }, other: game, target }, times));
+      const left = onOpp(game, t => runEffect(t, text, { self: src, hitOpps: n => { t.oppLife -= n; }, other: game, target, defOf }, times));
       G.log(s, `${src.name}: ${what}${times > 1 ? ` (×${times})` : ''}.${left.length ? ` Not done: ${left.join('; ')}.` : ''}`);
       return left;
     }
@@ -1929,11 +2197,12 @@ const Bot = (() => {
 
   // "At the beginning of your end step, (you may) mill four cards. If you do, return up to two Rat
   // creature cards from your graveyard to your hand." Returns [{ inst, mill, up, what }].
+  const END_MILL = new RegExp(`^at the beginning of your end step, (?:you may )?mill ${COUNT} cards?\\. if you do, return up to ${COUNT} (.+?) cards? from your graveyard to your hand\\.?$`, 'i');
   function endStepTriggers(s, defOf) {
     const out = [];
     for (const inst of permanents(s)) {
       for (const line of oracleLines(inst, defOf)) {
-        const m = new RegExp(`^at the beginning of your end step, (?:you may )?mill ${COUNT} cards?\\. if you do, return up to ${COUNT} (.+?) cards? from your graveyard to your hand\\.?$`, 'i').exec(line);
+        const m = END_MILL.exec(line);
         if (m) out.push({ inst, mill: toNumber(m[1]), up: toNumber(m[2]), what: m[3] });
       }
     }
@@ -2062,9 +2331,11 @@ const Bot = (() => {
       if (empty) notes.push("couldn't draw from its empty library, so it loses");
     }
     s.opponents = 1;
+    phaseTriggers(game, s, 'upkeep', defOf, null);
     const landsBefore = s.zones.battlefield.length;
     onOpp(game, () => playLand(s));
     if (s.zones.battlefield.length > landsBefore) notes.push(`played ${s.cards[s.zones.battlefield[s.zones.battlefield.length - 1]].name}`);
+    crackFetches(game, defOf);
     refreshGrants(game, defOf);
     return mainOne(game, defOf, notes);
   }
@@ -2108,6 +2379,8 @@ const Bot = (() => {
     const bot = game.bot;
     const s = bot.s;
     delete bot.tapChoice;
+    phaseTriggers(game, s, 'combat', defOf, null);
+    refreshGrants(game, defOf);
     for (const [tIid, cIid] of Object.entries(taps || {})) {
       const t = game.cards[tIid];
       const c = s.cards[cIid];
@@ -2127,6 +2400,7 @@ const Bot = (() => {
     attackers.forEach(iid => { if (!botStats(s.cards[iid]).kw.has('vigilance')) s.cards[iid].tapped = true; });
     // "Whenever this attacks" triggers, exalted, battle cry, annihilator; tokens that enter attacking join in.
     attackers.push(...declareAttack(s, attackers.map(iid => s.cards[iid]), defOf, { sacrifice: (n, why) => youSacrifice(game, n, why) }).map(([, iid]) => iid));
+    if (attackers.length) attackWatch(game, s, defOf, null, attackers.map(iid => s.cards[iid]));
     bot.pending = attackers.length ? { attackers, targets: chooseTargets(game, attackers, defOf) } : null;
     return { attackers, notes };
   }
@@ -2274,6 +2548,7 @@ const Bot = (() => {
       G.log(s, `${t.inst.name}: Opp milled ${t.mill}${back.length ? ` and returned ${names} to its hand` : ''}.`);
       notes.push(`milled ${t.mill} with ${t.inst.name}${back.length ? ` and got back ${names}` : ''}`);
     }
+    phaseTriggers(game, s, 'end step', defOf, null);
     if (monarchOf(game) === 'opp') {
       G.drawCards(s, 1, true);
       G.log(s, 'Opp is the monarch and drew a card.');
@@ -2444,7 +2719,12 @@ const Bot = (() => {
     extraCombat, playerHit, witherCounters, keywordNumbers, kwN,
     targetEffect, targetFilter, canTarget, applyTarget, damagePlayer, oppTarget, enterEffects,
     setResponder, getResponder, isInstantSpeed, resumeTurn, resolveStack, counterStack, oppCounters, oppInstantAt, pickBlocks, castOptions, castOne, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
-    yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker };
+    yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker, phaseTriggers, attackWatch,
+    searchSpec, searchable, applySearch, applyScry, crackFetches, ARTIFACT_TOKENS, faceOracle,
+    // For coverage.js, which reads card text the same way the rest of this file does.
+    parts: { OTHER_KEYWORDS, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,
+      OLD_MENACE, UNBLOCKABLE, ATTACK_TAX, SPELL_TAX, NO_GAIN, ARBORIA, ATTACK_CAP, BLOCK_CAP, ATTACK_BLOCK_CAP, isSelf,
+      counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, plainLine } };
 })();
 
 if (typeof module !== 'undefined') module.exports = Bot;

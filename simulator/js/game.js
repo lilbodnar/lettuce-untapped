@@ -420,6 +420,7 @@ const Game = (() => {
   //   { control: ['forest'] }   unless you control a Forest or a Plains (check lands)
   //   { maxOther: 2 }           unless you control two or fewer other lands (fast lands)
   //   { minOther: 2 }           unless you control two or more other lands (slow lands)
+  //   { minBasics: 2 }          unless you control two or more basic lands (battle lands)
   // Other conditions return false and are left for you to decide.
   const COUNT_WORDS = { one: 1, two: 2, three: 3, four: 4 };
   const BASICS = '(plains|island|swamp|mountain|forest)';
@@ -437,6 +438,7 @@ const Game = (() => {
       if (!cond) out = true;
       else if ((c = cond.match(/^you have (one|two|three|four) or more opponents$/))) out = { opponents: COUNT_WORDS[c[1]] };
       else if ((c = cond.match(/^you control (one|two|three|four) or (fewer|more) other lands$/))) out = c[2] === 'fewer' ? { maxOther: COUNT_WORDS[c[1]] } : { minOther: COUNT_WORDS[c[1]] };
+      else if ((c = cond.match(/^you control (one|two|three|four) or more basic lands$/))) out = { minBasics: COUNT_WORDS[c[1]] }; // battle lands
       else if ((c = cond.match(new RegExp(`^you control an? ${BASICS}(?:,? or an? ${BASICS})?$`)))) out = { control: [c[1], c[2]].filter(Boolean) };
     });
     return out;
@@ -453,6 +455,7 @@ const Game = (() => {
     if (et.opponents) return s.opponents != null && s.opponents < et.opponents;
     if (et.maxOther != null) return otherLands > et.maxOther;
     if (et.minOther != null) return otherLands < et.minOther;
+    if (et.minBasics != null) return others.filter(c => isLand(c) && /\bbasic\b/i.test(c.typeLine || '')).length < et.minBasics;
     if (et.control) return !others.some(c => et.control.some(t => new RegExp(`\\b${t}\\b`, 'i').test(c.typeLine || '')));
     return false;
   }

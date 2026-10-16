@@ -338,6 +338,7 @@
     if (game && game.mustDestroy) setTimeout(mustDestroyPrompt, 0);
     if (game && game.mustSacrifice) setTimeout(mustSacrificePrompt, 0);
     if (game && game.mustTarget && game.mustTarget.length) setTimeout(mustTargetPrompt, 0);
+    if (game && game.mustLibrary && game.mustLibrary.length) setTimeout(mustLibraryPrompt, 0);
     syncAuras(); // your Arrest on Opp's creature
     if (game) Bot.refreshGrants(game, def); // "Goblins you control have haste" and the like
     if (ui.tab === 'play') renderBoard();
@@ -492,6 +493,46 @@
       modalBox.querySelector('[data-pick-ok]').onclick = () => { modal.hidden = true; modalBox.innerHTML = ''; done([...chosen]); };
     };
     draw();
+  }
+
+  // Your "Search your library for …" (fetch lands, Cultivate, tutors), "Scry 2" and "Surveil 1":
+  // pick the cards, one request at a time. Cancel finds nothing (or keeps every card on top).
+  function mustLibraryPrompt() {
+    const list = game && game.mustLibrary;
+    if (!list || !list.length || !modal.hidden) return;
+    const [req] = list;
+    const next = fn => act(() => {
+      game.mustLibrary = game.mustLibrary.slice(1);
+      if (!game.mustLibrary.length) delete game.mustLibrary;
+      fn();
+      if (!req.then) return;
+      const self = (req.self && game.cards[req.self]) || { name: req.src };
+      const left = Bot.runEffect(game, req.then, Object.assign({ self }, effectCtx()));
+      Game.log(game, `${req.src}: ${req.then}.${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+    });
+    const place = d => (d.to === 'hand' ? 'into your hand' : `onto the battlefield${d.tapped ? ' tapped' : ''}`);
+    if (req.kind === 'search') {
+      const { spec } = req;
+      const ids = Bot.searchable(game, spec);
+      const what = spec.what ? `${spec.what} card` : 'card';
+      const done = picks => next(() => Bot.applySearch(game, spec, picks, req.src));
+      const cancel = { cancel: 'Find nothing', onCancel: () => done([]) };
+      if (!ids.length) return done([]);
+      // Cultivate: one onto the battlefield, then the other into your hand.
+      if (spec.rest) {
+        return pickCards({ title: `${req.src}: search your library`, note: `Pick a ${what} to put ${place(spec)}.`, ids, min: 0, max: 1, ok: 'Next', ...cancel }, first => {
+          const rest = ids.filter(iid => !first.includes(iid));
+          if (!first.length || !rest.length) return done(first);
+          pickCards({ title: `${req.src}: search your library`, note: `Pick a ${what} to put ${place(spec.rest)}.`, ids: rest, min: 0, max: 1, ok: 'Done', cancel: 'None', onCancel: () => done(first) }, second => done([...first, ...second]));
+        });
+      }
+      return pickCards({ title: `${req.src}: search your library`, note: `Pick up to ${spec.n} ${what}${spec.n === 1 ? '' : 's'} to put ${place(spec)}.`, ids, min: 0, max: spec.n, ok: 'Put', ...cancel }, done);
+    }
+    const top = game.zones.library.slice(0, req.n);
+    const away = req.kind === 'surveil' ? 'into your graveyard' : 'on the bottom of your library';
+    if (!top.length) return next(() => {});
+    pickCards({ title: `${req.src}: ${req.kind} ${top.length}`, note: `Pick the cards to put ${away}. The rest stay on top in this order.`, ids: top, min: 0, max: top.length, ok: 'Done' },
+      picks => next(() => Bot.applyScry(game, req.kind, top, picks, req.src)));
   }
 
   // Something made you discard (Earsplitting Rats entering, yours or Opp's): pick the cards.
@@ -677,6 +718,7 @@
   // graveyard to your hand" (Ashcoat of the Shadow Swarm). Asks for each, then runs then().
   function endStep(then) {
     if (game.endStepDone === game.turn) return then(); // already asked (End turn pressed again)
+    if (Bot.phaseTriggers(game, game, 'end step', def, null, true)) act(() => Bot.phaseTriggers(game, game, 'end step', def, effectCtx())); // "At the beginning of your end step, …"
     const todo = Bot.endStepTriggers(game, def);
     const finish = () => {
       if (amMonarch()) act(() => { Game.drawCards(game, 1); Game.log(game, 'You are the monarch, so you drew a card at your end step.'); });
@@ -755,7 +797,12 @@
   const upkeepIids = () => (game && game.upkeep && game.upkeep.turn === game.turn ? game.upkeep.iids.filter(iid => game.cards[iid] && game.cards[iid].zone === 'battlefield') : []);
 
   function startNextTurn() {
-    act(() => { delete game.offTurn; Game.nextTurn(game); markUpkeep(); });
+    act(() => {
+      delete game.offTurn;
+      Game.nextTurn(game);
+      Bot.phaseTriggers(game, game, 'upkeep', def, effectCtx()); // "At the beginning of your upkeep, …" that it can do
+      markUpkeep();
+    });
     const upkeep = upkeepIids();
     if (upkeep.length) status(`Upkeep triggers: ${upkeep.map(iid => game.cards[iid].name).join(', ')}. They're highlighted until you click Done.`);
     if (Online.connected()) {
@@ -1234,6 +1281,10 @@
     const limits = attackLimits();
     const targets = all.filter(t => t.pw || limits.byPid[t.pid].cap > 0);
     const notes = Object.entries(limits.byPid).filter(([, l]) => l.why).map(([pid, l]) => `${nameOf(pid)}: ${l.why}.`);
+    // "At the beginning of combat on your turn, …", once a turn.
+    if (game.combatTriggerTurn !== game.turn && Bot.phaseTriggers(game, game, 'combat', def, null, true)) {
+      act(() => { game.combatTriggerTurn = game.turn; Bot.phaseTriggers(game, game, 'combat', def, effectCtx()); });
+    }
     // Opp's Sentinel of the Eternal Watch taps one of your creatures at the beginning of your combat.
     if (hasBot() && game.combatTapTurn !== game.turn && Bot.combatTappers(game.bot.s, def).length) {
       let taps;
@@ -1338,7 +1389,11 @@
     closeModal();
     if (!isOnline()) {
       let msg;
-      act(() => { payTax(); msg = Bot.resolveYourAttack(game, picks.map(p => ({ iid: p.iid, pw: p.to.pw || null })), def); });
+      act(() => {
+        payTax();
+        if (picks.length) Bot.attackWatch(game, game, def, effectCtx(), picks.map(p => game.cards[p.iid])); // "Whenever you attack, …"
+        msg = Bot.resolveYourAttack(game, picks.map(p => ({ iid: p.iid, pw: p.to.pw || null })), def);
+      });
       return status(msg + outcome(), 'ok', 10000);
     }
     const byPlayer = new Map();
@@ -1350,6 +1405,7 @@
       // Tokens that enter tapped and attacking (Leonin Warleader's Cats) go after the same player.
       const sacrifice = (n, why) => Game.log(game, `${why}: the player it attacks sacrifices ${n} permanent${n === 1 ? '' : 's'} (they do that on their side).`);
       Bot.declareAttack(game, attackers, def, { sacrifice }).forEach(([from, iid]) => picks.push({ iid, to: picks.find(p => p.iid === from).to }));
+      if (attackers.length) Bot.attackWatch(game, game, def, effectCtx(), attackers);
       for (const p of picks) {
         const inst = game.cards[p.iid];
         if (!inst || inst.zone !== 'battlefield') continue;
@@ -1696,7 +1752,8 @@
     afterChange();
   }
 
-  const oracleOf = inst => (def(inst.id) || {}).oracle || '';
+  // The face that's up on a two-faced card (Bot.faceOracle).
+  const oracleOf = inst => { const c = def(inst.id) || {}; return Bot.faceOracle(c.oracle, c.name || inst.name, inst.flipped); };
 
   // What a spell from your hand or the command zone costs right now, or null if Auto-tap won't pay for it.
   function castCost(inst, opts = {}) {
@@ -2879,6 +2936,15 @@
     },
     // "Destroy target creature", "deals 3 damage to any target": you're asked which (mustTargetPrompt).
     target: (eff, part, src) => { (game.mustTarget = game.mustTarget || []).push({ eff, part, src: src ? src.name : 'Effect' }); },
+    // "Search your library for …", "Scry 2", "Surveil 1": you pick the cards (mustLibraryPrompt).
+    search: (spec, src) => { (game.mustLibrary = game.mustLibrary || []).push({ kind: 'search', spec, src }); },
+    scry: (n, kind, src) => { (game.mustLibrary = game.mustLibrary || []).push({ kind, n, src }); },
+    // What comes after the search or scry ("Scry 1. Draw a card.") waits for your pick.
+    later: (text, self) => {
+      const list = game.mustLibrary;
+      if (list && list.length) Object.assign(list[list.length - 1], { then: text, self: self ? self.iid : null });
+    },
+    defOf: def,
   });
 
   // Opp counters your spell as you cast it (its counterspells; see Bot.oppCounters).
@@ -2896,7 +2962,7 @@
   // Also undying, persist, afterlife and "whenever a creature dies" (Blood Artist) on either table.
   Game.hooks.died = (s, inst, info) => {
     if (s === game) Bot.died(game, inst, def, effectCtx());
-    else if (hasBot() && s === game.bot.s) Bot.died(s, inst, def, null);
+    else if (hasBot() && s === game.bot.s) Bot.died(s, inst, def, null, game);
     else return;
     Bot.afterDeath(game, s, inst, info || {}, def, effectCtx());
   };
@@ -2913,6 +2979,7 @@
   Game.hooks.tokenEntered = (s, inst) => {
     Bot.enterTrigger(s, inst, def); // a token copy of Spider-Man
     if (s === game) Bot.creatureEntered(game, inst, def, effectCtx());
+    else if (hasBot() && s === game.bot.s) Bot.creatureEntered(game, inst, def, null, s);
   };
 
   // Landfall on your cards ("Whenever a land enters under your control, …").
@@ -2930,6 +2997,11 @@
     if (s === game || (hasBot() && s === game.bot.s)) Bot.enterEffects(game, s, inst, def, effectCtx());
     if (s === game && Game.isLand(inst) && !inst.faceDown) Bot.landEntered(game, inst, def, effectCtx());
     if (s === game) Bot.creatureEntered(game, inst, def, effectCtx());
+    // Opp's landfall and "whenever a creature you control enters".
+    if (hasBot() && s === game.bot.s) {
+      if (Game.isLand(inst) && !inst.faceDown) Bot.landEntered(game, inst, def, null, s);
+      Bot.creatureEntered(game, inst, def, null, s);
+    }
     // "Choose one —": you tick the modes (after the move finishes, like the type prompt below).
     if (s === game && Bot.spellModes(inst, def)) return setTimeout(() => chooseModes(inst.iid), 0);
     // "Creatures you control get +2/+2 until end of turn": done, so the spell goes to the graveyard.
