@@ -204,7 +204,7 @@ test('Syr Konrad: deaths, milled creature cards and creatures leaving your grave
   const bear = put(game.bot.s, 'bear');
   Game.move(game.bot.s, bear.iid, 'graveyard');
   assert.equal(game.oppLife, 39);
-  const fates = find(game, 'fates', ['library']);
+  const fates = find(game, 'fates', ['library', 'hand']);
   Game.move(game, fates, 'library', { index: 0 });
   Game.mill(game, 1); // a creature card from the library
   assert.equal(game.oppLife, 38);

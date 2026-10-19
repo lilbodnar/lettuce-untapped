@@ -97,7 +97,7 @@ test("Herald's Horn puts a creature of the chosen type from the top into your ha
   const game = vsOpp();
   const horn = put(game, 'horn');
   horn.chosenType = 'Rat';
-  Game.move(game, find(game, 'typhoid', ['library']), 'library', { index: 0 });
+  Game.move(game, find(game, 'typhoid', ['library', 'hand']), 'library', { index: 0 });
   const hand = game.zones.hand.length;
   const [line] = defs.horn.oracle.split('\n').filter(l => /upkeep/.test(l));
   Bot.runEffect(game, line.replace(/^At the beginning of your upkeep, /, ''), ctx(game, { self: horn }));
@@ -153,8 +153,8 @@ test('Marrow-Gnawer gives every Rat fear, on both sides', () => {
 
 test("Patriarch's Bidding brings back each player's chosen type", () => {
   const game = vsOpp();
-  Game.move(game, find(game, 'typhoid', ['library']), 'graveyard');
-  Game.move(game, find(game, 'colony', ['library']), 'graveyard');
+  Game.move(game, find(game, 'typhoid', ['library', 'hand']), 'graveyard');
+  Game.move(game, find(game, 'colony', ['library', 'hand']), 'graveyard');
   Game.move(game.bot.s, find(game.bot.s, 'giant', ['library']), 'graveyard');
   const spell = game.cards[find(game, 'bidding')];
   Bot.runEffect(game, defs.bidding.oracle, ctx(game, { self: spell }));
@@ -235,7 +235,7 @@ test('Rat King, Verminister: disappear makes a Rat; it returns cards with the sa
   Bot.phaseTriggers(game, game, 'end step', defOf, ctx(game));
   assert.equal(king.counters['+1/+1'], 1);
   assert.equal(game.zones.battlefield.map(i => game.cards[i]).filter(c => c.token).length, 1);
-  ['colony', 'colony', 'colony'].forEach(() => Game.move(game, find(game, 'colony', ['library']), 'graveyard'));
+  ['colony', 'colony', 'colony'].forEach(() => Game.move(game, find(game, 'colony', ['library', 'hand']), 'graveyard'));
   const ab = Bot.activatedAbilities(king, defOf).find(a => a.sacOther);
   Bot.runEffect(game, ab.effect, ctx(game, { self: king }));
   assert.equal(named(game, 'Rat Colony').length, 3);
@@ -255,7 +255,7 @@ test('Banners and Chronicle: the chosen type gets the bonus and casting one draw
   assert.ok(st(rat).kw.has('first strike') && st(rat).kw.has('trample'));
   assert.equal(st(bear).pow, 2);
   const hand = game.zones.hand.length;
-  Bot.spellCast(game, game, game.cards[find(game, 'colony', ['library'])], defOf, ctx(game));
+  Bot.spellCast(game, game, game.cards[find(game, 'colony', ['library', 'hand'])], defOf, ctx(game));
   assert.equal(game.zones.hand.length, hand + 2);
 });
 
@@ -329,8 +329,8 @@ test('Valley Rotcaller drains for each other Rat; Gruesome Fate and Revenge of t
   assert.deepEqual([game.life, game.oppLife], [42, 38]);
   Bot.runEffect(game, defs.gruesome.oracle, ctx(game));
   assert.equal(game.oppLife, 35);
-  Game.move(game, find(game, 'bear', ['library']), 'graveyard');
-  Game.move(game, find(game, 'giant', ['library']), 'graveyard');
+  Game.move(game, find(game, 'bear', ['library', 'hand']), 'graveyard');
+  Game.move(game, find(game, 'giant', ['library', 'hand']), 'graveyard');
   Bot.runEffect(game, defs.revenge.oracle.split('\n')[0], ctx(game));
   const toks = game.zones.battlefield.map(i => game.cards[i]).filter(c => c.token);
   assert.equal(toks.length, 2);

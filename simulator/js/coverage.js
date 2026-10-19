@@ -257,7 +257,7 @@ const Coverage = (() => {
     const out = { you: true, opp: true, gaps: [] };
     let m;
     // Banners: "Creatures you control of the chosen type / color get +1/+1" read like grantsOnce reads them.
-    line = line.replace(/^(other )?(\w+)( you control)? of the chosen type\b/i, '$1Elf $2$3').replace(/ of the chosen (type|colou?r)\b/i, '');
+    line = line.replace(/^(other )?(\w+) you control of the chosen type\b/i, '$1Elf $2 you control').replace(/ you control of the chosen colou?r\b/i, ' you control');
     // Marrow-Gnawer ("All Rats have fear."); Dirty Wererat (threshold); Coat of Arms; Heraldic Banner's color; Rat Colony.
     if ((m = /^all (.+?) (?:have (.+?)|get [+-]\d+\/[+-]\d+)\.?$/i.exec(line)) && (!m[2] || B.grantKws(m[2]).length === kwOnly(m[2]).length)) return out;
     if (/^as long as there are \w+ or more cards in your graveyard, (.+?) gets [+-]\d+\/[+-]\d+(?: and (?:can't block|can't attack|has .+?))?\.?$/i.test(line)
