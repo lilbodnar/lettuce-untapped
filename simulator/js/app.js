@@ -2453,11 +2453,14 @@
   const MTGJSON = 'https://mtgjson.com/api/v5';
   const preconDeckName = p => `${p.name} (${p.code})`;
 
+  // The list loads by itself the first time the panel is shown (preconTried); offline, Try again does it.
+  let preconTried = false;
   function preconPanelHtml() {
     if (!precons) {
+      if (!preconTried) { preconTried = true; setTimeout(loadPrecons, 0); }
       return `<h3>Precon decks</h3>
         <p class="muted small">Every Commander precon Wizards has printed, ready to play or to play against. The lists come from MTGJSON.</p>
-        <div class="toolbar"><button class="btn sm" data-act="precons-load">Show precons</button><span class="muted small" id="preconMsg"></span></div>`;
+        <div class="toolbar"><button class="btn sm ghost" data-act="precons-load">Try again</button><span class="muted small" id="preconMsg">Loading the precon list…</span></div>`;
     }
     return `<h3>Precon decks</h3>
       <p class="muted small">Click <b>Add</b> and the deck joins Your Simulator decks: play it, or pick it as Opp's deck.</p>
@@ -2483,7 +2486,10 @@
     return rows.join('') + (list.length > 60 ? `<p class="muted small">${list.length - 60} more: search to narrow it down.</p>` : '') + (list.length ? '' : '<p class="muted small">No precon matches that.</p>');
   }
 
+  let preconLoading = false;
   async function loadPrecons() {
+    if (preconLoading || precons) return;
+    preconLoading = true;
     const say = t => { const m = $('#preconMsg'); if (m) m.textContent = t; };
     say('Loading the precon list…');
     try {
@@ -2502,6 +2508,8 @@
       learnPreconCommanders(learned);
     } catch (e) {
       say(`Couldn't load the precons (${e.message}). Check your internet connection.`);
+    } finally {
+      preconLoading = false;
     }
   }
 
