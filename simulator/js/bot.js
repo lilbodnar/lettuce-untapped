@@ -135,6 +135,9 @@ const Bot = (() => {
       const pt = /\bgets ([+-]\d+)\/([+-]\d+)/i.exec(m[1]);
       if (pt) { out.pow += Number(pt[1]); out.tou += Number(pt[2]); }
       const has = /\bhas (.+)$/i.exec(m[1]);
+      // Thornbite Staff: 'Equipped creature has "{2}, {T}: This creature deals 1 damage to any target" and "…"'.
+      const quoted = has ? [...has[1].matchAll(/"([^"]+)"/g)].map(q => q[1].replace(/\.$/, '')) : [];
+      if (quoted.length) out.lines = [...(out.lines || []), ...quoted];
       if (has) {
         has[1].toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(p => p.trim())
           .forEach(p => { if (KEYWORDS.includes(p) && !out.kw.includes(p)) out.kw.push(p); });
@@ -1383,7 +1386,7 @@ const Bot = (() => {
       if (ctx.hitOpps) ctx.hitOpps(n, true);
       G.log(g, `${(ctx.self && ctx.self.name) || 'Effect'}: ${n} damage to each creature and each player.`);
     }],
-    [/^spend only (\w+) mana on x$/i, () => {}],
+    [/^spend only (\w+) mana on (?:x|\d+)$/i, () => {}], // paid that way when activated (app.js)
     // Three Tree City: "{2}, {T}: Choose a color. Add an amount of mana of that color equal to the number of
     // creatures you control of the chosen type." The color is the one your hand needs most.
     [/^choose a color$/i, (g, m, ctx) => { ctx.chosenColor = neededColor(g); }],
@@ -1432,7 +1435,7 @@ const Bot = (() => {
   // hand onto the battlefield", "Put target creature card exiled with The Darkness Crystal onto the
   // battlefield tapped under your control with two additional +1/+1 counters on it".
   // Returns { min, max, what, from: 'mine' | 'any' | 'theirs' | 'hand' | 'exiled', exiledWith, to, tapped, counters } or null.
-  const CARD_MOVE = new RegExp(`^(?:return|put) (up to )?(one or two|any number of|${COUNT.slice(1, -1)}|eight|nine|ten)? ?(?:target )?(.+?) cards? from (your graveyard|a graveyard|graveyards|an opponent's graveyard|your hand) (to your hand|onto the battlefield( tapped)?(?: under your control)?)$`, 'i');
+  const CARD_MOVE = new RegExp(`^(?:return|put) (up to )?(one or two|any number of|${COUNT.slice(1, -1)}|eight|nine|ten)? ?(?:target )?(.+?) cards? from (your graveyard|a graveyard|graveyards|an opponent's graveyard|that player's graveyard|your hand) (to your hand|onto the battlefield( tapped)?(?: under your control)?)$`, 'i');
   const EXILED_MOVE = /^put target (.+?) cards? exiled with (.+?) onto the battlefield( tapped)? under your control(?: with (\w+) additional ([\w+/-]+) counters? on it)?$/i;
   // Also "put any number of creature cards from your hand onto the battlefield" (Last March of the
   // Ents) and "You may put a land card from your hand onto the battlefield" (Growth Spiral).
@@ -1446,7 +1449,7 @@ const Bot = (() => {
       const n = any ? 99 : m[2] ? (/one or two/i.test(m[2]) ? 2 : toNumber(m[2])) : 1;
       if (!n) return null;
       const min = m[1] || may || any ? 0 : /one or two/i.test(m[2] || '') ? 1 : n;
-      const from = { 'your graveyard': 'mine', 'a graveyard': 'any', graveyards: 'any', "an opponent's graveyard": 'theirs', 'your hand': 'hand' }[m[4].toLowerCase()];
+      const from = { 'your graveyard': 'mine', 'a graveyard': 'any', graveyards: 'any', "an opponent's graveyard": 'theirs', "that player's graveyard": 'theirs', 'your hand': 'hand' }[m[4].toLowerCase()];
       return { min, max: n, what: m[3].toLowerCase(), from, to: /hand/i.test(m[5]) ? 'hand' : 'battlefield', tapped: !!m[6], counters: null };
     }
     m = EXILED_MOVE.exec(p);
@@ -1917,6 +1920,7 @@ const Bot = (() => {
       const last = out[out.length - 1];
       if (last && /\btarget\b/i.test(last) && (FOLLOW_UP.test(p) || (/^shuffle$/i.test(p) && /its controller may search/i.test(last)))) out[out.length - 1] = `${last}. ${p}`;
       else if (last && /^you$/i.test(last)) out[out.length - 1] = `${last} and ${p}`; // Flumph: "you and target opponent each draw a card"
+      else if (last && /^each player$/i.test(p) && /\beach creature$/i.test(last)) out[out.length - 1] = `${last} and ${p}`; // Crypt Rats
       else out.push(p);
       return out;
     }, []);
@@ -2108,6 +2112,28 @@ const Bot = (() => {
     }
     delete game.nextUpkeep;
   }
+  // Crackdown Construct: "Whenever you activate an ability of an artifact or creature that isn't a mana
+  // ability, this creature gets +1/+1 until end of turn." src: what was activated, on table s.
+  const ACTIVATE_WATCH = /^whenever you activate an ability of an? (.+?)(?: that isn't a mana ability)?, (?:you may )?(.+)$/i;
+  function abilityActivated(game, s, src, defOf, ctx) {
+    for (const w of permanents(s)) {
+      for (const line of oracleLines(w, defOf)) {
+        const m = ACTIVATE_WATCH.exec(line);
+        if (m && m[1].split(/\s+or\s+/).some(k => isA(src, k))) runFor(game, s, w, m[2], `${src.name}'s ability was activated`, isOpps(game, s) ? null : ctx, defOf);
+      }
+    }
+  }
+  // Heraldic Banner's "choose a color": the color most of table s's creature cards are.
+  function bestColor(s, defOf) {
+    const n = {};
+    Object.values(s.cards).filter(c => /\bcreature\b/i.test(front(c.typeLine))).forEach(c => colorsOf(c.bot || defOf(c.id) || {}).forEach(k => { n[k] = (n[k] || 0) + 1; }));
+    return Object.keys(n).sort((a, b) => n[b] - n[a])[0] || 'B';
+  }
+  // Flashback {2}{B}{B}: its cost, or null.
+  const flashbackOf = (inst, defOf) => { const m = oracleLines(inst, defOf).map(l => /^flashback ((?:\{[^}]+\})+)/i.exec(l)).find(Boolean); return m ? m[1] : null; };
+  // Ninjutsu {1}{B}: its cost, or null.
+  const ninjutsuOf = (inst, defOf) => { const m = oracleLines(inst, defOf).map(l => /^ninjutsu ((?:\{[^}]+\})+)/i.exec(l)).find(Boolean); return m ? m[1] : null; };
+
   // "You have no maximum hand size." (Reliquary Tower) on table s.
   const noMaxHand = (s, defOf) => permanents(s).some(c => oracleLines(c, defOf).some(l => /^you have no maximum hand size\.?$/i.test(l)));
 
@@ -2222,6 +2248,7 @@ const Bot = (() => {
   // Flumph: "Whenever this creature is dealt damage, you and target opponent each draw a card." s: its table.
   function creatureDamaged(game, s, inst, n, defOf, ctx) {
     if (!(n > 0) || !inst) return;
+    inst.damageTaken = (inst.damageTaken || 0) + n; // this turn (Tangled Colony)
     for (const line of oracleLines(inst, defOf)) {
       const m = /^whenever (.+?) is dealt damage, (?:you may )?(.+)$/i.exec(line);
       if (!m || !isSelf(m[1], inst)) continue;
@@ -2288,7 +2315,8 @@ const Bot = (() => {
   const plainLine = l => l.replace(/\([^)]*\)/g, '').trim().replace(/^(?![IVX]+(?:, [IVX]+)* —)[A-Z][A-Za-z'’ -]{1,40}? — (?=[A-Z{+−-])/, '');
   // Abilities a pump gave it until end of turn (inst.pump.lines) count too, and ones other cards give
   // it ('Commander creatures you own have "Whenever this creature attacks …"', inst.grantedLines).
-  const oracleLines = (inst, defOf) => oracleText(inst, defOf).split('\n').map(plainLine).concat((inst.pump && inst.pump.lines) || [], inst.grantedLines || []);
+  const oracleLines = (inst, defOf) => oracleText(inst, defOf).split('\n').map(plainLine).concat((inst.pump && inst.pump.lines) || [], inst.grantedLines || [],
+    Object.values(inst.boosts || {}).flatMap(b => (b && b.lines) || [])); // abilities its equipment gives (Thornbite Staff)
 
   // Runs one trigger and logs it. Parts it can't do are logged for you to do by hand.
   function fire(game, inst, what, effect, ctx, times = 1) {
@@ -2364,6 +2392,12 @@ const Bot = (() => {
     if (!creature.faceDown && !G.isCreature(creature)) return;
     for (const inst of permanents(s)) {
       for (const line of oracleLines(inst, defOf)) {
+        // Thornbite Staff: "Whenever a Shaman creature enters, you may attach this Equipment to it."
+        const at = /^whenever an? (.+?) enters, (?:you may )?attach this equipment to it\.?$/i.exec(line);
+        if (at) {
+          if (!creature.faceDown && creature !== inst && isA(creature, at[1]) && !inst.attachedTo) G.attach(s, inst.iid, creature.iid, attachBonus(oracleText(inst, defOf)));
+          continue;
+        }
         const m = ENTER_WATCH.exec(line);
         if (!m || !/you control|under your control/i.test(line.split(',')[0]) || !watched(m, inst, creature, defOf)) continue;
         let effect = m[8];
@@ -2396,10 +2430,17 @@ const Bot = (() => {
           if (whose === 'your' && t !== active) continue;
           if (whose === "each opponent's" && t === active) continue;
           if (END_MILL.test(line)) continue; // Ashcoat's: endStepTriggers asks for it
+          // Rat King, Verminister (disappear): "if a permanent left the battlefield under your control this turn, …"
+          let effect = m[3];
+          const left = /^if a permanent left the battlefield under your control this turn, (.+)$/i.exec(effect);
+          if (left) {
+            if (!t.leftThisTurn) continue;
+            effect = left[1];
+          }
           n++;
           if (dry) continue;
           const yours = ctx || { hitOpps: k => { game.oppLife -= k; }, other: game.bot ? game.bot.s : null };
-          fireOn(game, t, inst, `beginning of ${phase === 'end step' ? 'the end step' : phase}`, m[3], t === game ? yours : null, defOf);
+          fireOn(game, t, inst, `beginning of ${phase === 'end step' ? 'the end step' : phase}`, effect, t === game ? yours : null, defOf);
         }
       }
     }
@@ -2458,6 +2499,8 @@ const Bot = (() => {
     for (const line of oracleLines(inst, defOf)) {
       const m = /^when(?:ever)? (.+?) (?:dies|is put into (?:a|your) graveyard from (?:the battlefield|play)), (?:you may )?(.+)$/i.exec(line);
       if (!m || !isSelf(m[1], inst)) continue;
+      // Tangled Colony: "create X 1/1 … tokens …, where X is the amount of damage dealt to it this turn"
+      m[2] = m[2].replace(/^(create )x\b(.+?),? where x is the amount of damage dealt to it this turn\.?$/i, (all, a, b) => `${a}${info.damage || 0}${b}`);
       const back = RETURN_STUNNED.exec(m[2].trim());
       if (back) {
         const had = Object.values(info.counters || {}).some(n => n > 0);
@@ -2686,19 +2729,25 @@ const Bot = (() => {
     // "Creatures your opponents control get -2/-2": from each table, for the other ones.
     const hostile = [];
     const fighting = []; // combatRuleOf's rules, from each table
+    const everyone = []; // Marrow-Gnawer: "All Rats have fear." (every table)
+    let coats = 0; // Coat of Arms
     for (const s of tables) {
       for (const src of permanents(s)) {
         for (const line of oracleLines(src, defOf)) {
           const m = /^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.exec(line);
           if (m && !m[1].includes(':')) hostile.push({ from: s, what: m[1], pow: Number(m[2]), tou: Number(m[3]) });
+          const a = /^all (.+?) (?:have (.+?)|get ([+-]\d+)\/([+-]\d+))\.?$/i.exec(line);
+          if (a && !a[1].includes(':')) everyone.push({ src: null, other: false, what: a[1], kws: grantKws(a[2] || ''), pow: Number(a[3] || 0), tou: Number(a[4] || 0) });
+          if (/^each creature gets \+1\/\+1 for each other creature on the battlefield that shares at least one creature type with it\.?$/i.test(line)) coats++;
           const f = combatRuleOf(line, src);
           if (f) fighting.push({ from: s, src, ...f });
         }
       }
     }
     for (const s of tables) {
-      const lords = hostile.filter(h => h.from !== s).map(h => ({ src: null, other: false, what: h.what, kws: [], pow: h.pow, tou: h.tou }));
+      const lords = hostile.filter(h => h.from !== s).map(h => ({ src: null, other: false, what: h.what, kws: [], pow: h.pow, tou: h.tou })).concat(everyone);
       const each = []; // "This gets +1/+1 for each other Cat you control"
+      const threshold = []; // Dirty Wererat: "As long as there are seven or more cards in your graveyard, this creature gets +2/+2 and can't block."
       const quoted = []; // 'Commander creatures you own have "Whenever this creature attacks …"'
       const types = []; // Roshan: "Other creatures you control are Assassins in addition to their other types."
       const sneaky = []; // Tetsuko Umezawa: "Creatures you control with power or toughness 1 or less can't be blocked."
@@ -2719,6 +2768,18 @@ const Bot = (() => {
             if (!src.chosenType) continue;
             line = line.replace(/ of the chosen type\b/i, '').replace(/^(other )?(\w+)/i, (all, o, w) => `${o || ''}${src.chosenType} ${w}`);
           }
+          // Heraldic Banner: "Creatures you control of the chosen color get +1/+0." (color: a lord for that color only)
+          let color = null;
+          if (/ of the chosen color\b/i.test(line)) {
+            if (!src.chosenColor) continue;
+            color = src.chosenColor;
+            line = line.replace(/ of the chosen color\b/i, '');
+          }
+          q = /^as long as there are (\w+) or more cards in your graveyard, (.+?) gets ([+-]\d+)\/([+-]\d+)(?: and (can't block|can't attack|has (.+?)))?\.?$/i.exec(line);
+          if (q && isSelf(q[2], src)) {
+            if (s.zones.graveyard.length >= toNumber(q[1])) threshold.push({ src, pow: Number(q[3]), tou: Number(q[4]), kws: q[6] ? grantKws(q[6]) : q[5] ? [q[5].toLowerCase()] : [] });
+            continue;
+          }
           let m = /^(other )?(.+?) you control can't be blocked except by two or more creatures\.?$/i.exec(line);
           if (m) { lords.push({ src, other: !!m[1], what: m[2], kws: ['menace'], pow: 0, tou: 0 }); continue; } // menace, older words
           // "Other creatures you control with defender get +0/+2" (Stalwart Shield-Bearers): withKw.
@@ -2728,15 +2789,16 @@ const Bot = (() => {
             const kws = grantKws(m[6] || m[7] || ''); // "protection from Dogs" is left to you; "protection from black and from red" isn't
             const pow = Number(m[4] || 0);
             const tou = Number(m[5] || 0);
-            if (kws.length || pow || tou) lords.push({ src, other: !!m[1], what: m[2], withKw: (m[3] || '').toLowerCase(), kws, pow, tou });
+            if (kws.length || pow || tou) lords.push({ src, other: !!m[1], what: m[2], withKw: (m[3] || '').toLowerCase(), kws, pow, tou, color });
             continue;
           }
           // Desmond Miles: "… for each other Assassin you control and each Assassin card in your graveyard."
           m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control(?: and each (.+?) cards? in your graveyard)?\.?$/i.exec(line);
           if (m && isSelf(m[1], src)) { each.push({ src, pow: Number(m[2]), tou: Number(m[3]), other: !!m[4], what: m[5], grave: m[6] || null }); continue; }
           // "Silverwing Squadron's power and toughness are each equal to the number of creatures you control."
-          m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) you control\.?$/i.exec(line);
-          if (m && isSelf(m[1], src)) each.push({ src, pow: /power/i.test(m[2]) ? 1 : 0, tou: /toughness/i.test(m[2]) ? 1 : 0, other: !!m[3], what: m[4], cda: true });
+          // Pestilence Rats: "… equal to the number of other Rats on the battlefield." (every table)
+          m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) (you control|on the battlefield)\.?$/i.exec(line);
+          if (m && isSelf(m[1], src)) each.push({ src, pow: /power/i.test(m[2]) ? 1 : 0, tou: /toughness/i.test(m[2]) ? 1 : 0, other: !!m[3], what: m[4], cda: true, everywhere: /battlefield/i.test(m[5]) });
         }
       }
       // Types first, since the rest checks them ("Assassins you control have menace").
@@ -2764,6 +2826,7 @@ const Bot = (() => {
         lords.forEach(l => {
           if ((l.other && l.src === c) || !isA(c, l.what)) return;
           if (l.withKw && !stats(c, c.bot || defOf(c.id)).kw.has(l.withKw)) return;
+          if (l.color && !stats(c, c.bot || defOf(c.id)).colors.includes(l.color)) return;
           l.kws.forEach(k => got.add(k));
           pow += l.pow;
           tou += l.tou;
@@ -2775,8 +2838,17 @@ const Bot = (() => {
           if (f.attack) got.add(DEFENDER_ATTACKS);
         });
         const cda = { pow: 0, tou: 0 };
+        threshold.filter(t => t.src === c).forEach(t => { pow += t.pow; tou += t.tou; t.kws.forEach(k => got.add(k)); });
+        // Coat of Arms: +1/+1 for each other creature (any table) that shares a creature type with it.
+        if (coats) {
+          const subs = x => new Set((front(x.typeLine).split('—')[1] || '').toLowerCase().split(/\s+/).filter(Boolean).concat(x.extraTypes || []));
+          const mineSubs = subs(c);
+          const n = tables.flatMap(t => creatures(t)).filter(o => o !== c && [...subs(o)].some(w => mineSubs.has(w))).length;
+          pow += coats * n;
+          tou += coats * n;
+        }
         each.filter(e => e.src === c).forEach(e => {
-          const n = all.filter(p => !(e.other && p === c) && isA(p, e.what)).length
+          const n = (e.everywhere ? tables.flatMap(t => permanents(t)) : all).filter(p => !(e.other && p === c) && isA(p, e.what)).length
             + (e.grave ? s.zones.graveyard.filter(iid => isA(s.cards[iid], e.grave)).length : 0);
           if (e.cda) { cda.pow += e.pow * n; cda.tou += e.tou * n; return; }
           pow += e.pow * n;
@@ -2804,7 +2876,8 @@ const Bot = (() => {
       if (k) out.push(k);
       t = t.replace(pro[0], '');
     }
-    return out.concat(kwList(t).filter(k => KEYWORDS.includes(k)));
+    // "toxic 1" (Karumonix) is the keyword toxic.
+    return out.concat(kwList(t).map(k => { const n = /^([a-z ]+?) \d+$/.exec(k); return n && NUMBERED.includes(n[1]) ? n[1] : k; }).filter(k => KEYWORDS.includes(k)));
   }
 
   // A regeneration shield saves a creature that would be destroyed: it's tapped instead and taken
@@ -3367,8 +3440,24 @@ const Bot = (() => {
   // anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1
   // damage to each opponent." Run for every card that changes zones (G.hooks.moved), on table s.
   const KONRAD = /^whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, (?:you may )?(.+)$/i;
+  // Rat King, Pale Piper: "Whenever Rat King or another nontoken creature you control leaves the battlefield, …"
+  const LEAVES_WATCH = /^whenever (?:(.+?) or )?(another |an? )?(nontoken )?(.+?)( you control)? leaves the battlefield, (?:you may )?(.+)$/i;
   function cardMoved(game, s, inst, from, to, defOf, ctx) {
     if (!inst || from === to || inst.faceDown) return;
+    if (from === 'battlefield') {
+      s.leftThisTurn = true; // Rat King, Verminister's "if a permanent left the battlefield under your control this turn"
+      const watchers = permanents(s).concat(inst);
+      for (const w of watchers) {
+        for (const line of oracleLines(w, defOf)) {
+          const m = LEAVES_WATCH.exec(line);
+          if (!m) continue;
+          if (w === inst) {
+            if (!(m[1] && isSelf(m[1], w))) continue; // the one that left sees itself only by name
+          } else if (!m[2] || (m[3] && inst.token) || !isA(inst, m[4])) continue;
+          runFor(game, s, w, m[6], `${inst.name} left the battlefield`, s === game ? ctx : null, defOf);
+        }
+      }
+    }
     const creatureCard = /\bcreature\b/i.test(front(inst.typeLine));
     const dies = from === 'battlefield' && (to === 'graveyard' || (to === 'command' && inst.commander)) && G.isCreature(inst);
     const intoGrave = to === 'graveyard' && from !== 'battlefield' && creatureCard && !inst.token;
@@ -3387,7 +3476,7 @@ const Bot = (() => {
   }
 
   // "Whenever you cast a noncreature spell", "Magecraft — Whenever you cast or copy an instant or sorcery spell", …
-  const CAST_WATCH = /^(?:magecraft\s*[—-]\s*)?whenever you cast (?:or copy )?(?:an? )?(.*?)\s*spells?( during an opponent's turn| during your turn)?, (?:you may )?(.+)$/i;
+  const CAST_WATCH = /^(?:magecraft\s*[—-]\s*)?whenever you cast (?:or copy )?(?:an? )?(.*?)\s*spells?( of the chosen type)?( during an opponent's turn| during your turn)?, (?:you may )?(.+)$/i;
 
   // A spell was cast on table s (a permanent spell is already on the battlefield, an instant or
   // sorcery may be too): prowess, "whenever you cast" triggers, cascade and storm. ctx: as for runEffect, for yours.
@@ -3406,9 +3495,11 @@ const Bot = (() => {
       for (const line of oracleLines(w, defOf)) {
         const m = CAST_WATCH.exec(line);
         if (!m || /\b(first|second)\b/i.test(line) || !spellFits(spell, m[1], defOf)) continue;
+        // Vanquisher's Banner: "a creature spell of the chosen type".
+        if (m[2] && !(w.chosenType && isA(spell, w.chosenType))) continue;
         // Nightmare Sower: "during an opponent's turn" (s.offTurn while someone else's turn is on).
-        if (m[2] && /opponent/i.test(m[2]) !== !!s.offTurn) continue;
-        const effect = m[3].trim();
+        if (m[3] && /opponent/i.test(m[3]) !== !!s.offTurn) continue;
+        const effect = m[4].trim();
         const p = /^(.+?) gets? ([+-]\d+)\/([+-]\d+) until end of turn\.?$/i.exec(effect);
         if (p && isSelf(p[1], w)) {
           pumpBy(w, Number(p[2]), Number(p[3]));
@@ -3992,13 +4083,14 @@ const Bot = (() => {
   // Interceptor, Shadow's Hound: "Whenever you attack with one or more legendary creatures, you may
   // pay {2}{B}. If you do, return this card from your graveyard to the battlefield tapped and
   // attacking." The cards in table s's graveyard that can, for these attackers: [{ inst, cost }].
-  const GRAVE_ATTACK = /^whenever you attack with one or more (.+?) creatures?, you may pay ((?:\{[^}]+\})+)\. if you do, return this card from your graveyard to the battlefield tapped and attacking\.?$/i;
+  // Persistent Marshstalker: "Whenever you attack with one or more Rats, if there are seven or more cards in your graveyard, you may pay {2}{B}. …"
+  const GRAVE_ATTACK = /^whenever you attack with one or more (.+?)(?: creatures?)?(?:, if there are (\w+) or more cards in your graveyard)?, you may pay ((?:\{[^}]+\})+)\. if you do, return this card from your graveyard to the battlefield tapped and attacking\.?$/i;
   function graveAttackers(s, attackers, defOf) {
     const out = [];
     for (const iid of s.zones.graveyard) {
       const inst = s.cards[iid];
       const m = oracleLines(inst, defOf).map(l => GRAVE_ATTACK.exec(l)).find(Boolean);
-      if (m && attackers.some(a => a && isA(a, m[1]))) out.push({ inst, cost: m[2] });
+      if (m && (!m[2] || s.zones.graveyard.length >= toNumber(m[2])) && attackers.some(a => a && isA(a, m[1]))) out.push({ inst, cost: m[3] });
     }
     return out;
   }
@@ -4192,6 +4284,30 @@ const Bot = (() => {
   // Opp blocks your attack and the damage is done. attacks: [{ iid, pw }], your creatures that
   // attack and, for ones going after a planeswalker, which of Opp's. Returns a short summary for a message.
   function resolveYourAttack(game, attacks, defOf, combatCtx = {}) {
+    const st = yourAttackBlocks(game, attacks, defOf);
+    return finishYourAttack(game, st.attackers, st.blocks, defOf, st.answered, combatCtx);
+  }
+  // Ninjutsu: after blocks, an unblocked attacker (attackerIid) goes back to your hand and the ninja
+  // (ninjaIid, in your hand) comes in tapped and attacking in its place. state: yourAttackBlocks's.
+  function ninjutsu(game, state, attackerIid, ninjaIid, defOf) {
+    const a = state.attackers.find(x => x.inst.iid === attackerIid && !(state.blocks.get(x) || []).length);
+    const ninja = game.cards[ninjaIid];
+    if (!a || !ninja || ninja.zone !== 'hand') return false;
+    const back = a.inst;
+    G.move(game, back.iid, 'hand');
+    ninja.combatEntry = true; // its "When this enters" picks its own targets (combat won't wait)
+    G.move(game, ninjaIid, 'battlefield', { put: true });
+    delete ninja.combatEntry;
+    ninja.tapped = true;
+    ninja.tappedFor = null;
+    ninja.attacking = true;
+    a.inst = ninja;
+    a.st = stats(ninja, defOf(ninja.id));
+    G.log(game, `Ninjutsu: ${back.name} returned to your hand and ${ninja.name} is attacking in its place.`);
+    return true;
+  }
+  // Your attack up to Opp's blocks: { attackers, blocks, answered } for finishYourAttack.
+  function yourAttackBlocks(game, attacks, defOf) {
     const s = game.bot.s;
     if (attacks.length) game.attackedYou = true; // Opp's Weathered Sentinels
     refreshGrants(game, defOf);
@@ -4228,7 +4344,7 @@ const Bot = (() => {
       attackers.forEach(a => { a.st = stats(a.inst, defOf(a.inst.id)); });
       [...blocks.values()].flat().forEach(b => { b.st = botStats(b.inst); });
     }
-    return finishYourAttack(game, attackers, blocks, defOf, answered, combatCtx);
+    return { attackers, blocks, answered };
   }
 
   // How the defending side blocks: kill an attacker without dying, trade for something at least as
@@ -4375,6 +4491,7 @@ const Bot = (() => {
     setResponder, getResponder, isInstantSpeed, resumeTurn, resolveStack, counterStack, oppCounters, oppInstantAt, pickBlocks, castOptions, castOne, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
     yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker, phaseTriggers, attackWatch, blockWatch, hitOf, TOUGH_DMG, DEFENDER_ATTACKS, selfDiscount, wipeVictims, bestNumber,
     searchSpec, searchable, applySearch, applyScry, crackFetches, ARTIFACT_TOKENS, faceOracle,
+    yourAttackBlocks, finishYourAttack, ninjutsu, ninjutsuOf, flashbackOf, abilityActivated, bestColor, applyDig, autoMoveCards,
     wouldDie, madnessCost, costChoices, offspringCopy, graveAttackers, returnAttacking, turnedFaceUp, loyaltyLocked, cardMoved,
     sendHome, takeCard, applyRecover, recoverCost, opponentDamaged, spellTargeted, graveCast, autoTarget, playerEffect,
     cardMoveSpec, moveChoices, applyMoveCards, exileTopCard, exileGreatest, exileGraveyard, handPick, addLife, cardFits, oppSacrifices,
@@ -4384,7 +4501,7 @@ const Bot = (() => {
     parts: { OTHER_KEYWORDS, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,
       OLD_MENACE, UNBLOCKABLE, ATTACK_TAX, SPELL_TAX, NO_GAIN, ARBORIA, ATTACK_CAP, BLOCK_CAP, ATTACK_BLOCK_CAP, isSelf,
       counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, BLOCK_WATCH, TOUGH_RULE, DEFENDER_RULE, SELF_DISCOUNT, WIPE, CHOOSE_WIPE, plainLine,
-      CLONE, TAX_WATCH, COUNTER_EXTRAS, counterExtraParts, EXTRA_BLOCK, RETURN_STUNNED, KONRAD, RECOVER, GRAVE_CAST, GRAVE_ATTACK, CRYSTAL, DEALT_WATCH, TARGET_WATCH, GAIN_WATCH, LOSS_WATCH, landfallText, settleIfYouDo, enteredElsewhere } };
+      LEAVES_WATCH, ACTIVATE_WATCH, CLONE, TAX_WATCH, COUNTER_EXTRAS, counterExtraParts, EXTRA_BLOCK, RETURN_STUNNED, KONRAD, RECOVER, GRAVE_CAST, GRAVE_ATTACK, CRYSTAL, DEALT_WATCH, TARGET_WATCH, GAIN_WATCH, LOSS_WATCH, landfallText, settleIfYouDo, enteredElsewhere } };
 })();
 
 if (typeof module !== 'undefined') module.exports = Bot;

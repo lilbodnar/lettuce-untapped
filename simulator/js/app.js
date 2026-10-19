@@ -339,7 +339,7 @@
     if (game && game.mustSacrifice) setTimeout(mustSacrificePrompt, 0);
     if (game && game.mustTarget && game.mustTarget.length) setTimeout(mustTargetPrompt, 0);
     if (game && game.mustLibrary && game.mustLibrary.length) setTimeout(mustLibraryPrompt, 0);
-    const asks = { mustCopy: mustCopyPrompt, mustTax: mustTaxPrompt, mustFlicker: mustFlickerPrompt, mustShock: mustShockPrompt, mustMadness: mustMadnessPrompt, mustModes: mustModesPrompt, mustCards: mustCardsPrompt, mustRecover: mustRecoverPrompt, mustHand: mustHandPrompt, mustSacToPlay: mustSacToPlayPrompt };
+    const asks = { mustDig: mustDigPrompt, mustSacThen: mustSacThenPrompt, mustCopy: mustCopyPrompt, mustTax: mustTaxPrompt, mustFlicker: mustFlickerPrompt, mustShock: mustShockPrompt, mustMadness: mustMadnessPrompt, mustModes: mustModesPrompt, mustCards: mustCardsPrompt, mustRecover: mustRecoverPrompt, mustHand: mustHandPrompt, mustSacToPlay: mustSacToPlayPrompt };
     for (const [k, fn] of Object.entries(asks)) if (game && game[k] && game[k].length) setTimeout(fn, 0);
     syncAuras(); // your Arrest on Opp's creature
     if (game) Bot.refreshGrants(game, def); // "Goblins you control have haste" and the like
@@ -892,6 +892,33 @@
     pickCards({ title: `${inst.name}: copy a creature`, note: 'It enters as a copy (a Wall with defender too). The copied creature is tapped and stays tapped while you control the copy.',
       ids: [...byKey.keys()], min: 1, max: 1, ok: 'Copy', cardOf: k => byKey.get(k).inst, whoOf: k => (k[0] === 'y' ? 'Yours' : "Opp's"),
       cancel: "Don't copy", onCancel: () => finish(null) }, picks => finish(byKey.get(picks[0])));
+  }
+
+  // Karumonix: pick the cards to keep from the top ones; the rest go to the bottom in a random order.
+  function mustDigPrompt() {
+    const req = game && game.mustDig && game.mustDig[0];
+    if (!req || !modal.hidden) return;
+    const done = picks => act(() => { nextOf('mustDig'); Bot.applyDig(game, req.top, picks, req.src); });
+    if (!req.fits.length) return done([]);
+    pickCards({ title: `${req.src}: top ${req.top.length} cards`, note: `You may put ${req.max >= 99 ? 'any number' : `up to ${req.max}`} ${req.what} card${req.max === 1 ? '' : 's'} into your hand. The rest go on the bottom in a random order.`,
+      ids: req.fits, min: 0, max: Math.min(req.max, req.fits.length), ok: 'Take', cancel: 'None', onCancel: () => done([]) }, done);
+  }
+
+  // Lord Skitter's Butcher: sacrifice another creature (or don't); if you do, the rest happens.
+  function mustSacThenPrompt() {
+    const req = game && game.mustSacThen && game.mustSacThen[0];
+    if (!req || !modal.hidden) return;
+    const ids = game.zones.battlefield.filter(iid => iid !== req.srcIid && Bot.cardFits(game.cards[iid], req.what));
+    const skip = () => act(() => { nextOf('mustSacThen'); Game.log(game, `${req.src}: didn't sacrifice.`); });
+    if (!ids.length) return skip();
+    pickCards({ title: `${req.src}: sacrifice another ${req.what}?`, note: `If you do: ${req.rest}.`, ids, min: 1, max: 1, ok: 'Sacrifice', cancel: "Don't", onCancel: skip }, picks => act(() => {
+      nextOf('mustSacThen');
+      const c = game.cards[picks[0]];
+      Game.move(game, c.iid, c.commander ? 'command' : 'graveyard');
+      const self = (req.srcIid && game.cards[req.srcIid]) || { name: req.src };
+      const left = Bot.runEffect(game, req.rest, Object.assign({ self, other: hasBot() ? game.bot.s : null }, effectCtx()));
+      Game.log(game, `${req.src}: sacrificed ${c.name}; ${req.rest}.${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+    }));
   }
 
   // Cycling and transmute from your hand: pay, discard it, then draw (cycling) or search for a card
@@ -1647,7 +1674,7 @@
       // Interceptor in your graveyard: "you may pay {2}{B}. If you do, return this card … tapped and attacking."
       const back = Bot.graveAttackers(game, picks.map(p => game.cards[p.iid]), def).filter(g => Game.autoPay(JSON.parse(JSON.stringify(game)), g.cost));
       const go = extra => {
-        let msg;
+        let state;
         act(() => {
           payTax();
           extra.forEach(g => {
@@ -1656,9 +1683,34 @@
             picks.push({ iid: Bot.returnAttacking(game, g.inst), to: picks.find(p => !p.to.pw) ? picks.find(p => !p.to.pw).to : picks[0].to });
           });
           if (picks.length) Bot.attackWatch(game, game, def, effectCtx(), picks.map(p => game.cards[p.iid])); // "Whenever you attack, …"
-          msg = Bot.resolveYourAttack(game, picks.map(p => ({ iid: p.iid, pw: p.to.pw || null })), def, effectCtx());
+          state = Bot.yourAttackBlocks(game, picks.map(p => ({ iid: p.iid, pw: p.to.pw || null })), def);
         });
-        status(msg + outcome(), 'ok', 10000);
+        const finish = () => {
+          let msg;
+          act(() => { msg = Bot.finishYourAttack(game, state.attackers, state.blocks, def, state.answered, effectCtx()); });
+          status(msg + outcome(), 'ok', 10000);
+        };
+        // Ninjutsu: after Opp blocks, swap an unblocked attacker for a ninja in your hand.
+        const unblocked = state.attackers.filter(a => !(state.blocks.get(a) || []).length && a.inst.zone === 'battlefield');
+        const ninjas = game.zones.hand.map(iid => game.cards[iid]).filter(c => Bot.ninjutsuOf(c, def) && Game.autoPay(JSON.parse(JSON.stringify(game)), Bot.ninjutsuOf(c, def)));
+        if (!unblocked.length || !ninjas.length) return finish();
+        openModal(`<div class="ask"><h3>Ninjutsu?</h3><p class="muted small">Unblocked: ${esc(unblocked.map(a => a.inst.name).join(', '))}. Pay a ninja's ninjutsu cost to return one of them to your hand and put the ninja in tapped and attacking.</p>
+          <div class="block-picks">${ninjas.flatMap(n => unblocked.map(a => `<button type="button" class="btn ghost" data-nj="${n.iid}|${a.inst.iid}" style="display:block;width:100%;text-align:left;margin:4px 0">${esc(n.name)} (${esc(Bot.ninjutsuOf(n, def))}) for ${esc(a.inst.name)}</button>`)).join('')}</div>
+          <div class="toolbar end"><button type="button" class="btn" data-nj="no">No ninjutsu</button></div></div>`);
+        modalBox.querySelectorAll('[data-nj]').forEach(b => {
+          b.onclick = () => {
+            closeAsk();
+            if (b.dataset.nj !== 'no') {
+              const [ninja, attacker] = b.dataset.nj.split('|');
+              act(() => {
+                const paid = Game.autoPay(game, Bot.ninjutsuOf(game.cards[ninja], def));
+                Game.log(game, `Paid ${Bot.ninjutsuOf(game.cards[ninja], def)} for ninjutsu${paid && paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`);
+                Bot.ninjutsu(game, state, attacker, ninja, def);
+              });
+            }
+            finish();
+          };
+        });
       };
       if (!back.length) return go([]);
       const g = back[0];
@@ -2098,6 +2150,7 @@
     if (opts.choice === 'alt') inst.altPaid = true; // Baleful Mastery: "If the {1}{B} cost was paid, …"
     if (opts.choice === 'offspring') inst.offspringPaid = true;
     if (opts.aftermath) { inst.flipped = true; inst.castAftermath = true; } // Dawn, from your graveyard
+    if (opts.flashback) inst.castAftermath = true; // flashback: exiled after it resolves too
     // From your graveyard or exile, it's cast (prowess, "whenever you cast …").
     if (inst.zone === 'graveyard' || inst.zone === 'exile') opts = { ...opts, cast: true };
     const fromHand = inst.zone === 'hand' || inst.zone === 'command';
@@ -3291,6 +3344,10 @@
     },
     // Opp's Rhystic Study or Smothering Tithe: you're asked whether you pay.
     payTax: req => later('mustTax', req),
+    // Karumonix: you pick the Rat cards from the top five.
+    dig: (spec, src) => later('mustDig', { ...spec, src: src ? src.name : 'Effect' }),
+    // Lord Skitter's Butcher: "You may sacrifice another creature. If you do, scry 2, then draw a card."
+    sacThen: (what, rest, src) => later('mustSacThen', { what, rest, src: src ? src.name : 'Effect', srcIid: src ? src.iid : null }),
     // Eerie Interlude: you pick which of your creatures to exile until the next end step.
     flicker: (what, src) => later('mustFlicker', { what, src: src ? src.name : 'Effect' }),
     // "Search your library for …", "Scry 2", "Surveil 1": you pick the cards (mustLibraryPrompt).
@@ -3382,7 +3439,14 @@
     // "When this enters, put a +1/+1 counter on each other creature you control" (Spider-Man): either table.
     Bot.enterTrigger(s, inst, def);
     // "When this enters, destroy target creature an opponent controls", "… create two 1/1 tokens": you pick targets; Opp picks its own.
-    if (s === game || (hasBot() && s === game.bot.s)) Bot.enterEffects(game, s, inst, def, effectCtx());
+    // Heraldic Banner: "As this artifact enters, choose a color." (the color most of the deck's creatures are)
+    if (!inst.faceDown && !inst.chosenColor && Game.choosesColor(oracleOf(inst))) {
+      inst.chosenColor = Bot.bestColor(s, def);
+      Game.log(s, `${inst.name}: chose ${{ W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' }[inst.chosenColor]}.`);
+    }
+    // A ninja coming in mid-combat picks its own targets (combat doesn't wait for a prompt).
+    const enterCtx = inst.combatEntry ? Object.assign(effectCtx(), { target: (eff, part, src) => { Bot.autoTarget(game, s, src || inst, eff, def); } }) : effectCtx();
+    if (s === game || (hasBot() && s === game.bot.s)) Bot.enterEffects(game, s, inst, def, enterCtx);
     if (s === game && Game.isLand(inst) && !inst.faceDown) Bot.landEntered(game, inst, def, effectCtx());
     if (s === game) Bot.creatureEntered(game, inst, def, effectCtx());
     // Opp's landfall and "whenever a creature you control enters".
@@ -3481,6 +3545,15 @@
     if (!inst || inst.zone !== 'battlefield') return;
     if (ab.loyalty != null) return activateLoyalty(iid, ab);
     if (ab.tap && inst.tapped) return status(`${inst.name} is already tapped.`, 'warn');
+    // "{X}: …" (Crypt Rats): ask for X, then it's a cost like any other ("Spend only black mana on X": {B} each).
+    if (/\{X\}/i.test(ab.mana) && !ab.x) {
+      return ask(`X for ${inst.name}`, 1).then(x => {
+        if (x == null || Number.isNaN(Number(x)) || x < 0) return;
+        const black = /spend only black mana on x/i.test(ab.effect);
+        const mana = ab.mana.replace(/\{X\}/gi, x ? (black ? '{B}'.repeat(x) : `{${x}}`) : '');
+        activate(iid, { ...ab, x: String(x), mana, effect: ab.effect.replace(/\bx\b/gi, String(x)) }, discards, sacs);
+      });
+    }
     if (ab.remove && (inst.counters[ab.remove.kind] || 0) < ab.remove.n) {
       return status(`${inst.name} needs ${ab.remove.n} ${ab.remove.kind} counters (it has ${inst.counters[ab.remove.kind] || 0}).`, 'warn', 8000);
     }
@@ -3501,8 +3574,10 @@
     // "Sacrifice a creature with defender: …" (Towering Titan): pick which.
     if (ab.sacOther && !sacs) {
       const ids = Bot.sacChoices(game, inst, ab.sacOther, def).map(c => c.iid);
-      if (!ids.length) return status(`${inst.name} needs you to sacrifice a ${ab.sacOther}, and you have none.`, 'warn', 8000);
-      return pickCards({ title: `Sacrifice a ${ab.sacOther} for ${inst.name}`, note: ab.text, ids, min: 1, max: 1, ok: 'Sacrifice and activate', cancel: 'Cancel' }, picks => activate(iid, ab, discards, picks));
+      const n = ab.sacCount || 1; // Piper of the Swarm: "Sacrifice three Rats"
+      const what = n === 1 ? `a ${ab.sacOther}` : `${n} ${ab.sacOther}`;
+      if (ids.length < n) return status(`${inst.name} needs you to sacrifice ${what}, and you don't have enough.`, 'warn', 8000);
+      return pickCards({ title: `Sacrifice ${what} for ${inst.name}`, note: ab.text, ids, min: n, max: n, ok: 'Sacrifice and activate', cancel: 'Cancel' }, picks => activate(iid, ab, discards, picks));
     }
     act(() => {
       (sacs || []).forEach(id => { const c = game.cards[id]; if (c) { Game.log(game, `Sacrificed ${c.name} for ${inst.name}.`); Game.move(game, id, c.commander ? 'command' : 'graveyard'); } });
@@ -3521,6 +3596,7 @@
       const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst }, effectCtx()));
       Game.log(game, `Activated ${inst.name}: ${ab.effect}${spent.length ? ` (paid with ${spent.join(', ')})` : ''}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
       if (ab.sacrifice) Game.move(game, iid, inst.commander ? 'command' : 'graveyard');
+      Bot.abilityActivated(game, game, inst, def, effectCtx()); // Crackdown Construct
     });
   }
 
@@ -4858,6 +4934,9 @@
       const cast = [];
       if (inst.zone === 'graveyard' && Bot.graveCast(game, inst, def)) cast.push({ label: 'Cast from graveyard', action: () => { closeModal(); tryPlay(iid, { cast: true }); } });
       // Aftermath (Dusk // Dawn): the back half from your graveyard; it's exiled after.
+      // Flashback (Revenge of the Rats): cast from your graveyard for its flashback cost, then exiled.
+      const fb = inst.zone === 'graveyard' && Bot.flashbackOf(inst, def);
+      if (fb) cast.push({ label: `Cast with flashback (${fb})`, action: () => { closeModal(); tryPlay(iid, { cast: true, flashback: true, cost: fb }); } });
       const after = inst.zone === 'graveyard' && Bot.aftermathOf(inst, def);
       if (after) cast.push({ label: `Cast ${after.name} (aftermath, ${after.cost})`, action: () => { closeModal(); tryPlay(iid, { cast: true, aftermath: true, cost: after.cost }); } });
       if (inst.zone === 'exile' && inst.playable) cast.push({ label: inst.playable.free ? 'Cast without paying its mana cost' : `Play it${inst.playable.anyMana ? ' (any mana)' : ''}`, action: () => { closeModal(); tryPlay(iid); } });

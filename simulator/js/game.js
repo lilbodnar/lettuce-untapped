@@ -91,7 +91,19 @@ const Game = (() => {
   function manaAbility(name, oracle) {
     if (!oracle) return null;
     const front = (name || '').split(' // ')[0].toLowerCase();
+    // Cabal Coffers: "{2}, {T}: Add {B} for each Swamp you control." Cabal Stronghold: "… for each basic
+    // Swamp you control." (its plain "{T}: Add {C}" is used while there aren't enough Swamps, see sourceOf)
     for (const line of oracle.split('\n')) {
+      const c = line.trim().match(/^\{(\d+)\},\s*\{T\}:\s*add \{([WUBRGC])\} for each (basic )?(\w+) you control\.?$/i);
+      if (c) return { colors: [c[2].toUpperCase()], amount: 0, sacrifice: false, filter: Number(c[1]), makes: [], countLand: { type: c[4].toLowerCase(), basic: !!c[3] } };
+    }
+    for (const line of oracle.split('\n')) {
+      // Shadowmoor filter lands (Flooded Grove): "{G/U}, {T}: Add {G}{G}, {G}{U}, or {U}{U}." Two mana, each
+      // either color; its hybrid {G/U} is paid like a {1} here.
+      const h = line.trim().match(/^\{([WUBRG])\/([WUBRG])\},\s*\{T\}:\s*add \{\1\}\{\1\}, \{\1\}\{\2\}, or \{\2\}\{\2\}\.?$/i);
+      if (h) { const pair = [h[1].toUpperCase(), h[2].toUpperCase()]; return { colors: pair, amount: 2, sacrifice: false, filter: 1, makes: [pair, pair] }; }
+      // Heraldic Banner: "{T}: Add one mana of the chosen color." (inst.chosenColor)
+      if (/^\{T\}:\s*add one mana of the chosen colou?r\.?$/i.test(line.trim())) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, chosenColor: true };
       // "{T}: Add {G} for each creature you control with defender." (Overgrown Battlement), "{T}: Add X
       // mana in any combination of colors, where X is the number of creatures you control with
       // defender." (Axebane Guardian): as much as s.kwCount says (kept by bot.js's refreshGrants).
@@ -125,6 +137,18 @@ const Game = (() => {
   // Creatures can't tap for mana the turn they arrive.
   function sourceOf(s, inst) {
     if (inst.faceDown || inst.phasedOut) return null;
+    if (inst.mana && inst.mana.countLand) {
+      const { type, basic } = inst.mana.countLand;
+      const n = s.zones.battlefield.map(id => s.cards[id]).filter(c => isLand(c) && !c.phasedOut && (!basic || /\bbasic\b/i.test(c.typeLine || ''))
+        && String(c.typeLine || '').toLowerCase().split(/[^a-z]+/).includes(type.replace(/s$/, ''))).length;
+      inst.mana.makes = Array(n).fill(inst.mana.colors[0]);
+      inst.mana.amount = n;
+      if (n > inst.mana.filter) return inst.mana;
+      if (!isLand(inst)) return null;
+      const colors = producesOf(inst).filter(k => k === 'C'); // Cabal Stronghold's {T}: Add {C}
+      return colors.length ? { colors, amount: 1, sacrifice: false } : null;
+    }
+    if (inst.mana && inst.mana.chosenColor) return inst.chosenColor ? { ...inst.mana, colors: [inst.chosenColor] } : null;
     if (inst.mana && inst.mana.countKw) {
       if (isCreature(inst) && inst.enteredTurn === s.turn) return null;
       const n = (s.kwCount || {})[inst.mana.countKw] || 0;
@@ -264,6 +288,8 @@ const Game = (() => {
 
   // "As this enters, choose a creature type" (Urza's Incubator, Herald's Horn, Vanquisher's Banner).
   const choosesType = oracle => /\bchoose a creature type\b/i.test(oracle || '');
+  // "As this artifact enters, choose a color." (Heraldic Banner)
+  const choosesColor = oracle => /\bas (?:this|.+?) enters, choose a colou?r\b/i.test(oracle || '');
 
   // Reads "<types> spells you cast cost {N} less to cast" from rules text. Returns a list of
   // { n, types, chosen }: types are the words a spell's type line needs (any one of them; "non…"
@@ -341,7 +367,7 @@ const Game = (() => {
   function withFilters(need, units, set, pool, forced, fromPool) {
     if (!set.length) return payWith(need, units, pool, forced, fromPool);
     const [f, ...rest] = set;
-    const out = f.mana.makes.map(c => ({ inst: f, colors: [c], rank: 1, kind: `F${c}` }));
+    const out = f.mana.makes.map(c => ({ inst: f, colors: [].concat(c), rank: 1, kind: `F${[].concat(c).join('')}` })); // [G, U]: either (Flooded Grove)
     const on = new Set([...forced, f]);
     const tryPay = (n, us, p, tapped, spent) => {
       if (!n) return withFilters(need, us.concat(out), rest, p, new Set([...on, ...tapped]), fromPool + spent);
@@ -825,6 +851,7 @@ const Game = (() => {
     delete inst.extraKw;
     delete inst.bounceAfterCombat;
     delete inst.castAftermath;
+    delete inst.damageTaken;
     // A copy (Wall of Stolen Identity) is itself again.
     if (inst.original) { Object.assign(inst, inst.original); delete inst.original; }
   }
@@ -878,9 +905,11 @@ const Game = (() => {
       delete inst.undoPump; // the pump it gave is gone anyway
       delete inst.exileIfDies;
       delete inst.playable;
+      delete inst.damageTaken;
     }
     delete s.delayed;
     delete s.deathsThisTurn;
+    delete s.leftThisTurn;
   }
 
   // "Counter target spell" (or "…creature spell", "…noncreature spell", "…unless its controller pays {3}").
@@ -935,7 +964,7 @@ const Game = (() => {
     if (at >= 0) list.splice(at, 1);
     // What it was like on the battlefield, for "if it had no counters on it", undying and persist,
     // and "if its toughness was less than 1" (taken before its equipment and pumps come off).
-    const info = { counters: Object.assign({}, inst.counters), to, pump: inst.pump || null, anthem: inst.anthem || null, cda: inst.cda || null, boosts: inst.boosts || null, custom: inst.custom || null };
+    const info = { counters: Object.assign({}, inst.counters), to, pump: inst.pump || null, anthem: inst.anthem || null, cda: inst.cda || null, boosts: inst.boosts || null, custom: inst.custom || null, damage: inst.damageTaken || 0 };
     if (from === 'battlefield' && (to !== 'battlefield' || opts.x != null)) {
       closeStack(s, inst);
       delete inst.stacked;
@@ -1037,7 +1066,7 @@ const Game = (() => {
     if (!next && inst.filterPaid) return untapFilter(s, inst);
     inst.tapped = next;
     if (next) {
-      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && inst.mana.countKw ? sourceOf(s, inst) : inst.mana;
+      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && (inst.mana.countKw || inst.mana.chosenColor) ? sourceOf(s, inst) : inst.mana;
       if (!src || inst.faceDown) return;
       let c = color;
       if (c === undefined) c = src.colors.length === 1 && !(isCreature(inst) && !isLand(inst)) ? src.colors[0] : null;
@@ -1069,14 +1098,15 @@ const Game = (() => {
     const spent = {};
     MANA.forEach(k => { if (before[k] > s.mana[k]) spent[k] = before[k] - s.mana[k]; });
     inst.filterPaid = { iids: untapped.filter(iid => s.cards[iid].tapped && s.cards[iid].zone === 'battlefield'), spent };
-    makes.forEach(c => { s.mana[c]++; });
-    log(s, `Paid {${filter}}${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''} and tapped ${inst.name} for ${makes.map(c => `{${c}}`).join('')}.`);
+    const one = c => [].concat(c)[0]; // Flooded Grove by hand: the first color of each (click the pool to change it)
+    makes.forEach(c => { s.mana[one(c)]++; });
+    log(s, `Paid {${filter}}${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''} and tapped ${inst.name} for ${makes.map(c => `{${one(c)}}`).join('')}.`);
   }
 
   function untapFilter(s, inst) {
     const { iids, spent } = inst.filterPaid;
     inst.tapped = false;
-    inst.mana.makes.forEach(c => { s.mana[c] = Math.max(0, s.mana[c] - 1); });
+    inst.mana.makes.forEach(c => { const k = [].concat(c)[0]; s.mana[k] = Math.max(0, s.mana[k] - 1); });
     MANA.forEach(k => { s.mana[k] += spent[k] || 0; });
     iids.forEach(iid => { if (s.cards[iid] && s.cards[iid].zone === 'battlefield') s.cards[iid].tapped = false; });
     delete inst.filterPaid;
@@ -1207,7 +1237,7 @@ const Game = (() => {
 
   return {
     ZONES, ZONE_NAMES, CELL_W, CELL_H, MANA, layout, hooks, producesOf, available, enterLife, enterDraw, entersTapped, tapsOnEntry, parseCost, autoPay, manaAbility, isCreature,
-    choosesType, costReductions, discount, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
+    choosesType, choosesColor, sourceOf, costReductions, discount, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
     attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew,

@@ -33,7 +33,7 @@ const Coverage = (() => {
   // Words that don't change the game once you're playing (or that you just follow, like flash).
   const NOTHING_TO_DO = ['partner', 'partner with', 'friends forever', 'choose a background', 'doctor\'s companion', 'flash', 'enchant'];
   // Done for you when you cast it (app.js asks), but Opp never uses them.
-  const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath'];
+  const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback'];
 
   // ---------- one keyword line ----------
 
@@ -175,8 +175,16 @@ const Coverage = (() => {
       return out;
     }
     if ((m = /^whenever one or more (.+?) you control attack, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[2].replace(/\bthat many\b/gi, '1')); return out; }
-    // "At the beginning of your upkeep / end step / combat on your turn, …"
-    if ((m = P.PHASE_TRIGGER.exec(line))) { effectGaps('both', m[3]); return out; }
+    // Ashcoat: "At the beginning of your end step, you may mill four cards. If you do, return up to two …"
+    if (new RegExp(`^at the beginning of your end step, (?:you may )?mill ${P.COUNT} cards?\\. if you do, return up to ${P.COUNT} (.+?) cards? from your graveyard to your hand\\.?$`, 'i').test(line)) return out;
+    // "At the beginning of your upkeep / end step / combat on your turn, …" (Rat King, Verminister: "if a permanent left the battlefield …")
+    if ((m = P.PHASE_TRIGGER.exec(line))) { effectGaps('both', m[3].replace(/^if a permanent left the battlefield under your control this turn, /i, '')); return out; }
+    // Rat King, Pale Piper: "Whenever Rat King or another nontoken creature you control leaves the battlefield, …"
+    if ((m = P.LEAVES_WATCH.exec(line))) { effectGaps('both', m[6]); return out; }
+    // Crackdown Construct: "Whenever you activate an ability of an artifact or creature …" (Opp never activates abilities)
+    if ((m = P.ACTIVATE_WATCH.exec(line))) { effectGaps('you', m[2]); gap(out, 'opp', 'trigger', 'whenever you activate an ability (Opp never activates them)'); return out; }
+    // Thornbite Staff: "Whenever a Shaman creature enters, you may attach this Equipment to it."
+    if (/^whenever an? (.+?) enters, (?:you may )?attach this equipment to it\.?$/i.test(line)) return out;
     if ((m = /^whenever you attack, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; }
     // Combat damage to a player
     if ((m = /^whenever (.+?) deals? combat damage to (?:a player|an opponent|one or more players)(?: or battle)?, (?:you may )?(.+)$/i.exec(line))) {
@@ -193,7 +201,7 @@ const Coverage = (() => {
     if ((m = P.DIES_WATCH.exec(line))) { effectGaps('both', m[6].replace(/^if its toughness was less than \d+, /i, '')); return out; }
     // "Whenever you cast …" (Nightmare Sower: "… during an opponent's turn")
     if ((m = P.CAST_WATCH.exec(line)) && !/\b(first|second)\b/i.test(line)) {
-      const e = m[3].trim();
+      const e = m[4].trim();
       const p = /^(.+?) gets? ([+-]\d+)\/([+-]\d+) until end of turn\.?$/i.exec(e);
       if ((p && self(p[1])) || PUMP_SENTENCE.test(e)) return out;
       effectGaps('both', e);
@@ -224,14 +232,15 @@ const Coverage = (() => {
       return out;
     }
     if (/^add\b/i.test(m[2])) {
-      if (is(card, 'land') || G.manaAbility(card.name, line)) return out;
+      // A land's plain "{T}: Add {B}." (Scryfall's produced_mana); others need manaAbility (Cabal Coffers).
+      if ((is(card, 'land') && /^\{T\}$/i.test(m[1].trim()) && !/for each|chosen|equal to|\bx\b/i.test(m[2])) || G.manaAbility(card.name, line)) return out;
       gap(out, 'both', 'mana', `mana ability: ${m[1]}: ${m[2]}`);
       return out;
     }
     if (/^(equip|crew|cycling|ward)\b/i.test(m[1])) return null; // keyword lines
     const ab = B.activatedAbilities(inst, () => ({ oracle: line }))[0];
     if (!ab) { gap(out, 'both', 'cost', m[1]); return out; }
-    const left = notRun(ab.effect, inst);
+    const left = notRun(/\{X\}/i.test(ab.mana) ? ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats: you pick X
     left.forEach(p => gap(out, 'you', 'activated', p));
     // Opp uses only "…: Regenerate this" (to save a creature) and its fetch lands (crackFetches).
     const regen = /^regenerate (.+?)\.?$/i.exec(ab.effect.trim());
@@ -247,6 +256,13 @@ const Coverage = (() => {
   function staticLine(card, line, inst) {
     const out = { you: true, opp: true, gaps: [] };
     let m;
+    // Banners: "Creatures you control of the chosen type / color get +1/+1" read like grantsOnce reads them.
+    line = line.replace(/^(other )?(\w+)( you control)? of the chosen type\b/i, '$1Elf $2$3').replace(/ of the chosen (type|colou?r)\b/i, '');
+    // Marrow-Gnawer ("All Rats have fear."); Dirty Wererat (threshold); Coat of Arms; Heraldic Banner's color; Rat Colony.
+    if ((m = /^all (.+?) (?:have (.+?)|get [+-]\d+\/[+-]\d+)\.?$/i.exec(line)) && (!m[2] || B.grantKws(m[2]).length === kwOnly(m[2]).length)) return out;
+    if (/^as long as there are \w+ or more cards in your graveyard, (.+?) gets [+-]\d+\/[+-]\d+(?: and (?:can't block|can't attack|has .+?))?\.?$/i.test(line)
+      || /^each creature gets \+1\/\+1 for each other creature on the battlefield that shares at least one creature type with it\.?$/i.test(line)
+      || G.choosesColor(line) || /^a deck can have any number of cards named /i.test(line)) return out;
     // 'Commander creatures you own have "Whenever this creature attacks a player, …"': the ability it gives.
     if ((m = /^(?:other )?(.+?) you (?:control|own) have "(.+)"\.?$/i.exec(line)) && !m[1].includes(':')) {
       const given = { id: 'given', name: 'this creature', typeLine: 'Creature' };
@@ -274,17 +290,18 @@ const Coverage = (() => {
       const raw = m[6] || m[7] || '';
       const pro = /protection from [a-z]+(?:,? (?:and )?from [a-z]+)*/i.exec(raw);
       const kws = kwOnly(pro ? raw.replace(pro[0], '') : raw).concat(pro && !B.grantKws(pro[0]).length ? ['protection'] : []);
-      const unknown = kws.filter(k => !B.KEYWORDS.includes(k));
+      const unknown = kws.filter(k => !B.KEYWORDS.includes(k) && !B.grantKws(k).length); // "toxic 1" is toxic
       if (!kws.length || !unknown.length) return out;
       unknown.forEach(k => gap(out, 'both', 'static', `… you control have ${k}`));
       return out;
     }
     if (/^(other )?(.+?) you control can't be blocked except by two or more creatures\.?$/i.test(line)) return out;
     if ((m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control(?: and each (.+?) cards? in your graveyard)?\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
-    if ((m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) you control\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
+    if ((m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) (?:you control|on the battlefield)\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
     if (/^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.test(line)) return out;
     if (P.TOUGH_RULE.test(line) || P.DEFENDER_RULE.test(line)) return out; // Arcades, Doran, High Alert
-    if (P.SELF_DISCOUNT.test(line)) return out; // The Pride of Hull Clade    if (P.ATTACK_TAX.test(line) || P.NO_GAIN.test(line) || P.ARBORIA.test(line) || P.ATTACK_CAP.test(line) || P.BLOCK_CAP.test(line)) return out;
+    if (P.SELF_DISCOUNT.test(line)) return out; // The Pride of Hull Clade
+    if (P.ATTACK_TAX.test(line) || P.NO_GAIN.test(line) || P.ARBORIA.test(line) || P.ATTACK_CAP.test(line) || P.BLOCK_CAP.test(line)) return out;
     if (P.SPELL_TAX.test(line) && !/\btarget/i.test(line)) return out;
     if (P.OLD_MENACE.test(line) || P.UNBLOCKABLE.test(line) || P.CANT.test(line)) return out;
     if (/^this spell can't be countered\.?$/i.test(line)) return out; // Opp doesn't try
@@ -294,9 +311,15 @@ const Coverage = (() => {
     if (/\benters(?: the battlefield)? tapped\b/i.test(line) && G.entersTapped(card.name, line)) return out;
     if ((m = /^(?:equipped|enchanted) creature (.+?)\.?$/i.exec(line))) {
       const b = B.attachBonus(line);
-      const has = /\bhas (.+?)(?:\.|$)/i.exec(m[1]);
+      const has = /\bhas (.+?)(?:\.|$)/i.exec(m[1].replace(/"[^"]*"/g, ''));
       const unknown = has ? kwOnly(has[1]).filter(k => !B.KEYWORDS.includes(k)) : [];
-      if (b.pow || b.tou || b.kw.length || b.cantAttack || b.cantBlock || b.noAbilities) {
+      // Thornbite Staff: abilities it gives in quotes are read like the creature's own.
+      const given = { id: 'given', name: 'this creature', typeLine: 'Creature' };
+      (b.lines || []).forEach(l => {
+        const r = triggerLine(card, l, given) || activatedLine(card, l, given) || staticLine(card, l, given);
+        r.gaps.filter(g => g.side !== 'opp').forEach(g => gap(out, 'you', g.kind, g.phrase));
+      });
+      if (b.pow || b.tou || b.kw.length || b.cantAttack || b.cantBlock || b.noAbilities || (b.lines || []).length) {
         unknown.forEach(k => gap(out, 'you', 'static', `equipped/enchanted creature has ${k}`));
         if (line.split(/(?<=\.)\s+/).length > 1) gap(out, 'you', 'static', `${/^equipped/i.test(line) ? 'equipped' : 'enchanted'} creature: ${line.split(/(?<=\.)\s+/).slice(1).join(' ')}`);
       } else gap(out, 'you', 'static', line);

@@ -80,7 +80,7 @@ const Autoplay = (() => {
     }
     delete t.mustDestroy;
     delete t.mustTarget;
-    ['mustModes', 'mustCards', 'mustRecover', 'mustMadness', 'mustShock', 'mustHand', 'mustSacToPlay', 'mustLibrary', 'mustTax', 'mustFlicker', 'mustCopy'].forEach(k => { delete t[k]; });
+    ['mustModes', 'mustCards', 'mustRecover', 'mustMadness', 'mustShock', 'mustHand', 'mustSacToPlay', 'mustLibrary', 'mustTax', 'mustFlicker', 'mustCopy', 'mustDig', 'mustSacThen'].forEach(k => { delete t[k]; });
   }
 
   // The defending table ("you") blocks Opp's pending attack the way Opp would.
