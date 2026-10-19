@@ -23,13 +23,15 @@
       <button data-tab="prices">Prices</button>
       <button data-tab="import">Import</button>
       <button data-tab="settings">Account &amp; backup</button>
-      <a class="app-link" href="simulator/index.html" title="Playtest your decks">Simulator ▸</a>
+      <button data-tab="simulator" class="sim-tab" title="Playtest your decks: play, play against the computer, odds and auto-tests">Simulator</button>
     </nav>
   </header>
   <div id="status" class="status" hidden></div>
   <div id="backupNote" class="status warn" hidden></div>
   <div id="syncNote" class="status warn" hidden></div>
   <main id="view"><div class="empty">Loading…</div></main>
+  <!-- The Simulator, kept open (and its game going) while you use the other tabs. -->
+  <div id="simHost" class="sim-host" hidden></div>
   <div id="modal" class="modal" hidden><div class="modal-box" id="modalBox"></div></div>
   <img id="hoverPreview" class="hover-preview" alt="" hidden>
   <div id="dropHint" class="drop-hint" hidden></div>

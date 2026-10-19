@@ -88,6 +88,12 @@ code { background: var(--panel-2); padding: 1px 5px; border-radius: 4px; font-si
 .tabs button.active { color: var(--text); background: var(--panel-2); box-shadow: inset 0 -2px 0 var(--accent); }
 .tabs .app-link { margin-left: auto; padding: .45rem .8rem; border-radius: 8px; text-decoration: none; font-weight: 600; }
 .tabs .app-link:hover { background: var(--panel-2); }
+/* The Simulator tab: last in the bar, and its page fills the window under the bar. */
+.tabs .sim-tab { margin-left: auto; font-weight: 600; }
+.sim-host { position: fixed; left: 0; right: 0; bottom: 0; top: 56px; z-index: 5; background: var(--bg); }
+.sim-frame { width: 100%; height: 100%; border: 0; display: block; }
+body.sim-open main, body.sim-open .foot { display: none; }
+.sim-bar { align-items: center; }
 
 /* Opened from the home screen: tabs get their own row under the title, one line that scrolls sideways */
 @media (display-mode: standalone) {

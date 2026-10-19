@@ -21,6 +21,9 @@
   // (see touchTap) instead of hover, click and right-click.
   const appMode = window.matchMedia('(display-mode: standalone)').matches;
   document.documentElement.classList.toggle('app', appMode);
+  // Inside MTG Tracker's Simulator tab (a frame): its own name and "◂ MTG Tracker" link are hidden.
+  const embedded = window.parent !== window;
+  document.documentElement.classList.toggle('embedded', embedded);
   const zoom = document.createElement('div');
   zoom.className = 'zoom';
   zoom.hidden = true;
@@ -5325,6 +5328,28 @@
   });
   window.addEventListener('resize', () => { if (ui.tab === 'play') { fitTable(); renderBoard(); } });
 
+  // ---------- inside MTG Tracker ----------
+
+  // The Tracker tells its Simulator tab: 'sim:refresh' (you opened the tab: read your decks again) and
+  // 'sim:open' { key, mode } (a deck page's buttons: 'play' starts it, 'bot' picks it for playing
+  // against the computer, 'odds' shows its odds).
+  window.addEventListener('message', async e => {
+    if (!embedded || e.source !== window.parent || !e.data || typeof e.data.type !== 'string') return;
+    const m = e.data;
+    if (m.type === 'sim:refresh') return refreshTracker();
+    if (m.type !== 'sim:open' || typeof m.key !== 'string') return;
+    await connectTracker(true);
+    if (!findDeck(m.key)) return status("That deck isn't here yet. Click Refresh on the Decks tab.", 'warn');
+    if (m.mode === 'play') return startGame(m.key, true);
+    if (m.mode === 'odds') { ui.oddsDeck = m.key; saveSoon(); return setTab('odds'); }
+    ui.botYou = m.key;
+    saveSoon();
+    setTab('decks');
+    const panel = document.querySelector('.bot-panel');
+    if (panel) { panel.scrollIntoView({ block: 'start' }); panel.classList.add('flash'); setTimeout(() => panel.classList.remove('flash'), 1500); }
+    status('Pick Opp\'s deck and who goes first, then click Play.', 'ok');
+  });
+
   // ---------- start ----------
 
   (async () => {
@@ -5354,6 +5379,7 @@
     }
     // Show the page right away; the Tracker's decks fill in as soon as they're read.
     setTab('decks'); // your saved games are listed there; Continue picks one back up
+    if (embedded) window.parent.postMessage({ type: 'sim:ready' }, location.origin === 'null' ? '*' : location.origin);
     if (game) upgradeSavedGame();
     // Offline support (../sw.js). Needs a web address; a double-clicked file skips it.
     if ('serviceWorker' in navigator && location.protocol.startsWith('http')) navigator.serviceWorker.register('../sw.js').catch(() => {});

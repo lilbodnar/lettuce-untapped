@@ -867,6 +867,8 @@
   function render() {
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === ui.tab));
     const view = $('#view');
+    showSimulator(ui.tab === 'simulator');
+    if (ui.tab === 'simulator') { renderBackupNote(); renderSyncNote(); syncNav(); return; }
     if (ui.tab === 'collection') view.innerHTML = renderCollection();
     else if (ui.tab === 'decks') view.innerHTML = ui.deckId ? renderDeck() : renderDeckList();
     else if (ui.tab === 'wishlist') view.innerHTML = renderWishlist();
@@ -877,6 +879,55 @@
     renderBackupNote();
     renderSyncNote();
     syncNav();
+  }
+
+  // ---------- the Simulator, as a tab ----------
+
+  // It runs in a frame that's made the first time you open the tab and then kept, so a game stays
+  // where you left it while you use the rest of the app. It reads your decks from this browser's
+  // storage (simulator/js/tracker-link.js), so they're saved first and it's told to read them again.
+  let simFrame = null;
+  let simReady = false;
+  const simQueue = []; // messages for it before it has started
+  function simSend(msg) {
+    if (simFrame && simReady) simFrame.contentWindow.postMessage(msg, location.origin === 'null' ? '*' : location.origin);
+    else simQueue.push(msg);
+  }
+  window.addEventListener('message', e => {
+    if (!simFrame || e.source !== simFrame.contentWindow) return;
+    if (e.data && e.data.type === 'sim:ready') {
+      simReady = true;
+      simQueue.splice(0).forEach(simSend);
+    }
+  });
+  function placeSimulator() {
+    const host = $('#simHost');
+    const bar = document.querySelector('.topbar');
+    if (host && bar) host.style.top = `${bar.getBoundingClientRect().bottom}px`;
+  }
+  function showSimulator(on) {
+    const host = $('#simHost');
+    const was = !host.hidden;
+    document.body.classList.toggle('sim-open', on);
+    host.hidden = !on;
+    if (!on) { if (was) loadSimResults(); return; } // games you finished there show on the deck pages
+    if (!simFrame) {
+      simFrame = document.createElement('iframe');
+      simFrame.className = 'sim-frame';
+      simFrame.title = 'MTG Simulator';
+      simFrame.src = 'simulator/index.html?embed=1';
+      host.appendChild(simFrame);
+    }
+    placeSimulator();
+    // Your latest changes, saved and read again.
+    (saveTimer ? (clearTimeout(saveTimer), saveTimer = null, saveNow()) : Promise.resolve()).then(() => simSend({ type: 'sim:refresh' }));
+  }
+  window.addEventListener('resize', placeSimulator);
+  // From a deck page: open this deck in the Simulator (mode 'play', 'bot' or 'odds').
+  function openInSimulator(deckId, mode) {
+    ui.tab = 'simulator';
+    render();
+    simSend({ type: 'sim:open', key: `tracker:${state.activeProfileId}:${deckId}`, mode });
   }
 
   // A reminder bar when it's been a month since the last backup (or since "Remind me later").
@@ -898,7 +949,7 @@
 
   // ---------- navigation (in-app Back button and the browser's Back/Forward) ----------
 
-  const TABS = ['collection', 'decks', 'wishlist', 'prices', 'import', 'settings'];
+  const TABS = ['collection', 'decks', 'wishlist', 'prices', 'import', 'settings', 'simulator'];
   let navDepth = 0; // how many in-app pages are behind the current one
 
   const navHash = () => (ui.tab === 'shared'
@@ -1396,6 +1447,12 @@
           ${st.proxies ? `<div><b>${st.proxies}</b><span>proxies</span></div>` : ''}
           <div><b>${money(st.missingCost)}</b><span>to finish</span></div>
         </div>
+      </div>
+      <div class="toolbar sim-bar">
+        <span class="muted small">Simulator:</span>
+        <button class="btn" data-action="simDeck" data-mode="play" title="Goldfish it: draw, play and attack on a virtual table">▶ Play</button>
+        <button class="btn ghost" data-action="simDeck" data-mode="bot" title="Pick an opponent deck and play against the computer">Play vs computer</button>
+        <button class="btn ghost" data-action="simDeck" data-mode="odds" title="Opening hands, land drops and draw odds">Odds</button>
       </div>
       <div class="toolbar">
         <label>Check against <select data-input="compare">
@@ -1993,6 +2050,7 @@
 
   const actions = {
     back: () => window.history.back(),
+    simDeck: el => openInSimulator(ui.deckId, el.dataset.mode),
     archidektDeck: el => loadArchidektDeck(el.dataset.id),
     tab: el => {
       // Coming from the Decks tab, importing most likely means adding a deck.
@@ -2445,16 +2503,7 @@
     // and the Simulator sees your latest decks.
     const flush = () => { if (saveTimer) { clearTimeout(saveTimer); saveTimer = null; saveNow(); } };
     window.addEventListener('pagehide', flush);
-    // Going to the Simulator: finish saving first, so a deck you just changed is there.
-    document.querySelector('.app-link').addEventListener('click', async e => {
-      if (!saveTimer) return;
-      e.preventDefault();
-      const href = e.currentTarget.href;
-      clearTimeout(saveTimer);
-      saveTimer = null;
-      await saveNow();
-      location.href = href;
-    });
+    // (The Simulator tab saves first too: showSimulator.)
     document.addEventListener('visibilitychange', async () => {
       if (document.hidden) {
         flush();
