@@ -2461,16 +2461,23 @@
     }
     return `<h3>Precon decks</h3>
       <p class="muted small">Click <b>Add</b> and the deck joins Your Simulator decks: play it, or pick it as Opp's deck.</p>
-      <div class="toolbar"><input type="search" id="preconFilter" placeholder="Search by name, set or year" value="${esc(preconQuery)}"><span class="muted small" id="preconMsg"></span></div>
+      <div class="toolbar"><input type="search" id="preconFilter" placeholder="Search by commander, deck name, set or year" value="${esc(preconQuery)}"><span class="muted small" id="preconMsg"></span></div>
       <div class="precon-list" id="preconList">${preconRowsHtml()}</div>`;
   }
 
+  // A precon's commander(s), front faces only: "The Tenth Doctor & Rose Tyler", or '' if not known yet.
+  const preconCommanders = p => (p.commanders || []).map(n => n.split(' // ')[0]).join(' & ');
+
   function preconRowsHtml() {
-    const q = preconQuery.trim().toLowerCase();
-    const list = (precons || []).filter(p => !q || `${p.name} ${p.code} ${p.releaseDate}`.toLowerCase().includes(q));
+    // Every word has to match the deck's name, commander, set code or year ("atraxa", "tenth doctor 2023").
+    const words = preconQuery.trim().toLowerCase().split(/\s+/).filter(Boolean);
+    const list = (precons || []).filter(p => {
+      const text = `${p.name} ${(p.commanders || []).join(' ')} ${p.code} ${p.releaseDate}`.toLowerCase();
+      return words.every(w => text.includes(w));
+    });
     const have = new Set(local.decks.map(d => d.name.toLowerCase()));
     const rows = list.slice(0, 60).map(p => `<div class="precon-row">
-        <span><b>${esc(p.name)}</b> <span class="muted small">${esc(p.code)} · ${esc(p.releaseDate.slice(0, 4))}</span></span>
+        <span><b>${esc(p.name)}</b>${preconCommanders(p) ? ` (${esc(preconCommanders(p))})` : ''} <span class="muted small">${esc(p.code)} · ${esc(p.releaseDate.slice(0, 4))}</span></span>
         ${have.has(preconDeckName(p).toLowerCase()) ? '<span class="muted small">Added</span>' : `<button class="btn sm ghost" data-act="precon-add" data-file="${esc(p.fileName)}">Add</button>`}
       </div>`);
     return rows.join('') + (list.length > 60 ? `<p class="muted small">${list.length - 60} more: search to narrow it down.</p>` : '') + (list.length ? '' : '<p class="muted small">No precon matches that.</p>');
@@ -2483,14 +2490,36 @@
       const res = await fetch(`${MTGJSON}/DeckList.json`);
       if (!res.ok) throw new Error(`MTGJSON answered ${res.status}`);
       const json = await res.json();
+      // Commanders: from js/precons.js (made by tools/precon-commanders.js), or ones looked up before.
+      let learned = {};
+      try { learned = JSON.parse(localStorage.getItem('mtg-precon-commanders') || '{}'); } catch (e) { learned = {}; }
+      const known = Object.assign({}, typeof PRECON_COMMANDERS !== 'undefined' ? PRECON_COMMANDERS : {}, learned);
       precons = (json.data || []).filter(d => d.type === 'Commander Deck' && d.fileName)
-        .map(d => ({ name: String(d.name), code: String(d.code || ''), releaseDate: String(d.releaseDate || ''), fileName: String(d.fileName) }))
+        .map(d => ({ name: String(d.name), code: String(d.code || ''), releaseDate: String(d.releaseDate || ''), fileName: String(d.fileName), commanders: known[d.fileName] || null }))
         .sort((a, b) => b.releaseDate.localeCompare(a.releaseDate) || a.name.localeCompare(b.name));
       const panel = $('#preconPanel');
       if (panel) panel.innerHTML = preconPanelHtml();
+      learnPreconCommanders(learned);
     } catch (e) {
       say(`Couldn't load the precons (${e.message}). Check your internet connection.`);
     }
+  }
+
+  // Precons newer than js/precons.js: their commanders are looked up (a few at most) and remembered
+  // in this browser, then the list shows them.
+  async function learnPreconCommanders(learned) {
+    const missing = (precons || []).filter(p => !p.commanders).slice(0, 12);
+    for (const p of missing) {
+      try {
+        const deck = (await (await fetch(`${MTGJSON}/decks/${encodeURIComponent(p.fileName)}.json`)).json()).data;
+        p.commanders = [...new Set((deck.commander || []).map(c => String(c.name)))];
+        learned[p.fileName] = p.commanders;
+      } catch (e) { break; } // offline: try again next time
+    }
+    if (!missing.length) return;
+    try { localStorage.setItem('mtg-precon-commanders', JSON.stringify(learned)); } catch (e) { /* not saved, looked up again next time */ }
+    const list = $('#preconList');
+    if (list) list.innerHTML = preconRowsHtml();
   }
 
   // Imports one precon: its commanders under a Commander heading, the rest as the deck.

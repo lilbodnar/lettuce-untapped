@@ -21,7 +21,7 @@ const APP_FILES = [
   'js/deckcheck.js', 'js/charts.js', 'js/app.js',
   'icons/icon-192.png', 'icons/favicon-32.png',
   'simulator/index.html', 'simulator/css/styles.css', 'simulator/js/tracker-link.js', 'simulator/js/game.js',
-  'simulator/js/odds.js', 'simulator/js/bot.js', 'simulator/js/autoplay.js', 'simulator/js/brackets.js', 'simulator/js/online.js', 'simulator/js/app.js',
+  'simulator/js/odds.js', 'simulator/js/bot.js', 'simulator/js/autoplay.js', 'simulator/js/brackets.js', 'simulator/js/online.js', 'simulator/js/precons.js', 'simulator/js/app.js',
 ];
 
 self.addEventListener('install', event => {
