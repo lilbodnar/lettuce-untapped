@@ -1647,11 +1647,11 @@ const Bot = (() => {
     if (own) { whose = /^you control$/.test(own[1]) ? 'mine' : 'theirs'; w = w.slice(0, own.index); }
     let extra = () => true;
     // "with mana value 3" (Hearth Kami's X, once you've picked it) is exactly that.
-    const x = /\s+with (flying|power (\d+) or less|power (\d+) or greater|mana value (\d+)( or less)?)$/.exec(w);
+    const x = /\s+with (flying|power (\d+) or less|power (\d+) or greater|mana value (\d+)( or less)?|power (\d+))$/.exec(w);
     if (x) {
       w = w.slice(0, x.index);
       extra = (inst, st) => (x[1] === 'flying' ? st.kw.has('flying') : x[2] ? st.pow <= Number(x[2]) : x[3] ? st.pow >= Number(x[3])
-        : x[5] ? (st.cmc || 0) <= Number(x[4]) : (st.cmc || 0) === Number(x[4]));
+        : x[6] ? st.pow === Number(x[6]) : x[5] ? (st.cmc || 0) <= Number(x[4]) : (st.cmc || 0) === Number(x[4]));
     }
     let players = null;
     const alts = [];

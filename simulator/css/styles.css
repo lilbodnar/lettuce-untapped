@@ -178,6 +178,10 @@ textarea { width: 100%; font-family: Consolas, monospace; font-size: .85rem; }
 .deck-art { height: 110px; background: var(--line) center 25% / cover no-repeat; }
 .deck-body { padding: .6rem .75rem .75rem; display: flex; flex-direction: column; gap: .35rem; }
 .paste { display: flex; flex-direction: column; gap: .6rem; }
+.precon-list { max-height: 360px; overflow-y: auto; display: flex; flex-direction: column; gap: .25rem; margin-top: .4rem; }
+.precon-row { display: flex; justify-content: space-between; align-items: center; gap: .6rem; padding: .25rem .4rem; border-radius: 6px; }
+.precon-row:nth-child(odd) { background: rgba(127, 127, 127, .08); }
+#preconFilter { max-width: 360px; width: 100%; }
 .paste input[name=name] { max-width: 360px; }
 
 /* modal + menu */

@@ -2301,8 +2301,10 @@
       <section class="panel">
         <h3>Your Simulator decks</h3>
         <p class="muted small">Decks you pasted here. You don't need to own any of the cards.</p>
-        ${local.decks.length ? `<div class="deck-grid">${local.decks.map(d => deckTile(d, true)).join('')}</div>` : '<p class="muted">None yet. Paste a list below.</p>'}
+        ${local.decks.length ? `<div class="deck-grid">${local.decks.map(d => deckTile(d, true)).join('')}</div>` : '<p class="muted">None yet. Add a precon or paste a list below.</p>'}
       </section>
+
+      <section class="panel" id="preconPanel">${preconPanelHtml()}</section>
 
       <section class="panel">
         <h3>Paste a deck list</h3>
@@ -2438,8 +2440,83 @@
     return { entries, errors };
   }
 
+  // ---------- precon decks (from MTGJSON, no account needed) ----------
+
+  // Every Commander precon, newest first: [{ name, code, releaseDate, fileName }], loaded when you ask.
+  let precons = null;
+  let preconQuery = '';
+  const MTGJSON = 'https://mtgjson.com/api/v5';
+  const preconDeckName = p => `${p.name} (${p.code})`;
+
+  function preconPanelHtml() {
+    if (!precons) {
+      return `<h3>Precon decks</h3>
+        <p class="muted small">Every Commander precon Wizards has printed, ready to play or to play against. The lists come from MTGJSON.</p>
+        <div class="toolbar"><button class="btn sm" data-act="precons-load">Show precons</button><span class="muted small" id="preconMsg"></span></div>`;
+    }
+    return `<h3>Precon decks</h3>
+      <p class="muted small">Click <b>Add</b> and the deck joins Your Simulator decks: play it, or pick it as Opp's deck.</p>
+      <div class="toolbar"><input type="search" id="preconFilter" placeholder="Search by name, set or year" value="${esc(preconQuery)}"><span class="muted small" id="preconMsg"></span></div>
+      <div class="precon-list" id="preconList">${preconRowsHtml()}</div>`;
+  }
+
+  function preconRowsHtml() {
+    const q = preconQuery.trim().toLowerCase();
+    const list = (precons || []).filter(p => !q || `${p.name} ${p.code} ${p.releaseDate}`.toLowerCase().includes(q));
+    const have = new Set(local.decks.map(d => d.name.toLowerCase()));
+    const rows = list.slice(0, 60).map(p => `<div class="precon-row">
+        <span><b>${esc(p.name)}</b> <span class="muted small">${esc(p.code)} · ${esc(p.releaseDate.slice(0, 4))}</span></span>
+        ${have.has(preconDeckName(p).toLowerCase()) ? '<span class="muted small">Added</span>' : `<button class="btn sm ghost" data-act="precon-add" data-file="${esc(p.fileName)}">Add</button>`}
+      </div>`);
+    return rows.join('') + (list.length > 60 ? `<p class="muted small">${list.length - 60} more: search to narrow it down.</p>` : '') + (list.length ? '' : '<p class="muted small">No precon matches that.</p>');
+  }
+
+  async function loadPrecons() {
+    const say = t => { const m = $('#preconMsg'); if (m) m.textContent = t; };
+    say('Loading the precon list…');
+    try {
+      const res = await fetch(`${MTGJSON}/DeckList.json`);
+      if (!res.ok) throw new Error(`MTGJSON answered ${res.status}`);
+      const json = await res.json();
+      precons = (json.data || []).filter(d => d.type === 'Commander Deck' && d.fileName)
+        .map(d => ({ name: String(d.name), code: String(d.code || ''), releaseDate: String(d.releaseDate || ''), fileName: String(d.fileName) }))
+        .sort((a, b) => b.releaseDate.localeCompare(a.releaseDate) || a.name.localeCompare(b.name));
+      const panel = $('#preconPanel');
+      if (panel) panel.innerHTML = preconPanelHtml();
+    } catch (e) {
+      say(`Couldn't load the precons (${e.message}). Check your internet connection.`);
+    }
+  }
+
+  // Imports one precon: its commanders under a Commander heading, the rest as the deck.
+  async function addPrecon(fileName) {
+    const p = (precons || []).find(x => x.fileName === fileName);
+    if (!p) return;
+    const say = t => { const m = $('#preconMsg'); if (m) m.textContent = t; };
+    say(`Getting ${p.name}…`);
+    let deck;
+    try {
+      const res = await fetch(`${MTGJSON}/decks/${encodeURIComponent(fileName)}.json`);
+      if (!res.ok) throw new Error(`MTGJSON answered ${res.status}`);
+      deck = (await res.json()).data;
+    } catch (e) {
+      return say(`Couldn't get ${p.name} (${e.message}).`);
+    }
+    const line = c => `${c.count || 1} ${c.name}`;
+    const text = ['Commander', ...(deck.commander || []).map(line), 'Deck', ...(deck.mainBoard || []).map(line)].join('\n');
+    await importDeckText(preconDeckName(p), text, say);
+    const list = $('#preconList');
+    if (list) list.innerHTML = preconRowsHtml();
+  }
+
   async function importPasted(name, text) {
     const msg = $('#pasteMsg');
+    return importDeckText(name, text, t => { msg.textContent = t; });
+  }
+
+  // Imports a deck list (pasted, or a precon's) as one of your Simulator decks. say(text): progress messages.
+  async function importDeckText(name, text, say) {
+    const msg = { set textContent(t) { say(t); } };
     const { entries, errors } = parseList(text);
     if (!entries.length) {
       msg.textContent = 'No cards found in that list.';
@@ -4957,6 +5034,8 @@
     if (b.tagName === 'SELECT' || b.tagName === 'INPUT' && b.type !== 'button') return;
     switch (a) {
       case 'play': return startGame(b.dataset.key, true); // turn 1's card is already drawn
+      case 'precons-load': b.disabled = true; return loadPrecons().finally(() => { b.disabled = false; });
+      case 'precon-add': b.disabled = true; return addPrecon(b.dataset.file).finally(() => { b.disabled = false; });
       case 'odds': ui.oddsDeck = b.dataset.key; saveSoon(); return setTab('odds');
       case 'resume': return setTab('play');
       case 'resume-game': return resumeGame(b.dataset.id);
@@ -5109,6 +5188,7 @@
       status(ui.upkeepOff ? 'Upkeep reminders are off.' : 'Upkeep reminders are on: upkeep triggers get highlighted at the start of your turn.');
     }
     if (e.target.id === 'viewerFilter' && viewer) { viewer.filter = e.target.value; renderViewer(); }
+    if (e.target.id === 'preconFilter') { preconQuery = e.target.value; const l = $('#preconList'); if (l) l.innerHTML = preconRowsHtml(); }
     if (e.target.id === 'pickFilter') {
       const q = e.target.value.toLowerCase();
       modalBox.querySelectorAll('.pick-list label').forEach(l => { l.hidden = q && !l.dataset.name.includes(q); });
