@@ -339,7 +339,7 @@
     if (game && game.mustSacrifice) setTimeout(mustSacrificePrompt, 0);
     if (game && game.mustTarget && game.mustTarget.length) setTimeout(mustTargetPrompt, 0);
     if (game && game.mustLibrary && game.mustLibrary.length) setTimeout(mustLibraryPrompt, 0);
-    const asks = { mustShock: mustShockPrompt, mustMadness: mustMadnessPrompt, mustModes: mustModesPrompt, mustCards: mustCardsPrompt, mustRecover: mustRecoverPrompt, mustHand: mustHandPrompt, mustSacToPlay: mustSacToPlayPrompt };
+    const asks = { mustCopy: mustCopyPrompt, mustTax: mustTaxPrompt, mustFlicker: mustFlickerPrompt, mustShock: mustShockPrompt, mustMadness: mustMadnessPrompt, mustModes: mustModesPrompt, mustCards: mustCardsPrompt, mustRecover: mustRecoverPrompt, mustHand: mustHandPrompt, mustSacToPlay: mustSacToPlayPrompt };
     for (const [k, fn] of Object.entries(asks)) if (game && game[k] && game[k].length) setTimeout(fn, 0);
     syncAuras(); // your Arrest on Opp's creature
     if (game) Bot.refreshGrants(game, def); // "Goblins you control have haste" and the like
@@ -519,7 +519,7 @@
     if (req.kind === 'number') return numberPrompt(req, next);
     if (req.kind === 'search') {
       const { spec } = req;
-      const ids = Bot.searchable(game, spec);
+      const ids = Bot.searchable(game, spec, def);
       const what = spec.what ? `${spec.what} card` : 'card';
       const done = picks => next(() => Bot.applySearch(game, spec, picks, req.src));
       const cancel = { cancel: 'Find nothing', onCancel: () => done([]) };
@@ -848,6 +848,68 @@
     }));
   }
 
+  // Opp's Rhystic Study ("… unless that player pays {1}") or Smothering Tithe ("that player may pay {2}"): pay or not.
+  function mustTaxPrompt() {
+    const req = game && game.mustTax && game.mustTax[0];
+    if (!req || !modal.hidden || !hasBot()) return;
+    const canPay = !!Game.autoPay(JSON.parse(JSON.stringify(game)), req.cost);
+    const theyGet = req.draw ? `Opp draws ${req.draw === 1 ? 'a card' : req.draw + ' cards'}` : `Opp gets a ${req.token} token`;
+    askButtons('mustTax', `Opp's ${req.why}`, `Pay ${req.cost}? If you don't, ${theyGet}.${canPay ? '' : " (Your untapped mana can't pay it.)"}`, [
+      { label: "Don't pay", ghost: true, run: () => Bot.applyTax(game, req, false) },
+      ...(canPay ? [{ label: `Pay ${req.cost}`, run: () => Bot.applyTax(game, req, true) }] : []),
+    ]);
+  }
+
+  // Eerie Interlude: pick your creatures to exile; they come back at the beginning of the next end step.
+  function mustFlickerPrompt() {
+    const req = game && game.mustFlicker && game.mustFlicker[0];
+    if (!req || !modal.hidden) return;
+    const ids = game.zones.battlefield.filter(iid => !game.cards[iid].phasedOut && Bot.cardFits(game.cards[iid], req.what) && Game.isCreature(game.cards[iid]));
+    const done = picks => act(() => { nextOf('mustFlicker'); Bot.flickerOut(game, game, picks, req.src); });
+    if (!ids.length) return done([]);
+    pickCards({ title: `${req.src}: exile your creatures`, note: 'Pick any number. They return at the beginning of the next end step (as new objects: counters and auras are gone).',
+      ids, min: 0, max: ids.length, ok: 'Exile', cancel: 'None', onCancel: () => done([]) }, done);
+  }
+
+  // Wall of Stolen Identity: pick the creature it enters as a copy of (or none, and it's a 0/0).
+  function mustCopyPrompt() {
+    const req = game && game.mustCopy && game.mustCopy[0];
+    if (!req || !modal.hidden) return;
+    const inst = game.cards[req.iid];
+    const finish = pick => act(() => {
+      nextOf('mustCopy');
+      if (!inst || inst.zone !== 'battlefield') return;
+      delete inst.copyPending;
+      if (!pick) return Game.log(game, `${inst.name} didn't copy anything.`);
+      Bot.becomeCopy(game, game, inst, pick, def);
+      Bot.enterTrigger(game, inst, def); // the copy's own "enters with …" and "When this enters, …"
+      Bot.enterEffects(game, game, inst, def, effectCtx());
+    });
+    const choices = inst && inst.zone === 'battlefield' ? Bot.cloneChoices(game, inst) : [];
+    if (!choices.length) return finish(null);
+    const key = c => `${c.s === game ? 'y' : 'o'}:${c.inst.iid}`;
+    const byKey = new Map(choices.map(c => [key(c), c]));
+    pickCards({ title: `${inst.name}: copy a creature`, note: 'It enters as a copy (a Wall with defender too). The copied creature is tapped and stays tapped while you control the copy.',
+      ids: [...byKey.keys()], min: 1, max: 1, ok: 'Copy', cardOf: k => byKey.get(k).inst, whoOf: k => (k[0] === 'y' ? 'Yours' : "Opp's"),
+      cancel: "Don't copy", onCancel: () => finish(null) }, picks => finish(byKey.get(picks[0])));
+  }
+
+  // Cycling and transmute from your hand: pay, discard it, then draw (cycling) or search for a card
+  // with the same mana value (transmute).
+  function handAbility(iid, ab) {
+    const inst = game.cards[iid];
+    if (!inst || inst.zone !== 'hand') return;
+    if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana for ${ab.label}.`, 'warn', 8000);
+    act(() => {
+      const paid = Game.autoPay(game, ab.cost);
+      Game.log(game, `${ab.label}: discarded ${inst.name}${paid && paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`);
+      const mv = inst.cmc || 0;
+      Game.move(game, iid, 'graveyard');
+      if (ab.kind === 'cycling') Game.drawCards(game, 1);
+      else later('mustLibrary', { kind: 'search', spec: { n: 1, what: '', to: 'hand', tapped: false, rest: null, mv }, src: `${inst.name} (transmute, mana value ${mv})` });
+    });
+  }
+
   // A friend's card targeted one of yours ("Destroy target creature"): it's done here, on your table.
   function receiveTarget(from, m) {
     const inst = game && game.cards[String(m.iid || '')];
@@ -910,6 +972,7 @@
   function endStep(then) {
     if (game.endStepDone === game.turn) return then(); // already asked (End turn pressed again)
     if (Bot.phaseTriggers(game, game, 'end step', def, null, true)) act(() => Bot.phaseTriggers(game, game, 'end step', def, effectCtx())); // "At the beginning of your end step, …"
+    if (game.flickerBack) act(() => Bot.flickerReturn(game)); // Eerie Interlude
     const todo = Bot.endStepTriggers(game, def);
     const finish = () => {
       if (amMonarch()) act(() => { Game.drawCards(game, 1); Game.log(game, 'You are the monarch, so you drew a card at your end step.'); });
@@ -991,6 +1054,7 @@
     act(() => {
       delete game.offTurn;
       Game.nextTurn(game);
+      Bot.upkeepDraws(game); // Arcane Denial: "at the beginning of the next turn's upkeep"
       Bot.phaseTriggers(game, game, 'upkeep', def, effectCtx()); // "At the beginning of your upkeep, …" that it can do
       Bot.phaseTriggers(game, game, 'draw step', def, effectCtx()); // The Immortal Sun: "draw an additional card"
       markUpkeep();
@@ -1750,6 +1814,7 @@
       game.poison = (game.poison || 0) + poison;
       Game.log(game, `${who} attacked: ${mine.join('; ')}.${dmg ? ` You took ${dmg} (now ${game.life}).` : ''}${poison ? ` You got ${poison} poison (now ${game.poison}).` : ''}`);
       Bot.dealtDamage(game, dmg, def);
+      Bot.combatOver(game); // Wall of Junk
     });
     // Combat damage to the monarch: the attacker becomes the monarch.
     const crown = hitIids.length > 0 && amMonarch();
@@ -2032,6 +2097,7 @@
     if (opts.flip) inst.flipped = true; // Boggart Trawler played as Boggart Bog
     if (opts.choice === 'alt') inst.altPaid = true; // Baleful Mastery: "If the {1}{B} cost was paid, …"
     if (opts.choice === 'offspring') inst.offspringPaid = true;
+    if (opts.aftermath) { inst.flipped = true; inst.castAftermath = true; } // Dawn, from your graveyard
     // From your graveyard or exile, it's cast (prowess, "whenever you cast …").
     if (inst.zone === 'graveyard' || inst.zone === 'exile') opts = { ...opts, cast: true };
     const fromHand = inst.zone === 'hand' || inst.zone === 'command';
@@ -2501,6 +2567,7 @@
         + (inst.cda ? `<span class="tag cda" title="Its */* from its own text (like the number of creatures you control), before counters and pumps">=${inst.cda.pow}/${inst.cda.tou}</span>` : '');
     }
     el.classList.toggle('tapped', !!inst.tapped);
+    el.classList.toggle('phased', !!inst.phasedOut); // Teferi's Protection
     el.classList.toggle('upkeep', !pid && upkeepIids().includes(inst.iid));
     // A card that just came into your hand gets a yellow outline for 5 seconds.
     const left = !pid && inst.zone === 'hand' && inst.newAt ? FRESH_MS - (Date.now() - inst.newAt) : 0;
@@ -3222,6 +3289,10 @@
       if (!hasBot() || !game.lastExiledTop) return false;
       later('mustSacToPlay', { what, src: src ? src.name : 'Effect', srcIid: src ? src.iid : null, card: game.lastExiledTop });
     },
+    // Opp's Rhystic Study or Smothering Tithe: you're asked whether you pay.
+    payTax: req => later('mustTax', req),
+    // Eerie Interlude: you pick which of your creatures to exile until the next end step.
+    flicker: (what, src) => later('mustFlicker', { what, src: src ? src.name : 'Effect' }),
     // "Search your library for …", "Scry 2", "Surveil 1": you pick the cards (mustLibraryPrompt).
     search: (spec, src) => { (game.mustLibrary = game.mustLibrary || []).push({ kind: 'search', spec, src }); },
     scry: (n, kind, src) => { (game.mustLibrary = game.mustLibrary || []).push({ kind, n, src }); },
@@ -3270,6 +3341,8 @@
   };
   // A card you took from Opp (or Opp from you) goes back to its owner when it leaves the battlefield.
   Game.hooks.sendHome = (s, inst, to) => { if (game && hasBot()) Bot.sendHome(game, s, inst, to, def); };
+  // Smothering Tithe: a player drew, and the other side's "whenever an opponent draws a card" sees it.
+  Game.hooks.drew = (s, n) => { if (game && hasBot() && (s === game || s === game.bot.s)) Bot.opponentActed(game, s, 'draw', n, def, s === game ? effectCtx() : null); };
   // "When this enters, it deals 2 damage to each opponent": Massacre Girl, Most Wanted sees it.
   Game.hooks.oppDamaged = (s, n) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.opponentDamaged(game, s, n, def, s === game ? effectCtx() : null); };
 
@@ -3294,6 +3367,11 @@
     if (s === game && inst.offspringPaid) { delete inst.offspringPaid; Bot.offspringCopy(game, inst); }
     // "As this land enters, you may pay 3 life. If you don't, it enters tapped." (Boggart Bog): you're asked.
     if (s === game && !inst.faceDown && Game.isLand(inst) && inst.entersTapped && inst.entersTapped.payLife) later('mustShock', { iid: inst.iid, n: inst.entersTapped.payLife });
+    // Wall of Stolen Identity: you pick what it copies; Opp's copies your best creature.
+    if (!inst.faceDown && !inst.original && Bot.cloneLine(inst, def)) {
+      if (s === game) { inst.copyPending = true; later('mustCopy', { iid: inst.iid }); } // a 0/0 waiting for your pick doesn't die yet
+      else if (hasBot() && s === game.bot.s) Bot.autoCopy(game, s, inst, def);
+    }
     // "Modular 1", "enters with two +1/+1 counters on it": on your table and Opp's.
     if (!inst.faceDown) {
       for (const [kind, n] of Object.entries(Game.entersWithCounters(oracleOf(inst)))) {
@@ -3340,6 +3418,7 @@
     if (hasBot() && game.bot.s.stack) {
       const name = Bot.counterStack(game);
       Game.log(game, `${by.name}: countered Opp's ${name}.`);
+      Bot.counterExtras(game, game, game.bot.s, oracleOf(by), by.name); // An Offer You Can't Refuse, Arcane Denial
       game.notice = `${by.name} countered Opp's ${name}. Click Let it resolve (or End turn) to let Opp carry on.${game.notice ? ' ' + game.notice : ''}`;
       return;
     }
@@ -3364,6 +3443,7 @@
       const done = Game.counterLast(pick.s);
       msg = done ? (pick.opp ? `Opp's ${done}` : done) : 'the last spell already resolved, so undo what it did by hand.';
     }
+    if (pick) Bot.counterExtras(game, game, pick.pid ? null : pick.s, oracleOf(by), by.name); // An Offer You Can't Refuse, Arcane Denial
     Game.log(game, `${by.name}: ${msg}`);
     game.notice = `${by.name}: ${msg}${game.notice ? ' ' + game.notice : ''}`;
   }
@@ -3396,7 +3476,7 @@
     });
   }
 
-  function activate(iid, ab, discards) {
+  function activate(iid, ab, discards, sacs) {
     const inst = game.cards[iid];
     if (!inst || inst.zone !== 'battlefield') return;
     if (ab.loyalty != null) return activateLoyalty(iid, ab);
@@ -3416,9 +3496,16 @@
       return pickCards({
         title: `Discard ${ab.discard === 1 ? 'a card' : ab.discard + ' cards'} for ${inst.name}`,
         note: ab.text, ids: [...game.zones.hand], max: ab.discard, ok: 'Discard and activate', cancel: 'Cancel',
-      }, picks => activate(iid, ab, picks));
+      }, picks => activate(iid, ab, picks, sacs));
+    }
+    // "Sacrifice a creature with defender: …" (Towering Titan): pick which.
+    if (ab.sacOther && !sacs) {
+      const ids = Bot.sacChoices(game, inst, ab.sacOther, def).map(c => c.iid);
+      if (!ids.length) return status(`${inst.name} needs you to sacrifice a ${ab.sacOther}, and you have none.`, 'warn', 8000);
+      return pickCards({ title: `Sacrifice a ${ab.sacOther} for ${inst.name}`, note: ab.text, ids, min: 1, max: 1, ok: 'Sacrifice and activate', cancel: 'Cancel' }, picks => activate(iid, ab, discards, picks));
     }
     act(() => {
+      (sacs || []).forEach(id => { const c = game.cards[id]; if (c) { Game.log(game, `Sacrificed ${c.name} for ${inst.name}.`); Game.move(game, id, c.commander ? 'command' : 'graveyard'); } });
       if (discards) {
         discards.forEach(id => Game.move(game, id, 'graveyard'));
         Game.log(game, `Discarded ${discards.map(id => game.cards[id].name).join(' and ')} for ${inst.name}.`);
@@ -3620,6 +3707,7 @@
       items = [
         { label: 'Play', hint: 'click', action: () => tryPlay(iid) },
         ...(backLand ? [{ label: `Play ${faces[1]} (land)`, action: () => tryPlay(iid, { flip: true }) }] : []),
+        ...Bot.handAbilities(inst, def).map(ab => ({ label: ab.label, action: () => handAbility(iid, ab) })), // cycling, transmute
         { label: 'Play face down', action: () => act(() => Game.move(game, iid, 'battlefield', { faceDown: true })) },
         { sep: true },
         { label: 'Discard', action: () => act(() => Game.move(game, iid, 'graveyard')) },
@@ -4769,6 +4857,9 @@
       // Ebondeath from your graveyard; Reno and Rude's or Ugin's cards from exile.
       const cast = [];
       if (inst.zone === 'graveyard' && Bot.graveCast(game, inst, def)) cast.push({ label: 'Cast from graveyard', action: () => { closeModal(); tryPlay(iid, { cast: true }); } });
+      // Aftermath (Dusk // Dawn): the back half from your graveyard; it's exiled after.
+      const after = inst.zone === 'graveyard' && Bot.aftermathOf(inst, def);
+      if (after) cast.push({ label: `Cast ${after.name} (aftermath, ${after.cost})`, action: () => { closeModal(); tryPlay(iid, { cast: true, aftermath: true, cost: after.cost }); } });
       if (inst.zone === 'exile' && inst.playable) cast.push({ label: inst.playable.free ? 'Cast without paying its mana cost' : `Play it${inst.playable.anyMana ? ' (any mana)' : ''}`, action: () => { closeModal(); tryPlay(iid); } });
       return showMenu(e.clientX, e.clientY, [...cast, ...(cast.length ? [{ sep: true }] : []), ...moveItems(iid, inst.zone).filter(i => !(viewer && viewer.top && i.label === 'Top of library'))]);
     }

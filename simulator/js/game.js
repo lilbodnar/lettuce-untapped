@@ -27,7 +27,8 @@ const Game = (() => {
   // hooks.sendHome(s, inst, to) takes a card you control but don't own back to its owner's table once
   // it leaves the battlefield. hooks.oppDamaged(s, n) runs when a card's "deals N damage to each
   // opponent" happens on entering (Massacre Girl, Most Wanted).
-  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null };
+  // hooks.drew(s, n) runs after a player draws (Smothering Tithe).
+  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -91,6 +92,11 @@ const Game = (() => {
     if (!oracle) return null;
     const front = (name || '').split(' // ')[0].toLowerCase();
     for (const line of oracle.split('\n')) {
+      // "{T}: Add {G} for each creature you control with defender." (Overgrown Battlement), "{T}: Add X
+      // mana in any combination of colors, where X is the number of creatures you control with
+      // defender." (Axebane Guardian): as much as s.kwCount says (kept by bot.js's refreshGrants).
+      const each = line.trim().match(/^\{T\}:\s*add (?:\{([WUBRGC])\} for each|x mana in any combination of colors, where x is the number of) creatures? you control with ([a-z ]+?)\.?$/i);
+      if (each) return { colors: each[1] ? [each[1].toUpperCase()] : ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, countKw: each[2].toLowerCase() };
       const f = line.trim().match(/^\{(\d+)\},\s*\{T\}:\s*add ((?:\{[WUBRGC]\}){2,})\.?$/i);
       if (f && Number(f[1]) > 0) {
         const makes = f[2].toUpperCase().match(/[WUBRGC]/g);
@@ -118,7 +124,12 @@ const Game = (() => {
   // What a card on the battlefield can tap for right now: { colors, amount, sacrifice } or null.
   // Creatures can't tap for mana the turn they arrive.
   function sourceOf(s, inst) {
-    if (inst.faceDown) return null;
+    if (inst.faceDown || inst.phasedOut) return null;
+    if (inst.mana && inst.mana.countKw) {
+      if (isCreature(inst) && inst.enteredTurn === s.turn) return null;
+      const n = (s.kwCount || {})[inst.mana.countKw] || 0;
+      return n ? { ...inst.mana, amount: n } : null;
+    }
     if (Object.values(inst.boosts || {}).some(b => b && b.noAbilities)) return null; // Arrest
     if (inst.mana && inst.mana.filter && !(isCreature(inst) && inst.enteredTurn === s.turn)) return inst.mana;
     if (isLand(inst)) {
@@ -619,6 +630,7 @@ const Game = (() => {
       drawn++;
     }
     if (!quiet && drawn) log(s, `Drew ${drawn === 1 ? 'a card' : drawn + ' cards'}.`);
+    if (drawn && hooks.drew) hooks.drew(s, drawn);
     return drawn;
   }
 
@@ -806,6 +818,15 @@ const Game = (() => {
     delete inst.loyaltyTurn;
     delete inst.auraPlaced;
     delete inst.offspringPaid;
+    delete inst.baseTou;
+    delete inst.skipUntap;
+    delete inst.frozenBy;
+    delete inst.phasedOut;
+    delete inst.extraKw;
+    delete inst.bounceAfterCombat;
+    delete inst.castAftermath;
+    // A copy (Wall of Stolen Identity) is itself again.
+    if (inst.original) { Object.assign(inst, inst.original); delete inst.original; }
   }
 
   // A planeswalker enters with loyalty counters equal to its printed loyalty (not for "X", or one
@@ -889,13 +910,13 @@ const Game = (() => {
     return msg;
   }
 
-  // opts: { index, bottom, x, y, faceDown }
+  // opts: { index, bottom, x, y, faceDown, cast, put } (put: an effect puts it there, it isn't cast or played)
   function move(s, iid, to, opts = {}) {
     const inst = s.cards[iid];
     if (!inst) return;
     const from = inst.zone;
     // Countered as it's cast (hooks.casting, Opp's counterspell): it never arrives. Its mana stays spent.
-    if (to === 'battlefield' && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown && hooks.casting && hooks.casting(s, inst)) {
+    if (to === 'battlefield' && !opts.put && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown && hooks.casting && hooks.casting(s, inst)) {
       if (from !== 'command') return move(s, iid, 'graveyard');
       inst.castCount = (inst.castCount || 0) + 1; // the tax still goes up
       log(s, `${inst.name} was countered and stays in the command zone.`);
@@ -964,10 +985,10 @@ const Game = (() => {
         inst.tapped = true;
         inst.tappedFor = null;
       }
-      if (from === 'hand' && isLand(inst)) s.landPlayed = true;
+      if (from === 'hand' && isLand(inst) && !opts.put) s.landPlayed = true;
       if (from === 'command' && inst.commander) inst.castCount = (inst.castCount || 0) + 1;
       // Cast, not just put onto the battlefield (The Sibsig Ceremony's "if you cast it").
-      if (from !== 'battlefield' && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown) inst.wasCast = true;
+      if (from !== 'battlefield' && !opts.put && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown) inst.wasCast = true;
     } else if (to === 'library') {
       if (opts.bottom) s.zones.library.push(iid);
       else s.zones.library.splice(opts.index || 0, 0, iid);
@@ -997,10 +1018,10 @@ const Game = (() => {
       applyEnterDraw(s, inst);
       if (hooks.entered) hooks.entered(s, inst);
       // Cast from your hand or the command zone (or for free, like cascade): prowess and "whenever you cast".
-      if ((from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !inst.faceDown && hooks.cast) hooks.cast(s, inst);
+      if (!opts.put && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !inst.faceDown && hooks.cast) hooks.cast(s, inst);
       // A spell cast from your hand or the command zone, for counterspells (see counterLast). Not one
       // that's already gone, like a resolved counterspell, unless its pump can still be taken back.
-      if ((from === 'hand' || from === 'command') && !isLand(inst) && s.cards[iid] && (inst.zone === 'battlefield' || inst.undoPump)) s.lastCast = { iid, at: Date.now() };
+      if (!opts.put && (from === 'hand' || from === 'command') && !isLand(inst) && s.cards[iid] && (inst.zone === 'battlefield' || inst.undoPump)) s.lastCast = { iid, at: Date.now() };
     }
   }
 
@@ -1016,7 +1037,7 @@ const Game = (() => {
     if (!next && inst.filterPaid) return untapFilter(s, inst);
     inst.tapped = next;
     if (next) {
-      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana;
+      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && inst.mana.countKw ? sourceOf(s, inst) : inst.mana;
       if (!src || inst.faceDown) return;
       let c = color;
       if (c === undefined) c = src.colors.length === 1 && !(isCreature(inst) && !isLand(inst)) ? src.colors[0] : null;
@@ -1073,10 +1094,16 @@ const Game = (() => {
     s.landPlayed = false;
     Object.keys(s.mana).forEach(k => { s.mana[k] = 0; });
     const stunned = [];
+    // Teferi's Protection: "Until your next turn, …" ends, and phased-out permanents come back.
+    delete s.untilNextTurn;
+    delete s.attackedYou; // "players who attacked you during their last turn"
+    s.zones.battlefield.forEach(iid => { delete s.cards[iid].phasedOut; });
     s.zones.battlefield.forEach(iid => {
       const c = s.cards[iid];
       // A stun counter: instead of untapping, one comes off.
       if (c.tapped && c.counters && c.counters.stun > 0) { counter(s, iid, 'stun', -1); stunned.push(c.name); return; }
+      // Wall of Frost ("doesn't untap during its controller's next untap step"), Wall of Stolen Identity's copied creature.
+      if (c.tapped && (c.skipUntap || c.frozenBy)) { delete c.skipUntap; stunned.push(c.name); return; }
       c.tapped = false;
       c.tappedFor = null;
       delete c.filterPaid;
@@ -1184,6 +1211,7 @@ const Game = (() => {
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
     attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew,
+    place: autoPlace,
   };
 })();
 

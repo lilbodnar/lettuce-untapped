@@ -30,12 +30,14 @@ const Autoplay = (() => {
     G.hooks.sendHome = (s, inst, to) => { const v = view(); if (v && v.bot) B.sendHome(v, s, inst, to, defOf); };
     G.hooks.oppDamaged = (s, n) => { const v = view(); if (v && v.bot) B.opponentDamaged(v, s, n, defOf); };
     G.hooks.discard = null;
+    G.hooks.drew = (s, n) => { const v = view(); if (v && v.bot) B.opponentActed(v, s, 'draw', n, defOf, null); };
     G.hooks.entered = (s, inst) => {
       if (!inst.faceDown) {
         for (const [kind, n] of Object.entries(G.entersWithCounters((defOf(inst.id) || {}).oracle))) G.counter(s, inst.iid, kind, n, { effect: true });
       }
-      B.enterTrigger(s, inst, defOf);
       const v = view();
+      if (v && v.bot && !inst.faceDown && !inst.original && B.cloneLine(inst, defOf)) B.autoCopy(v, s, inst, defOf); // Wall of Stolen Identity
+      B.enterTrigger(s, inst, defOf);
       if (v && v.bot) B.enterEffects(v, s, inst, defOf, null);
       if (v && v.bot && s === v.bot.s) {
         if (G.isLand(inst) && !inst.faceDown) B.landEntered(v, inst, defOf, null, s);
@@ -78,7 +80,7 @@ const Autoplay = (() => {
     }
     delete t.mustDestroy;
     delete t.mustTarget;
-    ['mustModes', 'mustCards', 'mustRecover', 'mustMadness', 'mustShock', 'mustHand', 'mustSacToPlay', 'mustLibrary'].forEach(k => { delete t[k]; });
+    ['mustModes', 'mustCards', 'mustRecover', 'mustMadness', 'mustShock', 'mustHand', 'mustSacToPlay', 'mustLibrary', 'mustTax', 'mustFlicker', 'mustCopy'].forEach(k => { delete t[k]; });
   }
 
   // The defending table ("you") blocks Opp's pending attack the way Opp would.

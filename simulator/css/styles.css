@@ -310,6 +310,7 @@ body.peek .side { position: relative; z-index: 51; }
 }
 .card img { width: 100%; height: 100%; display: block; border-radius: inherit; pointer-events: none; }
 .card.tapped { transform: rotate(90deg); }
+.card.phased { opacity: .35; filter: grayscale(1); }
 .card.upkeep { outline: 3px solid var(--accent); outline-offset: 1px; animation: upkeep-glow 1.6s ease-in-out infinite; }
 .card.fresh { outline: 3px solid #facc15; outline-offset: 1px; box-shadow: 0 0 14px rgba(250, 204, 21, .75); }
 .card.picked { outline: 3px solid var(--accent); outline-offset: 2px; }

@@ -25,7 +25,7 @@ const Coverage = (() => {
   // opponents and do the other things both sides can (Opp's in bot.js's oppCtx, yours in app.js's effectCtx).
   const noop = () => {};
   const ctxFor = inst => ({ self: inst, other: true, defOf: () => null, hitOpps: noop, hitTarget: noop, target: noop, oppsSacrifice: noop, loseHalf: noop,
-    oppsExileGreatest: noop, exileGrave: noop, oppsHandPick: noop, oppsDraw: noop, oppsDiscard: noop, exileTop: noop, sacToPlay: noop });
+    oppsExileGreatest: noop, exileGrave: noop, oppsHandPick: noop, oppsDraw: noop, oppsDiscard: noop, exileTop: noop, sacToPlay: noop, flicker: noop, blocked: {} });
   const runs = (text, inst) => P.canRunAll(text, ctxFor(inst));
   // The parts of an effect runEffect can't do.
   const notRun = (text, inst) => P.effectParts(P.settleIfYouDo(text, null)).filter(p => !P.canRunAll(p, ctxFor(inst)));
@@ -33,7 +33,7 @@ const Coverage = (() => {
   // Words that don't change the game once you're playing (or that you just follow, like flash).
   const NOTHING_TO_DO = ['partner', 'partner with', 'friends forever', 'choose a background', 'doctor\'s companion', 'flash', 'enchant'];
   // Done for you when you cast it (app.js asks), but Opp never uses them.
-  const YOURS_ONLY = ['offspring', 'freerunning', 'madness'];
+  const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath'];
 
   // ---------- one keyword line ----------
 
@@ -138,7 +138,7 @@ const Coverage = (() => {
       return out;
     }
     // "Whenever this attacks / blocks, …", "Whenever this creature attacks a player, …"
-    if ((m = /^whenever (.+?) (enters(?: the battlefield)? or attacks|attacks or blocks|attacks|blocks)( a player)?(?: a creature)?, (.+)$/i.exec(line)) && self(m[1])) {
+    if ((m = /^when(?:ever)? (.+?) (enters(?: the battlefield)? or attacks|attacks or blocks|attacks|blocks)( a player)?(?: a creature)?, (.+)$/i.exec(line)) && self(m[1])) {
       if (!combatEffect(m[4], inst)) gap(out, 'both', 'effect', m[4]);
       return out;
     }
@@ -156,6 +156,10 @@ const Coverage = (() => {
     if ((m = P.DEALT_WATCH.exec(line))) { effectGaps('both', m[1]); return out; }
     // Bloodthirsty Conqueror: "Whenever an opponent loses life, you gain that much life."
     if ((m = P.LOSS_WATCH.exec(line))) { effectGaps('both', m[2].replace(/\bthat much life\b/gi, '1 life')); return out; }
+    // Rhystic Study, Smothering Tithe: "… unless that player pays {1}"
+    if (P.TAX_WATCH.some(re => re.test(line))) return out;
+    // Flumph: "Whenever this creature is dealt damage, …"
+    if ((m = /^whenever (.+?) is dealt damage, (?:you may )?(.+)$/i.exec(line)) && self(m[1])) { effectGaps('both', m[2]); return out; }
     // Syr Konrad
     if ((m = P.KONRAD.exec(line))) { effectGaps('both', m[1]); return out; }
     // Roshan: "Whenever a permanent you control is turned face up, …" (you turn it up yourself; Opp never does)
@@ -251,6 +255,13 @@ const Coverage = (() => {
     // Roshan; recover (Garza's Assassin); Ebondeath from the graveyard; The Darkness Crystal; The Immortal Sun; Rune of Mortality.
     if (/^other creatures you control are \w+ in addition to their other types\./i.test(line) || P.RECOVER.test(line) || P.GRAVE_CAST.test(line)
       || P.CRYSTAL.test(line) || /^players can't activate planeswalkers' loyalty abilities\.?$/i.test(line)) return out;
+    // Tetsuko Umezawa; Weathered Sentinels; Reliquary Tower; Crystal Barricade and Teyo (hexproof, damage
+    // prevention); Wall of Glare and Brave the Sands; Wall of Stolen Identity; Towering Titan.
+    if (/^(.+?) you control with power or toughness \d+ or less can't be blocked\.?$/i.test(line)
+      || /^(.+?) can attack players who attacked you during their last turn as though it didn't have defender\.?$/i.test(line)
+      || /^you have (?:no maximum hand size|hexproof)\.?$/i.test(line) || /^prevent all noncombat damage that would be dealt to other creatures you control\.?$/i.test(line)
+      || P.EXTRA_BLOCK.test(line) || P.CLONE.test(line)
+      || (/^(.+?) enters(?: the battlefield)? with x ([\w+/-]+) counters on it, where x is the total (power|toughness) of other (.+?) you control\.?$/i.test(line))) return out;
     if ((m = /^as long as enchanted permanent is an? (creature|equipment), it has (.+?)\.?$/i.exec(line))) {
       const kws = kwOnly(m[2].replace(/^"equipped creature has (.+?)\.?"$/i, '$1'));
       if (!kws.every(k => B.KEYWORDS.includes(k))) gap(out, 'you', 'static', line);
@@ -259,7 +270,10 @@ const Coverage = (() => {
     if (/^you may pay (?:\{[^}]+\})+ rather than pay this spell's mana cost\.?$/i.test(line)) { gap(out, 'opp', 'static', 'other cost (Opp pays the mana cost)'); return out; }
     if ((m = LORD.exec(line)) && !m[2].includes(':')) {
       if (m[3] && !B.KEYWORDS.includes(m[3].toLowerCase())) { gap(out, 'both', 'static', line); return out; } // "with power 4 or greater"
-      const kws = kwOnly(m[6] || m[7] || '');
+      // "protection from black and from red" (Akroma's Memorial) is one keyword it gives.
+      const raw = m[6] || m[7] || '';
+      const pro = /protection from [a-z]+(?:,? (?:and )?from [a-z]+)*/i.exec(raw);
+      const kws = kwOnly(pro ? raw.replace(pro[0], '') : raw).concat(pro && !B.grantKws(pro[0]).length ? ['protection'] : []);
       const unknown = kws.filter(k => !B.KEYWORDS.includes(k));
       if (!kws.length || !unknown.length) return out;
       unknown.forEach(k => gap(out, 'both', 'static', `… you control have ${k}`));
@@ -304,7 +318,9 @@ const Coverage = (() => {
         if (!mode.split(/(?<=\.)\s+/).every(s => PUMP_SENTENCE.test(s.trim())) && !runs(mode, inst)) gap(out, 'you', 'spell', `modal spell: ${mode}`);
       });
     } else if (/\binstant\b/i.test(front(card.typeLine)) && G.isCounterspell(card.oracle)) {
-      if (!/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\})?\.?$/i.test(text.trim())) gap(out, 'you', 'spell', `counterspell: ${text}`);
+      // Its other sentences: ones counterExtras does (An Offer You Can't Refuse, Arcane Denial, Dovin's Veto).
+      const extras = P.counterExtraParts(text).filter(x => !P.COUNTER_EXTRAS.some(re => re.test(x)));
+      if (!/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\})?\b/im.test(text.replace(/^this spell can't be countered\.\s*/i, '')) || extras.length) gap(out, 'you', 'spell', `counterspell: ${text}`);
     } else if (!text.split(/(?<=\.)\s+/).every(s => PUMP_SENTENCE.test(s.trim()) && !/\btarget\b/i.test(s)) && !runs(text, inst)) {
       notRun(text, inst).forEach(p => gap(out, 'you', 'spell', p));
       if (!out.gaps.length) gap(out, 'you', 'spell', text);
