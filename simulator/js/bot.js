@@ -227,7 +227,14 @@ const Bot = (() => {
     return found.length || cost ? found : card.colorIdentity || [];
   }
 
-  const value = st => st.pow + st.tou + st.kw.size + st.cmc / 2;
+  // "Assigns combat damage equal to its toughness rather than its power" (Arcades, Doran) and "can
+  // attack as though it didn't have defender": given out by grantsOnce as these words in kw.
+  const TOUGH_DMG = 'toughness damage';
+  const DEFENDER_ATTACKS = 'defender attacks';
+  // The combat damage a creature deals: its power, or its toughness with TOUGH_DMG.
+  const hitOf = st => (st.kw.has(TOUGH_DMG) ? st.tou : st.pow);
+
+  const value = st => hitOf(st) + st.tou + st.kw.size + st.cmc / 2;
 
   // Can this creature be one of the blockers? (Flying needs flying or reach. Menace is about how
   // many block, so it's checked with legalBlock.)
@@ -247,8 +254,8 @@ const Bot = (() => {
     if (!m) return false;
     return m[1] === 'each color' ? (from.colors || []).length > 0 : m[1].split(' ').some(col => (from.colors || []).includes(col));
   });
-  // Defender, or an aura like Arrest on it.
-  const noAttack = st => st.kw.has('defender') || st.kw.has("can't attack");
+  // Defender (unless Arcades lets it attack anyway), or an aura like Arrest on it.
+  const noAttack = st => (st.kw.has('defender') && !st.kw.has(DEFENDER_ATTACKS)) || st.kw.has("can't attack");
   // "Its activated abilities can't be activated" (Arrest): no abilities, mana ones included.
   const silenced = inst => Object.values(inst.boosts || {}).some(b => b && b.noAbilities);
   // Decayed creatures can't block; "can't be blocked" ones (unblockable) aren't.
@@ -276,10 +283,10 @@ const Bot = (() => {
     const lethalOn = i => (B[i].dt || B[i].dmg >= bs[i].tou ? 0 : a.kw.has('deathtouch') ? 1 : bs[i].tou - B[i].dmg);
     const check = (x, t) => { if (!x.kw.has('indestructible') && (t.dmg >= x.tou || t.dt)) t.dead = true; };
     for (const step of [firstStep, normalStep]) {
-      const aHits = step(a) && !A.dead && a.pow > 0;
-      const bHits = bs.map((b, i) => step(b) && !B[i].dead && b.pow > 0);
+      const aHits = step(a) && !A.dead && hitOf(a) > 0;
+      const bHits = bs.map((b, i) => step(b) && !B[i].dead && hitOf(b) > 0);
       if (aHits) {
-        let left = a.pow;
+        let left = hitOf(a);
         if (!bs.length) player += left;
         else {
           const alive = bs.map((b, i) => i).filter(i => !B[i].dead);
@@ -298,8 +305,8 @@ const Bot = (() => {
       }
       bs.forEach((b, i) => {
         if (!bHits[i] || shielded(a, b)) return;
-        A.dmg += b.pow;
-        B[i].dealt += b.pow;
+        A.dmg += hitOf(b);
+        B[i].dealt += hitOf(b);
         if (b.kw.has('deathtouch')) A.dt = true;
       });
       check(a, A);
@@ -339,7 +346,7 @@ const Bot = (() => {
     for (const [key, idx] of fights) {
       if (idx.length < 2) continue;
       const b = list[idx[0]].blockers.find(y => y.key === key).st;
-      let left = Math.max(0, b.pow);
+      let left = Math.max(0, hitOf(b));
       idx.forEach((i, k) => {
         const lethal = b.kw.has('deathtouch') ? 1 : Math.max(0, list[i].st.tou);
         const n = k === idx.length - 1 ? left : Math.min(left, lethal);
@@ -348,9 +355,11 @@ const Bot = (() => {
       });
     }
     const taken = new Map(); // shared blocker key → { dmg, dt }
+    // Its share is already worked out, so it deals that (not its toughness, which is cut down here).
+    const asShared = kw => new Set([...kw].filter(k => k !== TOUGH_DMG));
     return list.map((x, i) => {
       const bsts = x.blockers.map(b => (shared(b.key)
-        ? { ...b.st, pow: powFor.get(`${b.key}|${i}`), tou: Math.max(1, b.st.tou - (taken.get(b.key) || { dmg: 0 }).dmg) }
+        ? { ...b.st, pow: powFor.get(`${b.key}|${i}`), tou: Math.max(1, b.st.tou - (taken.get(b.key) || { dmg: 0 }).dmg), kw: asShared(b.st.kw) }
         : b.st));
       const r = combat(x.st, bsts);
       x.blockers.forEach((b, j) => {
@@ -1209,12 +1218,14 @@ const Bot = (() => {
 
   // "Whenever a creature (you control) enters (the battlefield under your control), …" (Ajani's
   // Welcome), also "another creature", "nontoken creature", "a Dragon you control", "this creature or
-  // another Dragon you control", "a creature you control with flying / with power 4 or greater" and
-  // "… of the chosen type". Face-down cards are creatures too (of no type). Ones that see every
-  // player's creatures (Soul Warden) are left to you. s: the table it entered on.
-  const WATCH_HEAD = '^whenever (?:(.+?) or )?(an?|another) (nontoken )?(.+?)(?: you control)?( with flying| with power (\\d+) or greater)?( of the chosen type)?';
+  // another Dragon you control", "a creature you control with flying / with defender / with power 4
+  // or greater" ("a creature with defender you control" too) and "… of the chosen type". Face-down
+  // cards are creatures too (of no type). Ones that see every player's creatures (Soul Warden) are
+  // left to you. s: the table it entered on.
+  const WATCH_HEAD = '^whenever (?:(.+?) or )?(an?|another) (nontoken )?(.+?)(?: you control)?( with (?:power (\\d+) or greater|[a-z]+(?: [a-z]+)?))?(?: you control)?( of the chosen type)?';
   const ENTER_WATCH = new RegExp(`${WATCH_HEAD} enters(?: the battlefield)?(?: under your control)?(?: or attacks)?, (?:you may )?(.+)$`, 'i');
   const ATTACK_WATCH = new RegExp(`${WATCH_HEAD}(?: enters(?: the battlefield)? or)? attacks, (?:you may )?(.+)$`, 'i');
+  const BLOCK_WATCH = new RegExp(`${WATCH_HEAD} blocks(?: a creature)?, (?:you may )?(.+)$`, 'i');
   // Does creature (on table s) fit a watcher's words? m: an ENTER_WATCH or ATTACK_WATCH match on inst's line.
   function watched(m, inst, creature, defOf) {
     const self = creature === inst;
@@ -1226,7 +1237,7 @@ const Bot = (() => {
     if (m[7] && !(inst.chosenType && isA(creature, inst.chosenType))) return false;
     if (m[5]) {
       const st = stats(creature, creature.bot || defOf(creature.id));
-      if (m[6] ? st.pow < Number(m[6]) : !st.kw.has('flying')) return false;
+      if (m[6] ? st.pow < Number(m[6]) : !st.kw.has(m[5].replace(/^\s*with\s+/i, '').toLowerCase())) return false;
     }
     return true;
   }
@@ -1294,6 +1305,22 @@ const Bot = (() => {
         for (const a of list) {
           if (!watched(m, inst, a, defOf)) continue;
           fireOn(game, s, subjectOf(m[8], inst, a), `${a.name} attacked (${inst.name})`, m[8], ctx, defOf);
+        }
+      }
+    }
+  }
+
+  // Blockers were declared on table s: "Whenever a creature you control with defender blocks, …"
+  // (Perimeter Captain), once for each one. blockers: the blocking creatures.
+  function blockWatch(game, s, defOf, ctx, blockers = []) {
+    const list = [...new Set(blockers)].filter(b => b && b.zone === 'battlefield');
+    for (const inst of permanents(s)) {
+      for (const line of oracleLines(inst, defOf)) {
+        const m = BLOCK_WATCH.exec(line);
+        if (!m || !/you control/i.test(line.split(',')[0])) continue;
+        for (const b of list) {
+          if (!watched(m, inst, b, defOf)) continue;
+          fireOn(game, s, subjectOf(m[8], inst, b), `${b.name} blocked (${inst.name})`, m[8], ctx, defOf);
         }
       }
     }
@@ -1456,15 +1483,34 @@ const Bot = (() => {
     return any;
   }
 
+  // "Each creature you control with defender assigns combat damage equal to its toughness rather
+  // than its power and can attack as though it didn't have defender" (Arcades), "Each creature
+  // assigns …" (Doran, every table's), "Creatures you control can attack as though they didn't have
+  // defender" (High Alert), "Wall creatures can attack …" (Rolling Stones). Returns
+  // { what, mine, self, kw, tough, attack } or null.
+  const TOUGH_RULE = /^each (.+?)( you control)?(?: with ([a-z ]+?))? assigns combat damage equal to its toughness rather than its power( and can attack as though it didn['’]?t have defender)?\.?$/i;
+  const DEFENDER_RULE = /^(?:each )?(.+?)( you control)?(?: with ([a-z ]+?))? can attack as though (?:it|they) didn['’]?t have defender\.?$/i;
+  function combatRuleOf(line, src) {
+    let m = TOUGH_RULE.exec(line);
+    if (m) return { what: m[1], mine: !!m[2], self: false, kw: (m[3] || '').toLowerCase(), tough: true, attack: !!m[4] };
+    m = DEFENDER_RULE.exec(line);
+    if (!m || m[1].includes(':')) return null;
+    const self = isSelf(m[1], src);
+    return { what: m[1], mine: !!m[2] || self, self, kw: (m[3] || '').toLowerCase(), tough: false, attack: true };
+  }
+
   function grantsOnce(tables, defOf) {
     const kwList = text => text.toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
     // "Creatures your opponents control get -2/-2": from each table, for the other ones.
     const hostile = [];
+    const fighting = []; // combatRuleOf's rules, from each table
     for (const s of tables) {
       for (const src of permanents(s)) {
         for (const line of oracleLines(src, defOf)) {
           const m = /^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.exec(line);
           if (m && !m[1].includes(':')) hostile.push({ from: s, what: m[1], pow: Number(m[2]), tou: Number(m[3]) });
+          const f = combatRuleOf(line, src);
+          if (f) fighting.push({ from: s, src, ...f });
         }
       }
     }
@@ -1506,6 +1552,12 @@ const Bot = (() => {
           l.kws.forEach(k => got.add(k));
           pow += l.pow;
           tou += l.tou;
+        });
+        fighting.forEach(f => {
+          if ((f.mine && f.from !== s) || !(f.self ? f.src === c : isA(c, f.what))) return;
+          if (f.kw && !stats(c, c.bot || defOf(c.id)).kw.has(f.kw)) return;
+          if (f.tough) got.add(TOUGH_DMG);
+          if (f.attack) got.add(DEFENDER_ATTACKS);
         });
         const cda = { pow: 0, tou: 0 };
         each.filter(e => e.src === c).forEach(e => {
@@ -2134,13 +2186,16 @@ const Bot = (() => {
 
   // Runs "whenever this blocks" triggers for blocks { attackerIid: [blockerIid, …] } (a single iid
   // works too), before any damage. Tokens made "blocking that creature" are added to that attacker's
-  // blockers. s: the blockers' table. Returns the blocks, with every list an array.
-  function blockTriggers(s, blocks, defOf) {
+  // blockers. s: the blockers' table (yours); ctx: as for runEffect. Then "Whenever a creature you
+  // control blocks, …" (blockWatch). Returns the blocks, with every list an array.
+  function blockTriggers(s, blocks, defOf, ctx) {
+    const declared = [];
     for (const [a, list] of Object.entries(blocks)) {
       const ids = [].concat(list || []);
       blocks[a] = [...ids];
-      ids.forEach(id => blocks[a].push(...combatTrigger(s, s.cards[id], 'blocks', defOf)));
+      ids.forEach(id => { declared.push(s.cards[id]); blocks[a].push(...combatTrigger(s, s.cards[id], 'blocks', defOf)); });
     }
+    blockWatch(s, s, defOf, ctx, declared);
     return blocks;
   }
 
@@ -2253,11 +2308,11 @@ const Bot = (() => {
     const you = yourCreatures(game, defOf);
     const blockers = you.filter(c => !c.inst.tapped).map(c => c.st);
     const ready = creatures(s).map(inst => ({ inst, st: botStats(inst) }))
-      .filter(c => !c.inst.tapped && c.st.pow > 0 && !noAttack(c.st) && !sick(s, c.inst, c.st));
+      .filter(c => !c.inst.tapped && hitOf(c.st) > 0 && !noAttack(c.st) && !sick(s, c.inst, c.st));
     if (!ready.length) return [];
 
     // Everyone attacks if that's lethal even after your blockers each stop the biggest one they can.
-    const byPower = [...ready].sort((a, b) => b.st.pow - a.st.pow);
+    const byPower = [...ready].sort((a, b) => hitOf(b.st) - hitOf(a.st));
     let through = 0;
     const left = [...blockers];
     for (const a of byPower) {
@@ -2281,7 +2336,7 @@ const Bot = (() => {
     });
 
     // Keep blockers home if your creatures could swing back for lethal.
-    const yourPower = you.map(c => c.st.pow).sort((a, b) => b - a);
+    const yourPower = you.filter(c => !noAttack(c.st)).map(c => hitOf(c.st)).sort((a, b) => b - a);
     const home = () => creatures(s, c => !c.tapped && (!attackers.some(a => a.inst === c) || botStats(c).kw.has('vigilance'))).length;
     const danger = () => yourPower.slice(home()).reduce((n, p) => n + Math.max(0, p), 0) >= game.oppLife;
     while (danger()) {
@@ -2302,7 +2357,7 @@ const Bot = (() => {
     const walkers = game.zones.battlefield.map(iid => game.cards[iid]).filter(isPlaneswalker)
       .map(inst => ({ inst, loyalty: loyaltyOf(inst, defOf(inst.id)) })).sort((a, b) => a.loyalty - b.loyalty);
     for (const w of walkers) {
-      const pick = list.filter(a => !targets[a.iid] && toPlayer(a.st) >= Math.max(1, w.loyalty)).sort((a, b) => a.st.pow - b.st.pow)[0];
+      const pick = list.filter(a => !targets[a.iid] && toPlayer(a.st) >= Math.max(1, w.loyalty)).sort((a, b) => hitOf(a.st) - hitOf(b.st))[0];
       if (pick) targets[pick.iid] = w.inst.iid;
     }
     return targets;
@@ -2450,7 +2505,7 @@ const Bot = (() => {
     if (!pending) return '';
     refreshGrants(game, defOf);
     // "Whenever this blocks" triggers happen before any damage.
-    blockTriggers(game, blocks, defOf);
+    blockTriggers(game, blocks, defOf, { hitOpps: k => { game.oppLife -= k; }, other: s });
     let dmg = 0;
     let poison = 0;
     const oppHits = []; // Opp's creatures that dealt combat damage to you, for oppCombatDamage
@@ -2578,7 +2633,7 @@ const Bot = (() => {
       .map(x => ({ inst: game.cards[x.iid], pw: x.pw && s.cards[x.pw] && s.cards[x.pw].zone === 'battlefield' ? s.cards[x.pw] : null }))
       .filter(a => a.inst && a.inst.zone === 'battlefield')
       .map(a => Object.assign(a, { st: stats(a.inst, defOf(a.inst.id)) }))
-      .sort((a, b) => b.st.pow - a.st.pow);
+      .sort((a, b) => hitOf(b.st) - hitOf(a.st));
     // Opp's instants when you attack: removal on an attacker, before blocks.
     const answered = oppInstantAt(game, defOf, 'attack', attackers);
     attackers = attackers.filter(a => a.inst.zone === 'battlefield');
@@ -2591,7 +2646,9 @@ const Bot = (() => {
 
     // Opp's "whenever this blocks" triggers, then everyone's stats again with the pumps.
     // Tokens made "blocking that creature" (Brimaz) block the same attacker.
+    const declared = [...blocks.values()].flat().map(b => b.inst);
     for (const list of blocks.values()) [...list].forEach(b => combatTrigger(s, b.inst, 'blocks', defOf).forEach(iid => list.push({ inst: s.cards[iid], st: botStats(s.cards[iid]) })));
+    blockWatch(game, s, defOf, null, declared);
     if (blocks.size) {
       attackers.forEach(a => { a.st = stats(a.inst, defOf(a.inst.id)); });
       [...blocks.values()].flat().forEach(b => { b.st = botStats(b.inst); });
@@ -2618,7 +2675,10 @@ const Bot = (() => {
       picks.forEach((p, i) => {
         p.used = true;
         p.uses--;
-        if (p.uses > 0 && !r.b[i].dead) p.st = { ...p.st, pow: Math.max(0, p.st.pow - Math.max(0, a.st.tou)), tou: p.st.tou - r.b[i].dmg };
+        if (p.uses > 0 && !r.b[i].dead) {
+          const kw = new Set([...p.st.kw].filter(k => k !== TOUGH_DMG)); // what it has left is in pow now
+          p.st = { ...p.st, pow: Math.max(0, hitOf(p.st) - Math.max(0, a.st.tou)), tou: p.st.tou - r.b[i].dmg, kw };
+        }
         else free.splice(free.indexOf(p), 1);
       });
     };
@@ -2719,12 +2779,12 @@ const Bot = (() => {
     extraCombat, playerHit, witherCounters, keywordNumbers, kwN,
     targetEffect, targetFilter, canTarget, applyTarget, damagePlayer, oppTarget, enterEffects,
     setResponder, getResponder, isInstantSpeed, resumeTurn, resolveStack, counterStack, oppCounters, oppInstantAt, pickBlocks, castOptions, castOne, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
-    yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker, phaseTriggers, attackWatch,
+    yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker, phaseTriggers, attackWatch, blockWatch, hitOf, TOUGH_DMG, DEFENDER_ATTACKS,
     searchSpec, searchable, applySearch, applyScry, crackFetches, ARTIFACT_TOKENS, faceOracle,
     // For coverage.js, which reads card text the same way the rest of this file does.
     parts: { OTHER_KEYWORDS, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,
       OLD_MENACE, UNBLOCKABLE, ATTACK_TAX, SPELL_TAX, NO_GAIN, ARBORIA, ATTACK_CAP, BLOCK_CAP, ATTACK_BLOCK_CAP, isSelf,
-      counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, plainLine } };
+      counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, BLOCK_WATCH, TOUGH_RULE, DEFENDER_RULE, plainLine } };
 })();
 
 if (typeof module !== 'undefined') module.exports = Bot;

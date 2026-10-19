@@ -81,7 +81,7 @@ const Autoplay = (() => {
     const pending = view.bot.pending;
     const attackers = pending.attackers.map(iid => s.cards[iid]).filter(a => a && a.zone === 'battlefield')
       .map(inst => ({ inst, st: B.botStats(inst), pw: (pending.targets || {})[inst.iid] || null }))
-      .sort((a, b) => b.st.pow - a.st.pow);
+      .sort((a, b) => B.hitOf(b.st) - B.hitOf(a.st));
     const free = B.yourCreatures(view, defOf).filter(c => !c.inst.tapped).map(c => ({ ...c, uses: B.blocksAllowed(view, c.inst, defOf) }));
     const limit = B.blockRules(B.botRules(view, defOf).all, attackers.map(a => a.inst), defOf);
     const out = {};

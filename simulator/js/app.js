@@ -1295,7 +1295,7 @@
     let canAttack = false;
     const rows = Bot.yourCreatures(game, def).map(c => {
       const why = c.inst.attackedTurn === game.turn ? 'already attacked this turn' : c.inst.tapped ? 'tapped' : c.inst.enteredTurn === game.turn && !c.st.kw.has('haste') ? 'arrived this turn'
-        : c.st.kw.has("can't attack") ? "can't attack" : c.st.kw.has('defender') ? 'defender' : '';
+        : c.st.kw.has("can't attack") ? "can't attack" : Bot.noAttack(c.st) ? 'defender' : '';
       if (!why) canAttack = true;
       return `<div class="attack-row ${why ? 'muted' : ''}"><label><input type="checkbox" data-attacker="${esc(c.inst.iid)}" ${why ? 'disabled' : ''}>
         <b>${esc(c.inst.name)}</b> ${c.st.pow}/${c.st.tou}${esc(kwText(c.st))}${why ? ` <span class="small">(${why})</span>` : ''}</label>
@@ -1486,7 +1486,7 @@
     const theirs = [];
     act(() => {
       // Your "whenever this blocks" triggers happen before any damage.
-      Bot.blockTriggers(game, blocks, def);
+      Bot.blockTriggers(game, blocks, def, effectCtx());
       // Everyone's stats first: a creature of yours can block more than one (Brave the Sands).
       const plan = fight.attacks.map(a => {
         const bl = (blocks[a.iid] || []).map(id => game.cards[id]).filter(b => b && b.zone === 'battlefield');

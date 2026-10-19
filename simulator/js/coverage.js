@@ -139,10 +139,16 @@ const Coverage = (() => {
       effectGaps('both', m[1]);
       return out;
     }
-    // "Whenever a creature / a Dragon / this creature or another Cat you control enters (or attacks), …"
+    // "Whenever a creature / a Dragon / this creature or another Cat you control enters (or attacks
+    // or blocks), …". "with defender" needs a keyword it knows; other "with …" words it can't check.
     const watchHead = /you control|under your control/i.test(line.split(',')[0]);
-    if ((m = P.ENTER_WATCH.exec(line)) && watchHead && (!m[1] || self(m[1]))) { effectGaps('both', m[8]); return out; }
-    if ((m = P.ATTACK_WATCH.exec(line)) && watchHead && (!m[1] || self(m[1]))) { effectGaps('both', m[8]); return out; }
+    const withOk = w => !/ with /i.test(w[4]) && (!w[5] || w[6] || B.KEYWORDS.includes(w[5].replace(/^\s*with\s+/i, '').toLowerCase()));
+    for (const watch of [P.ENTER_WATCH, P.ATTACK_WATCH, P.BLOCK_WATCH]) {
+      if (!(m = watch.exec(line)) || !watchHead || (m[1] && !self(m[1]))) continue;
+      if (withOk(m)) effectGaps('both', m[8]);
+      else gap(out, 'both', 'trigger', t.head);
+      return out;
+    }
     if ((m = /^whenever one or more (.+?) you control attack, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[2].replace(/\bthat many\b/gi, '1')); return out; }
     // "At the beginning of your upkeep / end step / combat on your turn, …"
     if ((m = P.PHASE_TRIGGER.exec(line))) { effectGaps('both', m[3]); return out; }
@@ -221,6 +227,7 @@ const Coverage = (() => {
     if ((m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
     if ((m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) you control\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
     if (/^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.test(line)) return out;
+    if (P.TOUGH_RULE.test(line) || P.DEFENDER_RULE.test(line)) return out; // Arcades, Doran, High Alert
     if (P.ATTACK_TAX.test(line) || P.NO_GAIN.test(line) || P.ARBORIA.test(line) || P.ATTACK_CAP.test(line) || P.BLOCK_CAP.test(line)) return out;
     if (P.SPELL_TAX.test(line) && !/\btarget/i.test(line)) return out;
     if (P.OLD_MENACE.test(line) || P.UNBLOCKABLE.test(line) || P.CANT.test(line)) return out;
