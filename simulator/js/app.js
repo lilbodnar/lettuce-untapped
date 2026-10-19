@@ -507,10 +507,11 @@
       fn();
       if (!req.then) return;
       const self = (req.self && game.cards[req.self]) || { name: req.src };
-      const left = Bot.runEffect(game, req.then, Object.assign({ self }, effectCtx()));
+      const left = Bot.runEffect(game, req.then, Object.assign({ self, other: hasBot() ? game.bot.s : null }, effectCtx()));
       Game.log(game, `${req.src}: ${req.then}.${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
     });
     const place = d => (d.to === 'hand' ? 'into your hand' : `onto the battlefield${d.tapped ? ' tapped' : ''}`);
+    if (req.kind === 'number') return numberPrompt(req, next);
     if (req.kind === 'search') {
       const { spec } = req;
       const ids = Bot.searchable(game, spec);
@@ -533,6 +534,34 @@
     if (!top.length) return next(() => {});
     pickCards({ title: `${req.src}: ${req.kind} ${top.length}`, note: `Pick the cards to put ${away}. The rest stay on top in this order.`, ids: top, min: 0, max: top.length, ok: 'Done' },
       picks => next(() => Bot.applyScry(game, req.kind, top, picks, req.src)));
+  }
+
+  // "Choose a number between 0 and 10": one button per number, each showing what the wipe after it
+  // (req.then) would destroy on your side and Opp's. next: mustLibraryPrompt's, which runs req.then.
+  function numberPrompt(req, next) {
+    const other = hasBot() ? game.bot.s : null;
+    const fill = n => req.then.replace(/the chosen number/gi, String(n));
+    const names = list => list.map(x => x.c.name).join(', ');
+    const rows = [];
+    for (let n = req.min; n <= req.max; n++) {
+      const v = Bot.wipeVictims(game, other, fill(n), def);
+      const yours = v.mine.length ? `yours: ${names(v.mine)}` : 'none of yours';
+      const theirs = other ? (v.theirs.length ? ` · Opp's: ${names(v.theirs)}` : " · none of Opp's") : '';
+      rows.push(`<button class="btn ghost" data-number="${n}" style="display:block;width:100%;text-align:left;margin:4px 0"><b>${n}</b> <span class="small">— destroys ${esc(yours + theirs)}</span></button>`);
+    }
+    openModal(`<div class="page-head"><h3>${esc(req.src)}: choose a number</h3></div>
+      <p class="muted small">${esc(req.then)}.</p>
+      ${isOnline() ? '<p class="muted small">Other players destroy theirs on their side.</p>' : ''}
+      <div>${rows.join('')}</div>`);
+    modalBox.querySelectorAll('[data-number]').forEach(el => {
+      el.onclick = () => {
+        const n = Number(el.dataset.number);
+        modal.hidden = true;
+        modalBox.innerHTML = '';
+        req.then = fill(n);
+        next(() => Game.log(game, `${req.src}: you chose ${n}.`));
+      };
+    });
   }
 
   // Something made you discard (Earsplitting Rats entering, yours or Opp's): pick the cards.
@@ -1765,7 +1794,7 @@
     const rules = combatRules();
     const more = Bot.spellTax([{ rules: rules.mine, own: true }, ...Object.values(rules.byPid).map(r => ({ rules: r, own: false }))], inst, def);
     const tax = cmdTax + more;
-    const less = Game.discount(game, inst, oracleOf);
+    const less = Game.discount(game, inst, oracleOf) + Bot.selfDiscount(game, inst, def);
     return { cost, tax, less, label: `${cost}${cmdTax ? ` + ${cmdTax} tax` : ''}${more ? ` + ${more} more` : ''}${less ? ` − ${less}` : ''}` };
   }
 
@@ -2939,10 +2968,14 @@
     // "Search your library for …", "Scry 2", "Surveil 1": you pick the cards (mustLibraryPrompt).
     search: (spec, src) => { (game.mustLibrary = game.mustLibrary || []).push({ kind: 'search', spec, src }); },
     scry: (n, kind, src) => { (game.mustLibrary = game.mustLibrary || []).push({ kind, n, src }); },
+    // "Choose a number between 0 and 10. Destroy all creatures with power …" (Expel the
+    // Interlopers): you pick the number, then the wipe (then) runs with it (mustLibraryPrompt).
+    chooseNumber: (min, max, src, then) => { (game.mustLibrary = game.mustLibrary || []).push({ kind: 'number', min, max, src, then }); },
     // What comes after the search or scry ("Scry 1. Draw a card.") waits for your pick.
     later: (text, self) => {
       const list = game.mustLibrary;
-      if (list && list.length) Object.assign(list[list.length - 1], { then: text, self: self ? self.iid : null });
+      const last = list && list[list.length - 1];
+      if (last) Object.assign(last, { then: [last.then, text].filter(Boolean).join('. '), self: self ? self.iid : null });
     },
     defOf: def,
   });

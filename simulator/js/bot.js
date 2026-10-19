@@ -439,7 +439,8 @@ const Bot = (() => {
     if (!text || !canRunAll(text, { hitOpps: true, other: true, target: true })) return null;
     // removal: it destroys, exiles, bounces or burns a target ("Destroy target nonblack creature.")
     const removal = effectParts(text).some(p => { const e = targetEffect(p); return !!e && ['destroy', 'exile', 'bounce', 'damage'].includes(e.action); });
-    return { effect: text, removal };
+    const wipe = effectParts(text).some(p => CHOOSE_WIPE.test(p) || !!wipeOf(p)); // see wipeGain
+    return { effect: text, removal, wipe };
   }
 
   // deck: { name, key, rows }, defs: { scryfallId: card }. onDraw: Opp goes second.
@@ -606,7 +607,7 @@ const Bot = (() => {
         if (f.spell && f.spell.counter) continue; // only in answer to your spell (oppCounters)
         if (moment !== 'main' && (!isInstantSpeed(inst, defOf) || !f.spell || !(f.spell.kill || f.spell.damage || f.spell.removal || (moment === 'end' && f.spell.draw)))) continue;
         const tax = (zone === 'command' ? (inst.castCount || 0) * 2 : 0) + spellTax(taxes, inst, defOf);
-        if (!affordable(s, f.cost, tax - G.discount(s, inst, oracleOf(defOf)))) continue;
+        if (!affordable(s, f.cost, tax - G.discount(s, inst, oracleOf(defOf)) - selfDiscount(s, inst, defOf))) continue;
         let target = null;
         let priority = f.cmc + (G.isCreature(inst) ? 0.5 : 0);
         const held = moment === 'main' && heldForYourTurn(game, inst);
@@ -624,6 +625,11 @@ const Bot = (() => {
           priority += target === 'face' ? (game.life <= n ? 20 : -5) : 8;
         } else if (f.spell && f.spell.effect) {
           if (held || !oppCanTargetAll(game, inst, f.spell.effect, defOf)) continue;
+          // A board wipe only when it takes clearly more from you than from Opp.
+          if (f.spell.wipe) {
+            if (wipeGain(game, f.spell.effect, defOf) < 4) continue;
+            priority += 10;
+          }
           // On your turn: only on an attacker worth it (when you attack), or your best creature (end step).
           if (moment !== 'main' && f.spell.removal) {
             const hit = removalPick(game, inst, f.spell.effect, defOf);
@@ -646,7 +652,7 @@ const Bot = (() => {
     const pick = castOptions(game, defOf, moment, attackers)[0];
     if (!pick) return false;
     const { iid, inst, zone, tax, target } = pick;
-    onOpp(game, () => G.autoPay(s, inst.bot.cost, tax - G.discount(s, inst, oracleOf(defOf))));
+    onOpp(game, () => G.autoPay(s, inst.bot.cost, tax - G.discount(s, inst, oracleOf(defOf)) - selfDiscount(s, inst, defOf)));
     if (moment === 'main' && responder && responder(game, inst)) {
       s.zones[zone].splice(s.zones[zone].indexOf(iid), 1);
       inst.zone = 'stack';
@@ -924,8 +930,84 @@ const Bot = (() => {
   }
   const kwList = text => String(text || '').toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(Boolean);
 
+  // ---------- board wipes ----------
+
+  // "Destroy all creatures", "… with power 4 or greater", "… with power 2 or less", "… with power
+  // greater than or equal to 3". Expel the Interlopers: "Choose a number between 0 and 10. Destroy
+  // all creatures with power greater than or equal to the chosen number" (one part, see effectParts).
+  const WIPE = /^destroy all creatures(?: with power (?:(\d+|the chosen number) or (greater|less)|(greater|less) than or equal to (\d+|the chosen number)))?\.?$/i;
+  const CHOOSE_WIPE = /^choose a number between (\d+) and (\d+)\. (destroy all .+ the chosen number)\.?$/i;
+  // { test(st) }: does a creature with these stats get destroyed? null if the text isn't a wipe.
+  function wipeOf(text) {
+    const m = WIPE.exec(String(text).trim());
+    if (!m) return null;
+    const n = Number(m[1] || m[4]);
+    const dir = (m[2] || m[3] || '').toLowerCase();
+    return { test: st => !dir || (dir === 'greater' ? st.pow >= n : st.pow <= n) };
+  }
+  // The creatures a wipe destroys: on g (whoever's effect it is) and other (the opponent's table, if
+  // there is one here). Indestructible ones stay. Returns { mine, theirs }, each [{ c, st, t }].
+  function wipeVictims(g, other, text, defOf) {
+    const w = wipeOf(text);
+    const hit = t => (w && t && t.zones ? creatures(t).map(c => ({ c, t, st: stats(c, c.bot || defOf(c.id)) })).filter(x => w.test(x.st) && !x.st.kw.has('indestructible')) : []);
+    return { mine: hit(g), theirs: hit(other) };
+  }
+  // The number that's best for g's side: the most value destroyed on the other side less its own
+  // (the highest number on a tie, which destroys the fewest). Returns { n, net, mine, theirs }.
+  function bestNumber(g, other, text, min, max, defOf) {
+    const worth = list => list.reduce((k, x) => k + value(x.st), 0);
+    let best = null;
+    for (let n = max; n >= min; n--) {
+      const v = wipeVictims(g, other, text.replace(/the chosen number/gi, String(n)), defOf);
+      const net = worth(v.theirs) - worth(v.mine);
+      if (!best || net > best.net) best = { n, net, ...v };
+    }
+    return best;
+  }
+  // Destroys them (a regeneration shield taps one instead). ctx.other is the opponent's table.
+  function destroyAll(g, ctx, text) {
+    const defOf = ctx.defOf || (() => null);
+    const v = wipeVictims(g, ctx.other, text, defOf);
+    const names = [];
+    for (const { c, t } of [...v.mine, ...v.theirs]) {
+      if (c.regen > 0) {
+        c.regen--;
+        if (!c.regen) delete c.regen;
+        c.tapped = true;
+        continue;
+      }
+      G.move(t, c.iid, c.commander ? 'command' : 'graveyard');
+      names.push(c.name);
+    }
+    G.log(g, `${(ctx.self && ctx.self.name) || 'Effect'}: destroyed ${names.length ? andList(names) : 'no creatures'}.`);
+  }
+  // What a board wipe in Opp's spell is worth to Opp, choosing its best number.
+  function wipeGain(game, text, defOf) {
+    let total = 0;
+    for (const part of effectParts(text)) {
+      const m = CHOOSE_WIPE.exec(part);
+      if (m) total += bestNumber(game.bot.s, game, m[3], Number(m[1]), Number(m[2]), defOf).net;
+      else if (wipeOf(part)) total += bestNumber(game.bot.s, game, part, 0, 0, defOf).net;
+    }
+    return total;
+  }
+
   // The effects runEffect knows: [pattern, do(table, match, ctx), can(match, ctx) if it needs more than the words].
   const EFFECTS = [
+    // Board wipes, on every table here. Expel the Interlopers: you pick the number (ctx.chooseNumber,
+    // app.js; the wipe waits for it); Opp and automatic games pick the one that's best for them.
+    [WIPE, (g, m, ctx) => destroyAll(g, ctx, m[0]), m => !/the chosen number/i.test(m[0])],
+    [CHOOSE_WIPE, (g, m, ctx) => {
+      const [min, max] = [Number(m[1]), Number(m[2])];
+      const src = (ctx.self && ctx.self.name) || 'Effect';
+      if (ctx.chooseNumber) {
+        ctx.chooseNumber(min, max, src, m[3]);
+        return 'pause';
+      }
+      const { n } = bestNumber(g, ctx.other, m[3], min, max, ctx.defOf || (() => null));
+      G.log(g, `${src}: chose ${n}.`);
+      destroyAll(g, ctx, m[3].replace(/the chosen number/gi, String(n)));
+    }],
     [new RegExp(`^(?:you )?draw ${COUNT} cards?$`, 'i'), (g, m) => G.drawCards(g, toNumber(m[1]))],
     [new RegExp(`^(?:you )?gain ${COUNT} life$`, 'i'), (g, m) => { g.life += toNumber(m[1]); }], // "you may gain 1 life" comes without its "you"
     [new RegExp(`^(?:you )?lose ${COUNT} life$`, 'i'), (g, m) => { g.life -= toNumber(m[1]); }],
@@ -988,15 +1070,19 @@ const Bot = (() => {
   //   any target / target …, tap / untap target …, target … gets +X/+Y (and gains …) until end of
   //   turn (pump), put N … counters on target … (counter). what must be something targetFilter reads.
   function targetEffect(part) {
-    const p = String(part).trim().replace(/\.$/, '');
+    let p = String(part).trim().replace(/\.$/, '');
     let m;
+    // "Until end of turn, target creature gets …" reads as "target creature gets … until end of turn".
+    if ((m = /^until end of turn, (.+)$/i.exec(p))) p = `${m[1]} until end of turn`;
     let out = null;
     if ((m = /^(destroy|exile) (?:up to one )?target (.+)$/i.exec(p))) out = { action: m[1].toLowerCase(), what: m[2] };
     else if ((m = /^return (?:up to one )?target (.+?) to (?:its|their) owner's hand$/i.exec(p))) out = { action: 'bounce', what: m[1] };
     else if ((m = /^.+? deals (\d+) damage to (any target|(?:up to one )?target (.+))$/i.exec(p))) out = { action: 'damage', n: Number(m[1]), what: m[3] || 'any target' };
     else if ((m = /^(tap|untap) (?:up to one )?target (.+)$/i.exec(p))) out = { action: m[1].toLowerCase(), what: m[2] };
-    else if ((m = /^target (.+?) gets ([+-]\d+)\/([+-]\d+)(?: and gains (.+?))? until end of turn$/i.exec(p))) {
-      out = { action: 'pump', what: m[1], pow: Number(m[2]), tou: Number(m[3]), kw: kwWords(m[4]) };
+    else if ((m = /^target (.+?) gets ([+-]\d+)\/([+-]\d+)(?: and gains (.+?))?( and can attack as though it didn['’]?t have defender)? until end of turn$/i.exec(p))) {
+      // It can also gain a quoted ability ("Whenever this creature deals combat damage …") as lines.
+      const lines = [...String(m[4] || '').matchAll(/"([^"]+)"/g)].map(q => q[1]);
+      out = { action: 'pump', what: m[1], pow: Number(m[2]), tou: Number(m[3]), kw: kwWords(String(m[4] || '').replace(/"[^"]*"/g, '')), lines, attack: !!m[5] };
     } else if ((m = /^target (.+?) gains (.+?) until end of turn$/i.exec(p)) && kwWords(m[2]).length) out = { action: 'pump', what: m[1], pow: 0, tou: 0, kw: kwWords(m[2]) };
     else if ((m = new RegExp(`^put ${COUNT} ([\\w+/-]+) counters? on (?:up to one )?target (.+)$`, 'i').exec(p))) out = { action: 'counter', n: toNumber(m[1]), kind: m[2].toLowerCase(), what: m[3] };
     return out && targetFilter(out.what) ? out : null;
@@ -1085,8 +1171,12 @@ const Bot = (() => {
       what = `${eff.action === 'tap' ? 'tapped' : 'untapped'} ${inst.name}`;
     } else if (eff.action === 'pump') {
       pumpBy(inst, eff.pow, eff.tou);
-      if (eff.kw.length) inst.pump.kw = [...new Set([...(inst.pump.kw || []), ...eff.kw])];
-      what = `${inst.name} gets ${eff.pow >= 0 ? '+' : ''}${eff.pow}/${eff.tou >= 0 ? '+' : ''}${eff.tou}${eff.kw.length ? ` and ${eff.kw.join(', ')}` : ''} until end of turn`;
+      const kw = [...eff.kw, ...(eff.attack ? [DEFENDER_ATTACKS] : [])];
+      if (kw.length) inst.pump.kw = [...new Set([...(inst.pump.kw || []), ...kw])];
+      const lines = eff.lines || [];
+      if (lines.length) inst.pump.lines = [...(inst.pump.lines || []), ...lines]; // oracleLines reads them until end of turn
+      const gains = [...eff.kw, ...lines.map(l => `"${l}"`)];
+      what = `${inst.name} gets ${eff.pow >= 0 ? '+' : ''}${eff.pow}/${eff.tou >= 0 ? '+' : ''}${eff.tou}${gains.length ? ` and ${gains.join(', ')}` : ''}${eff.attack ? ' and can attack as though it didn\'t have defender' : ''} until end of turn`;
     } else if (eff.action === 'counter') {
       G.counter(s, inst.iid, eff.kind, eff.n, { effect: true });
       what = `${eff.n} ${eff.kind} counter${eff.n === 1 ? '' : 's'} on ${inst.name}`;
@@ -1144,8 +1234,9 @@ const Bot = (() => {
       }
     }
   }
+  // "Choose a number between 0 and 10." stays with the sentence that uses it (CHOOSE_WIPE).
   const effectParts = text => String(text).replace(/\([^)]*\)/g, '').trim().replace(/\.$/, '')
-    .split(/\.\s+|,?\s+and\s+(?=you |draw |each |put |target )|,\s+then\s+/i).map(p => p.trim()).filter(Boolean);
+    .split(/(?<!\bbetween \d+ and \d+)\.\s+|,?\s+and\s+(?=you |draw |each |put |target )|,\s+then\s+/i).map(p => p.trim()).filter(Boolean);
   const effectFor = (part, ctx) => EFFECTS.find(([re, , can]) => { const m = re.exec(part); return m && (!can || can(m, ctx)); });
   // Can runEffect do all of this text? (Then a spell made of it can resolve on its own.)
   const canRunAll = (text, ctx) => { const parts = effectParts(text); return parts.length > 0 && !/\bif you do\b/i.test(text) && parts.every(p => effectFor(p, ctx)); };
@@ -1180,7 +1271,8 @@ const Bot = (() => {
   // A rules line without reminder text or an ability word ("Raid — When …", "Landfall — Whenever …"),
   // which only names the ability. Saga chapters ("I, II — …") keep theirs.
   const plainLine = l => l.replace(/\([^)]*\)/g, '').trim().replace(/^(?![IVX]+(?:, [IVX]+)* —)[A-Z][A-Za-z'’ -]{1,40}? — (?=[A-Z{+−-])/, '');
-  const oracleLines = (inst, defOf) => oracleText(inst, defOf).split('\n').map(plainLine);
+  // Abilities a pump gave it until end of turn (inst.pump.lines) count too.
+  const oracleLines = (inst, defOf) => oracleText(inst, defOf).split('\n').map(plainLine).concat((inst.pump && inst.pump.lines) || []);
 
   // Runs one trigger and logs it. Parts it can't do are logged for you to do by hand.
   function fire(game, inst, what, effect, ctx, times = 1) {
@@ -1392,10 +1484,16 @@ const Bot = (() => {
     const bigger = h => !/power greater than its base power/.test(who) || h.st.pow > base(h);
     let g;
     let times = 0;
+    let effect = m[2];
     if ((g = /^one or more (.+?) you control/.exec(who))) times = hits.some(h => bigger(h) && isA(h.inst, g[1])) ? 1 : 0;
     else if ((g = /^(?:an?|another) (.+?) you control/.exec(who))) times = hits.filter(h => bigger(h) && isA(h.inst, g[1]) && !(/^another/.test(who) && h.inst === inst)).length;
-    else if (isSelf(who, inst)) times = hits.some(h => h.inst === inst) ? 1 : 0;
-    return times ? { times, effect: m[2] } : null;
+    else if (isSelf(who, inst)) {
+      const hit = hits.find(h => h.inst === inst);
+      times = hit ? 1 : 0;
+      // "draw cards equal to its toughness": the number, from its stats as it dealt the damage.
+      if (hit) effect = effect.replace(/\bcards equal to (?:its|this creature's) (power|toughness)\b/i, (all, k) => `${Math.max(0, /power/i.test(k) ? hit.st.pow : hit.st.tou)} cards`);
+    }
+    return times ? { times, effect } : null;
   }
 
   // "destroy up to one target artifact or enchantment that player controls" → 'artifact or enchantment'.
@@ -1483,6 +1581,23 @@ const Bot = (() => {
     return any;
   }
 
+  // A spell's discount on itself, from table s: "This spell costs {X} less to cast, where X is the
+  // total toughness of creatures you control" (The Pride of Hull Clade) or "This spell costs {1}
+  // less to cast for each Wall you control". Only generic mana comes off (autoPay).
+  const SELF_DISCOUNT = /^this spell costs \{(x|\d+)\} less to cast(?:, where x is the total (power|toughness) of (.+?) you control| for each (.+?) you control)\.?$/i;
+  function selfDiscount(s, inst, defOf) {
+    let total = 0;
+    for (const line of oracleLines(inst, defOf)) {
+      const m = SELF_DISCOUNT.exec(line);
+      if (!m) continue;
+      const mine = what => permanents(s).filter(c => isA(c, what));
+      if (m[2] && /^x$/i.test(m[1])) {
+        total += mine(m[3]).reduce((n, c) => { const st = stats(c, c.bot || defOf(c.id)); return n + Math.max(0, /power/i.test(m[2]) ? st.pow : st.tou); }, 0);
+      } else if (m[4] && /^\d+$/.test(m[1])) total += Number(m[1]) * mine(m[4]).length;
+    }
+    return total;
+  }
+
   // "Each creature you control with defender assigns combat damage equal to its toughness rather
   // than its power and can attack as though it didn't have defender" (Arcades), "Each creature
   // assigns …" (Doran, every table's), "Creatures you control can attack as though they didn't have
@@ -1526,13 +1641,14 @@ const Bot = (() => {
           }
           let m = /^(other )?(.+?) you control can't be blocked except by two or more creatures\.?$/i.exec(line);
           if (m) { lords.push({ src, other: !!m[1], what: m[2], kws: ['menace'], pow: 0, tou: 0 }); continue; } // menace, older words
-          m = /^(other )?(.+?) you control (?:get ([+-]\d+)\/([+-]\d+)(?: and have (.+?))?|have (.+?))\.?$/i.exec(line);
+          // "Other creatures you control with defender get +0/+2" (Stalwart Shield-Bearers): withKw.
+          m = /^(other )?(.+?) you control(?: with ([a-z]+(?: [a-z]+)?))? (?:get ([+-]\d+)\/([+-]\d+)(?: and have (.+?))?|have (.+?))\.?$/i.exec(line);
           if (m && m[2].includes(':')) continue; // an activated ability ("{2}: Elves you control get …"), not always on
           if (m) {
-            const kws = kwList(m[5] || m[6] || '').filter(k => KEYWORDS.includes(k)); // "protection from Dogs" is left to you
-            const pow = Number(m[3] || 0);
-            const tou = Number(m[4] || 0);
-            if (kws.length || pow || tou) lords.push({ src, other: !!m[1], what: m[2], kws, pow, tou });
+            const kws = kwList(m[6] || m[7] || '').filter(k => KEYWORDS.includes(k)); // "protection from Dogs" is left to you
+            const pow = Number(m[4] || 0);
+            const tou = Number(m[5] || 0);
+            if (kws.length || pow || tou) lords.push({ src, other: !!m[1], what: m[2], withKw: (m[3] || '').toLowerCase(), kws, pow, tou });
             continue;
           }
           m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control\.?$/i.exec(line);
@@ -1549,6 +1665,7 @@ const Bot = (() => {
         let tou = 0;
         lords.forEach(l => {
           if ((l.other && l.src === c) || !isA(c, l.what)) return;
+          if (l.withKw && !stats(c, c.bot || defOf(c.id)).kw.has(l.withKw)) return;
           l.kws.forEach(k => got.add(k));
           pow += l.pow;
           tou += l.tou;
@@ -2779,12 +2896,12 @@ const Bot = (() => {
     extraCombat, playerHit, witherCounters, keywordNumbers, kwN,
     targetEffect, targetFilter, canTarget, applyTarget, damagePlayer, oppTarget, enterEffects,
     setResponder, getResponder, isInstantSpeed, resumeTurn, resolveStack, counterStack, oppCounters, oppInstantAt, pickBlocks, castOptions, castOne, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
-    yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker, phaseTriggers, attackWatch, blockWatch, hitOf, TOUGH_DMG, DEFENDER_ATTACKS,
+    yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker, phaseTriggers, attackWatch, blockWatch, hitOf, TOUGH_DMG, DEFENDER_ATTACKS, selfDiscount, wipeVictims, bestNumber,
     searchSpec, searchable, applySearch, applyScry, crackFetches, ARTIFACT_TOKENS, faceOracle,
     // For coverage.js, which reads card text the same way the rest of this file does.
     parts: { OTHER_KEYWORDS, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,
       OLD_MENACE, UNBLOCKABLE, ATTACK_TAX, SPELL_TAX, NO_GAIN, ARBORIA, ATTACK_CAP, BLOCK_CAP, ATTACK_BLOCK_CAP, isSelf,
-      counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, BLOCK_WATCH, TOUGH_RULE, DEFENDER_RULE, plainLine } };
+      counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, BLOCK_WATCH, TOUGH_RULE, DEFENDER_RULE, SELF_DISCOUNT, WIPE, CHOOSE_WIPE, plainLine } };
 })();
 
 if (typeof module !== 'undefined') module.exports = Bot;

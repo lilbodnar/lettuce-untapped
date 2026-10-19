@@ -211,13 +211,14 @@ const Coverage = (() => {
 
   // ---------- always-on (static) lines ----------
 
-  const LORD = /^(other )?(.+?) you control (?:get ([+-]\d+)\/([+-]\d+)(?: and have (.+?))?|have (.+?))\.?$/i;
+  const LORD = /^(other )?(.+?) you control(?: with ([a-z]+(?: [a-z]+)?))? (?:get ([+-]\d+)\/([+-]\d+)(?: and have (.+?))?|have (.+?))\.?$/i;
 
   function staticLine(card, line, inst) {
     const out = { you: true, opp: true, gaps: [] };
     let m;
     if ((m = LORD.exec(line)) && !m[2].includes(':')) {
-      const kws = kwOnly(m[5] || m[6] || '');
+      if (m[3] && !B.KEYWORDS.includes(m[3].toLowerCase())) { gap(out, 'both', 'static', line); return out; } // "with power 4 or greater"
+      const kws = kwOnly(m[6] || m[7] || '');
       const unknown = kws.filter(k => !B.KEYWORDS.includes(k));
       if (!kws.length || !unknown.length) return out;
       unknown.forEach(k => gap(out, 'both', 'static', `… you control have ${k}`));
@@ -228,7 +229,7 @@ const Coverage = (() => {
     if ((m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) you control\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
     if (/^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.test(line)) return out;
     if (P.TOUGH_RULE.test(line) || P.DEFENDER_RULE.test(line)) return out; // Arcades, Doran, High Alert
-    if (P.ATTACK_TAX.test(line) || P.NO_GAIN.test(line) || P.ARBORIA.test(line) || P.ATTACK_CAP.test(line) || P.BLOCK_CAP.test(line)) return out;
+    if (P.SELF_DISCOUNT.test(line)) return out; // The Pride of Hull Clade    if (P.ATTACK_TAX.test(line) || P.NO_GAIN.test(line) || P.ARBORIA.test(line) || P.ATTACK_CAP.test(line) || P.BLOCK_CAP.test(line)) return out;
     if (P.SPELL_TAX.test(line) && !/\btarget/i.test(line)) return out;
     if (P.OLD_MENACE.test(line) || P.UNBLOCKABLE.test(line) || P.CANT.test(line)) return out;
     if (/^this spell can't be countered\.?$/i.test(line)) return out; // Opp doesn't try
