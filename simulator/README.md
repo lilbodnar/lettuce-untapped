@@ -13,9 +13,8 @@ Card data and images come from [Scryfall](https://scryfall.com) (free, no accoun
 
 ## Getting started
 
-1. Open MTG Tracker and click **Simulator ▸** at the top right. Online, that's [lilbodnar.github.io/lettuce-untapped/simulator](https://lilbodnar.github.io/lettuce-untapped/simulator/). (Or double-click `simulator/index.html` in a downloaded copy.)
-2. Your MTG Tracker decks show up on the **Decks** tab. Click **Play**.
-3. **◂ MTG Tracker** at the top right takes you back.
+1. Open MTG Tracker and click the **Simulator** tab at the top right. It opens right there, and your game keeps going while you use the other tabs. (It also works on its own page: [lilbodnar.github.io/lettuce-untapped/simulator](https://lilbodnar.github.io/lettuce-untapped/simulator/), or `simulator/index.html` in a downloaded copy, with **◂ MTG Tracker** to go back.)
+2. Your MTG Tracker decks show up on the **Decks** tab. Click **Play**. Or, on a deck's page in MTG Tracker, click **▶ Play**, **Play vs computer** or **Odds** to open that deck straight away.
 
 Use Chrome or Edge, and the same browser for both.
 
@@ -33,7 +32,9 @@ If your decks don't appear (for example in Firefox, or on a different computer):
 
 ## Playing decks you don't own
 
-On the Decks tab, paste a list into **Paste a deck list**, give it a name, and click **Import deck**. Lists from Archidekt, Moxfield, MTG Arena, or plain text like `1 Sol Ring` all work. To mark the commander, use a `[Commander]` category, a `*CMDR*` tag, or put it under a `Commander` heading. Sideboard sections are skipped.
+**Precons:** on the Decks tab, click **Show precons** under **Precon decks**, search by name, set or year, and click **Add**. Every Commander precon Wizards has printed is there (the lists come from [MTGJSON](https://mtgjson.com)). It joins Your Simulator decks, ready to play or to pick as Opp's deck.
+
+**Any list:** on the Decks tab, paste a list into **Paste a deck list**, give it a name, and click **Import deck**. Lists from Archidekt, Moxfield, MTG Arena, or plain text like `1 Sol Ring` all work. To mark the commander, use a `[Commander]` category, a `*CMDR*` tag, or put it under a `Commander` heading. Sideboard sections are skipped.
 
 ## Playing
 
