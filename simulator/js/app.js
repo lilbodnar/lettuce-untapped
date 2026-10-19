@@ -3730,7 +3730,7 @@
     const pick = (k, i = 0) => (findDeck(ui[k]) ? ui[k] : (decks[i] || decks[0]).key);
     const deckSel = (id, key, extra = '') => `<select id="${id}">${extra}${decks.map(d => `<option value="${esc(d.key)}" ${d.key === key ? 'selected' : ''}>${esc(d.name)}</option>`).join('')}</select>`;
     const numSel = (id, val, list) => `<select id="${id}">${list.map(n => `<option ${n === val ? 'selected' : ''}>${n}</option>`).join('')}</select>`;
-    const run = kind => `<button class="btn" data-act="auto-run" data-kind="${kind}" ${autoRun ? 'disabled' : ''}>Run</button>`;
+    const run = (kind, label = 'Run') => `<button class="btn" data-act="auto-run" data-kind="${kind}" ${autoRun ? 'disabled' : ''}>${label}</button>`;
     const out = kind => `<div id="out-${kind}">${autoOut(kind)}</div>`;
     view.innerHTML = `
       <p class="muted small">The computer plays your decks with Opp's rules: a land each turn, the biggest spells it can afford, attacks that look safe, and Opp's removal and blocks.
@@ -3770,6 +3770,13 @@
         ${out('gt')}
       </section>
       <section class="panel">
+        <h3>Bracket estimate</h3>
+        <p class="muted small">Where each Commander deck likely sits in the Commander Brackets (1 Exhibition, 2 Core, 3 Upgraded, 4 Optimized, 5 cEDH), going by what's in the list:
+          Game Changers, mass land denial, extra turns, tutors and well-known two-card combos. No games are played. A list can't show intent, so talk it over with your table.</p>
+        <div class="toolbar tight">${run('br', 'Estimate')}</div>
+        ${out('br')}
+      </section>
+      <section class="panel">
         <h3>Try a change</h3>
         <p class="muted small">Take cards out and put others in, then play the old and new versions side by side. Your deck isn't changed.
           Write one card per line, like <code>2 Shock</code> or <code>Grizzly Bears</code>.</p>
@@ -3806,7 +3813,7 @@
     const r = autoLast[kind];
     if (!r) return '';
     const errs = r.errors ? `<p class="muted small">${r.errors} game${r.errors === 1 ? '' : 's'} stopped with an error and ${r.errors === 1 ? "isn't" : "aren't"} counted.</p>` : '';
-    const html = { gf: goldfishHtml, mu: matchupHtml, gt: gauntletHtml, tc: changeHtml, lc: landsHtml }[kind](r);
+    const html = { gf: goldfishHtml, mu: matchupHtml, gt: gauntletHtml, br: bracketHtml, tc: changeHtml, lc: landsHtml }[kind](r);
     return html + errs;
   }
 
@@ -3923,11 +3930,40 @@
           }).join('')}<td class="num"><b>${overall && overall.rate != null ? pct(overall.rate) : '–'}</b></td></tr>`;
         }).join('')}</tbody></table></div>
       <p class="muted small">Each cell is how often the row's deck beat the column's. A pair can add up to less than 100% when some games had no winner by turn 25.</p>
-      ${r.focus == null ? `<h4>Ranking</h4><ol>${rank.map(x => `<li><b>${esc(x.name)}</b> ${pct(x.rate)} of ${x.g} games won</li>`).join('')}</ol>`
+      ${r.focus == null ? `<h4>Ranking</h4><ol>${rank.map(x => `<li><b>${esc(x.name)}</b> ${pct(x.rate)} of ${x.g} games won${r.brackets && r.brackets[x.i] ? ` <span class="muted">(Bracket ${r.brackets[x.i]})</span>` : ''}</li>`).join('')}</ol>`
         : (() => {
           const worst = cols.map(j => ({ j, c: cell(r.focus, j) })).filter(x => x.c && x.c.g).sort((a, b) => a.c.w / a.c.g - b.c.w / b.c.g)[0];
           return worst ? `<p class="small">Hardest matchup: <b>${esc(names[worst.j])}</b> (${pct(worst.c.w / worst.c.g)} won).</p>` : '';
         })()}`;
+  }
+
+  // Bracket estimate: one row per deck, then what put each deck where it is.
+  function bracketHtml(r) {
+    const cmd = r.decks.filter(d => d.est.commander);
+    const other = r.decks.filter(d => !d.est.commander);
+    const names = items => items.map(x => `${x.name}${x.qty > 1 ? ` ×${x.qty}` : ''}`).join(', ');
+    const num = items => {
+      const n = items.reduce((s, x) => s + (x.qty || 1), 0);
+      return `<td class="num" title="${esc(names(items.map(x => x.cards ? { name: x.cards.join(' + '), qty: 1 } : x)))}">${n || '–'}</td>`;
+    };
+    const label = e => `Bracket ${e.bracket}${e.bracket === 2 ? ' or 1' : e.bracket === 4 ? ' or 5' : ''}`;
+    const list = (title, items) => (items.length ? `<li>${title}: ${esc(names(items))}</li>` : '');
+    if (!cmd.length) return '<p class="muted small">None of your decks look like Commander decks (a commander, or 100 cards), and brackets are only for Commander.</p>';
+    return `<div class="table-scroll"><table class="list compact"><thead><tr><th>Deck</th><th>Estimate</th><th class="num">Game Changers</th><th class="num">Tutors</th><th class="num">Extra turns</th><th class="num">Land denial</th><th class="num">Two-card combos</th></tr></thead>
+        <tbody>${cmd.map(({ name, est: e }) => `<tr><td><b>${esc(name)}</b></td><td><b>${label(e)}</b> <span class="muted">${esc(e.name)}</span></td>
+          ${num(e.gameChangers)}${num(e.tutors)}${num(e.extraTurns)}${num(e.landDenial)}${num(e.combos)}</tr>`).join('')}</tbody></table></div>
+      <p class="muted small">Bracket 1 is a Bracket 2 deck built around a theme more than winning, and Bracket 5 is a Bracket 4 deck tuned for tournaments; the list can't tell those apart.
+        Hover a number to see the cards.</p>
+      ${cmd.map(({ name, est: e }) => `<details><summary><b>${esc(name)}</b>: ${label(e)}</summary><ul class="small">
+        ${e.reasons.length ? e.reasons.map(x => `<li>${esc(x.why)}: at least Bracket ${x.bracket}.</li>`).join('') : '<li>Nothing in the list goes past Bracket 2.</li>'}
+        ${list('Game Changers', e.gameChangers)}
+        ${list('Tutors', e.tutors)}
+        ${list('Extra turns', e.extraTurns)}
+        ${list('Mass land denial', e.landDenial)}
+        ${e.combos.length ? `<li>Two-card combos: ${e.combos.map(c => `${esc(c.cards.join(' + '))} (${c.mv} mana${c.early ? ', can go off early' : ''})`).join('; ')}</li>` : ''}
+        ${e.unchecked ? `<li class="muted">${e.unchecked} card${e.unchecked === 1 ? '' : 's'} couldn't be checked against the Game Changers list.</li>` : ''}
+      </ul></details>`).join('')}
+      ${other.length ? `<p class="muted small">Not Commander decks, so no bracket: ${other.map(d => esc(d.name)).join(', ')}.</p>` : ''}`;
   }
 
   // Try a change: the two versions side by side.
@@ -4007,6 +4043,21 @@
     return defs;
   }
 
+  // Like defsFor, and also asks Scryfall again for cards saved before they had the Game Changer mark.
+  async function bracketDefs(decks) {
+    const defs = await defsFor(decks);
+    const stale = [...new Set(decks.flatMap(d => d.rows.map(r => r.id)))].filter(id => def(id) && typeof def(id).gameChanger !== 'boolean');
+    if (stale.length) {
+      status(`Checking ${stale.length} cards against the Game Changers list…`);
+      const { found } = await Scryfall.collection(stale.map(id => ({ id })));
+      found.forEach(c => { local.cards[c.id] = c; defs[c.id] = c; });
+      await saveLocal();
+      hideStatus();
+    }
+    return defs;
+  }
+  const bracketOf = deck => Brackets.estimate(deck.rows, def);
+
   // "2 Shock" lines to cards: [{ id, name, qty }] (Scryfall finds the ones the Simulator doesn't know).
   async function cardsFromLines(text) {
     const { entries } = parseList(text);
@@ -4068,14 +4119,20 @@
         const pairs = [];
         if (focus == null) decks.forEach((_, i) => decks.forEach((__, j) => { if (j > i) pairs.push([i, j]); }));
         else decks.forEach((_, j) => { if (j !== focus) pairs.push([focus, j]); });
-        const defs = await defsFor(decks.filter((_, i) => pairs.some(p => p.includes(i))));
+        const defs = await bracketDefs(decks.filter((_, i) => pairs.some(p => p.includes(i))));
         const jobs = pairs.flatMap(([i, j]) => Array.from({ length: ui.gtN }, (_, k) => () => ({ i, j, r: Autoplay.match(decks[i], decks[j], defs, { aFirst: k % 2 === 0 }) })));
         runJobs('gt', jobs, list => {
           const cells = {};
           const add = (x, y, won) => { const c = cells[`${x}|${y}`] = cells[`${x}|${y}`] || { w: 0, g: 0 }; c.g++; if (won) c.w++; };
           list.forEach(({ i, j, r }) => { add(i, j, r.winner === 'A'); add(j, i, r.winner === 'B'); });
-          return { decks: decks.map(d => d.name), pairs: cells, focus, per: ui.gtN };
+          const brackets = decks.map(d => { const e = bracketOf(d); return e.commander ? e.bracket : null; });
+          return { decks: decks.map(d => d.name), pairs: cells, focus, per: ui.gtN, brackets };
         });
+      } else if (kind === 'br') {
+        const decks = allDecks();
+        await bracketDefs(decks);
+        autoLast.br = { decks: decks.map(d => ({ name: d.name, est: bracketOf(d) })) };
+        if (ui.tab === 'test') renderTest();
       } else if (kind === 'tc') {
         Object.assign(ui, { tcDeck: val('tcDeck'), tcOpp: val('tcOpp'), tcN: Number(val('tcN')), tcOut: val('tcOut'), tcIn: val('tcIn') });
         saveSoon();

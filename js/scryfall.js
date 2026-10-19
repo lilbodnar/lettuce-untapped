@@ -52,6 +52,7 @@ const Scryfall = (() => {
       cmc: c.cmc || 0,
       colorIdentity: c.color_identity || [],
       legalities: c.legalities || {}, // { commander: 'legal' | 'not_legal' | 'banned' | 'restricted', … }
+      gameChanger: c.game_changer === true, // on the Commander Brackets' Game Changers list
       image: img.normal || img.large || img.small || null,
       imageSmall: img.small || img.normal || null,
       imageLarge: img.large || img.normal || null,
