@@ -94,7 +94,7 @@ code, kbd { background: var(--panel-2); padding: 1px 5px; border-radius: 4px; fo
 .tabs .app-link { margin-left: auto; padding: .4rem .8rem; border-radius: 8px; text-decoration: none; font-weight: 600; }
 .tabs .app-link:hover { background: var(--panel-2); }
 /* Inside MTG Tracker's Simulator tab, which has the app's name and tabs already. */
-.embedded .brand, .embedded .tabs .app-link { display: none; }
+.embedded .topbar { display: none; } /* MTG Tracker's tab bar has its pages */
 .bot-panel.flash { box-shadow: 0 0 0 2px var(--accent); transition: box-shadow .3s; }
 .link-state { color: var(--muted); font-size: .85rem; display: flex; align-items: center; gap: .4rem; }
 .dot { width: 8px; height: 8px; border-radius: 50%; background: var(--muted); display: inline-block; }

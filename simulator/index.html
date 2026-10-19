@@ -11,6 +11,9 @@
   <link rel="apple-touch-icon" href="../icons/apple-touch-icon.png">
   <link rel="stylesheet" href="css/styles.css">
   <script>try { document.documentElement.dataset.accent = localStorage.getItem('mtg-accent') || 'orange'; } catch (e) {}</script>
+  <!-- The Simulator is part of MTG Tracker: opened on its own, it goes to the Tracker's Playtest tab
+       (which shows it, with every tab). "?standalone" in the address keeps this page on its own. -->
+  <script>if (window.parent === window && !/[?&]standalone\b/.test(location.search)) location.replace('../index.html#sim-decks');</script>
 </head>
 <body>
   <header class="topbar">

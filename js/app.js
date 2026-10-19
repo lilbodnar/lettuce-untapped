@@ -867,8 +867,20 @@
   function render() {
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === ui.tab));
     const view = $('#view');
-    showSimulator(ui.tab === 'simulator');
-    if (ui.tab === 'simulator') { renderBackupNote(); renderSyncNote(); syncNav(); return; }
+    if (ui.tab === 'simulator') ui.tab = 'sim-decks'; // the old single Simulator tab
+    const sim = ui.tab.startsWith('sim-');
+    showSimulator(sim);
+    if (sim) {
+      document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === ui.tab));
+      // Only when the page changes, so other redraws (prices updating…) leave a game alone.
+      if (!ui.simQuiet && simShown !== ui.tab) simSend({ type: 'sim:tab', tab: ui.tab.slice(4) });
+      simShown = ui.tab;
+      ui.simQuiet = false;
+      renderBackupNote();
+      renderSyncNote();
+      syncNav();
+      return;
+    }
     if (ui.tab === 'collection') view.innerHTML = renderCollection();
     else if (ui.tab === 'decks') view.innerHTML = ui.deckId ? renderDeck() : renderDeckList();
     else if (ui.tab === 'wishlist') view.innerHTML = renderWishlist();
@@ -888,6 +900,7 @@
   // storage (simulator/js/tracker-link.js), so they're saved first and it's told to read them again.
   let simFrame = null;
   let simReady = false;
+  let simShown = null; // the Simulator page last shown ('sim-play'…)
   const simQueue = []; // messages for it before it has started
   function simSend(msg) {
     if (simFrame && simReady) simFrame.contentWindow.postMessage(msg, location.origin === 'null' ? '*' : location.origin);
@@ -899,7 +912,14 @@
       simReady = true;
       simQueue.splice(0).forEach(simSend);
     }
+    // The Simulator changed page by itself (a game started, Continue…): the tab bar follows.
+    if (e.data && e.data.type === 'sim:tab' && SIM_TABS.includes(e.data.tab) && ui.tab !== `sim-${e.data.tab}` && ui.tab.startsWith('sim-')) {
+      ui.tab = `sim-${e.data.tab}`;
+      ui.simQuiet = true;
+      render();
+    }
   });
+  const SIM_TABS = ['decks', 'play', 'odds', 'test', 'help'];
   function placeSimulator() {
     const host = $('#simHost');
     const bar = document.querySelector('.topbar');
@@ -919,13 +939,15 @@
       host.appendChild(simFrame);
     }
     placeSimulator();
-    // Your latest changes, saved and read again.
+    if (was) return; // already showing (another Simulator tab, or a redraw)
+    // Coming from the rest of the app: your latest changes, saved and read again.
     (saveTimer ? (clearTimeout(saveTimer), saveTimer = null, saveNow()) : Promise.resolve()).then(() => simSend({ type: 'sim:refresh' }));
   }
   window.addEventListener('resize', placeSimulator);
   // From a deck page: open this deck in the Simulator (mode 'play', 'bot' or 'odds').
   function openInSimulator(deckId, mode) {
-    ui.tab = 'simulator';
+    ui.tab = mode === 'play' ? 'sim-play' : mode === 'odds' ? 'sim-odds' : 'sim-decks';
+    ui.simQuiet = true; // the Simulator picks its page itself once it has the deck
     render();
     simSend({ type: 'sim:open', key: `tracker:${state.activeProfileId}:${deckId}`, mode });
   }
@@ -949,7 +971,7 @@
 
   // ---------- navigation (in-app Back button and the browser's Back/Forward) ----------
 
-  const TABS = ['collection', 'decks', 'wishlist', 'prices', 'import', 'settings', 'simulator'];
+  const TABS = ['collection', 'decks', 'wishlist', 'prices', 'import', 'settings', 'simulator', 'sim-decks', 'sim-play', 'sim-odds', 'sim-test', 'sim-help'];
   let navDepth = 0; // how many in-app pages are behind the current one
 
   const navHash = () => (ui.tab === 'shared'

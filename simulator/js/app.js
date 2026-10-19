@@ -2203,6 +2203,8 @@
   // ---------- tabs ----------
 
   function setTab(tab) {
+    // Inside MTG Tracker, its tab bar shows which page this is.
+    if (embedded) window.parent.postMessage({ type: 'sim:tab', tab }, location.origin === 'null' ? '*' : location.origin);
     ui.tab = tab;
     document.querySelectorAll('#tabs button').forEach(b => b.classList.toggle('active', b.dataset.tab === tab));
     view.classList.toggle('wide', tab === 'play');
@@ -5337,6 +5339,8 @@
     if (!embedded || e.source !== window.parent || !e.data || typeof e.data.type !== 'string') return;
     const m = e.data;
     if (m.type === 'sim:refresh') return refreshTracker();
+    // MTG Tracker's tab bar: Playtest (decks), Play, Odds, Auto-test, Help.
+    if (m.type === 'sim:tab' && ['decks', 'play', 'odds', 'test', 'help'].includes(m.tab)) return setTab(m.tab);
     if (m.type !== 'sim:open' || typeof m.key !== 'string') return;
     await connectTracker(true);
     if (!findDeck(m.key)) return status("That deck isn't here yet. Click Refresh on the Decks tab.", 'warn');
