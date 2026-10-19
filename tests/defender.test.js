@@ -26,9 +26,13 @@ const defs = {
 };
 const defOf = id => defs[id];
 const deck = (name, ids) => ({ key: name, name, rows: ids.map(id => ({ id, qty: 3 })).concat({ id: 'forest', qty: 30 }) });
+// From the library (or, when every copy was drawn, from the hand, which then draws one more so tests
+// that count the hand aren't thrown off by the shuffle).
 const put = (s, id) => {
   const iid = [...s.zones.library, ...s.zones.hand].find(i => s.cards[i].id === id);
+  const fromHand = s.cards[iid].zone === 'hand';
   Game.move(s, iid, 'battlefield');
+  if (fromHand) Game.drawCards(s, 1, true);
   s.cards[iid].enteredTurn = -1;
   return s.cards[iid];
 };
@@ -125,7 +129,7 @@ test('Stalwart Shield-Bearers: other creatures you control with defender get +0/
 
 test('The Pride of Hull Clade costs {X} less, X being the total toughness of your creatures', () => {
   const game = vsOpp(['pride', 'bearers', 'wall', 'bear'], []);
-  const pride = game.cards[game.zones.library.find(i => game.cards[i].id === 'pride')];
+  const pride = game.cards[[...game.zones.library, ...game.zones.hand].find(i => game.cards[i].id === 'pride')];
   assert.equal(Bot.selfDiscount(game, pride, defOf), 0);
   put(game, 'bearers');
   put(game, 'wall');

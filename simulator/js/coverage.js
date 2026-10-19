@@ -31,7 +31,8 @@ const Coverage = (() => {
   const notRun = (text, inst) => P.effectParts(P.settleIfYouDo(text, null)).filter(p => !P.canRunAll(p, ctxFor(inst)));
 
   // Words that don't change the game once you're playing (or that you just follow, like flash).
-  const NOTHING_TO_DO = ['partner', 'partner with', 'friends forever', 'choose a background', 'doctor\'s companion', 'flash', 'enchant'];
+  const NOTHING_TO_DO = ['partner', 'partner with', 'friends forever', 'choose a background', 'doctor\'s companion', 'flash', 'enchant',
+    'changeling']; // every creature type: bot.js's isA reads it
   // Done for you when you cast it (app.js asks), but Opp never uses them.
   const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback'];
 
@@ -81,7 +82,8 @@ const Coverage = (() => {
   function enterPart(part, may, inst) {
     const p = part.trim().replace(/\.$/, '');
     if (B.targetEffect(p) || P.TOKEN_TEXT.test(p) || COUNTER_EACH.test(p) || /^you become the monarch$/i.test(p)) return true;
-    if (/for each|equal to|\bx\b/i.test(p)) return false;
+    // Amounts runEffect works out itself ("… for each creature destroyed this way", "X creature cards, where X is …").
+    if (/for each|equal to|\bx\b/i.test(p)) return !P.enteredElsewhere(p) && runs(p, inst);
     if (LIFE.test(p)) return true;
     if (!may && ENTER_DRAW.test(p)) return true;
     if (!may && ENTER_DISCARD.test(p)) return true;
@@ -334,7 +336,8 @@ const Coverage = (() => {
 
   function spell(card, lines, inst) {
     const out = { you: true, opp: true, gaps: [] };
-    const text = lines.join(' ');
+    // X is asked for when you cast it (app.js), so read it as a number.
+    const text = lines.join(' ').replace(/\bX\b/g, /\{X\}/i.test(card.manaCost || '') ? '1' : 'X');
     const modes = B.spellModes(inst, () => card);
     if (modes) {
       modes.modes.forEach(mode => {
@@ -366,7 +369,7 @@ const Coverage = (() => {
   // ---------- one card ----------
 
   function check(card) {
-    const inst = { id: 'card', name: card.name, typeLine: card.typeLine || '' };
+    const inst = { id: 'card', name: card.name, typeLine: card.typeLine || '', xValue: /\{X\}/i.test(card.manaCost || '') ? 1 : undefined };
     // Both faces of a two-faced card, each read as the Simulator reads it when that face is up.
     const text = [B.faceOracle(card.oracle, card.name, false), ...(String(card.name).includes(' // ') ? [B.faceOracle(card.oracle, card.name, true)] : [])];
     const lines = [...new Set(text)].join('\n').split('\n').map(P.plainLine).filter(Boolean);

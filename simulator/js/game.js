@@ -52,8 +52,10 @@ const Game = (() => {
   // as Boggart Bog), otherwise the front.
   const faceType = inst => { const t = String(inst.typeLine || '').split('//'); return (inst.flipped && t[1]) || t[0]; };
   const isLand = inst => /\bland\b/i.test(faceType(inst));
-  // A crewed Vehicle counts as a creature until the turn ends.
-  const isCreature = inst => !!inst.crewed || /\bcreature\b/i.test(faceType(inst));
+  // A crewed Vehicle counts as a creature until the turn ends, and so does a Restless land animated
+  // until end of turn (inst.becomes). A card cast for impending (time counters left) or bestowed on a
+  // creature (it's an aura then) isn't one, and a card mutated onto another is part of that creature.
+  const isCreature = inst => (!!inst.crewed || !!inst.becomes || /\bcreature\b/i.test(faceType(inst))) && !inst.impending && !inst.bestowed && !inst.mutatedOnto;
   const isVehicle = inst => /\bvehicle\b/i.test(faceType(inst));
   // The turn is over: Vehicles stop being creatures.
   const endCrew = s => s.zones.battlefield.forEach(iid => { delete s.cards[iid].crewed; delete s.cards[iid].crewedBy; });
@@ -109,6 +111,17 @@ const Game = (() => {
       // defender." (Axebane Guardian): as much as s.kwCount says (kept by bot.js's refreshGrants).
       const each = line.trim().match(/^\{T\}:\s*add (?:\{([WUBRGC])\} for each|x mana in any combination of colors, where x is the number of) creatures? you control with ([a-z ]+?)\.?$/i);
       if (each) return { colors: each[1] ? [each[1].toUpperCase()] : ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, countKw: each[2].toLowerCase() };
+      // Prophetic Prism: "{1}, {T}: Add one mana of any color."; Cascading Cataracts: "{5}, {T}: Add five
+      // mana in any combination of colors." (each mana any color)
+      const anyF = line.trim().match(/^\{(\d+)\},\s*\{T\}:\s*add (one mana of any colou?r|(\w+) mana in any combination of colou?rs)\.?$/i);
+      if (anyF && Number(anyF[1]) > 0) {
+        const k = anyF[3] ? toNumber(anyF[3]) : 1;
+        if (k) return { colors: [...MANA.slice(0, 5)], amount: k, sacrifice: false, filter: Number(anyF[1]), makes: Array(k).fill(MANA.slice(0, 5)) };
+      }
+      // Zaxara: "{T}: Add two mana of any one color."; Component Pouch: "{T}, Remove a component counter
+      // from this artifact: Add two mana of different colors." (the counter goes when it's tapped for mana)
+      const two = line.trim().match(/^\{T\}(?:,\s*remove an? (\w+) counter from (?:this \w+|it))?:\s*add (\w+) mana of (?:any one colou?r|different colou?rs)\.?$/i);
+      if (two && toNumber(two[2])) return { colors: [...MANA.slice(0, 5)], amount: toNumber(two[2]), sacrifice: false, ...(two[1] ? { remove: { kind: two[1].toLowerCase(), n: 1 } } : {}) };
       const f = line.trim().match(/^\{(\d+)\},\s*\{T\}:\s*add ((?:\{[WUBRGC]\}){2,})\.?$/i);
       if (f && Number(f[1]) > 0) {
         const makes = f[2].toUpperCase().match(/[WUBRGC]/g);
@@ -155,9 +168,12 @@ const Game = (() => {
       return n ? { ...inst.mana, amount: n } : null;
     }
     if (Object.values(inst.boosts || {}).some(b => b && b.noAbilities)) return null; // Arrest
+    if (inst.mana && inst.mana.remove && (inst.counters[inst.mana.remove.kind] || 0) < inst.mana.remove.n) return null; // Component Pouch with no counters
     if (inst.mana && inst.mana.filter && !(isCreature(inst) && inst.enteredTurn === s.turn)) return inst.mana;
     if (isLand(inst)) {
-      const colors = producesOf(inst);
+      // Abundant Growth: 'Enchanted land has "{T}: Add one mana of any color."'
+      const given = Object.values(inst.boosts || {}).some(b => b && (b.lines || []).some(l => /^\{T\}:\s*add one mana of any colou?r\.?$/i.test(l)));
+      const colors = given ? MANA.slice(0, 5) : producesOf(inst);
       return colors.length ? { colors, amount: 1, sacrifice: false } : null;
     }
     if (!inst.mana) return null;
@@ -299,11 +315,14 @@ const Game = (() => {
   function costReductions(oracle) {
     const out = [];
     for (const sentence of String(oracle || '').split(/\n+|(?<=\.)\s+/)) {
-      const m = sentence.trim().match(/^(.*?)\s*\bspells (you cast )?(of the chosen type )?(you cast )?cost \{(\d+)\} less to cast\.?$/i);
+      // Eminence (The Ur-Sphinx): "As long as The Ur-Sphinx is in the command zone or on the
+      // battlefield, other Sphinx spells you cast cost {1} less to cast." (from the command zone too)
+      const em = /^(?:eminence\s*[—-]\s*)?as long as .+? is in the command zone or on the battlefield, (?:other )?(.+)$/i.exec(sentence.trim());
+      const m = (em ? em[1] : sentence.trim()).match(/^(.*?)\s*\bspells (you cast )?(of the chosen type )?(you cast )?cost \{(\d+)\} less to cast\.?$/i);
       if (!m || !(m[2] || m[3] || m[4])) continue;
       const words = m[1].toLowerCase().split(/,?\s+(?:and\/or|and|or)\s+|,\s*|\s+/).filter(Boolean);
       if (words.length > 4 || !words.every(w => /^[a-z-]+$/.test(w))) continue;
-      out.push({ n: Number(m[5]), types: words, chosen: !!m[3] });
+      out.push({ n: Number(m[5]), types: words, chosen: !!m[3], ...(em ? { eminence: true } : {}) });
     }
     return out;
   }
@@ -314,10 +333,11 @@ const Game = (() => {
     const typeWords = String(spell.typeLine || '').split('//')[0].toLowerCase().split(/[^a-z-]+/).filter(Boolean);
     const has = w => typeWords.includes(w);
     let total = 0;
-    for (const iid of s.zones.battlefield) {
+    for (const iid of [...s.zones.battlefield, ...s.zones.command]) {
       const src = s.cards[iid];
       if (src.faceDown || src.iid === spell.iid) continue;
       for (const r of costReductions(oracleOf(src))) {
+        if (src.zone === 'command' && !r.eminence) continue;
         const plain = r.types.filter(w => !w.startsWith('non'));
         const nots = r.types.filter(w => w.startsWith('non')).map(w => w.replace(/^non-?/, ''));
         if (nots.some(has) || (plain.length && !plain.some(has))) continue;
@@ -347,6 +367,11 @@ const Game = (() => {
     for (const set of sets) if ((plan = withFilters(need, manaUnits(s), set, Object.assign({}, s.mana), new Set(), 0))) break;
     if (!plan) return null;
     const { units, used, pool, life, tapping } = plan;
+    // How many colors of mana were spent (converge: Radiant Flames, Painful Truths). A source that
+    // makes more than one color counts as whichever color isn't spent yet, as you'd pick.
+    const spent = new Set(need.pips.filter(p => p.colors.length === 1 && p.colors[0] !== 'C').map(p => p.colors[0]));
+    [...used].map(u => units[u].colors.filter(k => k !== 'C')).sort((a, b) => a.length - b.length)
+      .forEach(cs => { const k = cs.find(c => !spent.has(c)); if (k) spent.add(k); });
     // Mana a tapped source made but the spell didn't need floats in the pool.
     units.forEach((unit, u) => {
       if (!used.has(u) && tapping.has(unit.inst) && unit.colors.length === 1) pool[unit.colors[0]]++;
@@ -357,9 +382,10 @@ const Game = (() => {
     for (const inst of sources) {
       inst.tapped = true;
       inst.tappedFor = null;
+      if (inst.mana && inst.mana.remove) counter(s, inst.iid, inst.mana.remove.kind, -inst.mana.remove.n); // Component Pouch
       if (sourceOf(s, inst) && inst.mana && inst.mana.sacrifice) move(s, inst.iid, 'graveyard');
     }
-    return { sources: sources.map(i => i.name + (i.mana && i.mana.sacrifice ? ' (sacrificed)' : '')), life, pool: plan.fromPool };
+    return { sources: sources.map(i => i.name + (i.mana && i.mana.sacrifice ? ' (sacrificed)' : '')), life, pool: plan.fromPool, colors: spent.size };
   }
 
   // Turns on the filter sources in set one at a time: each one's {N} is paid by pool mana or other
@@ -477,6 +503,10 @@ const Game = (() => {
     // "As this land enters, you may pay 3 life. If you don't, it enters tapped." (Boggart Bog, shock lands)
     const shock = /\bas this land enters, you may pay (\w+) life\. if you don't, it enters tapped\b/i.exec(oracle);
     if (shock && toNumber(shock[1])) return { payLife: toNumber(shock[1]) };
+    // Game Trail, Murmuring Bosk: "As this land enters, you may reveal a Mountain or Forest card from
+    // your hand. If you don't, this land enters tapped." (revealed for you when you have one)
+    const reveal = /\bas this land enters, you may reveal an? (\w+)(?: or (\w+))? card from your hand\. if you don't, (?:this land|it) enters tapped\b/i.exec(oracle);
+    if (reveal) return { revealHand: [reveal[1], reveal[2]].filter(Boolean).map(t => t.toLowerCase()) };
     let out = false;
     oracle.split(/\n+|(?<=\.)\s+(?=[A-Z])/).forEach(line => {
       const m = line.match(/^(.+?) enters(?: the battlefield)? tapped(?: unless (.+?))?\.$/i);
@@ -491,6 +521,7 @@ const Game = (() => {
       else if ((c = cond.match(/^you control (one|two|three|four) or (fewer|more) other lands$/))) out = c[2] === 'fewer' ? { maxOther: COUNT_WORDS[c[1]] } : { minOther: COUNT_WORDS[c[1]] };
       else if ((c = cond.match(/^you control (one|two|three|four) or more basic lands$/))) out = { minBasics: COUNT_WORDS[c[1]] }; // battle lands
       else if ((c = cond.match(new RegExp(`^you control an? ${BASICS}(?:,? or an? ${BASICS})?$`)))) out = { control: [c[1], c[2]].filter(Boolean) };
+      else if ((c = cond.match(/^your opponents control (\w+) or more lands$/))) out = { oppLands: toNumber(c[1]) }; // Turbulent lands
     });
     return out;
   }
@@ -499,10 +530,16 @@ const Game = (() => {
   // (unknown when goldfishing, so then that condition is left to you). "You may pay 3 life" lands
   // come in untapped; app.js asks whether you pay, and Opp decides in bot.js.
   function tapsOnEntry(s, inst) {
+    // Archelos: "As long as Archelos is tapped, other permanents enter tapped. As long as Archelos is
+    // untapped, other permanents enter untapped." (s.enterState, kept by bot.js's refreshGrants)
+    if (s.enterState && s.enterState.src !== inst.iid && !inst.faceDown) return s.enterState.tapped;
     const et = inst.entersTapped;
     if (!et || inst.faceDown) return false;
     if (et === true) return true;
     if (et.payLife) return false;
+    // s.oppLandCount: how many lands the opponent has (bot.js); online it isn't known, so it's tapped.
+    if (et.oppLands) return !(s.oppLandCount >= et.oppLands);
+    if (et.revealHand) return !s.zones.hand.some(iid => et.revealHand.some(t => new RegExp(`\\b${t}\\b`, 'i').test(s.cards[iid].typeLine || '')));
     const others = s.zones.battlefield.map(iid => s.cards[iid]).filter(c => c !== inst);
     const otherLands = others.filter(isLand).length;
     if (et.opponents) return s.opponents != null && s.opponents < et.opponents;
@@ -585,6 +622,9 @@ const Game = (() => {
       x: 0,
       y: 0,
     }, extra);
+    if (/^changeling\b/im.test(String(def.oracle || ''))) inst.changeling = true; // every creature type (bot.js)
+    if (Array.isArray(def.colors) && def.colors.length && !def.custom) inst.cardColors = def.colors; // "multicolored card" (bot.js)
+    if (/^.+? is all colors\b/im.test(String(def.oracle || ''))) inst.allColors = true; // Transguild Courier
     s.cards[iid] = inst;
     return inst;
   }
@@ -778,8 +818,9 @@ const Game = (() => {
 
   // ---------- equipment and auras ----------
 
-  const isAttachment = inst => /\b(equipment|aura)\b/i.test((inst.typeLine || '').split('//')[0]);
-  const isAura = inst => /\baura\b/i.test((inst.typeLine || '').split('//')[0]);
+  // Bestowed (Chromanticore) and mutated (Illuna) cards ride on a creature like an aura.
+  const isAttachment = inst => !!inst.bestowed || !!inst.mutatedOnto || /\b(equipment|aura)\b/i.test((inst.typeLine || '').split('//')[0]);
+  const isAura = inst => !!inst.bestowed || !!inst.mutatedOnto || /\baura\b/i.test((inst.typeLine || '').split('//')[0]);
   const attachmentsOf = (s, hostIid) => s.zones.battlefield.filter(id => s.cards[id].attachedTo === hostIid);
   const ATTACH_PEEK = 0.22; // how far each attached card shows above its creature, in card widths
 
@@ -852,6 +893,9 @@ const Game = (() => {
     delete inst.bounceAfterCombat;
     delete inst.castAftermath;
     delete inst.damageTaken;
+    // The Commander precons' choices and states (bot.js).
+    ['becomes', 'impending', 'bestowed', 'mutatedOnto', 'chosenMode', 'chosenCardType', 'level', 'heldBy', 'goad', 'noAttackTurn',
+      'firstTurn', 'freeCast', 'xValue', 'spentColors', 'suspended'].forEach(k => delete inst[k]);
     // A copy (Wall of Stolen Identity) is itself again.
     if (inst.original) { Object.assign(inst, inst.original); delete inst.original; }
   }
@@ -906,7 +950,12 @@ const Game = (() => {
       delete inst.exileIfDies;
       delete inst.playable;
       delete inst.damageTaken;
+      delete inst.becomes; // Restless lands stop being creatures
+      delete inst.attackedNow;
+      // Cursed Mirror's copy lasts until end of turn.
+      if (inst.copyUntil != null && inst.original) { Object.assign(inst, inst.original); delete inst.original; delete inst.extraKw; delete inst.copyUntil; }
     }
+    delete s.lostLife; // Archfiend of Despair: life lost this turn
     delete s.delayed;
     delete s.deathsThisTurn;
     delete s.leftThisTurn;
@@ -976,7 +1025,8 @@ const Game = (() => {
       for (const id of attachmentsOf(s, iid)) {
         const a = s.cards[id];
         detach(s, id, true);
-        if (isAura(a)) move(s, id, 'graveyard');
+        // Bestow: a creature again. Mutate: the merged card goes where the creature went.
+        if (a.bestowed) { delete a.bestowed; autoPlace(s, a); log(s, `${a.name} is a creature again.`); } else if (a.mutatedOnto) { delete a.mutatedOnto; move(s, id, ['hand', 'library', 'exile'].includes(to) ? to : 'graveyard'); } else if (isAura(a)) move(s, id, 'graveyard');
         else { autoPlace(s, a); log(s, `${a.name} stays on the battlefield, unattached.`); }
       }
       delete inst.boosts;
@@ -1117,12 +1167,20 @@ const Game = (() => {
     log(s, 'Untapped everything.');
   }
 
+  // Unspent mana empties. Omnath, Locus of the Void: "If you would lose unspent mana, that mana
+  // becomes colorless instead." (s.keepMana, kept by bot.js's refreshGrants)
+  function emptyMana(s) {
+    const left = s.keepMana ? Object.values(s.mana).reduce((n, v) => n + (v || 0), 0) : 0;
+    Object.keys(s.mana).forEach(k => { s.mana[k] = 0; });
+    if (left) { s.mana.C = left; log(s, `${left} unspent mana became colorless instead of emptying.`); }
+  }
+
   function nextTurn(s) {
     endCrew(s);
     endOfTurn(s);
     s.turn++;
     s.landPlayed = false;
-    Object.keys(s.mana).forEach(k => { s.mana[k] = 0; });
+    emptyMana(s);
     const stunned = [];
     // Teferi's Protection: "Until your next turn, …" ends, and phased-out permanents come back.
     delete s.untilNextTurn;
@@ -1156,10 +1214,12 @@ const Game = (() => {
 
   function mill(s, n) {
     let count = 0;
+    s.lastMilled = []; // The Ur-Sphinx: "a card that player milled this way"
     for (let i = 0; i < n && s.zones.library.length; i++) {
       const iid = s.zones.library.shift();
       s.cards[iid].zone = 'graveyard';
       s.zones.graveyard.push(iid);
+      s.lastMilled.push(iid);
       count++;
       if (hooks.moved) hooks.moved(s, s.cards[iid], 'library', 'graveyard');
     }
@@ -1171,6 +1231,8 @@ const Game = (() => {
   function counter(s, iid, name, delta, opts = {}) {
     const inst = s.cards[iid];
     if (!inst) return 0;
+    // Darksteel Angel: "Creatures you control can't have -1/-1 counters put on them." (s.noMinusCounters, bot.js)
+    if (name === '-1/-1' && delta > 0 && s.noMinusCounters && isCreature(inst) && inst.zone === 'battlefield') { log(s, `${inst.name} can't have -1/-1 counters put on it.`); return 0; }
     if (opts.effect && delta > 0) {
       const twice = counterDoublers(s, inst, name);
       if (twice.length) {
@@ -1240,7 +1302,7 @@ const Game = (() => {
     choosesType, choosesColor, sourceOf, costReductions, discount, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
-    attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew,
+    attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,
     place: autoPlace,
   };
 })();

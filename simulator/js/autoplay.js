@@ -123,6 +123,7 @@ const Autoplay = (() => {
   // Why a player has lost, or ''.
   function lost(p) {
     const s = p.bot.s;
+    if (s.cantLose) return ''; // Darksteel Angel
     if (p.life <= 0) return 'life';
     if ((s.poison || 0) >= 10) return 'poison';
     if (Object.values(s.cmdDamage || {}).some(n => n >= 21)) return 'commander damage';

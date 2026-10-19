@@ -305,6 +305,7 @@
 
   function act(fn) {
     if (!game) return;
+    lastReq = null;
     delete game.oppHits;
     game.opponents = isOnline() ? others().length || null : hasBot() ? 1 : null; // for "enters tapped unless you have two or more opponents"
     if (hasBot()) game.bot.respond = ui.respond !== false; // Opp answers on your turn, and waits for your answers
@@ -342,7 +343,7 @@
     if (game && game.mustSacrifice) setTimeout(mustSacrificePrompt, 0);
     if (game && game.mustTarget && game.mustTarget.length) setTimeout(mustTargetPrompt, 0);
     if (game && game.mustLibrary && game.mustLibrary.length) setTimeout(mustLibraryPrompt, 0);
-    const asks = { mustDig: mustDigPrompt, mustSacThen: mustSacThenPrompt, mustCopy: mustCopyPrompt, mustTax: mustTaxPrompt, mustFlicker: mustFlickerPrompt, mustShock: mustShockPrompt, mustMadness: mustMadnessPrompt, mustModes: mustModesPrompt, mustCards: mustCardsPrompt, mustRecover: mustRecoverPrompt, mustHand: mustHandPrompt, mustSacToPlay: mustSacToPlayPrompt };
+    const asks = { mustDig: mustDigPrompt, mustSacThen: mustSacThenPrompt, mustCopy: mustCopyPrompt, mustTax: mustTaxPrompt, mustFlicker: mustFlickerPrompt, mustShock: mustShockPrompt, mustMadness: mustMadnessPrompt, mustModes: mustModesPrompt, mustCards: mustCardsPrompt, mustChoose: mustChoosePrompt, mustRecover: mustRecoverPrompt, mustHand: mustHandPrompt, mustSacToPlay: mustSacToPlayPrompt };
     for (const [k, fn] of Object.entries(asks)) if (game && game[k] && game[k].length) setTimeout(fn, 0);
     syncAuras(); // your Arrest on Opp's creature
     if (game) Bot.refreshGrants(game, def); // "Goblins you control have haste" and the like
@@ -357,15 +358,16 @@
 
   // Everyone in the game and why they've lost, if they have: 0 life, 10 poison, or 21 commander damage.
   function playersStatus() {
-    const why = (life, poison, cmd) => (life <= 0 ? `${life} life` : poison >= 10 ? `${poison} poison counters` : cmd >= 21 ? `${cmd} commander damage` : '');
-    const list = [{ key: 'me', name: 'You', why: why(game.life, game.poison || 0, Math.max(0, ...Object.values(game.cmdDamage || {}))) }];
+    // Darksteel Angel: "You can't lose the game" (s.cantLose, kept by Bot.refreshGrants).
+    const why = (life, poison, cmd, safe) => (safe ? '' : life <= 0 ? `${life} life` : poison >= 10 ? `${poison} poison counters` : cmd >= 21 ? `${cmd} commander damage` : '');
+    const list = [{ key: 'me', name: 'You', why: why(game.life, game.poison || 0, Math.max(0, ...Object.values(game.cmdDamage || {})), game.cantLose) }];
     if (isOnline()) {
       for (const p of others()) {
         const b = peers[p.pid] && peers[p.pid].board;
         if (b) list.push({ key: p.pid, name: p.name, why: why(b.life, b.poison || 0, 0) });
       }
     } else {
-      list.push({ key: 'opp', name: 'Opp', why: why(game.oppLife, 0, 0) });
+      list.push({ key: 'opp', name: 'Opp', why: why(game.oppLife, 0, 0, hasBot() && game.bot.s.cantLose) });
     }
     return list;
   }
@@ -513,10 +515,7 @@
       game.mustLibrary = game.mustLibrary.slice(1);
       if (!game.mustLibrary.length) delete game.mustLibrary;
       fn();
-      if (!req.then) return;
-      const self = (req.self && game.cards[req.self]) || { name: req.src };
-      const left = Bot.runEffect(game, req.then, Object.assign({ self, other: hasBot() ? game.bot.s : null }, effectCtx()));
-      Game.log(game, `${req.src}: ${req.then}.${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+      runThen(req);
     });
     const place = d => (d.to === 'hand' ? 'into your hand' : d.to === 'exile' ? 'into exile' : `onto the battlefield${d.tapped ? ' tapped' : ''}`);
     if (req.kind === 'number') return numberPrompt(req, next);
@@ -733,6 +732,7 @@
         const left = Bot.runEffect(game, req.modes[i], Object.assign({ self, other: hasBot() ? game.bot.s : null }, effectCtx()));
         Game.log(game, `${req.src}: ${req.modes[i]}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
       }
+      runThen(req);
     });
     if (req.pick >= req.modes.length) return run(req.modes.map((m, i) => i));
     openModal(`<form class="ask" id="trigModeForm"><h3>${esc(req.src)}</h3>
@@ -749,6 +749,32 @@
     };
   }
 
+  // Cards you pick for an effect (Bot.choiceIds / applyChoice): Brainstorm's two back on top, Time
+  // Wipe's creature to save, Duneblast's one to keep, a spell to cast for free (Rishkar's Expertise,
+  // Primeval Spawn, The Ur-Sphinx), cards to discard (Occult Epiphany), Mosswort Bridge's hideaway.
+  function mustChoosePrompt() {
+    const req = game && game.mustChoose && game.mustChoose[0];
+    if (!req || !modal.hidden) return;
+    const spec = req.spec;
+    const self = (req.self && game.cards[req.self]) || { name: req.src };
+    const ctx = () => Object.assign({ self, other: hasBot() ? game.bot.s : null }, effectCtx());
+    const table = spec.side === 'theirs' ? (hasBot() ? game.bot.s : null) : game;
+    const ids = table ? Bot.choiceIds(game, spec, ctx()) : [];
+    const finish = picks => act(() => {
+      nextOf('mustChoose');
+      Bot.applyChoice(game, { ...spec, src: req.src }, picks, ctx());
+      runThen(req);
+    });
+    if (!ids.length) return finish([]);
+    const n = Math.min(spec.max, ids.length);
+    const note = spec.mvTotal != null ? `Total mana value ${spec.mvTotal} or less (any over that stay where they are).`
+      : spec.action === 'top' && n > 1 ? 'The first card you click goes on top.' : spec.min ? `Pick ${n === 1 ? 'one' : n}.` : `Pick up to ${n === 1 ? 'one' : n}, or None.`;
+    pickCards({
+      title: `${req.src}: ${spec.title || 'choose'}`, note, ids, min: Math.min(spec.min, ids.length), max: n, ok: 'Done',
+      cardOf: iid => table.cards[iid], cancel: spec.min ? null : 'None', onCancel: () => finish([]),
+    }, finish);
+  }
+
   // Cards from graveyards (or your hand) to your hand or the battlefield: Liliana, Junji, Archenemy's
   // Charm, Ugin's −10, The Darkness Crystal. Cards on Opp's side come over to yours.
   function mustCardsPrompt() {
@@ -759,7 +785,7 @@
     const choices = Bot.moveChoices(game, other, spec);
     const key = c => `${c.s === game ? 'y' : 'o'}:${c.iid}`;
     const byKey = new Map(choices.map(c => [key(c), c]));
-    const finish = picks => act(() => { nextOf('mustCards'); Bot.applyMoveCards(game, spec, picks.map(k => byKey.get(k)).filter(Boolean), { name: req.src }, def); });
+    const finish = picks => act(() => { nextOf('mustCards'); Bot.applyMoveCards(game, spec, picks.map(k => byKey.get(k)).filter(Boolean), { name: req.src }, def); runThen(req); });
     if (!choices.length) return finish([]);
     const where = spec.to === 'hand' ? 'into your hand' : `onto the battlefield${spec.tapped ? ' tapped' : ''}`;
     pickCards({
@@ -1311,7 +1337,7 @@
   }
 
   const kwText = st => (st.kw.size ? ' · ' + [...st.kw].join(', ') : '');
-  const outcome = () => (game.oppLife <= 0 ? ' Opp is at 0 life: you win!' : game.life <= 0 ? ' You are at 0 life: Opp wins.' : '');
+  const outcome = () => (game.oppLife <= 0 && !(game.bot && game.bot.s.cantLose) ? ' Opp is at 0 life: you win!' : game.life <= 0 && !game.cantLose ? ' You are at 0 life: Opp wins.' : '');
 
   function botPanelHtml() {
     const decks = allDecks();
@@ -2090,6 +2116,7 @@
     const fromHand = inst.zone === 'hand' || inst.zone === 'command' || (inst.zone === 'graveyard' && opts.cast) || (inst.zone === 'exile' && inst.playable);
     if (!ui.autoTap || !fromHand || Game.isLand(inst) || opts.flip || opts.faceDown) return null;
     let cost = opts.cost != null ? opts.cost : (def(inst.id) || {}).manaCost || '';
+    if (opts.x != null) cost = cost.replace(/\{X\}/gi, opts.x ? `{${opts.x}}` : ''); // X you picked, each {X}
     if (inst.zone === 'exile' && inst.playable && inst.playable.free) cost = '';
     if (inst.zone === 'exile' && inst.playable && inst.playable.anyMana) cost = cost.replace(/\{[WUBRG](?:\/[WUBRGP2])?\}/gi, '{1}');
     const cmdTax = inst.zone === 'command' && inst.commander ? (inst.castCount || 0) * 2 : 0;
@@ -2118,12 +2145,22 @@
             closeAsk();
             if (b.dataset.cc === 'cancel') return;
             const c = choices[Number(b.dataset.cc)];
-            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost });
+            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend });
           };
         });
         return;
       }
     }
+    // A spell with {X} in its cost (Martial Coup, Neverwinter Hydra, Shark Typhoon): you say what X is.
+    const xCost = String(opts.cost != null ? opts.cost : (def(inst.id) || {}).manaCost || '');
+    if (/\{X\}/i.test(xCost) && opts.x == null && !Game.isLand(inst) && !opts.faceDown && !(inst.zone === 'exile' && inst.playable && inst.playable.free)) {
+      return ask(`X for ${inst.name}`, 1).then(x => {
+        if (x == null || Number.isNaN(Number(x)) || x < 0) return;
+        tryPlay(iid, { ...opts, x: Math.floor(Number(x)) });
+      });
+    }
+    // Explore: "You may play an additional land this turn."
+    if (inst.zone === 'hand' && Game.isLand(inst) && game.landPlayed && !opts.extraLand && game.extraLand === game.turn) { delete game.extraLand; opts = { ...opts, extraLand: true }; }
     // One land a turn. Play anyway is there for "you may play an additional land" effects.
     if (inst.zone === 'hand' && (Game.isLand(inst) || opts.flip) && !opts.faceDown && game.landPlayed && !opts.extraLand) {
       openModal(`<div class="ask"><h3>Land already played</h3>
@@ -2152,16 +2189,45 @@
     if (opts.flip) inst.flipped = true; // Boggart Trawler played as Boggart Bog
     if (opts.choice === 'alt') inst.altPaid = true; // Baleful Mastery: "If the {1}{B} cost was paid, …"
     if (opts.choice === 'offspring') inst.offspringPaid = true;
+    if (opts.x != null) inst.xValue = opts.x; // "X" in its text (Bot.fillX)
+    if (opts.choice === 'free') inst.freeCast = true; // Flawless Maneuver: no mana spent
+    // Impending (Overlord of the Mistmoors): time counters, not a creature until they're gone.
+    if (opts.choice === 'impending') { inst.impending = true; inst.counters = { ...inst.counters, time: opts.impending || 1 }; }
+    if (opts.choice === 'bestow') inst.bestowed = true; // Chromanticore: an aura on a creature (you pick it)
+    // Morph: face down as a 2/2 for {3}.
+    if (opts.choice === 'morph') opts = { ...opts, faceDown: true };
     if (opts.aftermath) { inst.flipped = true; inst.castAftermath = true; } // Dawn, from your graveyard
     if (opts.flashback) inst.castAftermath = true; // flashback: exiled after it resolves too
     // From your graveyard or exile, it's cast (prowess, "whenever you cast …").
     if (inst.zone === 'graveyard' || inst.zone === 'exile') opts = { ...opts, cast: true };
     const fromHand = inst.zone === 'hand' || inst.zone === 'command';
-    const aura = fromHand && Game.isAura(inst) && !opts.faceDown; // then you pick what it enchants
-    const c = castCost(inst, opts);
+    // Then you pick what it enchants (not a curse like Maddening Hex, which goes on an opponent).
+    const aura = fromHand && Game.isAura(inst) && !opts.faceDown && !/^enchant player\b/im.test(oracleOf(inst));
+    const c = castCost(inst, opts.choice === 'morph' ? { ...opts, faceDown: false } : opts);
+    // Suspend (Search for Tomorrow): pay, then it waits in exile with time counters.
+    if (opts.choice === 'suspend') {
+      const paid = c ? Game.autoPay(game, c.cost, c.tax - c.less) : { sources: [] };
+      if (!paid) return status(`Not enough untapped mana to suspend ${inst.name}.`, 'warn', 8000);
+      Game.move(game, iid, 'exile');
+      inst.suspended = true;
+      inst.counters = { ...inst.counters, time: opts.suspend || 1 };
+      Game.log(game, `Suspended ${inst.name} with ${opts.suspend} time counter${opts.suspend === 1 ? '' : 's'}${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`);
+      return;
+    }
+    // Mutate (Illuna, Nethroi): pay, then pick the non-Human creature it goes on top of.
+    if (opts.choice === 'mutate') {
+      const hosts = Bot.mutateHosts(game, inst, def);
+      if (!hosts.length) return status('You have no non-Human creature to mutate onto.', 'warn');
+      const paid = c ? Game.autoPay(game, c.cost, c.tax - c.less) : { sources: [] };
+      if (!paid) return status(`Not enough untapped mana to mutate ${inst.name}.`, 'warn', 8000);
+      setTimeout(() => pickCards({ title: `Mutate ${inst.name} onto…`, note: 'It goes on top: the creature has its power and toughness and every ability of both cards.', ids: hosts.map(h => h.iid), max: 1, ok: 'Mutate' },
+        picks => act(() => Bot.mutate(game, game, inst, game.cards[picks[0]], def, effectCtx()))), 0);
+      return;
+    }
     if (c) {
       const { cost, less } = c;
       const paid = !opts.manual && Game.autoPay(game, cost, c.tax - less);
+      if (paid) inst.spentColors = paid.colors || 0; // converge (Radiant Flames)
       if (!paid) {
         Game.move(game, iid, 'battlefield', opts);
         game.notice = `Played ${inst.name} without paying (${c.label}), so tap your mana for it yourself.${game.notice ? ' ' + game.notice : ''}`;
@@ -3399,7 +3465,17 @@
 
   // "Each opponent loses N life": Opp (or the goldfish Opp), or everyone else online.
   // "Target player loses N life" (Blood Artist): Opp, or online the player you pick with −.
-  const later = (list, req) => { (game[list] = game[list] || []).push(req); };
+  // A question for you, waiting in game[list]. What an effect does after it ("Draw two cards, then
+  // put two cards from your hand on top", "Scry 1. Draw a card.") is kept on the newest one (req.then).
+  let lastReq = null;
+  const later = (list, req) => { (game[list] = game[list] || []).push(req); lastReq = req; };
+  // Runs what waited for a question's answer (req.then), as req's card.
+  function runThen(req) {
+    if (!req.then) return;
+    const self = (req.self && game.cards[req.self]) || { name: req.src };
+    const left = Bot.runEffect(game, req.then, Object.assign({ self, other: hasBot() ? game.bot.s : null }, effectCtx()));
+    Game.log(game, `${req.src}: ${req.then}.${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+  }
   const effectCtx = () => ({
     // dmg: it's damage ("deals 1 damage to each opponent"), which Massacre Girl, Most Wanted sees.
     hitOpps: (n, dmg) => {
@@ -3470,16 +3546,16 @@
     // Eerie Interlude: you pick which of your creatures to exile until the next end step.
     flicker: (what, src) => later('mustFlicker', { what, src: src ? src.name : 'Effect' }),
     // "Search your library for …", "Scry 2", "Surveil 1": you pick the cards (mustLibraryPrompt).
-    search: (spec, src) => { (game.mustLibrary = game.mustLibrary || []).push({ kind: 'search', spec, src }); },
-    scry: (n, kind, src) => { (game.mustLibrary = game.mustLibrary || []).push({ kind, n, src }); },
+    search: (spec, src) => later('mustLibrary', { kind: 'search', spec, src }),
+    scry: (n, kind, src) => later('mustLibrary', { kind, n, src }),
     // "Choose a number between 0 and 10. Destroy all creatures with power …" (Expel the
     // Interlopers): you pick the number, then the wipe (then) runs with it (mustLibraryPrompt).
-    chooseNumber: (min, max, src, then) => { (game.mustLibrary = game.mustLibrary || []).push({ kind: 'number', min, max, src, then }); },
-    // What comes after the search or scry ("Scry 1. Draw a card.") waits for your pick.
+    chooseNumber: (min, max, src, then) => later('mustLibrary', { kind: 'number', min, max, src, then }),
+    // Cards you pick for an effect (Brainstorm, Time Wipe, Duneblast, Rishkar's Expertise, discarding…): mustChoosePrompt.
+    choose: (spec, src) => later('mustChoose', { spec, src: src ? src.name : 'Effect', self: src && src.iid ? src.iid : null }),
+    // What comes after a question ("Scry 1. Draw a card.") waits for your answer (runThen).
     later: (text, self) => {
-      const list = game.mustLibrary;
-      const last = list && list[list.length - 1];
-      if (last) Object.assign(last, { then: [last.then, text].filter(Boolean).join('. '), self: self ? self.iid : null });
+      if (lastReq) Object.assign(lastReq, { then: [lastReq.then, text].filter(Boolean).join('. '), self: self && self.iid ? self.iid : lastReq.self || null });
     },
     defOf: def,
   });
