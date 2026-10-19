@@ -115,6 +115,16 @@ const Bot = (() => {
     const out = { pow: 0, tou: 0, kw: [] };
     for (const raw of String(oracle || '').split('\n')) {
       const line = raw.replace(/\([^)]*\)/g, '').trim();
+      // Rune of Mortality: "As long as enchanted permanent is a creature, it has deathtouch." and "…
+      // is an Equipment, it has "Equipped creature has deathtouch."" (equipKw, see grantsOnce).
+      const al = /^as long as enchanted permanent is an? (creature|equipment), it has (.+?)\.?$/i.exec(line);
+      if (al) {
+        const q = /^"equipped creature has (.+?)\.?"$/i.exec(al[2]);
+        const kw = kwWords(q ? q[1] : al[2]);
+        if (/^equipment$/i.test(al[1]) && q) out.equipKw = [...new Set([...(out.equipKw || []), ...kw])];
+        else if (/^creature$/i.test(al[1]) && !q) kw.forEach(k => { if (!out.kw.includes(k)) out.kw.push(k); });
+        continue;
+      }
       const m = /^(?:equipped|enchanted) creature (.+?)\.?$/i.exec(line.split('. ')[0]);
       if (!m) continue;
       if (/\bcan't attack\b/i.test(m[1])) out.cantAttack = true;
@@ -480,18 +490,37 @@ const Bot = (() => {
   const sick = (s, inst, st) => inst.enteredTurn === s.turn && !st.kw.has('haste');
 
   // Runs an action on Opp's table with the real life totals: Opp's own life is game.oppLife,
-  // and "each opponent loses" on Opp's table is you.
+  // and "each opponent loses" on Opp's table is you. Inside one, another just runs (the totals are
+  // already on Opp's table), and addLife changes them there.
+  let oppDepth = 0;
   function onOpp(game, fn) {
     const s = game.bot.s;
+    if (oppDepth) return fn(s);
     s.life = game.oppLife;
     s.oppLife = game.life;
-    const out = fn(s);
+    oppDepth++;
+    let out;
+    try { out = fn(s); } finally { oppDepth--; }
     game.oppLife = s.life;
     game.life = s.oppLife;
     delete s.oppHits;
     delete s.notice;
     return out;
   }
+  // Changes your life (who 'you') or Opp's ('opp') by n, even in the middle of onOpp.
+  function addLife(game, who, n) {
+    const s = game.bot && game.bot.s;
+    if (oppDepth && s) {
+      if (who === 'opp') s.life += n;
+      else s.oppLife += n;
+    } else if (who === 'opp') game.oppLife += n;
+    else game.life += n;
+  }
+  const lifeOf = (game, who) => {
+    const s = game.bot && game.bot.s;
+    if (oppDepth && s) return who === 'opp' ? s.life : s.oppLife;
+    return who === 'opp' ? game.oppLife : game.life;
+  };
 
   // Can Opp pay this cost right now? Tries it on a copy so nothing is tapped.
   function affordable(s, cost, tax) {
@@ -515,6 +544,12 @@ const Bot = (() => {
     };
     const pick = lands.sort((a, b) => score(b) - score(a))[0];
     G.move(s, pick, 'battlefield');
+    // "As this land enters, you may pay 3 life. If you don't, it enters tapped.": Opp pays while it has more than 10.
+    const et = s.cards[pick].entersTapped;
+    if (et && et.payLife) {
+      if (s.life - et.payLife > 10) { s.life -= et.payLife; G.log(s, `Opp paid ${et.payLife} life so ${s.cards[pick].name} entered untapped.`); }
+      else s.cards[pick].tapped = true;
+    }
   }
 
   // Opp's fetch lands ("{T}, Pay 1 life, Sacrifice this land: Search your library for a Mountain or
@@ -595,10 +630,11 @@ const Bot = (() => {
     const options = [];
     // Thalia and the like, on either table.
     const taxes = [{ rules: tableRules(s, defOf), own: true }, { rules: tableRules(game, defOf), own: false }];
-    for (const zone of moment === 'main' ? ['command', 'hand'] : ['hand']) {
+    for (const zone of moment === 'main' ? ['command', 'hand', 'graveyard'] : ['hand']) {
       for (const iid of s.zones[zone]) {
         const inst = s.cards[iid];
         const f = inst.bot;
+        if (zone === 'graveyard' && !graveCast(s, inst, defOf)) continue; // Ebondeath, Dracolich
         const type = front(inst.typeLine);
         if (G.isLand(inst) || /\b(planeswalker|battle)\b/i.test(type) || /\baura\b/i.test(type)) continue;
         const isSpell = /\b(instant|sorcery)\b/i.test(type);
@@ -712,7 +748,7 @@ const Bot = (() => {
     const f = inst.bot;
     const note = text => { if (!noted) notes.push(text); };
     if (!f.spell) {
-      onOpp(game, () => G.move(s, iid, 'battlefield'));
+      onOpp(game, () => G.move(s, iid, 'battlefield', inst.zone === 'graveyard' ? { cast: true } : {}));
       spellCast(game, s, inst, defOf, null); // prowess, "whenever you cast", cascade
       if (G.choosesType(oracleOf(defOf)(inst))) {
         inst.chosenType = commonType(s);
@@ -844,8 +880,12 @@ const Bot = (() => {
   // battlefield tapped and the other into your hand" (Cultivate), "… for a card, put that card into
   // your hand" (Demonic Tutor). Returns { n, what, to, tapped, rest: { to, tapped } | null } or null.
   const SEARCH = new RegExp(`^search your library for (a|an|up to ${COUNT}) (.*?)\\s*cards?(?:, reveal (?:it|them|that card|those cards))?,? (?:and )?put (?:it|that card|them|those cards|(one)) (onto the battlefield|into your hand)( tapped)?(?: and the other (onto the battlefield|into your hand)( tapped)?)?$`, 'i');
-  const SEARCH_WORDS = /^(basic|nonbasic|land|creature|artifact|enchantment|instant|sorcery|planeswalker|legendary|snow|aura|equipment|[A-Z][a-z]+)$/;
+  const SEARCH_WORDS = /^(basic|nonbasic|land|nonland|creature|noncreature|artifact|enchantment|instant|sorcery|planeswalker|legendary|snow|aura|equipment|colorless|[A-Z][a-z]+)$/;
+  // Ugin, Eye of the Storms: "Search your library for any number of colorless nonland cards, exile them".
+  const SEARCH_EXILE = /^search your library for any number of (.*?)\s*cards?, exile (?:them|those cards)$/i;
   function searchSpec(part) {
+    const x = SEARCH_EXILE.exec(String(part).trim().replace(/\.$/, ''));
+    if (x && x[1].split(/\s+/).filter(Boolean).every(w => SEARCH_WORDS.test(w))) return { n: 99, what: x[1].trim(), to: 'exile', tapped: false, rest: null };
     const m = SEARCH.exec(String(part).trim().replace(/\.$/, ''));
     if (!m) return null;
     const what = m[3].trim();
@@ -862,6 +902,9 @@ const Bot = (() => {
       const basic = /\bbasic\b/i.test(front(inst.typeLine));
       if (/^basic$/i.test(w)) return basic;
       if (/^nonbasic$/i.test(w)) return !basic;
+      if (/^colorless$/i.test(w)) return !/\{[^}]*[WUBRG][^}]*\}/i.test(String((inst.bot && inst.bot.cost) || inst.cost || ''));
+      const not = /^non(\w+)$/i.exec(w);
+      if (not) return !typeWords(inst).includes(singular(not[1]));
       const tw = typeWords(inst);
       return tw.includes(w.toLowerCase()) || tw.includes(singular(w)); // "Plains" is its own singular
     }));
@@ -873,6 +916,7 @@ const Bot = (() => {
       G.move(s, iid, dest.to);
       if (dest.to === 'battlefield' && dest.tapped) { s.cards[iid].tapped = true; s.cards[iid].tappedFor = null; }
     });
+    s.lastSearched = [...picks]; // "those cards" (Ugin: "you may cast those cards without paying their mana costs")
     const names = picks.map(iid => s.cards[iid] && s.cards[iid].name).filter(Boolean);
     G.log(s, `${src}: searched the library${names.length ? ` for ${andList(names)}` : ' and found nothing'}.`);
   }
@@ -1058,10 +1102,220 @@ const Bot = (() => {
     [/^untap (.+)$/i, (g, m, ctx) => { ctx.self.tapped = false; ctx.self.tappedFor = null; }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self)],
     // Limits on when an ability can be used: you keep to them; nothing to do.
     [/^activate (?:this ability )?only (?:as a sorcery|once each turn|during your turn|during your upkeep|any time you could cast a sorcery)$/i, () => {}],
+    // Syr Konrad's "deals 1 damage to each opponent" (damage, so Massacre Girl, Most Wanted sees it).
+    [/^.+? deals (\w+) damage to each opponent$/i, (g, m, ctx) => ctx.hitOpps(toNumber(m[1]), true), (m, ctx) => !!ctx.hitOpps && toNumber(m[1]) > 0],
+    // Agent of the Fates: "each opponent sacrifices a creature of their choice".
+    [new RegExp(`^each opponent sacrifices ${COUNT} (.+?) of their choice$`, 'i'), (g, m, ctx) => ctx.oppsSacrifice(toNumber(m[1]), singular(m[2])), (m, ctx) => !!ctx.oppsSacrifice],
+    // Unstoppable Slasher: "they lose half their life, rounded up" (the player it hit).
+    [/^(?:they|that player) loses? half (?:their|his or her) life, rounded up$/i, (g, m, ctx) => ctx.loseHalf(), (m, ctx) => !!ctx.loseHalf],
+    // Drana: "put a +1/+1 counter on each attacking creature you control".
+    [new RegExp(`^put ${COUNT} ([\\w+/-]+) counters? on each attacking creature you control$`, 'i'), (g, m) => {
+      const who = creatures(g, c => c.attacking);
+      who.forEach(c => G.counter(g, c.iid, m[2].toLowerCase(), toNumber(m[1]), { effect: true }));
+      G.log(g, `${m[1]} ${m[2]} counter${toNumber(m[1]) === 1 ? '' : 's'} on each attacking creature (${who.length}).`);
+    }],
+    // Massacre Girl: "each other creature gets -1/-1 until end of turn", "each creature other than Massacre Girl gets …".
+    [/^each (other )?creatures?(?: other than (.+?))? gets? ([+-]\d+)\/([+-]\d+) until end of turn$/i, (g, m, ctx) => {
+      const skip = c => (m[1] || (m[2] && isSelf(m[2], ctx.self || {}))) && ctx.self && c.iid === ctx.self.iid && c.name === ctx.self.name;
+      const hit = [g, ctx.other].filter(t => t && t.zones).flatMap(t => creatures(t).filter(c => !skip(c)));
+      hit.forEach(c => pumpBy(c, Number(m[3]), Number(m[4])));
+      G.log(g, `${(ctx.self && ctx.self.name) || 'Effect'}: ${hit.length} creature${hit.length === 1 ? '' : 's'} get ${m[3]}/${m[4]} until end of turn.`);
+    }],
+    // Massacre Girl: "Whenever a creature dies this turn, …" lasts until the turn ends (afterDeath runs it).
+    [/^whenever a creature dies this turn, (.+)$/i, (g, m, ctx) => {
+      g.delayed = [...(g.delayed || []), { on: 'dies', effect: m[1], src: ctx.self ? ctx.self.iid : null, name: ctx.self ? ctx.self.name : 'Effect' }];
+    }],
+    // The Sibsig Ceremony: "destroy that creature" (the one that entered).
+    [/^destroy (?:that creature|it|this creature)$/i, (g, m, ctx) => {
+      const c = ctx.self;
+      if (c.zone !== 'battlefield') return;
+      if (stats(c, c.bot || (ctx.defOf || (() => null))(c.id)).kw.has('indestructible')) return G.log(g, `${c.name} is indestructible.`);
+      G.move(g, c.iid, c.commander ? 'command' : 'graveyard');
+    }, (m, ctx) => !!ctx.self && !!ctx.self.iid],
+    // Blot Out: the opponent exiles their creature or planeswalker with the greatest mana value.
+    [/^target opponent exiles an? (.+?) they control with the greatest mana value among .+? they control$/i, (g, m, ctx) => ctx.oppsExileGreatest(m[1]), (m, ctx) => !!ctx.oppsExileGreatest],
+    // Bojuka Bog, Boggart Trawler: the opponent's graveyard (the one worth exiling).
+    [/^exile target (?:player|opponent)'s graveyard$/i, (g, m, ctx) => ctx.exileGrave(), (m, ctx) => !!ctx.exileGrave],
+    // Appetite for Brains: "Target opponent reveals their hand. You choose a card from it with mana value 4 or greater and exile that card."
+    [/^target opponent reveals (?:their|his or her) hand$/i, () => {}, (m, ctx) => !!ctx.oppsHandPick],
+    [/^you choose an? (?:(nonland|creature|noncreature|nonland, noncreature|instant or sorcery) )?card from it(?: with mana value (\d+) or greater)? and (exile|discard)s? that card$/i,
+      (g, m, ctx) => ctx.oppsHandPick({ what: m[1] || '', mv: Number(m[2] || 0), to: m[3].toLowerCase() === 'exile' ? 'exile' : 'graveyard' }), (m, ctx) => !!ctx.oppsHandPick],
+    // Baleful Mastery: its other cost is picked when you cast it (app.js); an opponent draws if it was.
+    [/^you may pay ((?:\{[^}]+\})+) rather than pay this spell's mana cost$/i, () => {}],
+    [/^if the ((?:\{[^}]+\})+) cost was paid, an opponent draws (\w+) cards?$/i, (g, m, ctx) => { if (ctx.self && ctx.self.altPaid) ctx.oppsDraw(toNumber(m[2])); }, (m, ctx) => !!ctx.oppsDraw],
+    // Junji: "Each opponent discards two cards and loses 2 life."
+    [new RegExp(`^each opponent discards ${COUNT} cards?(?: and loses ${COUNT} life)?$`, 'i'), (g, m, ctx) => {
+      ctx.oppsDiscard(toNumber(m[1]));
+      if (m[2]) ctx.hitOpps(toNumber(m[2]));
+    }, (m, ctx) => !!ctx.oppsDiscard && (!m[2] || !!ctx.hitOpps)],
+    // Ob Nixilis, the Fallen: "have target player lose 3 life".
+    [new RegExp(`^have target (?:player|opponent) lose ${COUNT} life$`, 'i'), (g, m, ctx) => (ctx.hitTarget || ctx.hitOpps)(toNumber(m[1])), (m, ctx) => !!(ctx.hitTarget || ctx.hitOpps)],
+    // Syr Konrad: "Each player mills a card."
+    [new RegExp(`^each player mills ${COUNT} cards?$`, 'i'), (g, m, ctx) => {
+      G.mill(g, toNumber(m[1]));
+      if (ctx.other && ctx.other.zones) G.mill(ctx.other, toNumber(m[1]));
+      else if (ctx.othersMill) ctx.othersMill(toNumber(m[1]));
+    }],
+    // The Immortal Sun: "At the beginning of your draw step, draw an additional card."
+    [/^draw an additional card$/i, g => { G.drawCards(g, 1); }],
+    // Ugin, Eye of the Storms' "0: Add {C}{C}{C}." (a loyalty ability, so not tapping for mana).
+    [/^add ((?:\{[WUBRGC]\})+)$/i, (g, m) => { m[1].toUpperCase().match(/[WUBRGC]/g).forEach(k => { g.mana[k] = (g.mana[k] || 0) + 1; }); }],
+    // Ugin, the Spirit Dragon's −X: "Exile each permanent with mana value X or less that's one or more colors." (X filled in when you activate it)
+    [/^exile each (nonland )?permanent with mana value (\d+) or less that's one or more colors$/i, (g, m, ctx) => {
+      const gone = [];
+      for (const t of [g, ctx.other].filter(x => x && x.zones)) {
+        for (const c of permanents(t)) {
+          const card = c.bot || (ctx.defOf || (() => null))(c.id) || {};
+          if (!colorsOf(card).length || (card.cmc || 0) > Number(m[2]) || (m[1] && G.isLand(c))) continue;
+          G.move(t, c.iid, c.commander ? 'command' : 'exile');
+          gone.push(c.name);
+        }
+      }
+      G.log(g, `${(ctx.self && ctx.self.name) || 'Effect'}: exiled ${gone.length ? andList(gone) : 'nothing'}.`);
+    }],
+    // Ugin, Eye of the Storms' −11: the cards it exiled can be cast for free this turn (app.js offers it from exile).
+    [/^until end of turn, you may cast those cards without paying their mana costs$/i, g => {
+      (g.lastSearched || []).forEach(iid => { if (g.cards[iid] && g.cards[iid].zone === 'exile') g.cards[iid].playable = { free: true }; });
+    }],
+    // Reno and Rude: "exile the top card of that player's library", then "you may sacrifice another
+    // creature or artifact to play the exiled card this turn" (see settleIfYouDo).
+    [/^exile the top card of that player's library$/i, (g, m, ctx) => ctx.exileTop(ctx.self), (m, ctx) => !!ctx.exileTop],
+    [/^you may sacrifice another (.+?) to play the exiled card this turn$/i, (g, m, ctx) => ctx.sacToPlay(m[1], ctx.self), (m, ctx) => !!ctx.sacToPlay],
+    // "Choose one —" on a trigger (Retreat to Hagra, Junji): you tick the mode (ctx.chooseModes,
+    // app.js); Opp and automatic games pick one themselves.
+    [/^choose (one|two|three|one or both|one or more)\s*[—-]?$/i, (g, m, ctx) => {
+      const modes = oracleLines(ctx.self, ctx.defOf).filter(l => /^•/.test(l)).map(l => l.replace(/^•\s*/, ''));
+      const pick = /both|more/i.test(m[1]) ? modes.length : toNumber(m[1]) || 1;
+      if (ctx.chooseModes) { ctx.chooseModes(modes, pick, ctx.self); return 'pause'; }
+      const chosen = autoModes(g, modes, pick, ctx);
+      for (const mode of chosen) runEffect(g, mode, ctx);
+      G.log(g, `${ctx.self.name}: chose "${chosen.join('" and "')}".`);
+    }, (m, ctx) => !!ctx.self && !!ctx.defOf],
+    // Cards from a graveyard (or your hand) to your hand or the battlefield: Liliana, Junji,
+    // Archenemy's Charm, Ugin's −10, The Darkness Crystal. You pick (ctx.moveCards, app.js); Opp picks its best.
+    [/^.+$/, (g, m, ctx) => {
+      const spec = cardMoveSpec(m[0]);
+      if (ctx.moveCards) { ctx.moveCards(spec, ctx.self); return 'pause'; }
+      autoMoveCards(g, ctx.other, spec, ctx.self, ctx.defOf || (() => null));
+    }, m => !!cardMoveSpec(m[0])],
     // "Destroy target creature", "deals 3 damage to any target"…: ctx.target(effect) picks the target
     // (you're asked; Opp picks its own). See targetEffect.
-    [/^.+$/, (g, m, ctx) => ctx.target(targetEffect(m[0]), m[0], ctx.self), (m, ctx) => !!ctx.target && !!targetEffect(m[0])],
+    // "another target …" and "… other than this creature" can't pick the card itself (eff.exclude);
+    // "destroy up to two target creatures" asks twice.
+    [/^.+$/, (g, m, ctx) => {
+      const eff = targetEffect(m[0]);
+      if (ctx.self && ctx.self.iid) {
+        eff.srcIid = ctx.self.iid;
+        if (eff.another || (targetFilter(eff.what) || {}).notSelf) eff.exclude = ctx.self.iid;
+        const card = ctx.self.bot || (ctx.defOf && ctx.defOf(ctx.self.id));
+        if (card) eff.colors = colorsOf(card); // for protection from a color
+      }
+      for (let i = 0; i < (eff.count || 1); i++) ctx.target(eff, m[0], ctx.self);
+    }, (m, ctx) => !!ctx.target && !!targetEffect(m[0])],
   ];
+
+  // ---------- cards from graveyards, your hand or exile ----------
+
+  // "Return target creature card from your graveyard to your hand", "Put target non-Dragon creature
+  // card from a graveyard onto the battlefield under your control", "Put up to two creature cards from
+  // graveyards onto the battlefield under your control", "Return one or two target creature and/or
+  // planeswalker cards from your graveyard to your hand", "put up to seven permanent cards from your
+  // hand onto the battlefield", "Put target creature card exiled with The Darkness Crystal onto the
+  // battlefield tapped under your control with two additional +1/+1 counters on it".
+  // Returns { min, max, what, from: 'mine' | 'any' | 'theirs' | 'hand' | 'exiled', exiledWith, to, tapped, counters } or null.
+  const CARD_MOVE = new RegExp(`^(?:return|put) (up to )?(one or two|${COUNT.slice(1, -1)}|eight|nine|ten)? ?(?:target )?(.+?) cards? from (your graveyard|a graveyard|graveyards|an opponent's graveyard|your hand) (to your hand|onto the battlefield( tapped)?(?: under your control)?)$`, 'i');
+  const EXILED_MOVE = /^put target (.+?) cards? exiled with (.+?) onto the battlefield( tapped)? under your control(?: with (\w+) additional ([\w+/-]+) counters? on it)?$/i;
+  function cardMoveSpec(part) {
+    const p = String(part).trim().replace(/\.$/, '');
+    let m = CARD_MOVE.exec(p);
+    if (m) {
+      const n = m[2] ? (/one or two/i.test(m[2]) ? 2 : toNumber(m[2])) : 1;
+      if (!n) return null;
+      const min = m[1] ? 0 : /one or two/i.test(m[2] || '') ? 1 : n;
+      const from = { 'your graveyard': 'mine', 'a graveyard': 'any', graveyards: 'any', "an opponent's graveyard": 'theirs', 'your hand': 'hand' }[m[4].toLowerCase()];
+      return { min, max: n, what: m[3].toLowerCase(), from, to: /hand/i.test(m[5]) ? 'hand' : 'battlefield', tapped: !!m[6], counters: null };
+    }
+    m = EXILED_MOVE.exec(p);
+    if (m) return { min: 1, max: 1, what: m[1].toLowerCase(), from: 'exiled', exiledWith: m[2], to: 'battlefield', tapped: !!m[3], counters: m[4] ? { n: toNumber(m[4]), kind: m[5].toLowerCase() } : null };
+    return null;
+  }
+  // Does a card fit "creature", "non-Dragon creature", "creature and/or planeswalker", "permanent"?
+  const cardFits = (inst, what) => String(what).toLowerCase().split(/\s+(?:and\/or|or)\s+|,\s*/).some(alt => alt.split(/\s+/).filter(Boolean).every(w => {
+    const not = /^non-?(.+)$/.exec(w);
+    if (not) return !typeWords(inst).includes(singular(not[1]));
+    if (w === 'permanent' || w === 'permanents') return !/\b(instant|sorcery)\b/i.test(front(inst.typeLine));
+    return typeWords(inst).includes(singular(w));
+  }));
+  // The cards a spec can take, from table g (whoever's effect it is) and other (the other table):
+  // [{ s, iid }].
+  function moveChoices(g, other, spec) {
+    const tables = spec.from === 'mine' || spec.from === 'hand' ? [g] : spec.from === 'theirs' ? [other] : [g, other];
+    const zone = spec.from === 'hand' ? 'hand' : spec.from === 'exiled' ? 'exile' : 'graveyard';
+    return tables.filter(t => t && t.zones).flatMap(t => t.zones[zone].filter(iid => {
+      const c = t.cards[iid];
+      return c && cardFits(c, spec.what) && (spec.from !== 'exiled' || c.exiledWith === spec.exiledWith);
+    }).map(iid => ({ s: t, iid })));
+  }
+  // Moves the picked cards where the spec says, onto g (taking them from the other table if they're there).
+  function applyMoveCards(g, spec, picks, src, defOf) {
+    const names = [];
+    for (const { s, iid } of picks) {
+      const c = s.cards[iid];
+      if (!c) continue;
+      names.push(c.name);
+      const inst = s === g ? c : takeCard(s, iid, g, 'exile', { defOf });
+      G.move(g, inst.iid, spec.to);
+      if (spec.to !== 'battlefield') continue;
+      if (spec.tapped) { inst.tapped = true; inst.tappedFor = null; }
+      if (spec.counters) G.counter(g, inst.iid, spec.counters.kind, spec.counters.n, { effect: true });
+      delete inst.exiledWith;
+    }
+    const to = spec.to === 'hand' ? 'to your hand' : `onto the battlefield${spec.tapped ? ' tapped' : ''}`;
+    G.log(g, `${src ? src.name : 'Effect'}: ${names.length ? `put ${andList(names)} ${to}` : 'no cards to take'}.`);
+  }
+  // Opp (or an automatic game) takes the most expensive cards it can.
+  function autoMoveCards(g, other, spec, src, defOf) {
+    const cmc = c => (c.bot ? c.bot.cmc : (defOf(c.id) || {}).cmc) || 0;
+    const picks = moveChoices(g, other, spec).sort((a, b) => cmc(b.s.cards[b.iid]) - cmc(a.s.cards[a.iid])).slice(0, spec.max);
+    applyMoveCards(g, spec, picks, src, defOf);
+  }
+
+  // A card changes tables (Junji putting Opp's creature onto your battlefield, Reno and Rude exiling
+  // Opp's top card for you): it leaves fromS's zones and arrives in toS's zone. The card remembers its
+  // owner ('you' or 'opp'), so it goes back to them once it leaves the battlefield (G.hooks.sendHome).
+  // opts.quiet: it just appears there (no zone-change triggers); opts.defOf: for Opp's facts about
+  // a card of yours it takes. Your table is the one with game.bot on it. Returns the card on toS.
+  const roleOf = t => (t.bot ? 'you' : 'opp');
+  function takeCard(fromS, iid, toS, zone, opts = {}) {
+    const c = fromS.cards[iid];
+    const from = c.zone;
+    const list = fromS.zones[from];
+    if (list && list.indexOf(iid) >= 0) list.splice(list.indexOf(iid), 1);
+    delete fromS.cards[iid];
+    const inst = Object.assign({}, c, { iid: 'c' + toS.nextId++, zone: 'exile' });
+    const owner = c.owner || roleOf(fromS);
+    if (owner === roleOf(toS)) delete inst.owner;
+    else inst.owner = owner;
+    if (roleOf(toS) === 'you') delete inst.bot;
+    else if (!inst.bot) inst.bot = facts((opts.defOf && opts.defOf(c.id)) || { typeLine: c.typeLine });
+    toS.cards[inst.iid] = inst;
+    toS.zones.exile.push(inst.iid);
+    if (!opts.quiet && G.hooks.moved) G.hooks.moved(fromS, c, from, zone);
+    if (zone !== 'exile') G.move(toS, inst.iid, zone);
+    return inst;
+  }
+  // A card you control but someone else owns left the battlefield (G.hooks.sendHome): it goes to
+  // the same zone on its owner's table. game: your table (with game.bot).
+  function sendHome(game, s, inst, to, defOf) {
+    const home = inst.owner === 'opp' ? game.bot && game.bot.s : inst.owner === 'you' ? game : null;
+    if (!home || home === s || !s.cards[inst.iid]) return;
+    const back = takeCard(s, inst.iid, home, 'exile', { quiet: true, defOf });
+    if (to === 'exile') return;
+    home.zones.exile.splice(home.zones.exile.indexOf(back.iid), 1); // where it was going, without new triggers
+    back.zone = to;
+    if (to === 'library') home.zones.library.unshift(back.iid);
+    else home.zones[to].push(back.iid);
+  }
 
   // ---------- targets ----------
 
@@ -1069,24 +1323,47 @@ const Bot = (() => {
   //   destroy / exile target …, return target … to its owner's hand (bounce), … deals N damage to
   //   any target / target …, tap / untap target …, target … gets +X/+Y (and gains …) until end of
   //   turn (pump), put N … counters on target … (counter). what must be something targetFilter reads.
+  //   Also: target player draws N cards and loses N life (player), attach it to target … (attach).
+  //   "up to two target creatures" asks count times; "another target …" can't be the card itself.
+  // Sentences after it about the same creature (effectParts keeps them together) add to it:
+  //   "It gains lifelink until end of turn." (kw), "That creature can't be regenerated." (noRegen),
+  //   "If that creature would die this turn, exile it instead." (exileInstead), "If that creature is
+  //   an Assassin, it gains deathtouch until end of turn." (ifType), "Put X +1/+1 counters on a
+  //   commander creature you control, where X is the power of the creature exiled this way." (powerTo).
   function targetEffect(part) {
-    let p = String(part).trim().replace(/\.$/, '');
+    const [first, ...more] = String(part).trim().replace(/\.$/, '').split(/\.\s+/);
+    let p = first;
     let m;
     // "Until end of turn, target creature gets …" reads as "target creature gets … until end of turn".
     if ((m = /^until end of turn, (.+)$/i.exec(p))) p = `${m[1]} until end of turn`;
     let out = null;
-    if ((m = /^(destroy|exile) (?:up to one )?target (.+)$/i.exec(p))) out = { action: m[1].toLowerCase(), what: m[2] };
+    const T = '(?:up to (one|two|three) )?(another )?target';
+    const take = (o, n, another) => Object.assign(o, n && toNumber(n) > 1 ? { count: toNumber(n) } : {}, another ? { another: true } : {});
+    if ((m = new RegExp(`^(destroy|exile) ${T} (.+)$`, 'i').exec(p))) out = take({ action: m[1].toLowerCase(), what: m[4] }, m[2], m[3]);
     else if ((m = /^return (?:up to one )?target (.+?) to (?:its|their) owner's hand$/i.exec(p))) out = { action: 'bounce', what: m[1] };
-    else if ((m = /^.+? deals (\d+) damage to (any target|(?:up to one )?target (.+))$/i.exec(p))) out = { action: 'damage', n: Number(m[1]), what: m[3] || 'any target' };
+    else if ((m = /^.+? deals (\d+) damage to (any target|(?:up to one )?(another )?target (.+))$/i.exec(p))) out = take({ action: 'damage', n: Number(m[1]), what: m[4] || 'any target' }, null, m[3]);
     else if ((m = /^(tap|untap) (?:up to one )?target (.+)$/i.exec(p))) out = { action: m[1].toLowerCase(), what: m[2] };
-    else if ((m = /^target (.+?) gets ([+-]\d+)\/([+-]\d+)(?: and gains (.+?))?( and can attack as though it didn['’]?t have defender)? until end of turn$/i.exec(p))) {
+    else if ((m = /^(another )?target (.+?) gets ([+-]\d+)\/([+-]\d+)(?: and gains (.+?))?( and can attack as though it didn['’]?t have defender)? until end of turn$/i.exec(p))) {
       // It can also gain a quoted ability ("Whenever this creature deals combat damage …") as lines.
-      const lines = [...String(m[4] || '').matchAll(/"([^"]+)"/g)].map(q => q[1]);
-      out = { action: 'pump', what: m[1], pow: Number(m[2]), tou: Number(m[3]), kw: kwWords(String(m[4] || '').replace(/"[^"]*"/g, '')), lines, attack: !!m[5] };
-    } else if ((m = /^target (.+?) gains (.+?) until end of turn$/i.exec(p)) && kwWords(m[2]).length) out = { action: 'pump', what: m[1], pow: 0, tou: 0, kw: kwWords(m[2]) };
-    else if ((m = new RegExp(`^put ${COUNT} ([\\w+/-]+) counters? on (?:up to one )?target (.+)$`, 'i').exec(p))) out = { action: 'counter', n: toNumber(m[1]), kind: m[2].toLowerCase(), what: m[3] };
-    return out && targetFilter(out.what) ? out : null;
+      const lines = [...String(m[5] || '').matchAll(/"([^"]+)"/g)].map(q => q[1]);
+      out = take({ action: 'pump', what: m[2], pow: Number(m[3]), tou: Number(m[4]), kw: kwWords(String(m[5] || '').replace(/"[^"]*"/g, '')), lines, attack: !!m[6] }, null, m[1]);
+    } else if ((m = /^(another )?target (.+?) gains (.+?) until end of turn$/i.exec(p)) && kwWords(m[3]).length) out = take({ action: 'pump', what: m[2], pow: 0, tou: 0, kw: kwWords(m[3]) }, null, m[1]);
+    else if ((m = new RegExp(`^put ${COUNT} ([\\w+/-]+) counters? on (?:up to one )?(another )?target (.+)$`, 'i').exec(p))) out = take({ action: 'counter', n: toNumber(m[1]), kind: m[2].toLowerCase(), what: m[4], kw: [] }, null, m[3]);
+    else if ((m = new RegExp(`^target (player|opponent) draws ${COUNT} cards? and loses ${COUNT} life$`, 'i').exec(p))) out = { action: 'player', what: m[1], draw: toNumber(m[2]), lose: toNumber(m[3]) };
+    else if ((m = /^attach (?:it|this equipment|this aura) to target (.+)$/i.exec(p))) out = { action: 'attach', what: m[1] };
+    if (!out || !targetFilter(out.what)) return null;
+    for (const s of more) {
+      if ((m = /^(?:it|that creature) gains (.+?) until end of turn$/i.exec(s)) && kwWords(m[1]).length) out.kw = [...new Set([...(out.kw || []), ...kwWords(m[1])])];
+      else if (/^(?:it|that creature) can't be regenerated$/i.test(s)) out.noRegen = true;
+      else if (/^if that creature would die this turn, exile it instead$/i.test(s)) out.exileInstead = true;
+      else if ((m = /^if that creature is an? (.+?), it gains (.+?) until end of turn$/i.exec(s)) && kwWords(m[2]).length) out.ifType = { type: m[1], kw: kwWords(m[2]) };
+      else if ((m = /^put x ([\w+/-]+) counters on a commander creature you control, where x is the power of the creature exiled this way$/i.exec(s))) out.powerTo = { kind: m[1].toLowerCase() };
+      else return null;
+    }
+    return out;
   }
+  // Sentences that say more about the target of the sentence before them.
+  const FOLLOW_UP = /^(?:(?:it|that creature) (?:gains .+ until end of turn|can't be regenerated)|if that creature (?:would die this turn, exile it instead|is an? .+?, it gains .+ until end of turn)|put x .+ exiled this way)$/i;
   const kwWords = text => String(text || '').toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(k => KEYWORDS.includes(k));
 
   // What a target can be: "creature", "creature an opponent controls", "artifact or enchantment",
@@ -1097,6 +1374,14 @@ const Bot = (() => {
   function targetFilter(what) {
     let w = String(what).toLowerCase().trim().replace(/\.$/, '');
     if (w === 'any target') return { players: 'any', fits: inst => ['creature', 'planeswalker', 'battle'].some(t => isA(inst, t)) };
+    // "creature other than this creature" (Weed-Pruner Poplar): not the card itself (eff.exclude, see canTarget).
+    let notSelf = false;
+    const other = /\s+other than this (?:creature|permanent|artifact|enchantment)$/.exec(w);
+    if (other) { notSelf = true; w = w.slice(0, other.index); }
+    // "permanent that's one or more colors" (Ugin): not colorless.
+    let colored = false;
+    const col = /\s+that's one or more colors$/.exec(w);
+    if (col) { colored = true; w = w.slice(0, col.index); }
     let whose = null;
     const own = /\s+(you control|an opponent controls|you don't control|your opponents control)$/.exec(w);
     if (own) { whose = /^you control$/.test(own[1]) ? 'mine' : 'theirs'; w = w.slice(0, own.index); }
@@ -1108,7 +1393,17 @@ const Bot = (() => {
     }
     let players = null;
     const alts = [];
-    for (const alt of w.split(/\s+or\s+|,\s*/).map(a => a.trim()).filter(Boolean)) {
+    // "artifact, enchantment, or land" are three; in "nonartifact, nonblack creature" the words that
+    // only rule things out go with the one after them.
+    const pieces = [];
+    let carry = '';
+    for (const a of w.split(/,?\s+or\s+|,\s*(?:or\s+)?/).map(x => x.trim()).filter(Boolean)) {
+      if (a.split(/\s+/).every(x => /^non-?[a-z]+$/.test(x))) { carry += `${a} `; continue; }
+      pieces.push(carry + a);
+      carry = '';
+    }
+    if (carry) return null;
+    for (const alt of pieces) {
       if (alt === 'player') { players = 'any'; continue; }
       if (alt === 'opponent') { players = players || 'opps'; continue; }
       const words = alt.split(/\s+/);
@@ -1125,6 +1420,7 @@ const Bot = (() => {
         else if (word === 'attacking' || word === 'blocking') return null; // combat isn't a moment you can target in here
         else if (word === 'legendary') checks.push(inst => /\blegendary\b/i.test(front(inst.typeLine)));
         else if (/^[a-z]+$/.test(word) && word !== 'spell' && word !== 'ability' && words.length > 1) checks.push(inst => typeWords(inst).includes(singular(word))); // "Elf creature"
+        else if (/^[a-z]+$/.test(word) && !['spell', 'ability', 'card'].includes(word) && words.length === 1) { base = true; checks.push(inst => typeWords(inst).includes(singular(word))); } // "target Assassin"
         else return null;
       }
       if (!base) return null;
@@ -1133,39 +1429,57 @@ const Bot = (() => {
     if (!alts.length && !players) return null;
     return {
       players: whose === 'mine' ? null : players,
+      notSelf,
       fits: (inst, mine, st) => alts.length > 0 && !(whose === 'mine' && !mine) && !(whose === 'theirs' && mine)
-        && alts.some(checks => checks.every(f => f(inst, st))) && extra(inst, st),
+        && alts.some(checks => checks.every(f => f(inst, st))) && extra(inst, st) && (!colored || (st.colors || []).length > 0),
     };
   }
 
   // Can this effect target that permanent? (On the battlefield, the right kind, and not hexproof or
   // shroud against an opponent's effect; Opp also skips ward, since it doesn't pay for it.)
-  // mine: it's on the effect's own table. opp: Opp is the one choosing.
+  // mine: it's on the effect's own table. opp: Opp is the one choosing. eff.exclude: the card the
+  // effect is from, when it says "another target" or "other than this creature".
   function canTarget(eff, inst, st, mine, opp) {
     const f = targetFilter(eff.what);
     if (!f || !inst || inst.zone !== 'battlefield' || inst.faceDown) return false;
+    if (eff.exclude && mine && inst.iid === eff.exclude) return false;
     if (st.kw.has('shroud') || (!mine && (st.kw.has('hexproof') || (opp && st.kw.has('ward'))))) return false;
+    // Protection from a color: not by a spell or ability of that color (Black Knight and white cards).
+    if (!mine && eff.colors && shielded(st, { colors: eff.colors })) return false;
     return f.fits(inst, mine, st);
   }
 
   // Does a targeted effect to one permanent on table s (or to a player: who is 'you' or 'opp' as
   // seen from game, and life is changed there; online players are app.js's job). src: its name.
   // Returns a log line.
-  function applyTarget(game, s, inst, eff, src, defOf) {
+  // caster: the table of whoever's effect it is (for "put X +1/+1 counters on a commander creature you
+  // control" and attaching equipment); s when not given.
+  function applyTarget(game, s, inst, eff, src, defOf, caster = s) {
     const st = stats(inst, inst.bot || defOf(inst.id));
     const theirs = !!(game.bot && s === game.bot.s);
     const gone = to => { G.move(s, inst.iid, inst.commander && to !== 'hand' ? 'command' : to); };
     let what;
     if (eff.action === 'destroy' || (eff.action === 'damage' && G.isCreature(inst) && st.tou <= eff.n)) {
       if (st.kw.has('indestructible')) what = `${inst.name} is indestructible`;
-      else if (regenerates(game, inst, defOf, theirs)) what = `${inst.name} regenerated`;
+      else if (!eff.noRegen && regenerates(game, inst, defOf, theirs)) what = `${inst.name} regenerated`;
       else { gone('graveyard'); what = eff.action === 'damage' ? `${eff.n} damage kills ${inst.name}` : `destroyed ${inst.name}`; }
     } else if (eff.action === 'damage' && isPlaneswalker(inst)) {
       const dead = damagePlaneswalker(inst, inst.bot || defOf(inst.id), eff.n);
       if (dead) gone('graveyard');
       what = `${eff.n} damage to ${inst.name}${dead ? ', which dies' : ` (loyalty ${inst.counters.loyalty})`}`;
     } else if (eff.action === 'damage') what = `${eff.n} damage to ${inst.name} (not enough to kill it)`;
-    else if (eff.action === 'exile') { gone('exile'); what = `exiled ${inst.name}`; } else if (eff.action === 'bounce') { gone('hand'); what = `returned ${inst.name} to its owner's hand`; } else if (eff.action === 'tap' || eff.action === 'untap') {
+    else if (eff.action === 'exile') {
+      gone('exile');
+      what = `exiled ${inst.name}`;
+      // Astarion's Thirst: counters equal to its power on a commander creature of the caster's.
+      const cmd = eff.powerTo && creatures(caster, c => c.commander)[0];
+      if (cmd && st.pow > 0) { G.counter(caster, cmd.iid, eff.powerTo.kind, st.pow, { effect: true }); what += ` and put ${st.pow} ${eff.powerTo.kind} counter${st.pow === 1 ? '' : 's'} on ${cmd.name}`; }
+    } else if (eff.action === 'bounce') { gone('hand'); what = `returned ${inst.name} to its owner's hand`; } else if (eff.action === 'attach') {
+      // Hidden Blade: "attach it to target creature you control. If that creature is an Assassin, it gains deathtouch until end of turn."
+      const gear = caster.cards[eff.srcIid];
+      if (gear && gear.zone === 'battlefield') G.attach(caster, gear.iid, inst.iid, attachBonus(oracleText(gear, defOf)));
+      what = `attached ${gear ? gear.name : 'it'} to ${inst.name}`;
+    } else if (eff.action === 'tap' || eff.action === 'untap') {
       inst.tapped = eff.action === 'tap';
       inst.tappedFor = null;
       what = `${eff.action === 'tap' ? 'tapped' : 'untapped'} ${inst.name}`;
@@ -1180,17 +1494,38 @@ const Bot = (() => {
     } else if (eff.action === 'counter') {
       G.counter(s, inst.iid, eff.kind, eff.n, { effect: true });
       what = `${eff.n} ${eff.kind} counter${eff.n === 1 ? '' : 's'} on ${inst.name}`;
+      if (eff.kw && eff.kw.length) {
+        inst.pump = { pow: 0, tou: 0, ...inst.pump, kw: [...new Set([...((inst.pump && inst.pump.kw) || []), ...eff.kw])] };
+        what += ` and it gains ${eff.kw.join(', ')} until end of turn`;
+      }
+    }
+    // "If that creature would die this turn, exile it instead." (Bleed Dry)
+    if (eff.exileInstead && inst.zone === 'battlefield') inst.exileIfDies = true;
+    // "If that creature is an Assassin, it gains deathtouch until end of turn." (Hidden Blade)
+    if (eff.ifType && inst.zone === 'battlefield' && isA(inst, eff.ifType.type)) {
+      inst.pump = { pow: 0, tou: 0, ...inst.pump, kw: [...new Set([...((inst.pump && inst.pump.kw) || []), ...eff.ifType.kw])] };
+      what += ` (an ${eff.ifType.type}, so it gains ${eff.ifType.kw.join(', ')} until end of turn)`;
     }
     const line = `${src}: ${what}.`;
     G.log(s, line);
     return line;
   }
 
-  // Damage to a player as the target, seen from game: who 'you' or 'opp'.
-  function damagePlayer(game, who, n, src) {
-    if (who === 'you') game.life -= n;
-    else game.oppLife -= n;
+  // Damage to a player as the target, seen from game: who 'you' or 'opp'. With defOf, Massacre
+  // Girl, Most Wanted and the like on the damage dealer's side see it.
+  function damagePlayer(game, who, n, src, defOf) {
+    addLife(game, who, -n);
     G.log(game, `${src}: ${n} damage to ${who === 'you' ? 'you' : 'Opp'}.`);
+    if (defOf && game.bot) opponentDamaged(game, who === 'you' ? game.bot.s : game, n, defOf);
+  }
+  // "Target player draws two cards and loses 2 life." (Sign in Blood) for who: 'you' or 'opp'.
+  function playerEffect(game, who, eff, src) {
+    const t = who === 'you' ? game : game.bot.s;
+    if (eff.draw) G.drawCards(t, eff.draw, t !== game);
+    if (eff.lose) addLife(game, who, -eff.lose);
+    const line = `${src}: ${who === 'you' ? 'you' : 'Opp'} drew ${eff.draw} and lost ${eff.lose} life.`;
+    G.log(game, line);
+    return line;
   }
 
   // Opp picks a target for its own effect (src on its table): removal and damage on your most
@@ -1198,54 +1533,123 @@ const Bot = (() => {
   // pumps and counters on its own best creature, tap on your best untapped creature.
   // Returns { inst, s } or { player: 'you' } or null. dry: just look.
   function oppTarget(game, src, eff, defOf, dry) {
-    const s = game.bot.s;
-    const pool = [...permanents(game).map(inst => ({ inst, s: game, mine: false, st: stats(inst, defOf(inst.id)) })),
-      ...permanents(s).map(inst => ({ inst, s, mine: true, st: botStats(inst) }))].filter(x => canTarget(eff, x.inst, x.st, x.mine, true));
+    return autoTarget(game, game.bot.s, src, eff, defOf, dry);
+  }
+  // A target picked without asking, for whoever controls src (table s): Opp's effects, and yours in
+  // the middle of combat ("Whenever this attacks, another target Assassin you control gains
+  // deathtouch"). Harmful effects go on the other side's most valuable creature it can hit; helpful
+  // ones on its own best creature (one that's attacking and lacks the keyword, when there is one).
+  // The player for "target player draws two cards and loses 2 life" is itself.
+  function autoTarget(game, s, src, eff, defOf, dry) {
+    const other = s === game ? game.bot && game.bot.s : game;
+    const theirs = s !== game; // Opp's effect
+    const statsOf = inst => stats(inst, inst.bot || defOf(inst.id));
+    const pool = [...(other ? permanents(other).map(inst => ({ inst, s: other, mine: false, st: statsOf(inst) })) : []),
+      ...permanents(s).map(inst => ({ inst, s, mine: true, st: statsOf(inst) }))].filter(x => canTarget(eff, x.inst, x.st, x.mine, true));
     const best = list => list.sort((a, b) => value(b.st) - value(a.st))[0] || null;
+    const foe = theirs ? 'you' : 'opp';
+    const harmful = (eff.action === 'pump' && (eff.tou < 0 || eff.pow < 0)) || (eff.action === 'counter' && /^-/.test(eff.kind));
     let pick = null;
     if (['destroy', 'exile', 'bounce'].includes(eff.action)) pick = best(pool.filter(x => !x.mine && !(eff.action === 'destroy' && x.st.kw.has('indestructible'))));
     else if (eff.action === 'damage') {
       pick = best(pool.filter(x => !x.mine && G.isCreature(x.inst) && x.st.tou <= eff.n && !x.st.kw.has('indestructible')));
       const f = targetFilter(eff.what);
-      if (!pick && f && f.players) pick = { player: 'you' };
-    } else if (eff.action === 'tap') pick = best(pool.filter(x => !x.mine && !x.inst.tapped));
+      if (!pick && f && f.players) pick = { player: foe };
+    } else if (harmful) {
+      const cut = eff.action === 'pump' ? -eff.tou : eff.n;
+      const theirsC = pool.filter(x => !x.mine && G.isCreature(x.inst));
+      pick = best(theirsC.filter(x => x.st.tou <= cut && !x.st.kw.has('indestructible'))) || best(theirsC);
+    } else if (eff.action === 'player') pick = { player: theirs ? 'opp' : 'you', self: true };
+    else if (eff.action === 'tap') pick = best(pool.filter(x => !x.mine && !x.inst.tapped));
     else if (eff.action === 'untap') pick = best(pool.filter(x => x.mine && x.inst.tapped));
-    else pick = best(pool.filter(x => x.mine && G.isCreature(x.inst)));
+    else {
+      const own = pool.filter(x => x.mine && G.isCreature(x.inst));
+      const wants = x => (eff.kw || []).some(k => !x.st.kw.has(k));
+      pick = best(own.filter(x => x.inst.attacking && wants(x))) || best(own.filter(x => x.inst.attacking)) || best(own);
+    }
     if (!pick || dry) return pick;
-    if (pick.player) damagePlayer(game, 'you', eff.n, src.name);
-    else applyTarget(game, pick.s, pick.inst, eff, `Opp's ${src.name}`, defOf);
+    const name = `${theirs ? "Opp's " : ''}${src.name}`;
+    if (pick.self) playerEffect(game, pick.player, eff, name);
+    else if (pick.player) damagePlayer(game, pick.player, eff.n, name, defOf);
+    else applyTarget(game, pick.s, pick.inst, eff, name, defOf, s);
+    if (/\b(instant|sorcery)\b/i.test(front(src.typeLine || ''))) spellTargeted(game, s, src, pick, defOf, null);
     return pick;
   }
 
   // Your "When this enters, …" (or Opp's): the targeted parts ("destroy target creature an opponent
   // controls") and tokens ("create two 1/1 …"). Life, cards and counters on entering are done elsewhere.
   // s: the table it entered on. ctx.target is how you pick (app.js); Opp picks with oppTarget.
+  // Other parts ("each other creature gets -1/-1 until end of turn", "search your library …") run
+  // through runEffect; life, drawing and discarding on entering are done by game.js, and counters on
+  // each creature and the monarch by enterTrigger.
+  const ENTER_ELSEWHERE = [/^(?:you gain|you lose|each opponent loses|target opponent loses) \w+ life$/i, /^.+? deals \w+ damage to each opponent$/i,
+    new RegExp(`^(?:you )?draw ${COUNT} cards?$`, 'i'), /\bdiscards?\b/i, /^put .+ counters? on each (?!attacking)/i, /^you become the monarch$/i];
+  const enteredElsewhere = part => ENTER_ELSEWHERE.some(re => re.test(part));
   function enterEffects(game, s, inst, defOf, ctx) {
     if (!inst || inst.faceDown) return;
     const opps = isOpps(game, s);
     for (const line of oracleLines(inst, defOf)) {
       const m = /^when(?:ever)? (.+?) enters(?: the battlefield)?(?: or [^,]+)?, (?:you may )?(.+)$/i.exec(line);
       if (!m || !isSelf(m[1], inst)) continue;
-      for (const part of effectParts(m[2])) {
-        const eff = targetEffect(part);
-        if (eff && opps) oppTarget(game, inst, eff, defOf);
-        else if (eff && ctx && ctx.target) ctx.target(eff, part, inst);
-        else if (TOKEN_TEXT.test(part)) triggerTokens(s, inst, part, 'enters');
-      }
+      const text = settleIfYouDo(m[2], s);
+      if (/\bif you do\b/i.test(text)) continue; // left to you
+      const rest = effectParts(text).filter(p => !enteredElsewhere(p)).join('. ');
+      if (!rest) continue;
+      if (opps) runFor(game, s, inst, rest, 'entered', null, defOf);
+      else fire(s, inst, 'entered', rest, Object.assign({ other: game.bot ? game.bot.s : null, defOf }, ctx));
     }
   }
-  // "Choose a number between 0 and 10." stays with the sentence that uses it (CHOOSE_WIPE).
+  // "Choose a number between 0 and 10." stays with the sentence that uses it (CHOOSE_WIPE), and so
+  // do sentences about the target before them ("It gains lifelink until end of turn.", FOLLOW_UP).
+  // Nothing inside quotes is split (a quoted ability it gives: 'gains "Whenever …, draw a card."').
   const effectParts = text => String(text).replace(/\([^)]*\)/g, '').trim().replace(/\.$/, '')
-    .split(/(?<!\bbetween \d+ and \d+)\.\s+|,?\s+and\s+(?=you |draw |each |put |target )|,\s+then\s+/i).map(p => p.trim()).filter(Boolean);
+    .split(/((?<!\bbetween \d+ and \d+)\.\s+|,?\s+and\s+(?=you |draw |each |put |target )|,\s+then\s+|,\s+(?=draw (?:a|an|one|two|three|four|five|six|seven|\d+) cards?\b))/i)
+    .reduce((acc, piece, i) => {
+      const open = acc.length && (acc[acc.length - 1].match(/"/g) || []).length % 2 === 1;
+      if (open) acc[acc.length - 1] += piece; // still inside quotes: keep the separator and the rest
+      else if (i % 2 === 0) acc.push(piece);
+      return acc;
+    }, [])
+    .map(p => p.trim()).filter(Boolean)
+    .reduce((out, p) => {
+      const last = out[out.length - 1];
+      if (last && /\btarget\b/i.test(last) && FOLLOW_UP.test(p)) out[out.length - 1] = `${last}. ${p}`;
+      else out.push(p);
+      return out;
+    }, []);
   const effectFor = (part, ctx) => EFFECTS.find(([re, , can]) => { const m = re.exec(part); return m && (!can || can(m, ctx)); });
   // Can runEffect do all of this text? (Then a spell made of it can resolve on its own.)
-  const canRunAll = (text, ctx) => { const parts = effectParts(text); return parts.length > 0 && !/\bif you do\b/i.test(text) && parts.every(p => effectFor(p, ctx)); };
+  const canRunAll = (text, ctx) => {
+    const t = settleIfYouDo(text, null);
+    const parts = effectParts(t);
+    return parts.length > 0 && !/\bif you do\b/i.test(t) && parts.every(p => effectFor(p, ctx));
+  };
+
+  // "If you do" after a choice that's always worth making, so it's made for you:
+  //   Ob Nixilis, the Fallen: "have target player lose 3 life. If you do, put three +1/+1 counters on Ob Nixilis."
+  //   Nightshade Assassin: "reveal X black cards in your hand. If you do, target creature gets -X/-X
+  //   until end of turn." X is every black card in hand on table g (1 when there's no table).
+  //   Reno and Rude: "Then you may sacrifice another creature or artifact. If you do, you may play the
+  //   exiled card this turn, …" becomes one choice (ctx.sacToPlay).
+  function settleIfYouDo(text, g) {
+    let t = String(text).trim();
+    t = t.replace(/^(have target (?:player|opponent) lose \w+ life)\. if you do, /i, '$1. ');
+    const r = /^(?:you may )?reveal x (white|blue|black|red|green) cards in your hand\. if you do, (.+?) gets -x\/-x until end of turn\.?$/i.exec(t);
+    if (r) {
+      const color = PRO_COLORS[r[1].toLowerCase()];
+      const x = g ? g.zones.hand.filter(iid => colorsOf(g.cards[iid].bot || { manaCost: g.cards[iid].cost || '' }).includes(color)).length : 1;
+      t = x ? `${r[2]} gets -${x}/-${x} until end of turn` : '';
+    }
+    t = t.replace(/\.\s+then you may sacrifice another (.+?)\. if you do, you may play the exiled card this turn, and mana of any type can be spent to cast it\.?$/i, '. You may sacrifice another $1 to play the exiled card this turn');
+    return t;
+  }
 
   // Does the easy parts of an ability's effect: drawing, life, counters on the card itself,
   // tokens, proliferate, the monarch, untapping and extra combats. game: the table it happens on.
   // ctx: { self, hitOpps(n), hitTarget(n), other } where hitOpps takes life from each opponent
   // and other is the opponent's table (for proliferate). Returns the parts it couldn't do (for you to do by hand), or [].
   function runEffect(game, text, ctx, times = 1) {
+    text = settleIfYouDo(text, game);
     // "You may mill two cards. If you do, …": the first half is a choice the rest depends on, so it's all yours to do.
     if (/\bif you do\b/i.test(text)) return effectParts(text);
     const left = [];
@@ -1267,12 +1671,70 @@ const Bot = (() => {
     return left;
   }
 
+  // The modes Opp (or an automatic game) picks for "Choose one —" on a trigger: ones that hit the
+  // opponent first, then ones it can do all of; "you lose" counts against a mode.
+  function autoModes(g, modes, pick, ctx) {
+    const score = m => {
+      const spec = cardMoveSpec(effectParts(m)[0] || '');
+      return (/\bopponent\b|\btarget player\b/i.test(m) ? 3 : 0) + (canRunAll(m, ctx) ? 2 : 0)
+        + (spec && moveChoices(g, ctx.other, spec).length ? 3 : 0) - (/\byou lose\b/i.test(m) ? 1 : 0);
+    };
+    return [...modes].sort((a, b) => score(b) - score(a)).slice(0, pick);
+  }
+
+  // An opponent of table s was dealt noncombat damage n: "Whenever an opponent is dealt noncombat
+  // damage, put a +1/+1 counter on Massacre Girl." on s.
+  const DEALT_WATCH = /^whenever an opponent is dealt noncombat damage, (?:you may )?(.+)$/i;
+  function opponentDamaged(game, s, n, defOf, ctx) {
+    if (!(n > 0) || !s) return;
+    for (const w of permanents(s)) {
+      for (const line of oracleLines(w, defOf)) {
+        const m = DEALT_WATCH.exec(line);
+        if (m) runFor(game, s, w, m[1], `an opponent was dealt ${n} noncombat damage`, isOpps(game, s) ? null : ctx, defOf);
+      }
+    }
+  }
+
+  // A spell cast on table s targets something (pick: { inst, s } or { player }): heroic ("Whenever you
+  // cast a spell that targets this creature, …") and Danitha ("… that targets an opponent or a
+  // creature an opponent controls, …").
+  const TARGET_WATCH = /^(?:heroic\s*[—-]\s*)?whenever you cast a spell that targets (.+?), (?:you may )?(.+)$/i;
+  function spellTargeted(game, s, spell, pick, defOf, ctx) {
+    if (!pick || !spell) return;
+    const foe = s === game ? 'opp' : 'you';
+    for (const w of permanents(s)) {
+      for (const line of oracleLines(w, defOf)) {
+        const m = TARGET_WATCH.exec(line);
+        if (!m) continue;
+        const hit = m[1].split(/\s+or\s+/).some(alt => {
+          const a = alt.trim().toLowerCase();
+          if (pick.player) return /^an opponent$/.test(a) ? pick.player === foe : /^a player$/.test(a);
+          const mine = pick.s === s;
+          if (isSelf(a, w)) return pick.inst === w;
+          const c = /^an? (.+?)(?: (you control|an opponent controls))?$/.exec(a);
+          return !!c && isA(pick.inst, c[1]) && (!c[2] || (c[2] === 'you control') === mine);
+        });
+        if (hit) runFor(game, s, w, m[2], `${spell.name} targeted ${pick.player ? (pick.player === 'you' ? 'you' : 'Opp') : pick.inst.name}`, isOpps(game, s) ? null : ctx, defOf);
+      }
+    }
+  }
+
+  // Ebondeath, Dracolich: "You may cast this card from your graveyard if a creature not named
+  // Ebondeath, Dracolich died this turn." (s.deathsThisTurn, kept by afterDeath.)
+  const GRAVE_CAST = /^you may cast this card from your graveyard if a creature not named (.+?) died this turn\.?$/i;
+  function graveCast(s, inst, defOf) {
+    if (!inst || inst.zone !== 'graveyard') return false;
+    const m = oracleLines(inst, defOf).map(l => GRAVE_CAST.exec(l)).find(Boolean);
+    return !!m && (s.deathsThisTurn || []).some(n => n.toLowerCase() !== m[1].toLowerCase());
+  }
+
   const yourPermanents = game => game.zones.battlefield.map(iid => game.cards[iid]).filter(c => c && !c.faceDown);
   // A rules line without reminder text or an ability word ("Raid — When …", "Landfall — Whenever …"),
   // which only names the ability. Saga chapters ("I, II — …") keep theirs.
   const plainLine = l => l.replace(/\([^)]*\)/g, '').trim().replace(/^(?![IVX]+(?:, [IVX]+)* —)[A-Z][A-Za-z'’ -]{1,40}? — (?=[A-Z{+−-])/, '');
-  // Abilities a pump gave it until end of turn (inst.pump.lines) count too.
-  const oracleLines = (inst, defOf) => oracleText(inst, defOf).split('\n').map(plainLine).concat((inst.pump && inst.pump.lines) || []);
+  // Abilities a pump gave it until end of turn (inst.pump.lines) count too, and ones other cards give
+  // it ('Commander creatures you own have "Whenever this creature attacks …"', inst.grantedLines).
+  const oracleLines = (inst, defOf) => oracleText(inst, defOf).split('\n').map(plainLine).concat((inst.pump && inst.pump.lines) || [], inst.grantedLines || []);
 
   // Runs one trigger and logs it. Parts it can't do are logged for you to do by hand.
   function fire(game, inst, what, effect, ctx, times = 1) {
@@ -1303,9 +1765,16 @@ const Bot = (() => {
     for (const inst of permanents(s)) {
       for (const line of oracleLines(inst, defOf)) {
         const m = /^(?:landfall\s*[—-]\s*)?whenever a land(?: you control)? enters(?: the battlefield)?(?: under your control)?, (?:you may )?(.+)$/i.exec(line);
-        if (m) fireOn(game, s, inst, `landfall (${land.name})`, m[1], ctx, defOf);
+        if (m) fireOn(game, s, inst, `landfall (${land.name})`, landfallText(m[1], land), ctx, defOf);
       }
     }
+  }
+  // Guul Draz Overseer: "other creatures you control get +1/+0 until end of turn. If that land is a
+  // Swamp, those creatures get +2/+0 until end of turn instead." becomes the one that applies.
+  function landfallText(effect, land) {
+    const m = /^(.+?) get ([+-]\d+\/[+-]\d+) until end of turn\. if that land is an? (\w+), those creatures get ([+-]\d+\/[+-]\d+) until end of turn instead\.?$/i.exec(String(effect).trim());
+    if (!m) return effect;
+    return `${m[1]} get ${land && isA(land, m[3]) ? m[4] : m[2]} until end of turn`;
   }
 
   // "Whenever a creature (you control) enters (the battlefield under your control), …" (Ajani's
@@ -1343,7 +1812,13 @@ const Bot = (() => {
       for (const line of oracleLines(inst, defOf)) {
         const m = ENTER_WATCH.exec(line);
         if (!m || !/you control|under your control/i.test(line.split(',')[0]) || !watched(m, inst, creature, defOf)) continue;
-        const effect = m[8];
+        let effect = m[8];
+        // The Sibsig Ceremony: "if you cast it, destroy that creature, …"
+        const cast = /^if you cast it, (.+)$/i.exec(effect);
+        if (cast) {
+          if (!creature.wasCast) continue;
+          effect = cast[1];
+        }
         const who = subjectOf(effect, inst, creature);
         fireOn(game, s, who, `${creature.faceDown ? 'a creature' : creature.name} entered (${inst.name})`, effect, ctx, defOf);
       }
@@ -1354,7 +1829,7 @@ const Bot = (() => {
   // each end step" on every table. phase: 'upkeep', 'end step' or 'combat'; active: the table whose
   // turn it is. ctx: as for runEffect, for your cards. What can't be done is logged to do by hand.
   // dry: just count them. Returns how many there were.
-  const PHASE_TRIGGER = /^at the beginning of (?:(your|each|each player's|each opponent's) )?(upkeep|end step|combat on your turn|combat)(?:,| on [^,]+,) (?:you may )?(.+)$/i;
+  const PHASE_TRIGGER = /^at the beginning of (?:(your|each|each player's|each opponent's) )?(upkeep|draw step|end step|combat on your turn|combat)(?:,| on [^,]+,) (?:you may )?(.+)$/i;
   function phaseTriggers(game, active, phase, defOf, ctx, dry) {
     let n = 0;
     for (const t of [game, game.bot && game.bot.s].filter(Boolean)) {
@@ -1422,10 +1897,24 @@ const Bot = (() => {
   // a graveyard from play / the battlefield"). s: the table it died on. Tokens are made on either
   // table; other effects run on yours (ctx) and on Opp's (game, when s is Opp's table), and what's
   // left is logged to do by hand.
-  function died(s, inst, defOf, ctx, game) {
+  // Unstoppable Slasher: "When this creature dies, if it had no counters on it, return it to the
+  // battlefield tapped under its owner's control with two stun counters on it."
+  const RETURN_STUNNED = /^if it had no counters on it, return it to the battlefield( tapped)? under its owner's control(?: with (\w+) ([\w+/-]+) counters? on it)?\.?$/i;
+  function died(s, inst, defOf, ctx, game, info = {}) {
     for (const line of oracleLines(inst, defOf)) {
       const m = /^when(?:ever)? (.+?) (?:dies|is put into (?:a|your) graveyard from (?:the battlefield|play)), (?:you may )?(.+)$/i.exec(line);
       if (!m || !isSelf(m[1], inst)) continue;
+      const back = RETURN_STUNNED.exec(m[2].trim());
+      if (back) {
+        const had = Object.values(info.counters || {}).some(n => n > 0);
+        if (had || inst.token || !s.cards[inst.iid] || inst.zone !== 'graveyard') { G.log(s, `${inst.name} died${had ? ' with counters on it, so it stays dead' : ''}.`); continue; }
+        G.move(s, inst.iid, 'battlefield');
+        inst.tapped = true;
+        inst.tappedFor = null;
+        if (back[2]) G.counter(s, inst.iid, back[3].toLowerCase(), toNumber(back[2]), { effect: true });
+        G.log(s, `${inst.name} came back tapped${back[2] ? ` with ${back[2]} ${back[3]} counters` : ''}.`);
+        continue;
+      }
       if (triggerTokens(s, inst, m[2].trim(), 'dies')) continue;
       if (ctx) fire(s, inst, 'dies', m[2], ctx);
       else if (game && isOpps(game, s)) runFor(game, s, inst, m[2], 'died', null, defOf);
@@ -1439,6 +1928,8 @@ const Bot = (() => {
   // to a player, …".
   function combatDamage(game, hits, defOf, ctx) {
     if (!hits.length) return;
+    // Freerunning: "if you dealt combat damage to a player this turn with an Assassin or commander".
+    if (hits.some(h => h.inst.commander || isA(h.inst, 'assassin'))) game.freerunTurn = game.turn;
     for (const inst of yourPermanents(game)) {
       for (const line of oracleLines(inst, defOf)) {
         const h = hitTrigger(line, inst, hits);
@@ -1448,6 +1939,9 @@ const Bot = (() => {
           // You pick (or skip) which one: afterChange opens the picker for game.mustDestroy.
           game.mustDestroy = [...(game.mustDestroy || []), { what: d, why: inst.name }];
           G.log(game, `${inst.name}: combat damage to Opp, so you may destroy up to one ${d} Opp controls.`);
+        } else if (h.hitters && h.hitters.some(c => subjectOf(h.effect, inst, c) === c)) {
+          // "… put a +1/+1 counter on it": on each creature that dealt the damage.
+          h.hitters.forEach(c => fire(game, c, `combat damage to a player (${inst.name})`, h.effect, ctx));
         } else fire(game, inst, 'combat damage to a player', h.effect, ctx, h.times);
       }
     }
@@ -1485,15 +1979,22 @@ const Bot = (() => {
     let g;
     let times = 0;
     let effect = m[2];
+    let hitters = null;
     if ((g = /^one or more (.+?) you control/.exec(who))) times = hits.some(h => bigger(h) && isA(h.inst, g[1])) ? 1 : 0;
-    else if ((g = /^(?:an?|another) (.+?) you control/.exec(who))) times = hits.filter(h => bigger(h) && isA(h.inst, g[1]) && !(/^another/.test(who) && h.inst === inst)).length;
-    else if (isSelf(who, inst)) {
+    else if ((g = /^(?:an?|another) (.+?) you control(?: with ([a-z]+(?: [a-z]+)?))?/.exec(who))) {
+      // White Widow: "a creature you control with deathtouch"
+      const kw = g[2] && KEYWORDS.includes(g[2]) ? g[2] : null;
+      hitters = hits.filter(h => bigger(h) && isA(h.inst, g[1]) && !(/^another/.test(who) && h.inst === inst) && (!kw || h.st.kw.has(kw))).map(h => h.inst);
+      times = hitters.length;
+    } else if (isSelf(who, inst)) {
       const hit = hits.find(h => h.inst === inst);
       times = hit ? 1 : 0;
       // "draw cards equal to its toughness": the number, from its stats as it dealt the damage.
       if (hit) effect = effect.replace(/\bcards equal to (?:its|this creature's) (power|toughness)\b/i, (all, k) => `${Math.max(0, /power/i.test(k) ? hit.st.pow : hit.st.tou)} cards`);
+      // Desmond Miles: "surveil X, where X is the amount of damage it dealt to that player".
+      if (hit) effect = effect.replace(/\b(surveil|scry|draw|mill) x(?: cards)?, where x is the amount of damage (?:it|this creature|[^,]+?) dealt to that player\b/i, (all, verb) => `${verb} ${Math.max(0, hit.dmg != null ? hit.dmg : hitOf(hit.st))}${/draw|mill/i.test(verb) ? ' cards' : ''}`);
     }
-    return times ? { times, effect } : null;
+    return times ? { times, effect, hitters } : null;
   }
 
   // "destroy up to one target artifact or enchantment that player controls" → 'artifact or enchantment'.
@@ -1518,8 +2019,15 @@ const Bot = (() => {
     if (silenced(inst)) return out; // Arrest
     for (const line of oracleLines(inst, defOf)) {
       const m = /^([^:"]+):\s*(.+)$/.exec(line);
-      if (!m || /^add\b/i.test(m[2]) || /^(equip|crew|cycling|ward)\b/i.test(m[1])) continue;
+      const loyal = m && /^[+−-]?(\d+|x)$/i.test(m[1].trim()); // planeswalkers: "+1: …", "−X: …", "0: Add {C}{C}{C}."
+      if (!m || (/^add\b/i.test(m[2]) && !loyal) || /^(equip|crew|cycling|ward)\b/i.test(m[1])) continue;
       const ab = { text: line, mana: '', tap: false, remove: null, life: 0, sacrifice: false, discard: 0, effect: m[2] };
+      if (loyal) {
+        const k = m[1].trim().replace('−', '-');
+        ab.loyalty = /x/i.test(k) ? 'x' : Number(k);
+        out.push(ab);
+        continue;
+      }
       let ok = true;
       for (const part of m[1].split(/,\s*/)) {
         let c;
@@ -1540,8 +2048,9 @@ const Bot = (() => {
 
   // "Rats" → "rat", "Elves" → "elf", "creatures" → "creature".
   const singular = w => w.toLowerCase().replace(/ves$/, 'f').replace(/([^s])s$/, '$1');
-  // Does this permanent have every word of a phrase like "Rat creature" in its type line?
-  const typeWords = inst => front(inst.typeLine).toLowerCase().split(/[^a-z-]+/).filter(Boolean);
+  // Does this permanent have every word of a phrase like "Rat creature" in its type line? Types other
+  // cards give it count too (Roshan's "Other creatures you control are Assassins", see grantsOnce).
+  const typeWords = inst => front(inst.typeLine).toLowerCase().split(/[^a-z-]+/).filter(Boolean).concat(inst.extraTypes || []);
   const isA = (inst, phrase) => {
     const have = typeWords(inst);
     return phrase.toLowerCase().split(/\s+/).filter(Boolean).map(singular).every(w => have.includes(w));
@@ -1556,7 +2065,7 @@ const Bot = (() => {
   // creature left with 0 or less toughness goes to the graveyard, which can change the lords again.
   function refreshGrants(game, defOf) {
     const tables = [game, game.bot && game.bot.s].filter(Boolean);
-    for (let i = 0; i < 10; i++) {
+    for (let i = 0; i < 30; i++) { // Massacre Girl can take many rounds
       grantsOnce(tables, defOf);
       if (!zeroToughness(tables, defOf)) return;
     }
@@ -1632,8 +2141,14 @@ const Bot = (() => {
     for (const s of tables) {
       const lords = hostile.filter(h => h.from !== s).map(h => ({ src: null, other: false, what: h.what, kws: [], pow: h.pow, tou: h.tou }));
       const each = []; // "This gets +1/+1 for each other Cat you control"
+      const quoted = []; // 'Commander creatures you own have "Whenever this creature attacks …"'
+      const types = []; // Roshan: "Other creatures you control are Assassins in addition to their other types."
       for (const src of permanents(s)) {
         for (let line of oracleLines(src, defOf)) {
+          let q = /^(other )?(.+?) you (?:control|own) have "(.+)"\.?$/i.exec(line);
+          if (q && !q[2].includes(':')) { quoted.push({ src, other: !!q[1], what: q[2], line: q[3] }); continue; }
+          q = /^other creatures you control are (\w+?)s? in addition to their other types\.(.*)$/i.exec(line);
+          if (q) { types.push({ src, type: q[1].toLowerCase(), everywhere: /aren't on the battlefield/i.test(q[2]) }); continue; }
           // Banners: "Creatures you control of the chosen type get +1/+1" reads as "Elf creatures you control get +1/+1".
           if (/ of the chosen type\b/i.test(line)) {
             if (!src.chosenType) continue;
@@ -1651,18 +2166,36 @@ const Bot = (() => {
             if (kws.length || pow || tou) lords.push({ src, other: !!m[1], what: m[2], withKw: (m[3] || '').toLowerCase(), kws, pow, tou });
             continue;
           }
-          m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control\.?$/i.exec(line);
-          if (m && isSelf(m[1], src)) { each.push({ src, pow: Number(m[2]), tou: Number(m[3]), other: !!m[4], what: m[5] }); continue; }
+          // Desmond Miles: "… for each other Assassin you control and each Assassin card in your graveyard."
+          m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control(?: and each (.+?) cards? in your graveyard)?\.?$/i.exec(line);
+          if (m && isSelf(m[1], src)) { each.push({ src, pow: Number(m[2]), tou: Number(m[3]), other: !!m[4], what: m[5], grave: m[6] || null }); continue; }
           // "Silverwing Squadron's power and toughness are each equal to the number of creatures you control."
           m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) you control\.?$/i.exec(line);
           if (m && isSelf(m[1], src)) each.push({ src, pow: /power/i.test(m[2]) ? 1 : 0, tou: /toughness/i.test(m[2]) ? 1 : 0, other: !!m[3], what: m[4], cda: true });
         }
       }
+      // Types first, since the rest checks them ("Assassins you control have menace").
+      for (const c of Object.values(s.cards)) {
+        const add = types.filter(t => t.src !== c && (c.zone === 'battlefield' ? G.isCreature(c) && !c.faceDown : t.everywhere && /\bcreature\b/i.test(front(c.typeLine))))
+          .map(t => singular(t.type)).filter(t => !front(c.typeLine).toLowerCase().split(/[^a-z-]+/).includes(t));
+        if (add.length) c.extraTypes = [...new Set(add)];
+        else delete c.extraTypes;
+      }
       const all = permanents(s);
+      // "commander creatures": its commander.
+      const fitsWhat = (c, what) => {
+        const w = what.replace(/^commander\s+/i, '');
+        return (w === what || c.commander) && isA(c, w);
+      };
       for (const c of creatures(s)) {
         const got = new Set();
         let pow = 0;
         let tou = 0;
+        const lines = quoted.filter(q => !(q.other && q.src === c) && fitsWhat(c, q.what)).map(q => q.line);
+        if (lines.length) c.grantedLines = lines;
+        else delete c.grantedLines;
+        // An aura on its equipment that says 'it has "Equipped creature has deathtouch."' (Rune of Mortality).
+        G.attachmentsOf(s, c.iid).forEach(id => Object.values(s.cards[id].boosts || {}).forEach(b => (b.equipKw || []).forEach(k => got.add(k))));
         lords.forEach(l => {
           if ((l.other && l.src === c) || !isA(c, l.what)) return;
           if (l.withKw && !stats(c, c.bot || defOf(c.id)).kw.has(l.withKw)) return;
@@ -1678,7 +2211,8 @@ const Bot = (() => {
         });
         const cda = { pow: 0, tou: 0 };
         each.filter(e => e.src === c).forEach(e => {
-          const n = all.filter(p => !(e.other && p === c) && isA(p, e.what)).length;
+          const n = all.filter(p => !(e.other && p === c) && isA(p, e.what)).length
+            + (e.grave ? s.zones.graveyard.filter(iid => isA(s.cards[iid], e.grave)).length : 0);
           if (e.cda) { cda.pow += e.pow * n; cda.tou += e.tou * n; return; }
           pow += e.pow * n;
           tou += e.tou * n;
@@ -1745,7 +2279,9 @@ const Bot = (() => {
     const gain = p[4] || p[5];
     const kw = gain ? gain.toLowerCase().split(/,\s*(?:and\s+)?|\s+and\s+/).map(k => k.trim()).filter(k => KEYWORDS.includes(k)) : [];
     if (!pow && !tou && !kw.length) return false;
-    const who = permanents(s).filter(c => G.isCreature(c) && isA(c, p[1]));
+    // "Other creatures you control get +1/+0" (Guul Draz Overseer): not the card itself.
+    const other = /^other /i.test(p[1]);
+    const who = permanents(s).filter(c => G.isCreature(c) && isA(c, p[1].replace(/^other /i, '')) && !(other && c === inst));
     who.forEach(c => {
       inst.undoPump = inst.undoPump || {}; // for a counterspell (G.counterLast)
       if (!(c.iid in inst.undoPump)) inst.undoPump[c.iid] = c.pump ? { ...c.pump } : null;
@@ -1774,14 +2310,18 @@ const Bot = (() => {
 
   // Does the chosen modes (indexes into spellModes' list) on table s. Returns the ones it couldn't
   // do, which are logged for you to do by hand.
-  function runModes(s, inst, defOf, chosen) {
+  // ctx (as for runEffect) does the other modes ("Exile target creature or planeswalker.", "Return one
+  // or two target creature … cards from your graveyard to your hand.").
+  function runModes(s, inst, defOf, chosen, ctx) {
     const info = spellModes(inst, defOf);
     const left = [];
     for (const i of chosen) {
       const text = info && info.modes[i];
       if (!text) continue;
       const done = text.split(/(?<=\.)\s+/).map(sentence => pumpSentence(s, inst, sentence)).some(Boolean);
-      if (!done) left.push(text);
+      if (done) continue;
+      if (ctx && canRunAll(text, Object.assign({ self: inst, defOf }, ctx))) left.push(...runEffect(s, text, Object.assign({ self: inst, defOf }, ctx)));
+      else left.push(text);
     }
     if (left.length) G.log(s, `${inst.name}: do by hand: ${left.join(' ')}`);
     return left;
@@ -1793,17 +2333,37 @@ const Bot = (() => {
   // tapped and attacking." and Brimaz's "…that's attacking" / "…that's blocking that creature."
   // s: the table the creature is on. event: 'attacks' or 'blocks'. Returns the iids of tokens that
   // entered attacking (or blocking the same attacker), for the caller to add to the combat.
-  function combatTrigger(s, inst, event, defOf) {
+  // Anything else it can do ("another target Assassin you control gains deathtouch until end of turn",
+  // 'put a +1/+1 counter on this creature. It gains deathtouch and indestructible until end of turn')
+  // runs with ctx, whose targets are picked without asking (autoTarget) since combat doesn't wait.
+  // "Whenever this creature attacks a player, if no opponent has more life than that player, …":
+  // info.player is false when it attacks a planeswalker, info.mostLife false when someone else has more life.
+  function combatTrigger(s, inst, event, defOf, ctx, info = {}) {
     const attacking = [];
     if (!inst || inst.faceDown) return attacking;
     for (const line of oracleLines(inst, defOf)) {
-      const m = /^whenever (.+?) (enters(?: the battlefield)? or attacks|attacks or blocks|attacks|blocks)(?: a creature)?, (.+)$/i.exec(line);
+      const m = /^whenever (.+?) (enters(?: the battlefield)? or attacks|attacks or blocks|attacks|blocks)( a player)?(?: a creature)?, (.+)$/i.exec(line);
       if (!m || !isSelf(m[1], inst) || !m[2].toLowerCase().split(' or ').includes(event)) continue;
+      if (m[3] && info.player === false) continue;
+      let effect = m[4];
+      const most = /^if no opponent has more life than that player, (.+)$/i.exec(effect);
+      if (most) {
+        if (info.mostLife === false) continue;
+        effect = most[1];
+      }
+      m[3] = effect;
       if (counterEach(s, inst, m[3], event)) continue;
       const t = triggerTokens(s, inst, m[3].trim(), event);
       if (t) { attacking.push(...t); continue; }
       const p = /^(.+?) gets? ([+-](?:\d+|x))\/([+-](?:\d+|x)) until end of turn(?:, where x is the number of (.+?) you control)?\.?$/i.exec(m[3].trim());
-      if (!p || (/x/i.test(p[2] + p[3]) && !p[4])) continue;
+      if (!p || (/x/i.test(p[2] + p[3]) && !p[4])) {
+        if (ctx && canRunAll(m[3], Object.assign({ self: inst }, ctx))) {
+          const go = () => runEffect(s, m[3], Object.assign({ self: inst }, ctx));
+          const left = ctx.run ? ctx.run(go) : go();
+          G.log(s, `${inst.name} ${event === 'blocks' ? 'blocks' : 'attacks'}: ${m[3]}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+        }
+        continue;
+      }
       const x = p[4] ? permanents(s).filter(c => isA(c, p[4])).length : 0;
       const amount = v => (/x/i.test(v) ? (v[0] === '-' ? -x : x) : Number(v));
       let who;
@@ -1935,14 +2495,69 @@ const Bot = (() => {
   // your life as its opponent's. Logs it, with what's left to do by hand. Returns what's left.
   function runFor(game, s, src, text, what, ctx, defOf, times = 1) {
     if (isOpps(game, s)) {
-      const target = eff => { oppTarget(game, src, eff, defOf); };
-      const left = onOpp(game, t => runEffect(t, text, { self: src, hitOpps: n => { t.oppLife -= n; }, other: game, target, defOf }, times));
+      const left = onOpp(game, t => runEffect(t, text, Object.assign(oppCtx(game, src, defOf), ctx || {}), times));
       G.log(s, `${src.name}: ${what}${times > 1 ? ` (×${times})` : ''}.${left.length ? ` Not done: ${left.join('; ')}.` : ''}`);
       return left;
     }
     const left = runEffect(s, text, Object.assign({ self: src, other: game.bot ? game.bot.s : null }, ctx), times);
     G.log(s, `${src.name}: ${what}${times > 1 ? ` (×${times})` : ''}.${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
     return left;
+  }
+
+  // What Opp's effects do to you (src: Opp's card). Run inside onOpp, so life goes through addLife.
+  function oppCtx(game, src, defOf) {
+    const s = game.bot.s;
+    const why = `Opp's ${src.name}`;
+    return {
+      self: src, other: game, defOf,
+      target: eff => { autoTarget(game, s, src, eff, defOf); },
+      hitOpps: (n, dmg) => { addLife(game, 'you', -n); if (dmg) opponentDamaged(game, s, n, defOf); },
+      oppsSacrifice: (n, what) => youSacrifice(game, n, why, what),
+      loseHalf: () => addLife(game, 'you', -Math.ceil(Math.max(0, lifeOf(game, 'you')) / 2)),
+      oppsExileGreatest: what => exileGreatest(game, game, what, why, defOf),
+      exileGrave: () => exileGraveyard(game, why),
+      oppsHandPick: spec => handPick(game, s, game, spec, why, defOf),
+      oppsDraw: n => G.drawCards(game, n),
+      oppsDiscard: n => youDiscard(game, n, false, why),
+      exileTop: () => exileTopCard(game, s, why),
+    };
+  }
+
+  // Blot Out on table t: it exiles its creature or planeswalker with the greatest mana value (the
+  // least valuable one when there's a tie). g: the table it's logged on.
+  function exileGreatest(g, t, what, why, defOf) {
+    const cmc = c => (c.bot ? c.bot.cmc : (defOf(c.id) || {}).cmc) || 0;
+    const list = permanents(t).filter(c => what.split(/\s+or\s+/).some(w => isA(c, w)));
+    if (!list.length) return G.log(g, `${why}: nothing to exile.`);
+    const top = Math.max(...list.map(cmc));
+    const pick = list.filter(c => cmc(c) === top).sort((a, b) => value(stats(a, a.bot || defOf(a.id))) - value(stats(b, b.bot || defOf(b.id))))[0];
+    G.log(g, `${why}: ${t === g ? 'you' : 'Opp'} exiled ${pick.name} (mana value ${top}).`);
+    G.move(t, pick.iid, pick.commander ? 'command' : 'exile');
+  }
+  // Bojuka Bog on table t's graveyard.
+  function exileGraveyard(t, why) {
+    const n = t.zones.graveyard.length;
+    [...t.zones.graveyard].forEach(iid => G.move(t, iid, 'exile'));
+    G.log(t, `${why}: exiled ${n} card${n === 1 ? '' : 's'} from the graveyard.`);
+  }
+  // Appetite for Brains: from table t's hand, the chooser (table by) takes its best card that fits
+  // spec { what, mv, to }. g: where it's logged.
+  function handPick(g, by, t, spec, why, defOf) {
+    const cmc = c => (c.bot ? c.bot.cmc : (defOf(c.id) || {}).cmc) || 0;
+    const fits = c => cmc(c) >= (spec.mv || 0) && (!spec.what || spellFits(c, spec.what.replace(/,/g, ''), defOf));
+    const pick = t.zones.hand.map(iid => t.cards[iid]).filter(fits).sort((a, b) => cmc(b) - cmc(a))[0];
+    G.log(g, `${why}: ${pick ? `${spec.to === 'exile' ? 'exiled' : 'discarded'} ${pick.name} from the hand` : 'no card in the hand to take'}.`);
+    if (pick) G.move(t, pick.iid, spec.to);
+  }
+  // Reno and Rude: the top card of the other table's library goes to that player's exile. by: the
+  // table of whoever's card did it. Returns the exiled card (on the other table).
+  function exileTopCard(game, by, why) {
+    const t = by === game ? game.bot && game.bot.s : game;
+    const iid = t && t.zones.library[0];
+    if (!iid) return null;
+    G.move(t, iid, 'exile');
+    G.log(by, `${why}: exiled ${t.cards[iid].name} from the top of ${t === game ? 'your' : "Opp's"} library.`);
+    return t.cards[iid];
   }
 
   // Proliferate on table s: one more of each kind of counter on its permanents (not -1/-1), and on
@@ -1993,10 +2608,19 @@ const Bot = (() => {
   // creature attacking alone gets +1/+1 for each exalted), battle cry (each other attacker gets
   // +1/+0) and annihilator N (opts.sacrifice(n, why) makes the defending player sacrifice).
   // Returns [[attackerIid, tokenIid]] for tokens that entered attacking.
+  // opts.game: the whole game, so attack triggers can pick targets (autoTarget) and change life;
+  // opts.ctx: more of the context for yours (hitOpps); opts.info(inst): { player, mostLife } (see combatTrigger).
   function declareAttack(s, insts, defOf, opts = {}) {
     insts = insts.filter(i => i && i.zone === 'battlefield');
+    insts.forEach(i => { i.attacking = true; }); // until endOfCombat ("each attacking creature")
     const joined = [];
-    insts.forEach(inst => combatTrigger(s, inst, 'attacks', defOf).forEach(iid => joined.push([inst.iid, iid])));
+    const game = opts.game;
+    const ctxFor = inst => {
+      if (!game) return null;
+      if (isOpps(game, s)) return Object.assign(oppCtx(game, inst, defOf), { run: fn => onOpp(game, fn) });
+      return Object.assign({ other: game.bot ? game.bot.s : null, defOf }, opts.ctx, { target: (eff, part, src) => { autoTarget(game, s, src || inst, eff, defOf); } });
+    };
+    insts.forEach(inst => combatTrigger(s, inst, 'attacks', defOf, ctxFor(inst), opts.info ? opts.info(inst) : {}).forEach(iid => joined.push([inst.iid, iid])));
     const stOf = inst => stats(inst, inst.bot || defOf(inst.id));
     if (insts.length === 1) {
       const n = permanents(s).filter(p => (G.isCreature(p) ? stOf(p).kw.has('exalted') : kwOf(p, defOf).has('exalted'))).length;
@@ -2020,6 +2644,7 @@ const Bot = (() => {
 
   // End of combat: decayed creatures that attacked are sacrificed.
   function endOfCombat(s, attackers, defOf) {
+    creatures(s).forEach(c => { delete c.attacking; });
     for (const inst of attackers) {
       if (!inst || inst.zone !== 'battlefield' || !stats(inst, inst.bot || defOf(inst.id)).kw.has('decayed')) continue;
       G.log(s, `${inst.name} (decayed) is sacrificed at end of combat.`);
@@ -2027,19 +2652,21 @@ const Bot = (() => {
     }
   }
 
-  // Opp sacrifices n permanents: tokens first, then its cheapest cards, lands last (unless it has plenty).
-  function oppSacrifices(game, n, why) {
+  // Opp sacrifices n permanents (of a kind, like "creature", when what is given): tokens first, then
+  // its cheapest cards, lands last (unless it has plenty).
+  function oppSacrifices(game, n, why, what) {
     const s = game.bot.s;
     const lands = permanents(s).filter(G.isLand).length;
     const cost = c => (c.token ? -10 : G.isLand(c) ? (lands >= 6 ? 0 : 50) : (c.bot ? c.bot.cmc : 0) + 1);
-    const gone = permanents(s).sort((a, b) => cost(a) - cost(b)).slice(0, n);
+    const gone = permanents(s).filter(c => !what || isA(c, what)).sort((a, b) => cost(a) - cost(b)).slice(0, n);
     gone.forEach(c => moveOpps(s, c));
     if (gone.length) G.log(game, `${why}: Opp sacrificed ${andList(gone.map(c => c.name))}.`);
+    else if (what) G.log(game, `${why}: Opp had no ${what} to sacrifice.`);
   }
-  // You sacrifice n permanents: you pick them (app.js shows game.mustSacrifice).
-  function youSacrifice(game, n, why) {
-    if (!permanents(game).length) return;
-    game.mustSacrifice = { n: ((game.mustSacrifice || {}).n || 0) + n, why };
+  // You sacrifice n permanents (of a kind, when what is given): you pick them (app.js shows game.mustSacrifice).
+  function youSacrifice(game, n, why, what) {
+    if (!permanents(game).filter(c => !what || isA(c, what)).length) return;
+    game.mustSacrifice = { n: ((game.mustSacrifice || {}).n || 0) + n, why, what: what || (game.mustSacrifice || {}).what || null };
   }
 
   // "Whenever Blood Artist or another creature dies", "Whenever a creature you control dies",
@@ -2062,26 +2689,108 @@ const Bot = (() => {
     const spirits = (inst.bot ? (inst.bot.n || {}).afterlife : keywordNumbers(oracleText(inst, defOf)).afterlife) || 0;
     if (spirits) triggerTokens(s, inst, `create ${spirits} 1/1 white and black Spirit creature tokens with flying`, 'dies');
     if (!G.isCreature(inst) && !isPlaneswalker(inst)) return;
-    for (const t of [game, game.bot && game.bot.s].filter(Boolean)) {
+    const tables = [game, game.bot && game.bot.s].filter(Boolean);
+    if (G.isCreature(inst)) tables.forEach(t => { t.deathsThisTurn = [...(t.deathsThisTurn || []), inst.name]; }); // Ebondeath
+    for (const t of tables) {
       const watchers = permanents(t).filter(w => w !== inst);
       if (t === s) watchers.push(inst); // "Blood Artist or another creature dies" sees itself die
       for (const w of watchers) {
         for (const line of oracleLines(w, defOf)) {
           const m = DIES_WATCH.exec(line);
-          if (!m) continue;
+          if (!m || KONRAD.test(line)) continue; // Syr Konrad: cardMoved
           // The one that died sees itself only with "Blood Artist or another creature".
           if (w === inst && !(m[1] && isSelf(m[1], w))) continue;
           if (m[3] && inst.token) continue;
           if (!m[4].split(/\s+or\s+/).some(x => isA(inst, x))) continue;
           if (m[5] && (/you control/i.test(m[5]) ? t !== s : t === s)) continue;
-          runFor(game, t, w, m[6], `${inst.name} died`, t === game ? ctx : null, defOf);
+          // Massacre Girl, Known Killer: "if its toughness was less than 1, draw a card".
+          let effect = m[6];
+          const cond = /^if its toughness was less than (\d+), (.+)$/i.exec(effect);
+          if (cond) {
+            if (!(toughnessAtDeath(inst, info, defOf) < Number(cond[1]))) continue;
+            effect = cond[2];
+          }
+          runFor(game, t, w, effect, `${inst.name} died`, t === game ? ctx : null, defOf);
+        }
+      }
+      // "Whenever a creature dies this turn, …" (Massacre Girl), until the turn ends.
+      for (const d of [...(t.delayed || [])]) {
+        if (d.on !== 'dies' || !G.isCreature(inst)) continue;
+        const src = t.cards[d.src] && t.cards[d.src].name === d.name ? t.cards[d.src] : { name: d.name, iid: d.src };
+        runFor(game, t, src, d.effect, `${inst.name} died`, t === game ? ctx : null, defOf);
+      }
+    }
+    if (G.isCreature(inst) && info.to === 'graveyard') recoverTriggers(game, s, inst, defOf, ctx);
+  }
+
+  // Its toughness as it left the battlefield (Game.move's info has its counters, pumps and equipment).
+  function toughnessAtDeath(inst, info, defOf) {
+    const was = Object.assign({}, inst, { counters: info.counters || {}, pump: info.pump, anthem: info.anthem, cda: info.cda, boosts: info.boosts, custom: info.custom || inst.custom });
+    return stats(was, inst.bot || defOf(inst.id)).tou;
+  }
+
+  // Recover (Garza's Assassin): "When another creature is put into your graveyard from the
+  // battlefield, you may pay half your life, rounded up. If you do, return this card from your
+  // graveyard to your hand. Otherwise, exile this card." You're asked (ctx.recover, app.js); Opp pays
+  // mana when it can and life when it keeps 10 or more.
+  const RECOVER = /^recover\s*[—-]?\s*(.+?)\.?$/i;
+  const recoverCost = (inst, defOf) => { const m = oracleLines(inst, defOf).map(l => RECOVER.exec(l)).find(Boolean); return m ? m[1] : null; };
+  function recoverTriggers(game, s, dead, defOf, ctx) {
+    for (const iid of [...s.zones.graveyard]) {
+      const card = s.cards[iid];
+      if (!card || card === dead || card.iid === dead.iid) continue;
+      const cost = recoverCost(card, defOf);
+      if (!cost) continue;
+      if (s === game && ctx && ctx.recover) { ctx.recover(card, cost); continue; }
+      const who = s === game ? 'you' : 'opp';
+      const half = /^pay half your life, rounded up$/i.test(cost) ? Math.ceil(Math.max(0, lifeOf(game, who)) / 2) : 0;
+      const mana = /^(\{[^}]+\})+$/.test(cost);
+      const pay = half ? lifeOf(game, who) - half >= 10 : mana && affordable(s, cost, 0);
+      applyRecover(game, s, iid, pay, defOf);
+    }
+  }
+  // Pays the recover cost and returns the card to its owner's hand (pay), or exiles it.
+  function applyRecover(game, s, iid, pay, defOf) {
+    const card = s.cards[iid];
+    if (!card || card.zone !== 'graveyard') return;
+    const cost = recoverCost(card, defOf) || '';
+    const who = s === game ? 'you' : 'opp';
+    if (pay) {
+      if (/^pay half your life, rounded up$/i.test(cost)) addLife(game, who, -Math.ceil(Math.max(0, lifeOf(game, who)) / 2));
+      else if (/^(\{[^}]+\})+$/.test(cost)) { if (who === 'opp') onOpp(game, () => G.autoPay(s, cost)); else G.autoPay(s, cost); }
+      G.move(s, iid, 'hand');
+      G.log(s, `${card.name} (recover): paid ${/^pay/i.test(cost) ? cost.replace(/^pay /i, '') : cost} and returned it to ${who === 'you' ? 'your' : "Opp's"} hand.`);
+    } else {
+      G.move(s, iid, 'exile');
+      G.log(s, `${card.name} (recover): not paid, so it was exiled.`);
+    }
+  }
+
+  // Syr Konrad: "Whenever another creature dies, or a creature card is put into a graveyard from
+  // anywhere other than the battlefield, or a creature card leaves your graveyard, Syr Konrad deals 1
+  // damage to each opponent." Run for every card that changes zones (G.hooks.moved), on table s.
+  const KONRAD = /^whenever another creature dies, or a creature card is put into a graveyard from anywhere other than the battlefield, or a creature card leaves your graveyard, (?:you may )?(.+)$/i;
+  function cardMoved(game, s, inst, from, to, defOf, ctx) {
+    if (!inst || from === to || inst.faceDown) return;
+    const creatureCard = /\bcreature\b/i.test(front(inst.typeLine));
+    const dies = from === 'battlefield' && (to === 'graveyard' || (to === 'command' && inst.commander)) && G.isCreature(inst);
+    const intoGrave = to === 'graveyard' && from !== 'battlefield' && creatureCard && !inst.token;
+    const leaves = from === 'graveyard' && creatureCard;
+    if (!dies && !intoGrave && !leaves) return;
+    for (const t of [game, game.bot && game.bot.s].filter(Boolean)) {
+      for (const w of permanents(t)) {
+        if (w === inst) continue; // "another creature"
+        for (const line of oracleLines(w, defOf)) {
+          const m = KONRAD.exec(line);
+          if (!m || (!dies && !intoGrave && !(leaves && t === s))) continue;
+          runFor(game, t, w, m[1], `${inst.name} ${dies ? 'died' : intoGrave ? 'went to a graveyard' : 'left your graveyard'}`, t === game ? ctx : null, defOf);
         }
       }
     }
   }
 
   // "Whenever you cast a noncreature spell", "Magecraft — Whenever you cast or copy an instant or sorcery spell", …
-  const CAST_WATCH = /^(?:magecraft\s*[—-]\s*)?whenever you cast (?:or copy )?(?:an? )?(.*?)\s*spells?, (?:you may )?(.+)$/i;
+  const CAST_WATCH = /^(?:magecraft\s*[—-]\s*)?whenever you cast (?:or copy )?(?:an? )?(.*?)\s*spells?( during an opponent's turn| during your turn)?, (?:you may )?(.+)$/i;
 
   // A spell was cast on table s (a permanent spell is already on the battlefield, an instant or
   // sorcery may be too): prowess, "whenever you cast" triggers, cascade and storm. ctx: as for runEffect, for yours.
@@ -2100,7 +2809,9 @@ const Bot = (() => {
       for (const line of oracleLines(w, defOf)) {
         const m = CAST_WATCH.exec(line);
         if (!m || /\b(first|second)\b/i.test(line) || !spellFits(spell, m[1], defOf)) continue;
-        const effect = m[2].trim();
+        // Nightmare Sower: "during an opponent's turn" (s.offTurn while someone else's turn is on).
+        if (m[2] && /opponent/i.test(m[2]) !== !!s.offTurn) continue;
+        const effect = m[3].trim();
         const p = /^(.+?) gets? ([+-]\d+)\/([+-]\d+) until end of turn\.?$/i.exec(effect);
         if (p && isSelf(p[1], w)) {
           pumpBy(w, Number(p[2]), Number(p[3]));
@@ -2109,6 +2820,11 @@ const Bot = (() => {
       }
     }
     const lines = oracleLines(spell, defOf);
+    // Ugin, Eye of the Storms: "When you cast this spell, exile up to one target permanent that's one or more colors."
+    for (const l of lines) {
+      const c = /^when you cast this spell, (?:you may )?(.+)$/i.exec(l);
+      if (c) runFor(game, s, spell, c[1], 'cast', isOpps(game, s) ? null : ctx, defOf);
+    }
     if (lines.some(l => /^cascade\b/i.test(l))) cascade(game, s, spell, defOf, ctx);
     if (lines.some(l => /^storm\b/i.test(l)) && s.spellsThisTurn > 1) {
       const n = s.spellsThisTurn - 1;
@@ -2168,29 +2884,52 @@ const Bot = (() => {
   // Pridemate", "… that many …"), unless a card says that player can't gain life (Sulfuric Vortex),
   // in which case the gain is taken back. before: { you, opp } life totals before the action.
   // friends: online, the other players' tableRules (their Erebos counts too).
+  // Also "Whenever an opponent loses life, you gain that much life." (Bloodthirsty Conqueror) when the
+  // other side lost life. What those triggers do can set off more (Sanguine Bond with Bloodthirsty
+  // Conqueror goes on until someone is at 0), so it goes round until nothing changes (at most 100 times).
+  const GAIN_WATCH = /^whenever you gain life( for the first time each turn)?, (?:you may )?(.+)$/i;
+  const LOSS_WATCH = /^whenever an opponent loses life( during your turn)?, (?:you may )?(.+)$/i;
   function lifeChanged(game, before, defOf, ctx, friends = []) {
     const tables = [{ t: game, key: 'life', was: before.you }];
     if (game.bot && before.opp != null) tables.push({ t: game.bot.s, key: 'oppLife', was: before.opp });
     const rules = tables.map(x => tableRules(x.t, defOf)).concat(friends.map(r => ({ noGain: r.noGain || {} })));
-    tables.forEach((x, i) => {
-      const gained = game[x.key] - x.was;
-      if (!(gained > 0)) return;
-      const blocked = rules.some((r, j) => r.noGain.all || (r.noGain.opps && j !== i) || (r.noGain.self && j === i));
-      if (blocked) {
-        game[x.key] = x.was;
-        G.log(x.t, `${x.t === game ? 'You' : 'Opp'} can't gain life, so the ${gained} life is taken back.`);
-        return;
-      }
-      for (const w of permanents(x.t)) {
-        for (const line of oracleLines(w, defOf)) {
-          const m = /^whenever you gain life( for the first time each turn)?, (?:you may )?(.+)$/i.exec(line);
-          if (!m) continue;
-          if (m[1] && x.t.gainTurn === x.t.turn) continue;
-          runFor(game, x.t, w, m[2].replace(/\bthat much life\b/gi, `${gained} life`).replace(/\bthat many\b/gi, String(gained)), `gained ${gained} life`, x.t === game ? ctx : null, defOf);
+    const fill = (text, n) => text.replace(/\bthat much life\b/gi, `${n} life`).replace(/\bthat many\b/gi, String(n));
+    for (let round = 0; round < 100; round++) {
+      const fired = [];
+      tables.forEach((x, i) => {
+        const gained = game[x.key] - x.was;
+        if (gained > 0 && rules.some((r, j) => r.noGain.all || (r.noGain.opps && j !== i) || (r.noGain.self && j === i))) {
+          game[x.key] = x.was;
+          G.log(x.t, `${x.t === game ? 'You' : 'Opp'} can't gain life, so the ${gained} life is taken back.`);
         }
-      }
-      x.t.gainTurn = x.t.turn;
-    });
+      });
+      tables.forEach((x, i) => {
+        const change = game[x.key] - x.was;
+        x.was = game[x.key];
+        if (change > 0) {
+          for (const w of permanents(x.t)) {
+            for (const line of oracleLines(w, defOf)) {
+              const m = GAIN_WATCH.exec(line);
+              if (!m || (m[1] && x.t.gainTurn === x.t.turn)) continue;
+              fired.push({ t: x.t, w, effect: fill(m[2], change), why: `gained ${change} life` });
+            }
+          }
+          x.t.gainTurn = x.t.turn;
+        } else if (change < 0 && tables.length > 1) {
+          const other = tables[1 - i].t;
+          for (const w of permanents(other)) {
+            for (const line of oracleLines(w, defOf)) {
+              const m = LOSS_WATCH.exec(line);
+              if (!m || (m[1] && other.offTurn)) continue;
+              fired.push({ t: other, w, effect: fill(m[2], -change), why: `${x.t === game ? 'you' : 'Opp'} lost ${-change} life` });
+            }
+          }
+        }
+      });
+      if (!fired.length) return;
+      fired.forEach(f => runFor(game, f.t, f.w, f.effect, f.why, f.t === game ? ctx : null, defOf));
+      if (game.life <= 0 || (game.bot && game.oppLife <= 0)) return;
+    }
   }
 
   // ---------- rules that limit attacks and blocks ----------
@@ -2207,7 +2946,8 @@ const Bot = (() => {
   // Ghostly Prison, Propaganda: "Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you."
   const ATTACK_TAX = /^creatures can't attack you(?: or planeswalkers you control)? unless their controller pays \{(\d+)\} for each (?:creature they control that's attacking you|of those creatures)\.?$/i;
   // Thalia: "Noncreature spells cost {1} more to cast." Also "… spells your opponents cast cost {1} more to cast."
-  const SPELL_TAX = /^(?:(.+?) )?spells( your opponents cast)? cost \{(\d+)\} more to cast\.?$/i;
+  // Geist-Fueled Scarecrow: "Creature spells you cast cost {1} more to cast." (only its controller's)
+  const SPELL_TAX = /^(?:(.+?) )?spells( your opponents cast| you cast)? cost \{(\d+)\} more to cast\.?$/i;
   // Sulfuric Vortex, Erebos: "Players can't gain life." / "Your opponents can't gain life."
   // (Sulfuric Vortex's own words: "If a player would gain life, that player gains no life instead.")
   const NO_GAIN = /^(?:(players|your opponents|you) can't gain life|if (a player|an opponent) would gain life, that player gains no life instead)\.?$/i;
@@ -2227,7 +2967,7 @@ const Bot = (() => {
       for (const line of oracleLines(inst, defOf)) {
         let m;
         if ((m = ATTACK_TAX.exec(line))) out.attackTax += Number(m[1]);
-        else if ((m = SPELL_TAX.exec(line)) && !/\btarget/i.test(line)) out.spellTaxes.push({ what: (m[1] || '').trim(), n: Number(m[3]), opps: !!m[2] });
+        else if ((m = SPELL_TAX.exec(line)) && !/\btarget/i.test(line)) out.spellTaxes.push({ what: (m[1] || '').trim(), n: Number(m[3]), opps: /opponents/i.test(m[2] || ''), own: /you cast/i.test(m[2] || '') });
         else if ((m = NO_GAIN.exec(line))) out.noGain[NO_GAIN_WHO[(m[1] || m[2]).toLowerCase()]] = true;
         else if (ARBORIA.test(line)) out.arboria = true;
         else if ((m = ATTACK_CAP.exec(line)) && holds(m[1], m[2], inst) && toNumber(m[3])) {
@@ -2276,7 +3016,7 @@ const Bot = (() => {
   // The extra a spell costs because of Thalia and the like. all: [{ rules, own }], own being the
   // table of whoever casts it.
   const spellTax = (all, spell, defOf) => all.reduce((n, t) => n + t.rules.spellTaxes
-    .filter(x => (!x.opps || !t.own) && spellFits(spell, x.what, defOf)).reduce((m, x) => m + x.n, 0), 0);
+    .filter(x => (!x.opps || !t.own) && (!x.own || t.own) && spellFits(spell, x.what, defOf)).reduce((m, x) => m + x.n, 0), 0);
 
   // The most creatures a player can block with this combat: from any table (Silent Arbiter) and from
   // the attackers themselves (Mirri attacking). attackers: [inst] on table s. Returns { cap, why } (cap Infinity: no limit).
@@ -2504,6 +3244,7 @@ const Bot = (() => {
     }
     s.opponents = 1;
     phaseTriggers(game, s, 'upkeep', defOf, null);
+    phaseTriggers(game, s, 'draw step', defOf, null); // The Immortal Sun
     const landsBefore = s.zones.battlefield.length;
     onOpp(game, () => playLand(s));
     if (s.zones.battlefield.length > landsBefore) notes.push(`played ${s.cards[s.zones.battlefield[s.zones.battlefield.length - 1]].name}`);
@@ -2570,12 +3311,108 @@ const Bot = (() => {
       if (paid) G.log(s, `Opp paid {${tax * attackers.length}} to attack you (${paid.sources.join(', ') || 'floating mana'}).`);
     }
     attackers.forEach(iid => { if (!botStats(s.cards[iid]).kw.has('vigilance')) s.cards[iid].tapped = true; });
+    // Interceptor in Opp's graveyard: back tapped and attacking when Opp can pay.
+    if (attackers.length) {
+      for (const g of graveAttackers(s, attackers.map(iid => s.cards[iid]), defOf)) {
+        if (!affordable(s, g.cost, 0)) continue;
+        onOpp(game, () => G.autoPay(s, g.cost));
+        attackers.push(returnAttacking(s, g.inst));
+      }
+    }
     // "Whenever this attacks" triggers, exalted, battle cry, annihilator; tokens that enter attacking join in.
-    attackers.push(...declareAttack(s, attackers.map(iid => s.cards[iid]), defOf, { sacrifice: (n, why) => youSacrifice(game, n, why) }).map(([, iid]) => iid));
+    attackers.push(...declareAttack(s, attackers.map(iid => s.cards[iid]), defOf, { sacrifice: (n, why) => youSacrifice(game, n, why), game }).map(([, iid]) => iid));
     if (attackers.length) attackWatch(game, s, defOf, null, attackers.map(iid => s.cards[iid]));
     bot.pending = attackers.length ? { attackers, targets: chooseTargets(game, attackers, defOf) } : null;
     return { attackers, notes };
   }
+
+  // ---------- costs, graveyards and other rules for a few cards ----------
+
+  // The Darkness Crystal on another table than s: "If a nontoken creature an opponent controls would
+  // die, instead exile it and you gain 2 life." Returns 'exile' (G.hooks.wouldDie) or null. The card
+  // remembers it (exiledWith), for "Put target creature card exiled with The Darkness Crystal …".
+  const CRYSTAL = /^if a nontoken creature an opponent controls would die, instead exile it and you gain (\w+) life\.?$/i;
+  function wouldDie(game, s, inst, defOf) {
+    if (inst.token || inst.commander) return null;
+    for (const t of [game, game.bot && game.bot.s].filter(Boolean)) {
+      if (t === s) continue;
+      for (const w of permanents(t)) {
+        for (const line of oracleLines(w, defOf)) {
+          const m = CRYSTAL.exec(line);
+          if (!m) continue;
+          inst.exiledWith = w.name;
+          addLife(game, t === game ? 'you' : 'opp', toNumber(m[1]));
+          G.log(t, `${w.name}: ${inst.name} was exiled instead of dying, and ${t === game ? 'you' : 'Opp'} gained ${toNumber(m[1])} life.`);
+          return 'exile';
+        }
+      }
+    }
+    return null;
+  }
+
+  // Madness {1}{B}: the cost, or null.
+  const madnessCost = (inst, defOf) => { const m = oracleLines(inst, defOf).map(l => /^madness ((?:\{[^}]+\})+)/i.exec(l)).find(Boolean); return m ? m[1] : null; };
+
+  // The ways you can cast a spell from your hand, when it has more than one: [{ key, label, cost }].
+  //   Offspring {2} (pay {2} more for a 1/1 token copy), Freerunning {3}{B} (after an Assassin or your
+  //   commander dealt combat damage to a player this turn), "You may pay {1}{B} rather than pay this
+  //   spell's mana cost." (Baleful Mastery). s: your table.
+  function costChoices(s, inst, defOf) {
+    const card = defOf(inst.id) || {};
+    const cost = card.manaCost || '';
+    const out = [{ key: 'normal', label: `Cast it (${cost || 'free'})`, cost }];
+    for (const line of oracleLines(inst, defOf)) {
+      let m;
+      if ((m = /^offspring ((?:\{[^}]+\})+)/i.exec(line))) out.push({ key: 'offspring', label: `With offspring (${cost}${m[1]}): also a 1/1 token copy`, cost: cost + m[1] });
+      else if ((m = /^freerunning ((?:\{[^}]+\})+)/i.exec(line)) && s.freerunTurn === s.turn) out.push({ key: 'freerun', label: `Freerunning (${m[1]})`, cost: m[1] });
+      else if ((m = /^you may pay ((?:\{[^}]+\})+) rather than pay this spell's mana cost\.?$/i.exec(line))) out.push({ key: 'alt', label: `For ${m[1]} instead${oracleLines(inst, defOf).some(l => /^if the .+ cost was paid, an opponent draws/i.test(l)) ? ' (an opponent draws a card)' : ''}`, cost: m[1] });
+    }
+    return out;
+  }
+  // Offspring: "When this creature enters, create a 1/1 token copy of it."
+  function offspringCopy(s, inst) {
+    const tok = G.copyAsToken(s, inst.iid);
+    if (!tok) return;
+    tok.custom = { pt: '1/1', text: '' };
+    G.log(s, `${inst.name} (offspring): made a 1/1 token copy.`);
+  }
+
+  // Interceptor, Shadow's Hound: "Whenever you attack with one or more legendary creatures, you may
+  // pay {2}{B}. If you do, return this card from your graveyard to the battlefield tapped and
+  // attacking." The cards in table s's graveyard that can, for these attackers: [{ inst, cost }].
+  const GRAVE_ATTACK = /^whenever you attack with one or more (.+?) creatures?, you may pay ((?:\{[^}]+\})+)\. if you do, return this card from your graveyard to the battlefield tapped and attacking\.?$/i;
+  function graveAttackers(s, attackers, defOf) {
+    const out = [];
+    for (const iid of s.zones.graveyard) {
+      const inst = s.cards[iid];
+      const m = oracleLines(inst, defOf).map(l => GRAVE_ATTACK.exec(l)).find(Boolean);
+      if (m && attackers.some(a => a && isA(a, m[1]))) out.push({ inst, cost: m[2] });
+    }
+    return out;
+  }
+  // Puts it onto the battlefield tapped and attacking (the caller adds it to the attack).
+  function returnAttacking(s, inst) {
+    G.move(s, inst.iid, 'battlefield');
+    inst.tapped = true;
+    inst.tappedFor = null;
+    inst.attacking = true;
+    G.log(s, `${inst.name} returned from the graveyard tapped and attacking.`);
+    return inst.iid;
+  }
+
+  // Roshan, Hidden Magister: "Whenever a permanent you control is turned face up, you draw a card and you lose 1 life."
+  function turnedFaceUp(game, inst, defOf, ctx) {
+    for (const w of yourPermanents(game)) {
+      for (const line of oracleLines(w, defOf)) {
+        const m = /^whenever a permanent you control is turned face up, (?:you may )?(.+)$/i.exec(line);
+        if (m) fire(game, w, `${inst.name} was turned face up`, m[1], Object.assign({ other: game.bot ? game.bot.s : null, defOf }, ctx));
+      }
+    }
+  }
+
+  // The Immortal Sun on any table: "Players can't activate planeswalkers' loyalty abilities."
+  const loyaltyLocked = (game, defOf) => [game, game.bot && game.bot.s].filter(Boolean)
+    .some(t => permanents(t).some(c => oracleLines(c, defOf).some(l => /^players can't activate planeswalkers' loyalty abilities\.?$/i.test(l))));
 
   // "A", "A and B", "A, B and C"
   const andList = list => (list.length < 3 ? list.join(' and ') : `${list.slice(0, -1).join(', ')} and ${list[list.length - 1]}`);
@@ -2737,13 +3574,16 @@ const Bot = (() => {
 
   // Opp blocks your attack and the damage is done. attacks: [{ iid, pw }], your creatures that
   // attack and, for ones going after a planeswalker, which of Opp's. Returns a short summary for a message.
-  function resolveYourAttack(game, attacks, defOf) {
+  function resolveYourAttack(game, attacks, defOf, combatCtx = {}) {
     const s = game.bot.s;
     refreshGrants(game, defOf);
     // "Whenever this attacks" triggers, exalted, battle cry, annihilator; tokens that enter attacking
     // go after the same player or planeswalker.
     const list = attacks.map(x => (typeof x === 'string' ? { iid: x } : x));
-    const joined = declareAttack(game, list.map(a => game.cards[a.iid]), defOf, { sacrifice: (n, why) => oppSacrifices(game, n, why) })
+    const joined = declareAttack(game, list.map(a => game.cards[a.iid]), defOf, {
+      sacrifice: (n, why) => oppSacrifices(game, n, why), game, ctx: { hitOpps: n => { game.oppLife -= n; } },
+      info: inst => ({ player: !(list.find(a => a.iid === inst.iid) || {}).pw }),
+    })
       .map(([from, iid]) => ({ iid, pw: (list.find(a => a.iid === from) || {}).pw }));
     attacks = list.concat(joined);
     let attackers = attacks.map(x => (typeof x === 'string' ? { iid: x } : x))
@@ -2770,7 +3610,7 @@ const Bot = (() => {
       attackers.forEach(a => { a.st = stats(a.inst, defOf(a.inst.id)); });
       [...blocks.values()].flat().forEach(b => { b.st = botStats(b.inst); });
     }
-    return finishYourAttack(game, attackers, blocks, defOf, answered);
+    return finishYourAttack(game, attackers, blocks, defOf, answered, combatCtx);
   }
 
   // How the defending side blocks: kill an attacker without dying, trade for something at least as
@@ -2833,8 +3673,15 @@ const Bot = (() => {
   }
 
   // Your attack after Opp has blocked: the damage, deaths and triggers. answered: what Opp cast first.
-  function finishYourAttack(game, attackers, blocks, defOf, answered) {
+  function finishYourAttack(game, attackers, blocks, defOf, answered, combatCtx = {}) {
     const s = game.bot.s;
+    // For "whenever … deals combat damage to a player" (app.js adds the ones that ask you things).
+    const hitCtx = {
+      hitOpps: n => { game.oppLife -= n; }, other: s,
+      loseHalf: () => { game.oppLife -= Math.ceil(Math.max(0, game.oppLife) / 2); },
+      exileTop: src => { const c = exileTopCard(game, game, src ? src.name : 'Effect'); game.lastExiledTop = c ? c.iid : null; },
+      ...combatCtx,
+    };
     const oppDies = b => { if (!regenerates(game, b, defOf, true)) moveOpps(s, b); };
     const yoursDies = a => { if (!regenerates(game, a, defOf, false)) moveYours(game, a, 'graveyard'); };
     let dmg = 0;
@@ -2843,6 +3690,15 @@ const Bot = (() => {
     const own = n => `your ${n}`;
     const theirs = n => n;
     const hits = []; // your creatures that dealt combat damage to Opp, for "whenever … deals combat damage" cards
+    // Unblocked first strikers hit first, so their triggers (Drana's "put a +1/+1 counter on each
+    // attacking creature you control") happen before the rest deal damage.
+    const firstOnly = st => st.kw.has('first strike') && !st.kw.has('double strike');
+    const early = attackers.filter(a => !a.pw && !(blocks.get(a) || []).length && (a.st.kw.has('first strike') || a.st.kw.has('double strike')) && hitOf(a.st) > 0 && !a.st.kw.has('infect'));
+    if (early.length && attackers.length > early.length - early.filter(a => firstOnly(a.st)).length) {
+      combatDamage(game, early.map(a => ({ inst: a.inst, st: a.st, card: defOf(a.inst.id), dmg: hitOf(a.st) })), defOf, hitCtx);
+      attackers.forEach(a => { if (!(early.includes(a) && firstOnly(a.st)) && a.inst.zone === 'battlefield') a.st = stats(a.inst, defOf(a.inst.id)); });
+      early.forEach(a => { a.early = true; });
+    }
     const results = combatAll(attackers.map(a => ({ st: a.st, blockers: (blocks.get(a) || []).map(b => ({ key: b.inst.iid, st: b.st })) })));
     for (const [i, a] of attackers.entries()) {
       if (!a.st.kw.has('vigilance')) a.inst.tapped = true;
@@ -2869,7 +3725,7 @@ const Bot = (() => {
       const ph = playerHit(a.st, hit);
       if (ph.poison) { s.poison = (s.poison || 0) + ph.poison; poison += ph.poison; }
       dmg += ph.life;
-      if (hit) hits.push({ inst: a.inst, st: a.st, card: defOf(a.inst.id) });
+      if (hit && !(a.early && firstOnly(a.st))) hits.push({ inst: a.inst, st: a.st, card: defOf(a.inst.id), dmg: hit });
       if (hit && a.inst.commander) {
         game.cmdDealt = game.cmdDealt || {};
         game.cmdDealt[a.inst.name] = (game.cmdDealt[a.inst.name] || 0) + hit;
@@ -2885,7 +3741,7 @@ const Bot = (() => {
     const first = answered && answered.length ? `Opp ${answered.join(', ')}. ` : '';
     const msg = `${first}You attacked: ${lines.join('; ') || 'nothing left to attack with'}.${dmg ? ` Opp took ${dmg} (now ${game.oppLife}).` : ''}${poison ? ` Opp got ${poison} poison (now ${s.poison}).` : ''}`;
     G.log(game, msg);
-    combatDamage(game, hits.filter(h => h.inst.zone === 'battlefield' || h.inst.zone === 'graveyard'), defOf, { hitOpps: n => { game.oppLife -= n; } });
+    combatDamage(game, hits.filter(h => h.inst.zone === 'battlefield' || h.inst.zone === 'graveyard'), defOf, hitCtx);
     if (hits.length) takeMonarch(game, 'you');
     endOfCombat(game, attackers.map(a => a.inst), defOf);
     return msg;
@@ -2898,10 +3754,14 @@ const Bot = (() => {
     setResponder, getResponder, isInstantSpeed, resumeTurn, resolveStack, counterStack, oppCounters, oppInstantAt, pickBlocks, castOptions, castOne, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
     yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker, phaseTriggers, attackWatch, blockWatch, hitOf, TOUGH_DMG, DEFENDER_ATTACKS, selfDiscount, wipeVictims, bestNumber,
     searchSpec, searchable, applySearch, applyScry, crackFetches, ARTIFACT_TOKENS, faceOracle,
+    wouldDie, madnessCost, costChoices, offspringCopy, graveAttackers, returnAttacking, turnedFaceUp, loyaltyLocked, cardMoved,
+    sendHome, takeCard, applyRecover, recoverCost, opponentDamaged, spellTargeted, graveCast, autoTarget, playerEffect,
+    cardMoveSpec, moveChoices, applyMoveCards, exileTopCard, exileGreatest, exileGraveyard, handPick, addLife, cardFits, oppSacrifices,
     // For coverage.js, which reads card text the same way the rest of this file does.
     parts: { OTHER_KEYWORDS, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,
       OLD_MENACE, UNBLOCKABLE, ATTACK_TAX, SPELL_TAX, NO_GAIN, ARBORIA, ATTACK_CAP, BLOCK_CAP, ATTACK_BLOCK_CAP, isSelf,
-      counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, BLOCK_WATCH, TOUGH_RULE, DEFENDER_RULE, SELF_DISCOUNT, WIPE, CHOOSE_WIPE, plainLine } };
+      counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, BLOCK_WATCH, TOUGH_RULE, DEFENDER_RULE, SELF_DISCOUNT, WIPE, CHOOSE_WIPE, plainLine,
+      RETURN_STUNNED, KONRAD, RECOVER, GRAVE_CAST, GRAVE_ATTACK, CRYSTAL, DEALT_WATCH, TARGET_WATCH, GAIN_WATCH, LOSS_WATCH, landfallText, settleIfYouDo, enteredElsewhere } };
 })();
 
 if (typeof module !== 'undefined') module.exports = Bot;

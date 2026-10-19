@@ -21,25 +21,31 @@ const Coverage = (() => {
   const is = (card, type) => new RegExp(`\\b${type}\\b`, 'i').test(front(card.typeLine));
   const NUM = '(a|an|one|two|three|four|five|six|seven|eight|nine|ten|\\d+)';
 
-  // A context like the ones app.js and bot.js pass to runEffect: one that can pick targets and hit opponents.
-  const ctxFor = inst => ({ self: inst, other: true, hitOpps: () => {}, hitTarget: () => {}, target: () => {} });
+  // A context like the ones app.js and bot.js pass to runEffect: one that can pick targets, hit
+  // opponents and do the other things both sides can (Opp's in bot.js's oppCtx, yours in app.js's effectCtx).
+  const noop = () => {};
+  const ctxFor = inst => ({ self: inst, other: true, defOf: () => null, hitOpps: noop, hitTarget: noop, target: noop, oppsSacrifice: noop, loseHalf: noop,
+    oppsExileGreatest: noop, exileGrave: noop, oppsHandPick: noop, oppsDraw: noop, oppsDiscard: noop, exileTop: noop, sacToPlay: noop });
   const runs = (text, inst) => P.canRunAll(text, ctxFor(inst));
   // The parts of an effect runEffect can't do.
-  const notRun = (text, inst) => P.effectParts(text).filter(p => !P.canRunAll(p, ctxFor(inst)));
+  const notRun = (text, inst) => P.effectParts(P.settleIfYouDo(text, null)).filter(p => !P.canRunAll(p, ctxFor(inst)));
 
   // Words that don't change the game once you're playing (or that you just follow, like flash).
   const NOTHING_TO_DO = ['partner', 'partner with', 'friends forever', 'choose a background', 'doctor\'s companion', 'flash', 'enchant'];
+  // Done for you when you cast it (app.js asks), but Opp never uses them.
+  const YOURS_ONLY = ['offspring', 'freerunning', 'madness'];
 
   // ---------- one keyword line ----------
 
   function keywordLine(card, line) {
     const parts = line.toLowerCase().replace(/\.$/, '').split(/,\s*|;\s*/).map(p => p.trim()).filter(Boolean);
-    const known = p => P.isKeyword(p, B.KEYWORDS) || P.isKeyword(p, P.OTHER_KEYWORDS) || NOTHING_TO_DO.some(k => p === k || p.startsWith(k + ' '));
+    const known = p => P.isKeyword(p, B.KEYWORDS) || P.isKeyword(p, P.OTHER_KEYWORDS) || P.isKeyword(p, YOURS_ONLY) || NOTHING_TO_DO.some(k => p === k || p.startsWith(k + ' '));
     if (!parts.length || !parts.every(known)) return null;
     const out = { you: true, opp: true, gaps: [] };
     for (const p of parts) {
       const name = p.split(/[\s—{]/)[0];
       if (NOTHING_TO_DO.some(k => p === k || p.startsWith(k + ' '))) continue;
+      if (YOURS_ONLY.includes(name)) { gap(out, 'opp', 'keyword', `${name} (Opp never uses it)`); continue; }
       if (/^protection\b/.test(p)) {
         if (!P.protectionKw(p)) gap(out, 'both', 'keyword', p.replace(/\{[^}]+\}/g, '{M}'));
         continue;
@@ -72,24 +78,26 @@ const Coverage = (() => {
   const allKw = text => { const k = kwOnly(text); return k.length > 0 && k.every(w => B.KEYWORDS.includes(w)); };
 
   // Can bot.js's enterEffects / game.js's enter readers do this part of a "When this enters, …"?
-  function enterPart(part, may) {
+  function enterPart(part, may, inst) {
     const p = part.trim().replace(/\.$/, '');
     if (B.targetEffect(p) || P.TOKEN_TEXT.test(p) || COUNTER_EACH.test(p) || /^you become the monarch$/i.test(p)) return true;
     if (/for each|equal to|\bx\b/i.test(p)) return false;
     if (LIFE.test(p)) return true;
     if (!may && ENTER_DRAW.test(p)) return true;
     if (!may && ENTER_DISCARD.test(p)) return true;
-    return false;
+    // Other parts runEffect can do run too (enterEffects), unless game.js is the one that does them.
+    return !P.enteredElsewhere(p) && runs(p, inst);
   }
 
-  // A pump or counters a "whenever this attacks / blocks" does (combatTrigger), for every side.
+  // A pump or counters a "whenever this attacks / blocks" does (combatTrigger), for every side, or
+  // anything else runEffect can do there.
   function combatEffect(effect, inst) {
-    const e = effect.trim();
+    const e = effect.trim().replace(/^if no opponent has more life than that player, /i, '');
     const [first, ...rest] = e.split(/(?<=\.)\s+/);
     if (COUNTER_EACH.test(first)) return rest.every(s => THOSE_GAIN.test(s) && allKw(THOSE_GAIN.exec(s)[1]));
     if (P.TOKEN_TEXT.test(e)) return true;
     const p = COMBAT_PUMP.exec(e);
-    if (!p || (/x/i.test(p[2] + p[3]) && !p[4])) return false;
+    if (!p || (/x/i.test(p[2] + p[3]) && !p[4])) return runs(e, inst);
     return P.isSelf(p[1], inst) || /^(other )?(.+?) you control$/i.test(p[1]);
   }
 
@@ -115,37 +123,50 @@ const Coverage = (() => {
 
     // "When this enters (or attacks), …"
     if ((m = /^when(?:ever)? (.+?) enters(?: the battlefield)?(?: or ([^,]+))?, (?:you may )?(.+)$/i.exec(line)) && self(m[1])) {
-      const parts = P.effectParts(m[3]);
-      const first = m[3].trim().split(/(?<=\.)\s+/)[0];
-      if (COUNTER_EACH.test(first)) { if (!combatEffect(m[3], inst)) gap(out, 'both', 'effect', m[3]); return out; }
-      for (const part of parts) if (!enterPart(part, may)) gap(out, 'both', 'effect', part);
-      if (m[2] && /attacks/i.test(m[2]) && !combatEffect(m[3], inst) && out.gaps.length) return out;
+      const text = P.settleIfYouDo(m[3], null);
+      if (/\bif you do\b/i.test(text)) { gap(out, 'both', 'effect', m[3]); return out; }
+      const parts = P.effectParts(text);
+      const first = text.trim().split(/(?<=\.)\s+/)[0];
+      if (COUNTER_EACH.test(first)) { if (!combatEffect(text, inst)) gap(out, 'both', 'effect', text); return out; }
+      for (const part of parts) if (!enterPart(part, may, inst)) gap(out, 'both', 'effect', part);
       return out;
     }
-    // "When this dies, …"
+    // "When this dies, …" (Unstoppable Slasher: "if it had no counters on it, return it to the battlefield …")
     if ((m = /^when(?:ever)? (.+?) (?:dies|is put into (?:a|your) graveyard from (?:the battlefield|play)), (?:you may )?(.+)$/i.exec(line)) && self(m[1])) {
-      if (P.TOKEN_TEXT.test(m[2].trim())) return out;
+      if (P.TOKEN_TEXT.test(m[2].trim()) || P.RETURN_STUNNED.test(m[2].trim())) return out;
       effectGaps('both', m[2]);
       return out;
     }
-    // "Whenever this attacks / blocks, …"
-    if ((m = /^whenever (.+?) (enters(?: the battlefield)? or attacks|attacks or blocks|attacks|blocks)(?: a creature)?, (.+)$/i.exec(line)) && self(m[1])) {
-      if (!combatEffect(m[3], inst)) gap(out, 'both', 'effect', m[3]);
+    // "Whenever this attacks / blocks, …", "Whenever this creature attacks a player, …"
+    if ((m = /^whenever (.+?) (enters(?: the battlefield)? or attacks|attacks or blocks|attacks|blocks)( a player)?(?: a creature)?, (.+)$/i.exec(line)) && self(m[1])) {
+      if (!combatEffect(m[4], inst)) gap(out, 'both', 'effect', m[4]);
       return out;
     }
     if ((m = P.ATTACK_BLOCK_CAP.exec(line)) && self(m[1])) return out;
-    // Landfall
+    // Interceptor: "Whenever you attack with one or more legendary creatures, you may pay {2}{B}. If you do, return this card from your graveyard …"
+    if (P.GRAVE_ATTACK.test(line)) return out;
+    // Landfall (Guul Draz Overseer's "If that land is a Swamp, …" too)
     if ((m = /^(?:landfall\s*[—-]\s*)?whenever a land(?: you control)? enters(?: the battlefield)?(?: under your control)?, (?:you may )?(.+)$/i.exec(line))) {
-      effectGaps('both', m[1]);
+      effectGaps('both', B.parts.landfallText(m[1], null));
       return out;
     }
+    // Heroic, Danitha: "Whenever you cast a spell that targets …"
+    if ((m = P.TARGET_WATCH.exec(line))) { effectGaps('both', m[2]); return out; }
+    // Massacre Girl, Most Wanted: "Whenever an opponent is dealt noncombat damage, …"
+    if ((m = P.DEALT_WATCH.exec(line))) { effectGaps('both', m[1]); return out; }
+    // Bloodthirsty Conqueror: "Whenever an opponent loses life, you gain that much life."
+    if ((m = P.LOSS_WATCH.exec(line))) { effectGaps('both', m[2].replace(/\bthat much life\b/gi, '1 life')); return out; }
+    // Syr Konrad
+    if ((m = P.KONRAD.exec(line))) { effectGaps('both', m[1]); return out; }
+    // Roshan: "Whenever a permanent you control is turned face up, …" (you turn it up yourself; Opp never does)
+    if ((m = /^whenever a permanent you control is turned face up, (?:you may )?(.+)$/i.exec(line))) { effectGaps('you', m[1]); gap(out, 'opp', 'trigger', 'turned face up (Opp never plays face down)'); return out; }
     // "Whenever a creature / a Dragon / this creature or another Cat you control enters (or attacks
     // or blocks), …". "with defender" needs a keyword it knows; other "with …" words it can't check.
     const watchHead = /you control|under your control/i.test(line.split(',')[0]);
     const withOk = w => !/ with /i.test(w[4]) && (!w[5] || w[6] || B.KEYWORDS.includes(w[5].replace(/^\s*with\s+/i, '').toLowerCase()));
     for (const watch of [P.ENTER_WATCH, P.ATTACK_WATCH, P.BLOCK_WATCH]) {
       if (!(m = watch.exec(line)) || !watchHead || (m[1] && !self(m[1]))) continue;
-      if (withOk(m)) effectGaps('both', m[8]);
+      if (withOk(m)) effectGaps('both', m[8].replace(/^if you cast it, /i, '')); // The Sibsig Ceremony
       else gap(out, 'both', 'trigger', t.head);
       return out;
     }
@@ -159,20 +180,22 @@ const Coverage = (() => {
       const fits = /^one or more (.+?) you control/.test(who) || /^(?:an?|another) (.+?) you control/.test(who) || self(who);
       if (fits) {
         if (P.destroyTheirs(m[2])) return out;
-        effectGaps('both', m[2]);
+        // Desmond Miles: "surveil X, where X is the amount of damage it dealt to that player"
+        effectGaps('both', m[2].replace(/\b(surveil|scry|draw|mill) x(?: cards)?, where x is the amount of damage .+? dealt to that player\b/i, '$1 1'));
         return out;
       }
     }
-    // "Whenever another creature dies" (Blood Artist), on any table.
-    if ((m = P.DIES_WATCH.exec(line))) { effectGaps('both', m[6]); return out; }
-    // "Whenever you cast …"
+    // "Whenever another creature dies" (Blood Artist), on any table. Massacre Girl, Known Killer: "if its toughness was less than 1, …"
+    if ((m = P.DIES_WATCH.exec(line))) { effectGaps('both', m[6].replace(/^if its toughness was less than \d+, /i, '')); return out; }
+    // "Whenever you cast …" (Nightmare Sower: "… during an opponent's turn")
     if ((m = P.CAST_WATCH.exec(line)) && !/\b(first|second)\b/i.test(line)) {
-      const e = m[2].trim();
+      const e = m[3].trim();
       const p = /^(.+?) gets? ([+-]\d+)\/([+-]\d+) until end of turn\.?$/i.exec(e);
       if ((p && self(p[1])) || PUMP_SENTENCE.test(e)) return out;
       effectGaps('both', e);
       return out;
     }
+    if ((m = /^when you cast this spell, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; } // Ugin, Eye of the Storms
     if ((m = /^whenever you gain life( for the first time each turn)?, (?:you may )?(.+)$/i.exec(line))) {
       effectGaps('both', m[2].replace(/\bthat much life\b/gi, '1 life').replace(/\bthat many\b/gi, '1'));
       return out;
@@ -190,8 +213,12 @@ const Coverage = (() => {
     const m = /^([^:"]+):\s*(.+)$/.exec(line);
     if (!m || /^(when|whenever|at|if|as)\b/i.test(m[1])) return null;
     const out = { you: true, opp: true, gaps: [] };
-    // Planeswalker loyalty abilities: "+1: …", "−2: …".
-    if (/^[+−-]?(\d+|x)$/i.test(m[1].trim())) { gap(out, 'both', 'loyalty', 'planeswalker loyalty abilities'); return out; }
+    // Planeswalker loyalty abilities: "+1: …", "−X: …" (you pick X), "0: Add {C}{C}{C}." Opp never casts planeswalkers.
+    if (/^[+−-]?(\d+|x)$/i.test(m[1].trim())) {
+      notRun(m[2].replace(/\bx\b/gi, '1'), inst).forEach(p => gap(out, 'you', 'loyalty', p));
+      gap(out, 'opp', 'loyalty', 'planeswalker loyalty abilities (Opp never casts planeswalkers)');
+      return out;
+    }
     if (/^add\b/i.test(m[2])) {
       if (is(card, 'land') || G.manaAbility(card.name, line)) return out;
       gap(out, 'both', 'mana', `mana ability: ${m[1]}: ${m[2]}`);
@@ -216,6 +243,20 @@ const Coverage = (() => {
   function staticLine(card, line, inst) {
     const out = { you: true, opp: true, gaps: [] };
     let m;
+    // 'Commander creatures you own have "Whenever this creature attacks a player, …"': the ability it gives.
+    if ((m = /^(?:other )?(.+?) you (?:control|own) have "(.+)"\.?$/i.exec(line)) && !m[1].includes(':')) {
+      const given = { id: 'given', name: 'this creature', typeLine: 'Creature' };
+      return triggerLine(card, m[2], given) || activatedLine(card, m[2], given) || staticLine(card, m[2], given);
+    }
+    // Roshan; recover (Garza's Assassin); Ebondeath from the graveyard; The Darkness Crystal; The Immortal Sun; Rune of Mortality.
+    if (/^other creatures you control are \w+ in addition to their other types\./i.test(line) || P.RECOVER.test(line) || P.GRAVE_CAST.test(line)
+      || P.CRYSTAL.test(line) || /^players can't activate planeswalkers' loyalty abilities\.?$/i.test(line)) return out;
+    if ((m = /^as long as enchanted permanent is an? (creature|equipment), it has (.+?)\.?$/i.exec(line))) {
+      const kws = kwOnly(m[2].replace(/^"equipped creature has (.+?)\.?"$/i, '$1'));
+      if (!kws.every(k => B.KEYWORDS.includes(k))) gap(out, 'you', 'static', line);
+      return out;
+    }
+    if (/^you may pay (?:\{[^}]+\})+ rather than pay this spell's mana cost\.?$/i.test(line)) { gap(out, 'opp', 'static', 'other cost (Opp pays the mana cost)'); return out; }
     if ((m = LORD.exec(line)) && !m[2].includes(':')) {
       if (m[3] && !B.KEYWORDS.includes(m[3].toLowerCase())) { gap(out, 'both', 'static', line); return out; } // "with power 4 or greater"
       const kws = kwOnly(m[6] || m[7] || '');
@@ -225,7 +266,7 @@ const Coverage = (() => {
       return out;
     }
     if (/^(other )?(.+?) you control can't be blocked except by two or more creatures\.?$/i.test(line)) return out;
-    if ((m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
+    if ((m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control(?: and each (.+?) cards? in your graveyard)?\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
     if ((m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) you control\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
     if (/^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.test(line)) return out;
     if (P.TOUGH_RULE.test(line) || P.DEFENDER_RULE.test(line)) return out; // Arcades, Doran, High Alert
@@ -260,7 +301,7 @@ const Coverage = (() => {
     const modes = B.spellModes(inst, () => card);
     if (modes) {
       modes.modes.forEach(mode => {
-        if (!mode.split(/(?<=\.)\s+/).every(s => PUMP_SENTENCE.test(s.trim()))) gap(out, 'you', 'spell', `modal spell: ${mode}`);
+        if (!mode.split(/(?<=\.)\s+/).every(s => PUMP_SENTENCE.test(s.trim())) && !runs(mode, inst)) gap(out, 'you', 'spell', `modal spell: ${mode}`);
       });
     } else if (/\binstant\b/i.test(front(card.typeLine)) && G.isCounterspell(card.oracle)) {
       if (!/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\})?\.?$/i.test(text.trim())) gap(out, 'you', 'spell', `counterspell: ${text}`);
@@ -296,7 +337,13 @@ const Coverage = (() => {
     for (const text of lines) {
       if (/^•/.test(text) || /^choose (one|two|three|one or more|one or both|any number)\b/i.test(text)) {
         if (isSpell) { spellLines.push(text); continue; }
-        if (/^•/.test(text)) continue; // a mode of the trigger above, which already counts as not done
+        // A mode of the trigger above ("Choose one —"): runEffect does it once it's picked.
+        if (/^•/.test(text)) {
+          const mode = { you: true, opp: true, gaps: [] };
+          notRun(text.replace(/^•\s*/, ''), inst).forEach(p => gap(mode, 'both', 'effect', p));
+          out.push({ text, ...mode });
+          continue;
+        }
       }
       const kw = keywordLine(card, text);
       if (kw) { out.push({ text, ...kw }); continue; }

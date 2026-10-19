@@ -22,9 +22,14 @@ const Autoplay = (() => {
     const responder = B.getResponder();
     G.hooks.died = (s, inst, info) => {
       const v = view();
-      B.died(s, inst, defOf, null, v);
+      B.died(s, inst, defOf, null, v, info || {});
       if (v) B.afterDeath(v, s, inst, info || {}, defOf, null);
     };
+    G.hooks.wouldDie = (s, inst) => { const v = view(); return v && v.bot ? B.wouldDie(v, s, inst, defOf) : null; };
+    G.hooks.moved = (s, inst, from, to) => { const v = view(); if (v && v.bot) B.cardMoved(v, s, inst, from, to, defOf, null); };
+    G.hooks.sendHome = (s, inst, to) => { const v = view(); if (v && v.bot) B.sendHome(v, s, inst, to, defOf); };
+    G.hooks.oppDamaged = (s, n) => { const v = view(); if (v && v.bot) B.opponentDamaged(v, s, n, defOf); };
+    G.hooks.discard = null;
     G.hooks.entered = (s, inst) => {
       if (!inst.faceDown) {
         for (const [kind, n] of Object.entries(G.entersWithCounters((defOf(inst.id) || {}).oracle))) G.counter(s, inst.iid, kind, n, { effect: true });
@@ -73,6 +78,7 @@ const Autoplay = (() => {
     }
     delete t.mustDestroy;
     delete t.mustTarget;
+    ['mustModes', 'mustCards', 'mustRecover', 'mustMadness', 'mustShock', 'mustHand', 'mustSacToPlay', 'mustLibrary'].forEach(k => { delete t[k]; });
   }
 
   // The defending table ("you") blocks Opp's pending attack the way Opp would.

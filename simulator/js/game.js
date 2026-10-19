@@ -21,7 +21,13 @@ const Game = (() => {
   // goes from the battlefield to the graveyard ("When this dies, …", undying); hooks.cast(s, inst)
   // after a spell cast from hand or the command zone arrives (prowess).
   // hooks.casting(s, inst) returns true when the spell being cast is countered (Opp's counterspell).
-  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null };
+  // hooks.wouldDie(s, inst) can send a creature somewhere else instead of the graveyard (The Darkness
+  // Crystal: 'exile'). hooks.discard(s, inst) can send a discarded card somewhere else (madness:
+  // 'exile'). hooks.moved(s, inst, from, to) runs after any card changes zones (Syr Konrad).
+  // hooks.sendHome(s, inst, to) takes a card you control but don't own back to its owner's table once
+  // it leaves the battlefield. hooks.oppDamaged(s, n) runs when a card's "deals N damage to each
+  // opponent" happens on entering (Massacre Girl, Most Wanted).
+  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -41,10 +47,13 @@ const Game = (() => {
     return a;
   }
 
-  const isLand = inst => /\bland\b/i.test((inst.typeLine || '').split('//')[0]);
+  // The type line of the face that's up: the back of a flipped two-faced card (Boggart Trawler played
+  // as Boggart Bog), otherwise the front.
+  const faceType = inst => { const t = String(inst.typeLine || '').split('//'); return (inst.flipped && t[1]) || t[0]; };
+  const isLand = inst => /\bland\b/i.test(faceType(inst));
   // A crewed Vehicle counts as a creature until the turn ends.
-  const isCreature = inst => !!inst.crewed || /\bcreature\b/i.test((inst.typeLine || '').split('//')[0]);
-  const isVehicle = inst => /\bvehicle\b/i.test((inst.typeLine || '').split('//')[0]);
+  const isCreature = inst => !!inst.crewed || /\bcreature\b/i.test(faceType(inst));
+  const isVehicle = inst => /\bvehicle\b/i.test(faceType(inst));
   // The turn is over: Vehicles stop being creatures.
   const endCrew = s => s.zones.battlefield.forEach(iid => { delete s.cards[iid].crewed; delete s.cards[iid].crewedBy; });
 
@@ -165,6 +174,7 @@ const Game = (() => {
     let you = 0;
     let opp = 0;
     let target = 0;
+    let dmg = 0; // the part of opp that's damage ("deals 2 damage to each opponent"), not life loss
     for (const effect of enterEffects(name, oracle)) {
       if (/for each|equal to|\bx life\b/i.test(effect)) continue;
       let g;
@@ -172,9 +182,9 @@ const Game = (() => {
       if ((g = effect.match(/\byou lose (\w+) life\b/i)) && toNumber(g[1])) you -= toNumber(g[1]);
       if ((g = effect.match(/\beach opponent loses (\w+) life\b/i)) && toNumber(g[1])) opp -= toNumber(g[1]);
       if ((g = effect.match(/\btarget opponent loses (\w+) life\b/i)) && toNumber(g[1])) target -= toNumber(g[1]);
-      if ((g = effect.match(/\bdeals (\w+) damage to each opponent\b/i)) && toNumber(g[1])) opp -= toNumber(g[1]);
+      if ((g = effect.match(/\bdeals (\w+) damage to each opponent\b/i)) && toNumber(g[1])) { opp -= toNumber(g[1]); dmg += toNumber(g[1]); }
     }
-    return you || opp || target ? { you, opp, target } : null;
+    return you || opp || target ? { you, opp, target, dmg } : null;
   }
 
   // Reads "When this enters, draw a card" (or "draw two cards", "draw a card, then discard…").
@@ -427,12 +437,16 @@ const Game = (() => {
   function entersTapped(name, oracle) {
     if (!oracle) return false;
     const front = (name || '').split(' // ')[0].toLowerCase();
+    // "As this land enters, you may pay 3 life. If you don't, it enters tapped." (Boggart Bog, shock lands)
+    const shock = /\bas this land enters, you may pay (\w+) life\. if you don't, it enters tapped\b/i.exec(oracle);
+    if (shock && toNumber(shock[1])) return { payLife: toNumber(shock[1]) };
     let out = false;
     oracle.split(/\n+|(?<=\.)\s+(?=[A-Z])/).forEach(line => {
       const m = line.match(/^(.+?) enters(?: the battlefield)? tapped(?: unless (.+?))?\.$/i);
       if (!m) return;
       const subject = m[1].toLowerCase();
-      if (!(subject === front || /^this (land|creature|artifact|permanent)$/.test(subject))) return;
+      // "Ebondeath enters tapped." for Ebondeath, Dracolich
+      if (!(subject === front || subject === front.split(',')[0] || /^this (land|creature|artifact|permanent)$/.test(subject))) return;
       const cond = (m[2] || '').toLowerCase();
       let c;
       if (!cond) out = true;
@@ -445,11 +459,13 @@ const Game = (() => {
   }
 
   // Does this card come in tapped right now? s.opponents is how many opponents you have
-  // (unknown when goldfishing, so then that condition is left to you).
+  // (unknown when goldfishing, so then that condition is left to you). "You may pay 3 life" lands
+  // come in untapped; app.js asks whether you pay, and Opp decides in bot.js.
   function tapsOnEntry(s, inst) {
     const et = inst.entersTapped;
     if (!et || inst.faceDown) return false;
     if (et === true) return true;
+    if (et.payLife) return false;
     const others = s.zones.battlefield.map(iid => s.cards[iid]).filter(c => c !== inst);
     const otherLands = others.filter(isLand).length;
     if (et.opponents) return s.opponents != null && s.opponents < et.opponents;
@@ -482,6 +498,7 @@ const Game = (() => {
     const msg = `${inst.name} entered: ${parts.join(', ')}.`;
     log(s, msg);
     s.notice = msg;
+    if (inst.enterLife.dmg && hooks.oppDamaged) hooks.oppDamaged(s, inst.enterLife.dmg);
   }
 
   function applyEnterDraw(s, inst) {
@@ -781,6 +798,14 @@ const Game = (() => {
     delete inst.pump;
     delete inst.regen;
     delete inst.granted;
+    delete inst.grantedLines;
+    delete inst.wasCast;
+    delete inst.altPaid;
+    delete inst.exileIfDies;
+    delete inst.attacking;
+    delete inst.loyaltyTurn;
+    delete inst.auraPlaced;
+    delete inst.offspringPaid;
   }
 
   // A planeswalker enters with loyalty counters equal to its printed loyalty (not for "X", or one
@@ -822,13 +847,19 @@ const Game = (() => {
     return { n: n * 2 ** by.length, by };
   }
 
-  // "Until end of turn" pumps and regeneration shields wear off.
+  // "Until end of turn" pumps and regeneration shields wear off, and so do the turn's "if it would
+  // die this turn, exile it instead" (Bleed Dry), "you may play that card this turn" (Reno and Rude),
+  // "whenever a creature dies this turn" (Massacre Girl) and the creatures that died this turn.
   function endOfTurn(s) {
     for (const inst of Object.values(s.cards)) {
       delete inst.pump;
       delete inst.regen;
       delete inst.undoPump; // the pump it gave is gone anyway
+      delete inst.exileIfDies;
+      delete inst.playable;
     }
+    delete s.delayed;
+    delete s.deathsThisTurn;
   }
 
   // "Counter target spell" (or "…creature spell", "…noncreature spell", "…unless its controller pays {3}").
@@ -870,9 +901,20 @@ const Game = (() => {
       log(s, `${inst.name} was countered and stays in the command zone.`);
       return;
     }
+    // "If that creature would die this turn, exile it instead" (Bleed Dry), and The Darkness Crystal's
+    // "If a nontoken creature an opponent controls would die, instead exile it".
+    if (from === 'battlefield' && to === 'graveyard' && !inst.faceDown && isCreature(inst)) {
+      if (inst.exileIfDies) to = 'exile';
+      else if (hooks.wouldDie) to = hooks.wouldDie(s, inst) || to;
+    }
+    // Madness: a discarded card can go to exile instead, to be cast from there.
+    if (from === 'hand' && to === 'graveyard' && hooks.discard) to = hooks.discard(s, inst) || to;
     const list = s.zones[from];
     const at = list.indexOf(iid);
     if (at >= 0) list.splice(at, 1);
+    // What it was like on the battlefield, for "if it had no counters on it", undying and persist,
+    // and "if its toughness was less than 1" (taken before its equipment and pumps come off).
+    const info = { counters: Object.assign({}, inst.counters), to, pump: inst.pump || null, anthem: inst.anthem || null, cda: inst.cda || null, boosts: inst.boosts || null, custom: inst.custom || null };
     if (from === 'battlefield' && (to !== 'battlefield' || opts.x != null)) {
       closeStack(s, inst);
       delete inst.stacked;
@@ -892,11 +934,11 @@ const Game = (() => {
 
     // A commander sent to the command zone instead of the graveyard still died.
     const died = from === 'battlefield' && (to === 'graveyard' || (to === 'command' && inst.commander)) && !inst.faceDown;
-    const info = { counters: Object.assign({}, inst.counters), to }; // for undying and persist
     if (inst.token && to !== 'battlefield') {
       delete s.cards[iid];
       log(s, `${inst.name} token left the battlefield and is gone.`);
       if (died && hooks.died) hooks.died(s, inst, info);
+      if (hooks.moved) hooks.moved(s, inst, from, to);
       return;
     }
 
@@ -924,6 +966,8 @@ const Game = (() => {
       }
       if (from === 'hand' && isLand(inst)) s.landPlayed = true;
       if (from === 'command' && inst.commander) inst.castCount = (inst.castCount || 0) + 1;
+      // Cast, not just put onto the battlefield (The Sibsig Ceremony's "if you cast it").
+      if (from !== 'battlefield' && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown) inst.wasCast = true;
     } else if (to === 'library') {
       if (opts.bottom) s.zones.library.push(iid);
       else s.zones.library.splice(opts.index || 0, 0, iid);
@@ -945,6 +989,9 @@ const Game = (() => {
     if (from === 'command' && to === 'battlefield') msg = `Cast ${name} from the command zone (cast #${inst.castCount}).`;
     log(s, msg);
     if (died && hooks.died) hooks.died(s, inst, info);
+    if (hooks.moved) hooks.moved(s, inst, from, to);
+    // A card you control but another player owns goes back to them once it leaves the battlefield.
+    if (inst.owner && from === 'battlefield' && to !== 'battlefield' && hooks.sendHome && s.cards[iid]) hooks.sendHome(s, inst, to);
     if (to === 'battlefield') {
       applyEnterLife(s, inst);
       applyEnterDraw(s, inst);
@@ -1025,8 +1072,16 @@ const Game = (() => {
     s.turn++;
     s.landPlayed = false;
     Object.keys(s.mana).forEach(k => { s.mana[k] = 0; });
-    s.zones.battlefield.forEach(iid => { s.cards[iid].tapped = false; s.cards[iid].tappedFor = null; delete s.cards[iid].filterPaid; });
-    log(s, `— Turn ${s.turn} — untapped.`);
+    const stunned = [];
+    s.zones.battlefield.forEach(iid => {
+      const c = s.cards[iid];
+      // A stun counter: instead of untapping, one comes off.
+      if (c.tapped && c.counters && c.counters.stun > 0) { counter(s, iid, 'stun', -1); stunned.push(c.name); return; }
+      c.tapped = false;
+      c.tappedFor = null;
+      delete c.filterPaid;
+    });
+    log(s, `— Turn ${s.turn} — untapped.${stunned.length ? ` ${stunned.join(', ')} stayed tapped (a stun counter came off).` : ''}`);
     drawCards(s, 1);
   }
 
@@ -1049,6 +1104,7 @@ const Game = (() => {
       s.cards[iid].zone = 'graveyard';
       s.zones.graveyard.push(iid);
       count++;
+      if (hooks.moved) hooks.moved(s, s.cards[iid], 'library', 'graveyard');
     }
     log(s, `Milled ${count}.`);
   }
