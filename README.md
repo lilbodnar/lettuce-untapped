@@ -132,7 +132,7 @@ Under the search box on the **Collection** tab:
 
 ## Simulator (playtesting)
 
-The **Simulator** tab at the top right playtests your decks right here in MTG Tracker. Your decks show up there automatically, and a game you start keeps going while you use the other tabs. On a deck's page, **▶ Play**, **Play vs computer** and **Odds** open that deck in the Simulator. You can also add any Commander precon from a list, or paste any deck list, even one you own none of the cards for. Then:
+The Simulator's tabs are at the right of the tab bar: **Playtest** (your games, playing against the computer or online, precons and pasted decks), **Play** (the table), **Odds**, **Auto-test** and **Help**. Your decks show up there automatically, and a game you start keeps going while you use the other tabs. On a deck's page, **▶ Play**, **Play vs computer** and **Odds** open that deck in the Simulator. You can also add any Commander precon from a list, or paste any deck list, even one you own none of the cards for. Then:
 
 - **Play** it on a virtual table: draw, play, tap, make tokens, track life and mana, mulligan, scry, undo
 - Play it **against the computer**, which plays another of your decks

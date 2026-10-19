@@ -13,8 +13,8 @@ Card data and images come from [Scryfall](https://scryfall.com) (free, no accoun
 
 ## Getting started
 
-1. Open MTG Tracker and click the **Simulator** tab at the top right. It opens right there, and your game keeps going while you use the other tabs. (It also works on its own page: [lilbodnar.github.io/lettuce-untapped/simulator](https://lilbodnar.github.io/lettuce-untapped/simulator/), or `simulator/index.html` in a downloaded copy, with **◂ MTG Tracker** to go back.)
-2. Your MTG Tracker decks show up on the **Decks** tab. Click **Play**. Or, on a deck's page in MTG Tracker, click **▶ Play**, **Play vs computer** or **Odds** to open that deck straight away.
+1. Open MTG Tracker. The Simulator's pages are tabs at the right of its tab bar: **Playtest**, **Play**, **Odds**, **Auto-test** and **Help**. Your game keeps going while you use the other tabs. (The Simulator's own address, [lilbodnar.github.io/lettuce-untapped/simulator](https://lilbodnar.github.io/lettuce-untapped/simulator/), opens MTG Tracker on its Playtest tab. Add `?standalone` to it for the Simulator on its own page.)
+2. Your MTG Tracker decks show up on the **Playtest** tab (called **Decks** below, which is its name on its own page). Click **Play**. Or, on a deck's page in MTG Tracker, click **▶ Play**, **Play vs computer** or **Odds** to open that deck straight away.
 
 Use Chrome or Edge, and the same browser for both.
 
