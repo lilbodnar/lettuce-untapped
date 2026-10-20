@@ -28,7 +28,8 @@ const Game = (() => {
   // it leaves the battlefield. hooks.oppDamaged(s, n) runs when a card's "deals N damage to each
   // opponent" happens on entering (Massacre Girl, Most Wanted).
   // hooks.drew(s, n) runs after a player draws (Smothering Tithe).
-  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null };
+  // hooks.counters(s, inst, kind, n) runs after counters are put on a permanent (Exemplar of Light).
+  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -78,7 +79,7 @@ const Game = (() => {
   // the basic land types in its type line (so "Land — Forest Plains" makes G or W).
   function producesOf(inst) {
     if (!isLand(inst)) return [];
-    if (Array.isArray(inst.produces) && inst.produces.length) return MANA.filter(m => inst.produces.includes(m));
+    if (Array.isArray(inst.produces) && inst.produces.length) return MANA.filter(m => inst.produces.includes(m) && !(inst.lifeColors || []).includes(m)); // Ifnir Deadlands
     const words = (inst.typeLine || '').split('//')[0].toLowerCase().split(/[^a-z]+/);
     return MANA.filter(m => words.some(w => BASIC_TYPES[w] === m));
   }
@@ -90,7 +91,23 @@ const Game = (() => {
   // Returns { colors, amount, sacrifice } or null; the "{1}, {T}" kind also has filter (the {N} it
   // costs) and makes (each mana it adds, like ['G', 'W']). Other costs and "any one color" sources
   // are left for you to do by hand.
+  // Elementalist's Palette: "{T}: Add {C} for each charge counter on this artifact. Spend this mana only on costs that contain {X}." (its other
+  // "{T}: Add one mana of any color." otherwise; manaUnits picks the counters for a spell with {X})
+  const PALETTE = /^\{T\}:\s*add \{C\} for each ([\w-]+) counter on this \w+\. spend this mana only on costs that contain \{X\}\.?$/im;
+  // City of Brass: "Whenever this land becomes tapped, it deals 1 damage to you." (autoPay)
+  const TAP_PAIN = /^whenever this land becomes tapped, it deals (\d+) damage to you\.?$/im;
   function manaAbility(name, oracle) {
+    const pain = oracle && TAP_PAIN.exec(oracle);
+    const r = manaAbilityTwo(name, oracle);
+    return r && pain ? { ...r, pain: Number(pain[1]) } : r;
+  }
+  function manaAbilityTwo(name, oracle) {
+    const one = manaAbilityOne(name, oracle);
+    const pal = oracle && PALETTE.exec(oracle);
+    if (!pal) return one;
+    return one ? { ...one, xCounters: pal[1].toLowerCase() } : { colors: ['C'], amount: 0, sacrifice: false, xCounters: pal[1].toLowerCase() };
+  }
+  function manaAbilityOne(name, oracle) {
     if (!oracle) return null;
     const front = (name || '').split(' // ')[0].toLowerCase();
     // Cabal Coffers: "{2}, {T}: Add {B} for each Swamp you control." Cabal Stronghold: "… for each basic
@@ -106,6 +123,12 @@ const Game = (() => {
       if (h) { const pair = [h[1].toUpperCase(), h[2].toUpperCase()]; return { colors: pair, amount: 2, sacrifice: false, filter: 1, makes: [pair, pair] }; }
       // Heraldic Banner: "{T}: Add one mana of the chosen color." (inst.chosenColor)
       if (/^\{T\}:\s*add one mana of the chosen colou?r\.?$/i.test(line.trim())) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, chosenColor: true };
+      // Throne of Eldraine: "{T}: Add four mana of the chosen color. Spend this mana only to cast monocolored spells of that color." (spendable)
+      const thr4 = line.trim().match(/^\{T\}:\s*add (\w+) mana of the chosen colou?r\. spend this mana only to cast monocolored spells of that colou?r\.?$/i);
+      if (thr4 && toNumber(thr4[1])) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: toNumber(thr4[1]), sacrifice: false, chosenColor: true, monoOnly: true };
+      // Thriving Isle: "{T}: Add {U} or one mana of the chosen color."
+      const thr = line.trim().match(/^\{T\}:\s*add \{([WUBRG])\} or one mana of the chosen colou?r\.?$/i);
+      if (thr) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, chosenColor: true, base: thr[1].toUpperCase() };
       // "{T}: Add {G} for each creature you control with defender." (Overgrown Battlement), "{T}: Add X
       // mana in any combination of colors, where X is the number of creatures you control with
       // defender." (Axebane Guardian): as much as s.kwCount says (kept by bot.js's refreshGrants).
@@ -113,14 +136,36 @@ const Game = (() => {
       if (each) return { colors: each[1] ? [each[1].toUpperCase()] : ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, countKw: each[2].toLowerCase() };
       // Prophetic Prism: "{1}, {T}: Add one mana of any color."; Cascading Cataracts: "{5}, {T}: Add five
       // mana in any combination of colors." (each mana any color)
-      const anyF = line.trim().match(/^\{(\d+)\},\s*\{T\}:\s*add (one mana of any colou?r|(\w+) mana in any combination of colou?rs)\.?$/i);
+      // Orb of Dragonkind: "… Spend this mana only to cast Dragon spells or activate abilities of Dragons." (onlyFor: autoPay's spell)
+      // Study Hall: "… When you spend this mana to cast your commander, scry X, …" (the scry isn't done; the mana is).
+      const anyF = line.trim().replace(/\s+when you spend this mana to cast your commander, .+$/i, '').match(/^\{(\d+)\},\s*\{T\}:\s*add (one mana of any colou?r|(\w+) mana in any combination of colou?rs)\.?(?: spend this mana only to cast (\w+) spells(?: or activate abilities of \w+)?\.?)?$/i);
       if (anyF && Number(anyF[1]) > 0) {
         const k = anyF[3] ? toNumber(anyF[3]) : 1;
-        if (k) return { colors: [...MANA.slice(0, 5)], amount: k, sacrifice: false, filter: Number(anyF[1]), makes: Array(k).fill(MANA.slice(0, 5)) };
+        if (k) return { colors: [...MANA.slice(0, 5)], amount: k, sacrifice: false, filter: Number(anyF[1]), makes: Array(k).fill(MANA.slice(0, 5)), ...(anyF[4] ? { onlyFor: anyF[4].toLowerCase() } : {}) };
       }
       // Zaxara: "{T}: Add two mana of any one color."; Component Pouch: "{T}, Remove a component counter
       // from this artifact: Add two mana of different colors." (the counter goes when it's tapped for mana)
-      const two = line.trim().match(/^\{T\}(?:,\s*remove an? (\w+) counter from (?:this \w+|it))?:\s*add (\w+) mana of (?:any one colou?r|different colou?rs)\.?$/i);
+      // Smokebraider, Flamebraider: "{T}: Add two mana in any combination of colors. Spend this mana only to cast Elemental spells or activate
+      // abilities of Elementals." (spendable: Elemental spells; not for abilities here)
+      const braid = line.trim().match(/^\{T\}:\s*add (\w+) mana in any combination of colou?rs\. spend this mana only to cast (\w+) spells or activate abilities of \w+(?: sources)?\.?$/i);
+      if (braid && toNumber(braid[1])) return { colors: [...MANA.slice(0, 5)], amount: toNumber(braid[1]), sacrifice: false, onlyFor: braid[2].toLowerCase() };
+      // Troyan, Gutsy Explorer: "{T}: Add {G}{U}. Spend this mana only to cast spells with mana value 5 or greater or spells with {X} in their
+      // mana costs." (spendable)
+      const big = line.trim().match(/^\{T\}:\s*add ((?:\{[WUBRGC]\})+)\. spend this mana only to cast spells with mana value (\d+) or greater or spells with \{X\} in their mana costs\.?$/i);
+      if (big) { const makes = big[1].toUpperCase().match(/[WUBRGC]/g); return { colors: [...new Set(makes)], amount: makes.length, sacrifice: false, makes, bigOrX: Number(big[2]) }; }
+      // Mana Bloom: "Remove a charge counter from this enchantment: Add one mana of any color. Activate only once each turn." (it's tapped
+      // once used, so it's ready again next turn)
+      const bloom = line.trim().match(/^remove an? ([\w-]+) counter from this \w+: add one mana of any colou?r\. activate only once each turn\.?$/i);
+      if (bloom) return { colors: [...MANA.slice(0, 5)], amount: 1, sacrifice: false, remove: { kind: bloom[1].toLowerCase(), n: 1 } };
+      // Jegantha, the Wellspring: "{T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs."
+      const five = line.trim().match(/^\{T\}:\s*add ((?:\{[WUBRG]\}){2,})\. this mana can't be spent to pay generic mana costs\.?$/i);
+      if (five) { const makes = five[1].toUpperCase().match(/[WUBRG]/g); return { colors: [...new Set(makes)], amount: makes.length, sacrifice: false, makes, noGeneric: true }; }
+      // Springleaf Drum: "{T}, Tap an untapped creature you control: Add one mana of any color." (autoPay taps one)
+      if (/^\{T\}, tap an untapped creature you control: add one mana of any colou?r\.?$/i.test(line.trim())) return { colors: [...MANA.slice(0, 5)], amount: 1, sacrifice: false, tapCreature: true };
+      // Millikin: "{T}, Mill a card: Add {C}." (autoPay mills it)
+      if (/^\{T\}, mill a card: add \{C\}\.?$/i.test(line.trim())) return { colors: ['C'], amount: 1, sacrifice: false, mill: 1 };
+      // Channeler Initiate: "{T}, Remove a -1/-1 counter from this creature: Add one mana of any color."
+      const two = line.trim().match(/^\{T\}(?:,\s*remove an? ([\w+/-]+) counter from (?:this \w+|it))?:\s*add (\w+) mana of (?:any one colou?r|different colou?rs|any colou?r)\.?$/i);
       if (two && toNumber(two[2])) return { colors: [...MANA.slice(0, 5)], amount: toNumber(two[2]), sacrifice: false, ...(two[1] ? { remove: { kind: two[1].toLowerCase(), n: 1 } } : {}) };
       const f = line.trim().match(/^\{(\d+)\},\s*\{T\}:\s*add ((?:\{[WUBRGC]\}){2,})\.?$/i);
       if (f && Number(f[1]) > 0) {
@@ -130,26 +175,69 @@ const Game = (() => {
       const m = line.trim().match(/^\{T\}(?:,\s*sacrifice ([^:]+))?:\s*add (.+?)\.?$/i);
       if (!m) continue;
       const sacrifice = !!m[1];
+      // Gilded Goose: "{T}, Sacrifice a Food: Add one mana of any color." (another permanent: sourceOf checks there's one, autoPay sacrifices it)
+      const other = sacrifice && /^an? (\w+)$/i.exec(m[1].trim());
+      if (other && /^one mana of any colou?r\.?$/i.test(m[2].trim())) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, sacOther: other[1].toLowerCase() };
       if (sacrifice && !/^(this \w+|it)$/i.test(m[1].trim()) && m[1].trim().toLowerCase() !== front) continue;
       const add = m[2].split(/\.\s/)[0].trim(); // "Add {U} or {B}. This deals 1 damage to you."
+      // Powerstone, Vibranium: "This mana can't be spent to cast a nonartifact spell." (autoPay's spendable)
+      const artifactOnly = /this mana can't be spent to cast a nonartifact spell/i.test(m[2]) ? { artifactOnly: true } : {};
       let g;
       if ((g = add.match(/^((?:\{[WUBRGC]\})+)$/i))) {
         const syms = g[1].toUpperCase().match(/[WUBRGC]/g);
-        if (syms.every(c => c === syms[0])) return { colors: [syms[0]], amount: syms.length, sacrifice };
+        if (syms.every(c => c === syms[0])) return { colors: [syms[0]], amount: syms.length, sacrifice, ...artifactOnly };
         continue;
       }
       if (/^\{[WUBRGC]\}(?:,? (?:or )?\{[WUBRGC]\})+$/i.test(add) && /\bor\b/i.test(add)) {
         return { colors: MANA.filter(c => add.toUpperCase().includes(`{${c}}`)), amount: 1, sacrifice };
       }
-      if (/^one mana of any colou?r\b/i.test(add)) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice };
+      // Exploding Barrel: "{T}: Add one mana of any color. Put a pressure counter on this artifact." (autoPay puts it on)
+      const ctr = /\bput an? ([\w+/-]+) counter on this \w+\.?$/i.exec(m[2]);
+      if (/^one mana of any colou?r\b/i.test(add)) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice, ...(ctr ? { addCounter: ctr[1].toLowerCase() } : {}) };
+      // Goldspan Dragon's Treasures: "{T}, Sacrifice this artifact: Add two mana of any one color."
+      const k = /^(\w+) mana of any one colou?r\b/i.exec(add);
+      if (k && toNumber(k[1])) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: toNumber(k[1]), sacrifice };
     }
     return null;
   }
 
   // What a card on the battlefield can tap for right now: { colors, amount, sacrifice } or null.
   // Creatures can't tap for mana the turn they arrive.
+  // Forsaken Monument (s.extraC, from bot.js): a source that makes only {C} makes that many more.
   function sourceOf(s, inst) {
+    const src = baseSource(s, inst);
+    // Goldspan Dragon: 'Treasures you control have "{T}, Sacrifice this artifact: Add two mana of any one color."' (s.treasureMana, bot.js's refreshGrants)
+    if (src && s.treasureMana && src.sacrifice && /\btreasure\b/i.test(inst.typeLine || '')) return { ...src, amount: Math.max(src.amount, s.treasureMana) };
+    // Fertile Ground: "Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color."
+    // Mirari's Wake, Vorinclex: "Whenever you tap a land for mana, add one mana of any type that land produced." (s.landDouble, bot.js's refreshGrants)
+    if (src && isLand(inst) && s.landDouble && !src.filter) {
+      const aura = attachmentsOf(s, inst.iid).filter(id => s.cards[id].extraManaAura).length;
+      return { ...src, amount: src.amount * (1 + s.landDouble) + aura, makes: [...Array(src.amount * (1 + s.landDouble)).fill(src.colors), ...Array(aura).fill(MANA.slice(0, 5))] };
+    }
+    const extra = src && isLand(inst) ? attachmentsOf(s, inst.iid).filter(id => s.cards[id].extraManaAura).length : 0;
+    if (extra) return { ...src, amount: src.amount + extra, makes: [...Array(src.amount).fill(src.colors), ...Array(extra).fill(MANA.slice(0, 5))] };
+    if (!src || !s.extraC || !src.colors.every(k => k === 'C') || src.filter) return src;
+    return { ...src, amount: src.amount + s.extraC };
+  }
+  // The creature Springleaf Drum would tap (an untapped one, tokens first), or null.
+  const drumFodder = (s, inst) => {
+    const list = s.zones.battlefield.map(id => s.cards[id]).filter(c => c !== inst && !c.tapped && !c.phasedOut && !c.attacking && isCreature(c));
+    return list.find(c => c.token) || list[0] || null;
+  };
+  // The permanent a "Sacrifice a Food: Add …" source would sacrifice (a token first), or null.
+  const sacFodder = (s, inst) => {
+    const kind = inst.mana && inst.mana.sacOther;
+    const list = kind ? s.zones.battlefield.map(id => s.cards[id]).filter(c => c !== inst && !c.phasedOut && new RegExp(`\\b${kind}\\b`, 'i').test(c.typeLine || '')) : [];
+    return list.find(c => c.token) || list[0] || null;
+  };
+  function baseSource(s, inst) {
     if (inst.faceDown || inst.phasedOut) return null;
+    // Song of Freyalise: 'Until your next turn, creatures you control gain "{T}: Add one mana of any color."' (s.creatureManaTurn)
+    if (!inst.mana && s.creatureManaTurn != null && s.turn === s.creatureManaTurn && isCreature(inst)) return inst.enteredTurn === s.turn ? null : { colors: [...MANA.slice(0, 5)], amount: 1, sacrifice: false };
+    // Springleaf Drum: "{T}, Tap an untapped creature you control: Add one mana of any color." (autoPay taps one)
+    if (inst.mana && inst.mana.tapCreature && !drumFodder(s, inst)) return null;
+    // Rishkar: 'Each creature you control with a counter on it has "{T}: Add {G}."' (inst.grantedMana, bot.js)
+    if (!inst.mana && inst.grantedMana && isCreature(inst)) return inst.enteredTurn === s.turn ? null : inst.grantedMana;
     if (inst.mana && inst.mana.countLand) {
       const { type, basic } = inst.mana.countLand;
       const n = s.zones.battlefield.map(id => s.cards[id]).filter(c => isLand(c) && !c.phasedOut && (!basic || /\bbasic\b/i.test(c.typeLine || ''))
@@ -161,14 +249,19 @@ const Game = (() => {
       const colors = producesOf(inst).filter(k => k === 'C'); // Cabal Stronghold's {T}: Add {C}
       return colors.length ? { colors, amount: 1, sacrifice: false } : null;
     }
-    if (inst.mana && inst.mana.chosenColor) return inst.chosenColor ? { ...inst.mana, colors: [inst.chosenColor] } : null;
+    if (inst.mana && inst.mana.chosenColor) {
+      const cols = [...new Set([inst.mana.base, inst.chosenColor].filter(Boolean))]; // Thriving lands: their own color too
+      return cols.length ? { ...inst.mana, colors: cols } : null;
+    }
     if (inst.mana && inst.mana.countKw) {
       if (isCreature(inst) && inst.enteredTurn === s.turn) return null;
       const n = (s.kwCount || {})[inst.mana.countKw] || 0;
       return n ? { ...inst.mana, amount: n } : null;
     }
     if (Object.values(inst.boosts || {}).some(b => b && b.noAbilities)) return null; // Arrest
+    if (inst.mana && inst.mana.sacOther && !sacFodder(s, inst)) return null; // Gilded Goose with no Food
     if (inst.mana && inst.mana.remove && (inst.counters[inst.mana.remove.kind] || 0) < inst.mana.remove.n) return null; // Component Pouch with no counters
+    if (inst.mana && inst.mana.mill && !s.zones.library.length) return null; // Millikin with nothing to mill
     if (inst.mana && inst.mana.filter && !(isCreature(inst) && inst.enteredTurn === s.turn)) return inst.mana;
     if (isLand(inst)) {
       // Abundant Growth: 'Enchanted land has "{T}: Add one mana of any color."'
@@ -184,21 +277,39 @@ const Game = (() => {
   // Every untapped mana source, as one unit per mana it makes, in the order auto-tap uses them:
   // lands (fewest colors first), then mana rocks, then creatures, then things you sacrifice (Treasure).
   // Sources that cost {1} to tap (filterSources) aren't in it.
-  function manaUnits(s) {
+  // spell: what's being paid for ({ typeLine }), for mana that can only be spent on some spells (Orb of Dragonkind).
+  const spendable = (src, spell) => (!src.onlyFor || (!!spell && new RegExp(`\\b${src.onlyFor}\\b`, 'i').test(spell.typeLine || '')))
+    && (!src.artifactOnly || !spell || /\bartifact\b/i.test(spell.typeLine || '')) // Vibranium: abilities and artifact spells
+    && (!src.monoOnly || (!!spell && (spell.cardColors || []).length === 1 && src.colors.includes(spell.cardColors[0]))) // Throne of Eldraine
+    && (!src.bigOrX || (!!spell && (hasX(spell) || (spell.cmc || 0) >= src.bigOrX))); // Troyan
+  const hasX = spell => /\{X\}/i.test((spell && spell.cost) || '');
+
+  function manaUnits(s, spell) {
     const units = [];
     for (const iid of s.zones.battlefield) {
       const inst = s.cards[iid];
       if (inst.tapped) continue;
-      const src = sourceOf(s, inst);
-      if (!src || src.filter) continue;
+      let src = sourceOf(s, inst);
+      // Elementalist's Palette: its charge counters' {C} for a spell with {X}, when that's more
+      const xn = inst.mana && inst.mana.xCounters && hasX(spell) ? inst.counters[inst.mana.xCounters] || 0 : 0;
+      if (xn > ((src && src.amount) || 0)) src = { colors: ['C'], amount: xn, sacrifice: false };
+      if (!src || src.filter || !spendable(src, spell)) continue;
       const rank = isLand(inst) ? 0 : src.sacrifice ? 3 : isCreature(inst) ? 2 : 1;
-      for (let i = 0; i < src.amount; i++) units.push({ inst, colors: src.colors, rank, kind: `${rank}${src.colors.join('')}${src.amount}` });
+      // Jegantha: each mana its own color (src.makes), and none of it for generic costs (noGeneric, payWith).
+      for (let i = 0; i < src.amount; i++) units.push({ inst, colors: src.makes ? [].concat(src.makes[i]) : src.colors, rank, kind: `${rank}${(src.makes ? [].concat(src.makes[i]) : src.colors).join('')}${src.amount}`, ...(src.noGeneric ? { noGeneric: true } : {}) });
+    }
+    // Relic of Legends: "Tap an untapped legendary creature you control: Add one mana of any color." (last resort)
+    if (s.zones.battlefield.some(iid => s.cards[iid].tapLegend && !s.cards[iid].faceDown && !s.cards[iid].phasedOut)) {
+      for (const iid of s.zones.battlefield) {
+        const c = s.cards[iid];
+        if (!c.tapped && !c.faceDown && !c.phasedOut && isCreature(c) && /\blegendary\b/i.test(c.typeLine || '') && !units.some(u => u.inst === c)) units.push({ inst: c, colors: [...MANA.slice(0, 5)], rank: 4, kind: '4L' });
+      }
     }
     return units.sort((a, b) => a.rank - b.rank || a.colors.length - b.colors.length);
   }
 
   // Untapped sources like "{1}, {T}: Add {G}{W}." (Sungrass Prairie, Signets).
-  const filterSources = s => s.zones.battlefield.map(iid => s.cards[iid]).filter(inst => !inst.tapped && (sourceOf(s, inst) || {}).filter);
+  const filterSources = (s, spell) => s.zones.battlefield.map(iid => s.cards[iid]).filter(inst => { const src = !inst.tapped && sourceOf(s, inst); return !!src && !!src.filter && spendable(src, spell); });
 
   const NUMBER_WORDS = { a: 1, an: 1, one: 1, two: 2, three: 3, four: 4, five: 5, six: 6, seven: 7, eight: 8, nine: 9, ten: 10 };
   const toNumber = w => (/^\d+$/.test(w) ? Number(w) : NUMBER_WORDS[w.toLowerCase()] || null);
@@ -329,6 +440,7 @@ const Game = (() => {
 
   // How much less a spell costs from the permanents on your battlefield. oracleOf(inst) gives a
   // card's rules text. Only generic mana is taken off; autoPay won't go below zero.
+  const AFFINITY_GRANT = /^(\w+) spells you cast have affinity for (\w+)\.?$/im;
   function discount(s, spell, oracleOf) {
     const typeWords = String(spell.typeLine || '').split('//')[0].toLowerCase().split(/[^a-z-]+/).filter(Boolean);
     const has = w => typeWords.includes(w);
@@ -344,6 +456,21 @@ const Game = (() => {
         if (r.chosen && !(src.chosenType && has(src.chosenType.toLowerCase()))) continue;
         total += r.n;
       }
+      // Pearl-Ear, Imperial Advisor: "Enchantment spells you cast have affinity for Auras." ({1} less for each Aura you control)
+      const aff = src.zone === 'battlefield' && AFFINITY_GRANT.exec(String(oracleOf(src) || ''));
+      if (aff && has(aff[1].toLowerCase())) {
+        const kind = aff[2].toLowerCase().replace(/s$/, '');
+        total += s.zones.battlefield.filter(id => id !== spell.iid && new RegExp(`\\b${kind}\\b`, 'i').test(String(s.cards[id].typeLine || '').split('//')[0])).length;
+      }
+      // Advanced Reconstruction (a Class, from level 3): "Spells you cast from anywhere other than your hand cost {2} less to cast."
+      if (src.zone !== 'battlefield' || spell.zone === 'hand') continue;
+      let level = 1;
+      for (const l of String(oracleOf(src) || '').split('\n').map(x => x.trim())) {
+        const lv = /:\s*level (\d+)$/i.exec(l);
+        if (lv) { level = Number(lv[1]); continue; }
+        const m = /^spells you cast from anywhere other than your hand cost \{(\d+)\} less to cast\.?$/i.exec(l);
+        if (m && (src.level || 1) >= level) total += Number(m[1]);
+      }
     }
     return total;
   }
@@ -357,16 +484,24 @@ const Game = (() => {
   // { sources, life, pool } describing what was spent. extraGeneric adds to (tax) or, when
   // negative, takes off (discounts) the generic part. Sources like "{1}, {T}: Add {G}{W}" are
   // used only when the spell can't be paid without them; their {1} comes from another source or the pool.
-  function autoPay(s, cost, extraGeneric = 0) {
+  function autoPay(s, cost, extraGeneric = 0, spell = null) {
     const need = parseCost(cost);
     need.generic = Math.max(0, need.generic + extraGeneric);
     if (!need.generic && !need.pips.length) return { sources: [], life: 0, pool: 0 };
-    const filters = filterSources(s).slice(0, 3);
+    const filters = filterSources(s, spell).slice(0, 3);
     const sets = filters.reduce((acc, f) => acc.concat(acc.map(a => [...a, f])), [[]]).sort((a, b) => a.length - b.length);
     let plan = null;
-    for (const set of sets) if ((plan = withFilters(need, manaUnits(s), set, Object.assign({}, s.mana), new Set(), 0))) break;
+    for (const set of sets) if ((plan = withFilters(need, manaUnits(s, spell), set, Object.assign({}, s.mana), new Set(), 0))) break;
+    // Channel (Yavimaya Bloomsage): "Until end of turn, any time you could activate a mana ability, you may pay 1 life. If you do, add {C}."
+    // (s.lifeManaTurn): life covers the generic mana the sources can't.
+    let lifeMana = 0;
+    for (let k = 1; !plan && s.lifeManaTurn === s.turn && k <= need.generic && k < s.life; k++) {
+      const less = { ...need, generic: need.generic - k };
+      for (const set of sets) if ((plan = withFilters(less, manaUnits(s, spell), set, Object.assign({}, s.mana), new Set(), 0))) { lifeMana = k; break; }
+    }
     if (!plan) return null;
     const { units, used, pool, life, tapping } = plan;
+    if (lifeMana) { s.life -= lifeMana; log(s, `Paid ${lifeMana} life for {C} (Channel).`); }
     // How many colors of mana were spent (converge: Radiant Flames, Painful Truths). A source that
     // makes more than one color counts as whichever color isn't spent yet, as you'd pick.
     const spent = new Set(need.pips.filter(p => p.colors.length === 1 && p.colors[0] !== 'C').map(p => p.colors[0]));
@@ -383,9 +518,17 @@ const Game = (() => {
       inst.tapped = true;
       inst.tappedFor = null;
       if (inst.mana && inst.mana.remove) counter(s, inst.iid, inst.mana.remove.kind, -inst.mana.remove.n); // Component Pouch
+      if (inst.mana && inst.mana.addCounter) counter(s, inst.iid, inst.mana.addCounter, 1); // Exploding Barrel
+      if (inst.mana && inst.mana.pain) { s.life -= inst.mana.pain; log(s, `${inst.name} dealt ${inst.mana.pain} damage to its controller as it was tapped.`); } // City of Brass
+      if (inst.mana && inst.mana.mill && s.zones.library.length) move(s, s.zones.library[0], 'graveyard'); // Millikin
+      if (inst.mana && inst.mana.tapCreature) { const c = drumFodder(s, inst); if (c) { c.tapped = true; c.tappedFor = null; } } // Springleaf Drum
+      if (s.landsFrozen && isLand(inst)) inst.skipUntap = true; // the opponent's Vorinclex: it doesn't untap during your next untap step
       if (sourceOf(s, inst) && inst.mana && inst.mana.sacrifice) move(s, inst.iid, 'graveyard');
+      if (inst.mana && inst.mana.sacOther) { const f = sacFodder(s, inst); if (f) move(s, f.iid, 'graveyard'); } // Gilded Goose's Food
     }
-    return { sources: sources.map(i => i.name + (i.mana && i.mana.sacrifice ? ' (sacrificed)' : '')), life, pool: plan.fromPool, colors: spent.size };
+    // Coin of Mastery: "for each mana from an artifact source spent to cast it"
+    const artifactMana = [...used].filter(u => units[u] && units[u].inst && /\bartifact\b/i.test(String(units[u].inst.typeLine || '').split('//')[0])).length;
+    return { sources: sources.map(i => i.name + (i.mana && i.mana.sacrifice ? ' (sacrificed)' : '')), life, pool: plan.fromPool, colors: spent.size, artifactMana };
   }
 
   // Turns on the filter sources in set one at a time: each one's {N} is paid by pool mana or other
@@ -434,7 +577,7 @@ const Game = (() => {
 
     // Tries pips in order. Units of the same kind are interchangeable, so only one of each kind is tried.
     function solve(i) {
-      if (i === pips.length) return units.length - used.size + poolLeft >= generic;
+      if (i === pips.length) return units.filter((u, k) => !used.has(k) && !u.noGeneric).length + poolLeft >= generic;
       const pip = pips[i];
       const tried = new Set();
       for (let u = 0; u < units.length; u++) {
@@ -471,7 +614,7 @@ const Game = (() => {
     const tapping = () => new Set([...forced, ...[...used].map(u => units[u].inst)]);
     while (generic > 0) {
       const busy = tapping();
-      const free = units.map((u, i) => i).filter(i => !used.has(i));
+      const free = units.map((u, i) => i).filter(i => !used.has(i) && !units[i].noGeneric);
       const left = inst => free.filter(i => units[i].inst === inst).length;
       const colorless = i => (units[i].colors.join('') === 'C' ? 0 : 1);
       let pick = free.find(i => busy.has(units[i].inst));
@@ -522,6 +665,7 @@ const Game = (() => {
       else if ((c = cond.match(/^you control (one|two|three|four) or more basic lands$/))) out = { minBasics: COUNT_WORDS[c[1]] }; // battle lands
       else if ((c = cond.match(new RegExp(`^you control an? ${BASICS}(?:,? or an? ${BASICS})?$`)))) out = { control: [c[1], c[2]].filter(Boolean) };
       else if ((c = cond.match(/^your opponents control (\w+) or more lands$/))) out = { oppLands: toNumber(c[1]) }; // Turbulent lands
+      else if ((c = cond.match(/^you control (\w+) or more other (\w+?)s$/))) out = { minOtherType: { n: toNumber(c[1]), type: c[2] } }; // Witch's Cottage: "three or more other Swamps"
     });
     return out;
   }
@@ -547,6 +691,7 @@ const Game = (() => {
     if (et.minOther != null) return otherLands < et.minOther;
     if (et.minBasics != null) return others.filter(c => isLand(c) && /\bbasic\b/i.test(c.typeLine || '')).length < et.minBasics;
     if (et.control) return !others.some(c => et.control.some(t => new RegExp(`\\b${t}\\b`, 'i').test(c.typeLine || '')));
+    if (et.minOtherType) return others.filter(c => new RegExp(`\\b${et.minOtherType.type}\\b`, 'i').test(c.typeLine || '')).length < et.minOtherType.n;
     return false;
   }
 
@@ -625,6 +770,16 @@ const Game = (() => {
     if (/^changeling\b/im.test(String(def.oracle || ''))) inst.changeling = true; // every creature type (bot.js)
     if (Array.isArray(def.colors) && def.colors.length && !def.custom) inst.cardColors = def.colors; // "multicolored card" (bot.js)
     if (/^.+? is all colors\b/im.test(String(def.oracle || ''))) inst.allColors = true; // Transguild Courier
+    if (/^tap an untapped legendary creature you control: add one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.tapLegend = true; // Relic of Legends (manaUnits)
+    if (/^rebound\b/im.test(String(def.oracle || ''))) inst.hasRebound = true; // Terramorph (move)
+    if (/^compleated\b/im.test(String(def.oracle || ''))) inst.compleated = true; // Vraska, Betrayal's Sting (startLoyalty)
+    if (/^whenever enchanted land is tapped for mana, its controller adds an additional one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.extraManaAura = true; // Fertile Ground (sourceOf)
+    if (/^if one or more creature tokens would be created under your control, that many 4\/4 white angel creature tokens with flying and vigilance are created instead\.?$/im.test(String(def.oracle || ''))) inst.angelTokens = true; // Divine Visitation (createToken)
+    // Ifnir Deadlands: "{T}, Pay 1 life: Add {B}." That color isn't auto-tapped (producesOf); you activate it (bot.js's activatedAbilities).
+    const lines = String(def.oracle || '').split('\n');
+    const lifeOnly = MANA.filter(k => lines.some(l => new RegExp(`^\\{T\\}, pay \\w+ life: add \\{${k}\\}\\.?$`, 'i').test(l.trim()))
+      && !lines.some(l => new RegExp(`^\\{T\\}: add [^.]*\\{${k}\\}`, 'i').test(l.trim())));
+    if (lifeOnly.length) inst.lifeColors = lifeOnly;
     s.cards[iid] = inst;
     return inst;
   }
@@ -845,6 +1000,8 @@ const Game = (() => {
     closeStack(s, inst);
     delete inst.stacked;
     inst.attachedTo = hostIid;
+    // Flickering Ward: "Enchanted creature has protection from the chosen color."
+    if (bonus && bonus.proChosen && inst.chosenColor) bonus = { ...bonus, kw: [...(bonus.kw || []), `protection from ${inst.chosenColor}`] };
     host.boosts = Object.assign({}, host.boosts, { [iid]: bonus || { pow: 0, tou: 0, kw: [] } });
     placeAttached(s, host);
     log(s, `Attached ${inst.name} to ${host.name}.`);
@@ -873,12 +1030,25 @@ const Game = (() => {
     delete inst.crewed;
     delete inst.crewedBy;
     delete inst.chosenType;
+    delete inst.imprint; // Duplicant
+    delete inst.monstrous; // Fleecemane Lion
+    delete inst.echoDone; // Mogg War Marshal: echo is due again
+    delete inst.tempFlashback; // Past in Flames: only while it stays in the graveyard
+    delete inst.modesEver; // Kimoyo Beads: "choose one that hasn't been chosen"
+    delete inst.monarchAttack; // Okoye
+    delete inst.animatedBy; // Animate Dead
+    delete inst.overloaded; // Vandalblast
+    delete inst.unearthed;
+    delete inst.kickCount;
+    delete inst.prepared;
+    delete inst.evoked;
     delete inst.enchanting; // an aura on another player's creature
     delete inst.pump;
     delete inst.regen;
     delete inst.granted;
     delete inst.grantedLines;
     delete inst.wasCast;
+    delete inst.castFrom;
     delete inst.altPaid;
     delete inst.exileIfDies;
     delete inst.attacking;
@@ -895,9 +1065,10 @@ const Game = (() => {
     delete inst.damageTaken;
     // The Commander precons' choices and states (bot.js).
     ['becomes', 'impending', 'bestowed', 'mutatedOnto', 'chosenMode', 'chosenCardType', 'level', 'heldBy', 'goad', 'noAttackTurn',
-      'firstTurn', 'freeCast', 'xValue', 'spentColors', 'suspended'].forEach(k => delete inst[k]);
+      'firstTurn', 'freeCast', 'xValue', 'spentColors', 'suspended', 'foretold'].forEach(k => delete inst[k]);
     // A copy (Wall of Stolen Identity) is itself again.
     if (inst.original) { Object.assign(inst, inst.original); delete inst.original; }
+    delete inst.keepLines; // Irma's own ability, kept while she was a copy
   }
 
   // A planeswalker enters with loyalty counters equal to its printed loyalty (not for "X", or one
@@ -909,7 +1080,10 @@ const Game = (() => {
     inst.counters = inst.counters || {};
     if (inst.counters.loyalty != null) return;
     const twice = counterDoublers(s, inst, 'loyalty');
-    inst.counters.loyalty = n * 2 ** twice.length;
+    // Compleated: two fewer for each Phyrexian symbol paid with (2) life.
+    const less = inst.compleated && inst.phyrexianLife ? inst.phyrexianLife : 0;
+    if (less) log(s, `${inst.name} (compleated): ${less} fewer loyalty, for the life paid.`);
+    inst.counters.loyalty = Math.max(0, n - less) * 2 ** twice.length;
     if (twice.length) log(s, `${inst.name} enters with ${inst.counters.loyalty} loyalty instead of ${n} (${twice.join(', ')}).`);
   }
 
@@ -936,6 +1110,12 @@ const Game = (() => {
   // How many tokens an effect that makes n of them really makes on this table: { n, by: [names] }.
   function tokenCount(s, n) {
     const by = doublers(s, d => d.tokens);
+    // Donatello, the Brains: "… those tokens plus a Mutagen token are created instead." (s.plusMutagen: its text, from bot.js's refreshGrants)
+    if (s.plusMutagen && n > 0 && !s.mutagenBusy) {
+      s.mutagenBusy = true;
+      try { createToken(s, { custom: true, name: 'Mutagen', typeLine: 'Token Artifact — Mutagen', text: s.plusMutagen, oracle: s.plusMutagen }, { quiet: true }); } finally { s.mutagenBusy = false; }
+      log(s, 'Donatello: a Mutagen token too.');
+    }
     return { n: n * 2 ** by.length, by };
   }
 
@@ -948,14 +1128,22 @@ const Game = (() => {
       delete inst.regen;
       delete inst.undoPump; // the pump it gave is gone anyway
       delete inst.exileIfDies;
-      delete inst.playable;
+      delete inst.handIfDies; // Together Forever (bot.js's died)
+      // Cards you may play from exile: this turn, until a later turn (playable.until), or for as long as they stay exiled (forever).
+      if (inst.playable && !inst.playable.forever && !(inst.playable.until > s.turn)) delete inst.playable;
+      delete inst.tempFlashback; // Past in Flames
       delete inst.damageTaken;
-      delete inst.becomes; // Restless lands stop being creatures
+      delete inst.damagedBy; // Hawkeye: the sources that dealt it damage this turn
+      if (!(inst.becomes && inst.becomes.forever)) delete inst.becomes; // Restless lands stop being creatures (Excava's Spirits stay)
       delete inst.attackedNow;
+      delete inst.modesUsed; // Parapet Thrasher: modes chosen this turn
       // Cursed Mirror's copy lasts until end of turn.
       if (inst.copyUntil != null && inst.original) { Object.assign(inst, inst.original); delete inst.original; delete inst.extraKw; delete inst.copyUntil; }
     }
     delete s.lostLife; // Archfiend of Despair: life lost this turn
+    delete s.attackersNow; // Arachnogenesis: creatures attacking this player
+    delete s.redirect; // Heroic Sacrifice
+    delete s.marked;
     delete s.delayed;
     delete s.deathsThisTurn;
     delete s.leftThisTurn;
@@ -993,6 +1181,8 @@ const Game = (() => {
     const inst = s.cards[iid];
     if (!inst) return;
     const from = inst.zone;
+    if (from !== 'graveyard') s.moveSeq = (s.moveSeq || 0) + 1; // cards leaving a graveyard together share one (bot.js's cardMoved)
+    if (from === 'graveyard' && to !== 'graveyard') s.graveLeftTurn = s.turn; // Primary Research, Relic Retriever: "if a card left your graveyard this turn"
     // Countered as it's cast (hooks.casting, Opp's counterspell): it never arrives. Its mana stays spent.
     if (to === 'battlefield' && !opts.put && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown && hooks.casting && hooks.casting(s, inst)) {
       if (from !== 'command') return move(s, iid, 'graveyard');
@@ -1006,14 +1196,25 @@ const Game = (() => {
       if (inst.exileIfDies) to = 'exile';
       else if (hooks.wouldDie) to = hooks.wouldDie(s, inst) || to;
     }
+    // Unearth: "Exile it … if it would leave the battlefield."
+    if (from === 'battlefield' && to !== 'battlefield' && to !== 'exile' && inst.unearthed) to = 'exile';
+    // A finality counter (Shuri's Fabricator): "If a permanent with a finality counter on it would die, exile it instead."
+    if (from === 'battlefield' && to === 'graveyard' && (inst.counters || {}).finality > 0) to = 'exile';
     // Madness: a discarded card can go to exile instead, to be cast from there.
     if (from === 'hand' && to === 'graveyard' && hooks.discard) to = hooks.discard(s, inst) || to;
+    // Rebound (Terramorph): cast from your hand, it's exiled as it resolves, to be cast again at your next upkeep (bot.js's upkeepSuspend).
+    // Gravestorm (Ominous Harvest): permanents put into a graveyard from the battlefield this turn.
+    if (from === 'battlefield' && to === 'graveyard' && !inst.faceDown) { if (s.toGraveTurn !== s.turn) { s.toGraveTurn = s.turn; s.toGraveN = 0; } s.toGraveN++; }
+    let rebound = false;
+    if (from === 'battlefield' && to === 'graveyard' && inst.reboundArmed && /\b(instant|sorcery)\b/i.test(inst.typeLine || '')) { to = 'exile'; rebound = true; }
+    // Quintorius, Loremaster: "If that spell would be put into a graveyard, put it on the bottom of its owner's library instead."
+    if (from === 'battlefield' && to === 'graveyard' && inst.bottomInstead && /\b(instant|sorcery)\b/i.test(inst.typeLine || '')) { delete inst.bottomInstead; return move(s, iid, 'library', { bottom: true }); }
     const list = s.zones[from];
     const at = list.indexOf(iid);
     if (at >= 0) list.splice(at, 1);
     // What it was like on the battlefield, for "if it had no counters on it", undying and persist,
     // and "if its toughness was less than 1" (taken before its equipment and pumps come off).
-    const info = { counters: Object.assign({}, inst.counters), to, pump: inst.pump || null, anthem: inst.anthem || null, cda: inst.cda || null, boosts: inst.boosts || null, custom: inst.custom || null, damage: inst.damageTaken || 0 };
+    const info = { counters: Object.assign({}, inst.counters), to, pump: inst.pump || null, anthem: inst.anthem || null, cda: inst.cda || null, boosts: inst.boosts ? Object.assign({}, inst.boosts) : null, custom: inst.custom || null, damage: inst.damageTaken || 0 };
     if (from === 'battlefield' && (to !== 'battlefield' || opts.x != null)) {
       closeStack(s, inst);
       delete inst.stacked;
@@ -1045,6 +1246,10 @@ const Game = (() => {
     if (from === 'battlefield' && to !== 'battlefield') resetForZoneChange(inst);
     inst.zone = to;
     if (opts.faceDown) inst.faceDown = true;
+    delete inst.reboundArmed;
+    if (rebound) { inst.rebounding = true; log(s, `${inst.name} (rebound) is exiled; cast it again at your next upkeep.`); }
+    // Rebound: only when it's cast from the hand.
+    if (from === 'hand' && to === 'battlefield' && inst.hasRebound && !opts.put) inst.reboundArmed = true;
 
     if (to === 'battlefield') {
       // Cards arriving from another zone always go to their tidy spot, even when dropped somewhere;
@@ -1056,7 +1261,7 @@ const Game = (() => {
         placeAttached(s, inst); // its equipment and auras come along
       }
       s.zones.battlefield.push(iid); // last = drawn on top
-      if (from !== 'battlefield') { inst.enteredTurn = s.turn; delete inst.attackedTurn; startLoyalty(s, inst); }
+      if (from !== 'battlefield') { inst.enteredTurn = s.turn; delete inst.attackedTurn; startLoyalty(s, inst); countEntered(s, inst); }
       // A spell cast or a nontoken permanent put onto the battlefield on this player's own turn
       // (s.offTurn is set while someone else's turn is on), for Arboria.
       if (from !== 'battlefield' && !inst.token && !s.offTurn) s.actedTurn = s.turn;
@@ -1067,7 +1272,9 @@ const Game = (() => {
       if (from === 'hand' && isLand(inst) && !opts.put) s.landPlayed = true;
       if (from === 'command' && inst.commander) inst.castCount = (inst.castCount || 0) + 1;
       // Cast, not just put onto the battlefield (The Sibsig Ceremony's "if you cast it").
-      if (from !== 'battlefield' && !opts.put && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown) inst.wasCast = true;
+      if (from !== 'battlefield' && !opts.put && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown) { inst.wasCast = true; inst.castFrom = from; } // Dirgur Focusmage: "… from your hand"
+      // Arena of Glory: "If any of that mana is spent on a creature spell, it gains haste until end of turn." (the next creature spell this turn)
+      if (inst.wasCast && s.hasteMana === s.turn && isCreature(inst)) { delete s.hasteMana; inst.pump = { pow: 0, tou: 0, ...inst.pump, kw: [...new Set([...((inst.pump && inst.pump.kw) || []), 'haste'])] }; }
     } else if (to === 'library') {
       if (opts.bottom) s.zones.library.push(iid);
       else s.zones.library.splice(opts.index || 0, 0, iid);
@@ -1169,10 +1376,21 @@ const Game = (() => {
 
   // Unspent mana empties. Omnath, Locus of the Void: "If you would lose unspent mana, that mana
   // becomes colorless instead." (s.keepMana, kept by bot.js's refreshGrants)
+  // Leyline Tyrant: "You don't lose unspent red mana" (s.keepRed).
   function emptyMana(s) {
     const left = s.keepMana ? Object.values(s.mana).reduce((n, v) => n + (v || 0), 0) : 0;
+    const red = s.keepRed && !s.keepMana ? s.mana.R || 0 : 0;
     Object.keys(s.mana).forEach(k => { s.mana[k] = 0; });
     if (left) { s.mana.C = left; log(s, `${left} unspent mana became colorless instead of emptying.`); }
+    if (red) s.mana.R = red;
+  }
+  // Goddric's celebration: how many nonland permanents entered under this player's control this turn.
+  function countEntered(s, inst) {
+    if (isLand(inst)) return;
+    // Gyome: nontoken creatures that entered this turn.
+    if (isCreature(inst) && !inst.token) { if (s.creaturesInTurn !== s.turn) { s.creaturesInTurn = s.turn; s.creaturesIn = 0; } s.creaturesIn++; }
+    if (s.enteredMark !== s.turn) { s.enteredMark = s.turn; s.enteredCount = 0; }
+    s.enteredCount++;
   }
 
   function nextTurn(s) {
@@ -1185,13 +1403,15 @@ const Game = (() => {
     // Teferi's Protection: "Until your next turn, …" ends, and phased-out permanents come back.
     delete s.untilNextTurn;
     delete s.attackedYou; // "players who attacked you during their last turn"
-    s.zones.battlefield.forEach(iid => { delete s.cards[iid].phasedOut; });
+    s.zones.battlefield.forEach(iid => { if (!s.cards[iid].heldBy) delete s.cards[iid].phasedOut; }); // Oubliette keeps its one (heldBy)
     s.zones.battlefield.forEach(iid => {
       const c = s.cards[iid];
       // A stun counter: instead of untapping, one comes off.
       if (c.tapped && c.counters && c.counters.stun > 0) { counter(s, iid, 'stun', -1); stunned.push(c.name); return; }
       // Wall of Frost ("doesn't untap during its controller's next untap step"), Wall of Stolen Identity's copied creature.
       if (c.tapped && (c.skipUntap || c.frozenBy)) { delete c.skipUntap; stunned.push(c.name); return; }
+      // Fall from Favor: it stays tapped unless its controller is the monarch.
+      if (c.tapped && !s.monarch && Object.values(c.boosts || {}).some(b => b && b.noUntapUnlessMonarch)) { stunned.push(c.name); return; }
       c.tapped = false;
       c.tappedFor = null;
       delete c.filterPaid;
@@ -1233,6 +1453,13 @@ const Game = (() => {
     if (!inst) return 0;
     // Darksteel Angel: "Creatures you control can't have -1/-1 counters put on them." (s.noMinusCounters, bot.js)
     if (name === '-1/-1' && delta > 0 && s.noMinusCounters && isCreature(inst) && inst.zone === 'battlefield') { log(s, `${inst.name} can't have -1/-1 counters put on it.`); return 0; }
+    // Hardened Scales, Ozolith, Kami of Whispered Hopes, Benevolent Hydra: "If one or more +1/+1 counters would be put on a creature (an artifact
+    // or creature, a permanent, another creature) you control, that many plus one +1/+1 counters are put on it instead." (s.counterPlus, bot.js)
+    if (name === '+1/+1' && delta > 0 && inst.zone === 'battlefield' && (s.counterPlus || []).length) {
+      const type = String(inst.typeLine || '').toLowerCase();
+      const more = s.counterPlus.filter(p => p.not !== inst.iid && (p.what === 'permanent' || (/creature/.test(p.what) && isCreature(inst)) || (/artifact/.test(p.what) && /\bartifact\b/.test(type)))).length;
+      if (more) { delta += more; log(s, `${inst.name} gets ${more} more +1/+1 counter${more === 1 ? '' : 's'}.`); }
+    }
     if (opts.effect && delta > 0) {
       const twice = counterDoublers(s, inst, name);
       if (twice.length) {
@@ -1243,6 +1470,8 @@ const Game = (() => {
     const n = (inst.counters[name] || 0) + delta;
     if (n <= 0) delete inst.counters[name];
     else inst.counters[name] = n;
+    // Exemplar of Light: "Whenever you put one or more +1/+1 counters on this creature, …" (bot.js)
+    if (delta > 0 && inst.zone === 'battlefield' && hooks.counters) hooks.counters(s, inst, name, delta);
     return delta;
   }
 
@@ -1253,6 +1482,10 @@ const Game = (() => {
 
   // def: a Scryfall card, or { custom: true, name, pt, text } for a hand-made token.
   function createToken(s, def, opts = {}) {
+    // Divine Visitation: "If one or more creature tokens would be created under your control, that many 4/4 white
+    // Angel creature tokens with flying and vigilance are created instead."
+    const angel = /\bcreature\b/i.test(def.typeLine || '') && s.zones.battlefield.some(iid => s.cards[iid].angelTokens && !s.cards[iid].phasedOut && !s.cards[iid].faceDown);
+    if (angel) def = { custom: true, name: 'Angel', typeLine: 'Token Creature — Angel', pt: '4/4', text: 'Flying, vigilance' };
     const inst = makeInstance(s, def, {
       token: true,
       custom: def.custom ? { pt: def.pt || '', text: def.text || '' } : null,
@@ -1265,7 +1498,10 @@ const Game = (() => {
       doubles: def.doubles !== undefined ? def.doubles : doublesOf(def.oracle),
       enteredTurn: s.turn,
     });
+    if (angel) { inst.extraKw = ['flying', 'vigilance']; inst.tokenColors = ['W']; }
+    s.tokenTurn = s.turn; // Idol of Oblivion: "if you created a token this turn"
     startLoyalty(s, inst);
+    countEntered(s, inst);
     if (opts.x != null) {
       inst.x = opts.x;
       inst.y = opts.y;
@@ -1299,7 +1535,7 @@ const Game = (() => {
 
   return {
     ZONES, ZONE_NAMES, CELL_W, CELL_H, MANA, layout, hooks, producesOf, available, enterLife, enterDraw, entersTapped, tapsOnEntry, parseCost, autoPay, manaAbility, isCreature,
-    choosesType, choosesColor, sourceOf, costReductions, discount, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
+    choosesType, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
     attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,

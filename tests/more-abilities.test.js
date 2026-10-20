@@ -67,10 +67,10 @@ test('prowess pumps when you cast a noncreature spell, not a creature', () => {
   const game = vsOpp(['monk', 'bolt', 'bear'], []);
   hook(game);
   const monk = put(game, 'monk');
-  Game.move(game, game.zones.library.find(i => game.cards[i].id === 'bear'), 'hand');
+  Game.move(game, [...game.zones.library, ...game.zones.hand].find(i => game.cards[i].id === 'bear'), 'hand');
   Game.move(game, game.zones.hand.find(i => game.cards[i].id === 'bear'), 'battlefield');
   assert.equal(monk.pump, undefined);
-  const bolt = game.zones.library.find(i => game.cards[i].id === 'bolt');
+  const bolt = [...game.zones.library, ...game.zones.hand].find(i => game.cards[i].id === 'bolt');
   Game.move(game, bolt, 'hand');
   Game.move(game, bolt, 'battlefield');
   assert.deepEqual([monk.pump.pow, monk.pump.tou], [1, 1]);
@@ -80,9 +80,9 @@ test('a simple sorcery resolves by itself; Young Pyromancer makes a token', () =
   const game = vsOpp(['divination', 'pyro'], []);
   hook(game);
   put(game, 'pyro');
-  const hand = game.zones.hand.length;
-  const d = game.zones.library.find(i => game.cards[i].id === 'divination');
+  const d = [...game.zones.library, ...game.zones.hand].find(i => game.cards[i].id === 'divination');
   Game.move(game, d, 'hand');
+  const hand = game.zones.hand.length - 1; // not counting Divination itself
   Game.move(game, d, 'battlefield');
   assert.equal(game.cards[d].zone, 'graveyard');
   assert.equal(game.zones.hand.length, hand + 2);
@@ -224,13 +224,13 @@ test('Relentless Assault gives another combat; Palace Jailer makes you the monar
   const bear = put(game, 'bear');
   Bot.resolveYourAttack(game, [bear.iid], defOf);
   assert.equal(bear.attackedTurn, game.turn);
-  const a = game.zones.library.find(i => game.cards[i].id === 'assault');
+  const a = [...game.zones.library, ...game.zones.hand].find(i => game.cards[i].id === 'assault');
   Game.move(game, a, 'hand');
   Game.move(game, a, 'battlefield');
   assert.equal(bear.tapped, false);
   assert.equal(bear.attackedTurn, undefined);
 
-  Game.move(game, game.zones.library.find(i => game.cards[i].id === 'monarch'), 'hand');
+  Game.move(game, [...game.zones.library, ...game.zones.hand].find(i => game.cards[i].id === 'monarch'), 'hand');
   const jailer = game.zones.hand.find(i => game.cards[i].id === 'monarch');
   Game.move(game, jailer, 'battlefield');
   Bot.enterTrigger(game, game.cards[jailer], defOf);

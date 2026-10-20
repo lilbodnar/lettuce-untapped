@@ -64,7 +64,9 @@ test('Opp plays lands and spells and attacks an empty board', () => {
   // A land each turn: every land it drew is out, up to 4 (a land-light draw has fewer).
   const drawn = Object.values(s.cards).filter(c => Game.isLand(c) && c.zone !== 'library').length;
   assert.ok(s.zones.battlefield.filter(iid => Game.isLand(s.cards[iid])).length >= Math.min(4, drawn));
-  assert.ok(s.zones.battlefield.filter(iid => Game.isCreature(s.cards[iid])).length >= 3);
+  // Every Goblin it drew is cast, up to 3 (a Goblin-light draw has fewer).
+  const goblins = Object.values(s.cards).filter(c => Game.isCreature(c) && c.zone !== 'library').length;
+  assert.ok(s.zones.battlefield.filter(iid => Game.isCreature(s.cards[iid])).length >= Math.min(3, goblins));
   assert.ok(game.life < 20, 'hasty goblins should have hit you');
   assert.ok(s.zones.hand.length <= 7);
 });

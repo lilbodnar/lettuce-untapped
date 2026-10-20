@@ -29,8 +29,9 @@ const Autoplay = (() => {
     G.hooks.moved = (s, inst, from, to) => { const v = view(); if (v && v.bot) B.cardMoved(v, s, inst, from, to, defOf, null); };
     G.hooks.sendHome = (s, inst, to) => { const v = view(); if (v && v.bot) B.sendHome(v, s, inst, to, defOf); };
     G.hooks.oppDamaged = (s, n) => { const v = view(); if (v && v.bot) B.opponentDamaged(v, s, n, defOf); };
-    G.hooks.discard = null;
+    G.hooks.discard = (s, inst) => { const v = view(); return v && v.bot ? B.discardWatch(s, inst, defOf, v) : null; };
     G.hooks.drew = (s, n) => { const v = view(); if (v && v.bot) B.opponentActed(v, s, 'draw', n, defOf, null); };
+    G.hooks.counters = (s, inst, kind, n) => { const v = view(); if (v && v.bot) B.countersPut(v, s, inst, kind, n, defOf, null); };
     G.hooks.entered = (s, inst) => {
       if (!inst.faceDown) {
         for (const [kind, n] of Object.entries(G.entersWithCounters((defOf(inst.id) || {}).oracle))) G.counter(s, inst.iid, kind, n, { effect: true });

@@ -652,7 +652,7 @@
     const opts = []; // { label, who, card, apply }
     // A spell of yours targeting something: heroic and Danitha see it.
     const srcCard = req.srcIid && game.cards[req.srcIid];
-    const targeted = pick => { if (srcCard && /\b(instant|sorcery)\b/i.test(String(srcCard.typeLine || '').split('//')[0])) Bot.spellTargeted(game, game, srcCard, pick, def, effectCtx()); };
+    const targeted = pick => { if (srcCard && /\b(instant|sorcery)\b/i.test(String(srcCard.typeLine || '').split('//')[0])) Bot.spellTargeted(game, game, srcCard, pick, def, effectCtx(), eff); };
     const perm = (inst, st, mine, who, apply) => { if (Bot.canTarget(eff, inst, st, mine, false)) opts.push({ label: inst.name, who, card: inst, apply }); };
     game.zones.battlefield.map(iid => game.cards[iid]).forEach(inst => perm(inst, Bot.stats(inst, def(inst.id)), true, 'You', () => { Bot.applyTarget(game, game, inst, eff, req.src, def, game); targeted({ inst, s: game }); }));
     if (hasBot()) {
@@ -728,6 +728,8 @@
     const self = (req.self && game.cards[req.self]) || { name: req.src };
     const run = picks => act(() => {
       nextOf('mustModes');
+      // Parapet Thrasher ("… this turn": modesUsed), Kimoyo Beads (modesEver).
+      if (req.once && self.iid) { const key = req.once === true ? 'modesUsed' : req.once; self[key] = [...(self[key] || []), ...picks.map(i => req.modes[i])]; }
       for (const i of picks) {
         const left = Bot.runEffect(game, req.modes[i], Object.assign({ self, other: hasBot() ? game.bot.s : null }, effectCtx()));
         Game.log(game, `${req.src}: ${req.modes[i]}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
@@ -914,7 +916,7 @@
       Bot.enterTrigger(game, inst, def); // the copy's own "enters with …" and "When this enters, …"
       Bot.enterEffects(game, game, inst, def, effectCtx());
     });
-    const choices = inst && inst.zone === 'battlefield' ? Bot.cloneChoices(game, inst) : [];
+    const choices = inst && inst.zone === 'battlefield' ? Bot.cloneChoices(game, inst, def) : [];
     if (!choices.length) return finish(null);
     const key = c => `${c.s === game ? 'y' : 'o'}:${c.inst.iid}`;
     const byKey = new Map(choices.map(c => [key(c), c]));
@@ -957,6 +959,18 @@
   function handAbility(iid, ab, x) {
     const inst = game.cards[iid];
     if (!inst || inst.zone !== 'hand') return;
+    // Foretell (Haunting Voyage): {2} on your turn, exiled face down; castable from a later turn for its foretell cost (castCost's playable.cost).
+    if (ab.kind === 'foretell') {
+      if (game.offTurn) return status('Foretell only on your turn.', 'warn');
+      if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana to foretell ${inst.name} (${ab.cost}).`, 'warn', 8000);
+      return act(() => {
+        Game.autoPay(game, ab.cost);
+        Game.move(game, iid, 'exile');
+        inst.foretold = true;
+        inst.playable = { forever: true, cost: ab.castCost, from: game.turn + 1 };
+        Game.log(game, `Foretold ${inst.name} (castable from your next turn for ${ab.castCost}).`);
+      });
+    }
     if (/\{X\}/i.test(ab.cost) && x == null) {
       return ask(`X for ${ab.label}`, 1).then(v => { if (v != null && !Number.isNaN(Number(v)) && v >= 0) handAbility(iid, ab, Math.floor(Number(v))); });
     }
@@ -969,6 +983,7 @@
       Game.move(game, iid, 'graveyard');
       if (ab.kind === 'cycling') Game.drawCards(game, 1);
       else if (ab.kind === 'basic landcycling') later('mustLibrary', { kind: 'search', spec: { n: 1, what: 'basic land', to: 'hand', tapped: false, rest: null }, src: `${inst.name} (basic landcycling)` });
+      else if (/^\w+cycling$/.test(ab.kind)) later('mustLibrary', { kind: 'search', spec: { n: 1, what: ab.kind.replace(/cycling$/, '').replace(/^\w/, ch => ch.toUpperCase()), to: 'hand', tapped: false, rest: null }, src: `${inst.name} (${ab.kind})` }); // Plainscycling
       else later('mustLibrary', { kind: 'search', spec: { n: 1, what: '', to: 'hand', tapped: false, rest: null, mv }, src: `${inst.name} (transmute, mana value ${mv})` });
       // Shark Typhoon, Decree of Savagery: "When you cycle this card, …"
       if (/cycling/.test(ab.kind)) {
@@ -1044,6 +1059,8 @@
   // graveyard to your hand" (Ashcoat of the Shadow Swarm). Asks for each, then runs then().
   function endStep(then) {
     if (game.endStepDone === game.turn) return then(); // already asked (End turn pressed again)
+    // Ninja Pizza, Michelangelo: "At the beginning of your second main phase, …" (done as the turn ends, after combat)
+    if (Bot.phaseTriggers(game, game, 'second main', def, null, true)) act(() => Bot.phaseTriggers(game, game, 'second main', def, effectCtx()));
     if (Bot.phaseTriggers(game, game, 'end step', def, null, true)) act(() => Bot.phaseTriggers(game, game, 'end step', def, effectCtx())); // "At the beginning of your end step, …"
     if (game.flickerBack) act(() => Bot.flickerReturn(game)); // Eerie Interlude
     // "At the beginning of the next end step" (Venser's copies, Avacyn, Synthetic Destiny) and impending's time counters.
@@ -1611,6 +1628,7 @@
     if (hasBot() && (game.bot.pending || game.bot.tapChoice || game.bot.s.stack)) return oppWaiting();
     if (incoming.length) return openIncoming();
     if (isOnline() && activePid && activePid !== Online.id()) return status(`It's ${nameOf(activePid)}'s turn, not yours.`);
+    if (game.skipCombatTurn === game.turn) return status('You skip combat this turn (Fatespinner or Time Stop).', 'warn'); // Bot's "that player skips their combat"
     const all = attackTargets();
     if (!all.length) return status('No one else is in the game yet.');
     // Arboria keeps players who did nothing last turn safe (their planeswalkers can still be attacked).
@@ -1631,7 +1649,9 @@
     let canAttack = false;
     const rows = Bot.yourCreatures(game, def).map(c => {
       const why = c.inst.attackedTurn === game.turn ? 'already attacked this turn' : c.inst.tapped ? 'tapped' : c.inst.enteredTurn === game.turn && !c.st.kw.has('haste') ? 'arrived this turn'
-        : c.st.kw.has("can't attack") ? "can't attack" : Bot.noAttack(c.st) ? 'defender' : '';
+        : c.st.kw.has("can't attack") ? "can't attack" : Bot.noAttack(c.st) ? 'defender'
+        : hasBot() && Bot.tooWeakToAttack(game, game.bot.s, c.st, def) ? "Opp is the monarch: power too low to attack" // Queen Mother Ramonda
+        : c.inst.vowAgainst === 'opp' && (c.inst.counters || {}).vow > 0 ? "a vow counter: it can't attack Opp" : ''; // Promise of Loyalty
       if (!why) canAttack = true;
       return `<div class="attack-row ${why ? 'muted' : ''}"><label><input type="checkbox" data-attacker="${esc(c.inst.iid)}" ${why ? 'disabled' : ''}>
         <b>${esc(c.inst.name)}</b> ${c.st.pow}/${c.st.tou}${esc(kwText(c.st))}${why ? ` <span class="small">(${why})</span>` : ''}</label>
@@ -1711,7 +1731,7 @@
     if (held.length) return status(`${held.map(p => game.cards[p.iid].name).join(' and ')} can't attack this combat (an opponent won the roll).`, 'warn');
     // Goaded creatures and "attacks each combat if able" (Chaos Dragon) have to attack when they can.
     const must = [...modalBox.querySelectorAll('[data-attacker]')].map(x => x.dataset.attacker)
-      .filter(iid => !picks.some(p => p.iid === iid) && game.cards[iid] && Bot.mustAttack(game.cards[iid], def) && game.cards[iid].noAttackTurn !== game.turn);
+      .filter(iid => !picks.some(p => p.iid === iid) && game.cards[iid] && Bot.mustAttack(game.cards[iid], def, game.turn) && game.cards[iid].noAttackTurn !== game.turn);
     if (must.length) return status(`${must.map(iid => game.cards[iid].name).join(' and ')} must attack this combat if able (goaded, or "attacks each combat if able"). Tick ${must.length === 1 ? 'it' : 'them'} too.`, 'warn', 8000);
     if (!picks.length) return status('Tick at least one creature to attack with.');
     // Silent Arbiter caps every attacker; Mirri only the ones attacking her controller, not their planeswalkers.
@@ -2144,12 +2164,14 @@
   // Also from your graveyard (Ebondeath) or exile (Reno and Rude: any mana works; Ugin: free).
   // opts.cost: another cost picked for it (offspring, freerunning, Baleful Mastery's).
   function castCost(inst, opts = {}) {
-    const fromHand = inst.zone === 'hand' || inst.zone === 'command' || (inst.zone === 'graveyard' && opts.cast) || (inst.zone === 'exile' && inst.playable);
+    const fromHand = inst.zone === 'hand' || inst.zone === 'command' || (inst.zone === 'graveyard' && opts.cast) || (inst.zone === 'exile' && inst.playable) || (inst.zone === 'library' && opts.fromTop);
     if (!ui.autoTap || !fromHand || Game.isLand(inst) || opts.flip || opts.faceDown) return null;
     let cost = opts.cost != null ? opts.cost : (def(inst.id) || {}).manaCost || '';
     if (opts.x != null) cost = cost.replace(/\{X\}/gi, opts.x ? `{${opts.x}}` : ''); // X you picked, each {X}
     if (inst.zone === 'exile' && inst.playable && inst.playable.free) cost = '';
+    if (inst.zone === 'hand' && inst.miracleTurn === game.turn) cost = ''; // Molecule Man: miracle {0}
     if (inst.zone === 'exile' && inst.playable && inst.playable.anyMana) cost = cost.replace(/\{[WUBRG](?:\/[WUBRGP2])?\}/gi, '{1}');
+    if (inst.zone === 'exile' && inst.playable && inst.playable.cost) cost = inst.playable.cost; // a foretold card: its foretell cost
     const cmdTax = inst.zone === 'command' && inst.commander ? (inst.castCount || 0) * 2 : 0;
     // Thalia and the like, on any table.
     const rules = combatRules();
@@ -2164,6 +2186,13 @@
   function tryPlay(iid, opts = {}) {
     const inst = game && game.cards[iid];
     if (!inst) return;
+    // Serra Avenger: "You can't cast Serra Avenger during your first, second, or third turns of the game."
+    if (Bot.castTooEarly(game, inst, def)) return status(`You can't cast ${inst.name} during your first three turns.`, 'warn');
+    // Dragon Man: "You may cast this card from your graveyard by discarding a card in addition to paying its other costs." (pick it)
+    if (inst.zone === 'graveyard' && opts.cast && !opts.flashback && !opts.aftermath && !opts.graveDiscard && Bot.graveDiscards(inst, def) && inst.graveOkTurn !== game.turn) {
+      if (!game.zones.hand.length) return status(`You need a card in hand to discard for ${inst.name}.`, 'warn');
+      return pickCards({ title: `Discard a card to cast ${inst.name}`, ids: game.zones.hand.slice(), min: 1, max: 1, ok: 'Discard and cast', cancel: 'Cancel' }, picks => tryPlay(iid, { ...opts, graveDiscard: picks[0] }));
+    }
     // Offspring, freerunning, "You may pay {1}{B} rather than pay this spell's mana cost": pick how.
     if ((inst.zone === 'hand' || inst.zone === 'command') && !Game.isLand(inst) && !opts.flip && !opts.faceDown && !opts.choice) {
       const choices = Bot.costChoices(game, inst, def);
@@ -2176,7 +2205,7 @@
             closeAsk();
             if (b.dataset.cc === 'cancel') return;
             const c = choices[Number(b.dataset.cc)];
-            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend });
+            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend, tapOthers: c.tapOthers, kicks: c.kicks });
           };
         });
         return;
@@ -2203,9 +2232,11 @@
       return;
     }
     const c = castCost(inst, opts);
-    if (!c || Game.autoPay(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less)) return act(() => playCard(iid, opts));
+    if (!c || Game.autoPay(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less, inst)) return act(() => playCard(iid, opts));
     // Convoke (Fallaji Wayfarer): your untapped creatures can make up the difference.
     if (Bot.hasConvoke(game, inst, def) && Bot.convokeTap(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less, def)) return act(() => playCard(iid, { ...opts, convoke: true }));
+    // Improvise (Kappa Cannoneer): your untapped artifacts pay for generic mana.
+    if (Bot.hasImprovise(game, inst, def) && Bot.improviseTap(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less, inst)) return act(() => playCard(iid, { ...opts, improvise: true }));
     openModal(`<div class="ask"><h3>Not enough mana</h3>
       <p>You don't have enough untapped mana to cast ${esc(inst.name)} (${esc(c.label)}).</p>
       <div class="toolbar end"><button type="button" class="btn ghost" data-nm="cancel">Cancel</button><button type="button" class="btn" data-nm="go">Play anyway (tap mana manually)</button></div></div>`);
@@ -2227,15 +2258,34 @@
     // Impending (Overlord of the Mistmoors): time counters, not a creature until they're gone.
     if (opts.choice === 'impending') { inst.impending = true; inst.counters = { ...inst.counters, time: opts.impending || 1 }; }
     if (opts.choice === 'bestow') inst.bestowed = true; // Chromanticore: an aura on a creature (you pick it)
+    if (opts.choice === 'kicked') inst.kicked = true; // Josu Vess: "if he was kicked"
+    if (opts.choice === 'squad') inst.squadCount = opts.kicks || 1; // squad: that many token copies as it enters
+    if (opts.choice === 'fuse') inst.fused = true; // both halves (Bot.spellResolve)
+    else if (opts.kicks) { inst.kickCount = opts.kicks; inst.kicked = true; } // Batroc's multikicker
+    if (opts.choice === 'evoke') inst.evoked = true; // Mulldrifter: sacrificed as it enters (the entered hook)
+    if (opts.choice === 'overload') inst.overloaded = true; // Vandalblast: "each" instead of "target" (Bot.spellText)
+    // Gift: the opponent gets it first ("If the gift was promised, …").
+    if (opts.choice === 'gift') { inst.giftPromised = true; effectCtx().oppsDraw(1); Game.log(game, `${inst.name}: promised the gift, so an opponent drew a card.`); }
+    // Sephara: tap four untapped creatures with flying as part of the cost.
+    if (opts.choice === 'altTap') (opts.tapOthers || []).forEach(id => { const c = game.cards[id]; if (c) { c.tapped = true; c.tappedFor = null; } });
     // Morph: face down as a 2/2 for {3}.
     if (opts.choice === 'morph') opts = { ...opts, faceDown: true };
     if (opts.aftermath) { inst.flipped = true; inst.castAftermath = true; } // Dawn, from your graveyard
-    if (opts.flashback) inst.castAftermath = true; // flashback: exiled after it resolves too
+    if (opts.graveDiscard && game.cards[opts.graveDiscard] && game.cards[opts.graveDiscard].zone === 'hand') { // Dragon Man's extra cost
+      Game.log(game, `Discarded ${game.cards[opts.graveDiscard].name} to cast ${inst.name} from your graveyard.`);
+      Game.move(game, opts.graveDiscard, 'graveyard');
+    }
+    if (opts.flashback) {
+      inst.castAftermath = true; // flashback: exiled after it resolves too
+      const life = Bot.flashbackLife(inst, def); // Deep Analysis: "Flashback—{1}{U}, Pay 3 life."
+      if (life) { game.life -= life; Game.log(game, `Paid ${life} life for ${inst.name}'s flashback.`); }
+    }
     // From your graveyard or exile, it's cast (prowess, "whenever you cast …").
     if (inst.zone === 'graveyard' || inst.zone === 'exile') opts = { ...opts, cast: true };
     const fromHand = inst.zone === 'hand' || inst.zone === 'command';
     // Then you pick what it enchants (not a curse like Maddening Hex, which goes on an opponent).
-    const aura = fromHand && Game.isAura(inst) && !opts.faceDown && !/^enchant player\b/im.test(oracleOf(inst));
+    // Animate Dead ("Enchant creature card in a graveyard"): its own enter trigger brings the card back and attaches to it.
+    const aura = fromHand && Game.isAura(inst) && !opts.faceDown && !/^enchant (?:player|creature card in a graveyard)\b/im.test(oracleOf(inst));
     const c = castCost(inst, opts.choice === 'morph' ? { ...opts, faceDown: false } : opts);
     // Suspend (Search for Tomorrow): pay, then it waits in exile with time counters.
     if (opts.choice === 'suspend') {
@@ -2260,8 +2310,11 @@
     if (c) {
       const { cost, less } = c;
       if (opts.convoke) { const tapped = Bot.convokeTap(game, cost, c.tax - less, def); if (tapped && tapped.length) Game.log(game, `Convoked ${inst.name}: tapped ${tapped.join(', ')}.`); }
-      const paid = !opts.manual && Game.autoPay(game, cost, c.tax - less);
+      if (opts.improvise) { const tapped = Bot.improviseTap(game, cost, c.tax - less, inst); if (tapped && tapped.length) Game.log(game, `Improvised ${inst.name}: tapped ${tapped.join(', ')}.`); }
+      const paid = !opts.manual && Game.autoPay(game, cost, c.tax - less, inst);
       if (paid) inst.spentColors = paid.colors || 0; // converge (Radiant Flames)
+      if (paid) inst.artifactMana = paid.artifactMana || 0; // Coin of Mastery (Bot.creatureEntered)
+      if (paid) inst.phyrexianLife = paid.life || 0; // compleated (Vraska, Betrayal's Sting): game.js's startLoyalty
       if (!paid) {
         Game.move(game, iid, 'battlefield', opts);
         game.notice = `Played ${inst.name} without paying (${c.label}), so tap your mana for it yourself.${game.notice ? ' ' + game.notice : ''}`;
@@ -2275,6 +2328,7 @@
       else if (less) Game.log(game, `${inst.name} cost ${less} less, so it was free.`);
     }
     Game.move(game, iid, 'battlefield', opts);
+    if (opts.fromTop) Bot.topHaste(inst); // Thundermane Dragon: "it gains haste until end of turn"
     if (aura) setTimeout(() => startAttach(iid), 0);
   }
 
@@ -3442,12 +3496,32 @@
       e.preventDefault();
       const chosen = boxes.filter(o => o.checked).map(o => Number(o.value));
       if (!chosen.length) return status('Tick a mode first.', 'warn');
+      // Escalate (Collective Effort): each mode past the first costs more.
+      const escalate = Bot.payEscalate(JSON.parse(JSON.stringify(game)), inst, chosen.length - 1, def);
+      if (escalate === null) return status(`You can't pay escalate for ${chosen.length} modes.`, 'warn', 8000);
+      // Spree (Great Train Heist): each chosen mode's extra cost.
+      const spree = info.spree ? chosen.map(i => info.costs[i]).join('') : '';
+      if (spree && !Game.autoPay(JSON.parse(JSON.stringify(game)), spree)) return status(`Not enough untapped mana for those modes (${spree}).`, 'warn', 8000);
       done();
       act(() => {
+        if (spree) { Game.autoPay(game, spree); Game.log(game, `${inst.name}: paid ${spree} for spree.`); }
+        if (escalate) Game.log(game, `${inst.name}: ${Bot.payEscalate(game, game.cards[inst.iid], chosen.length - 1, def)}.`);
         Bot.runModes(game, inst, def, chosen, Object.assign({ other: hasBot() ? game.bot.s : null }, effectCtx(), { target: (eff, part, src) => effectCtx().target(eff, part, src || inst) }));
         if (inst.zone === 'battlefield') Game.move(game, inst.iid, 'graveyard');
       });
     };
+  }
+
+  // Prepare (Stensian Sanguinist // Exsanguinate): cast a copy of its spell (asks for X), which unprepares it.
+  async function castPreparedCopy(iid) {
+    const inst = game.cards[iid];
+    const sp = inst && Bot.preparedSpell(inst, def);
+    if (!sp || !inst.prepared) return;
+    let x = 0;
+    if (/\{X\}/i.test(sp.cost)) { x = await ask(`X for ${sp.name}?`, 1); if (x == null) return; x = Math.max(0, Math.floor(Number(x) || 0)); }
+    const cost = sp.cost.replace(/\{X\}/gi, x ? `{${x}}` : '');
+    if (!Game.autoPay(JSON.parse(JSON.stringify(game)), cost)) return status(`Not enough untapped mana for ${sp.name} (${cost || 'free'}).`, 'warn', 8000);
+    act(() => Bot.castPrepared(game, game, inst, def, Object.assign({ other: hasBot() ? game.bot.s : null }, effectCtx()), x));
   }
 
   function chooseTypePrompt(iid) {
@@ -3578,7 +3652,7 @@
     },
     othersMill: n => Game.log(game, `Each other player mills ${n === 1 ? 'a card' : n + ' cards'} (they do that on their side).`),
     // "Choose one —" on a trigger (Retreat to Hagra, Junji): you tick it (mustModesPrompt).
-    chooseModes: (modes, pick, src) => later('mustModes', { modes, pick, src: src.name, self: src.iid }),
+    chooseModes: (modes, pick, src, once) => later('mustModes', { modes, pick, src: src.name, self: src.iid, once }),
     // Cards from graveyards (Liliana, Junji, Archenemy's Charm, The Darkness Crystal) or your hand (Ugin): you pick them.
     moveCards: (spec, src) => later('mustCards', { spec, src: src ? src.name : 'Effect' }),
     // Garza's Assassin (recover): pay or exile it.
@@ -3641,7 +3715,7 @@
   // Currency Converter (either table): "Whenever you discard a card, you may exile that card from your graveyard."
   Game.hooks.discard = (s, inst) => {
     if (!game || !(s === game || (hasBot() && s === game.bot.s))) return null;
-    if (s !== game || inst.faceDown || !Bot.madnessCost(inst, def)) return Bot.discardWatch(s, inst, def);
+    if (s !== game || inst.faceDown || !Bot.madnessCost(inst, def)) return Bot.discardWatch(s, inst, def, game);
     later('mustMadness', { iid: inst.iid });
     return 'exile';
   };
@@ -3653,6 +3727,8 @@
   Game.hooks.sendHome = (s, inst, to) => { if (game && hasBot()) Bot.sendHome(game, s, inst, to, def); };
   // Smothering Tithe: a player drew, and the other side's "whenever an opponent draws a card" sees it.
   Game.hooks.drew = (s, n) => { if (game && hasBot() && (s === game || s === game.bot.s)) Bot.opponentActed(game, s, 'draw', n, def, s === game ? effectCtx() : null); };
+  // Exemplar of Light: "Whenever you put one or more +1/+1 counters on this creature, …"
+  Game.hooks.counters = (s, inst, kind, n) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.countersPut(game, s, inst, kind, n, def, s === game ? effectCtx() : null); };
   // "When this enters, it deals 2 damage to each opponent": Massacre Girl, Most Wanted sees it.
   Game.hooks.oppDamaged = (s, n) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.opponentDamaged(game, s, n, def, s === game ? effectCtx() : null); };
 
@@ -3680,6 +3756,13 @@
     }
     if (s === game && !inst.faceDown) {
       // Windcrag Siege, Outpost Siege: "As this enchantment enters, choose …" — you pick.
+      // Devour N (Mycoloth): pick the creatures it eats; N +1/+1 counters for each.
+      const dv = Bot.devourOf(inst, def);
+      const food = dv ? game.zones.battlefield.filter(i => i !== inst.iid && Game.isCreature(game.cards[i])) : [];
+      if (food.length) {
+        setTimeout(() => pickCards({ title: `${inst.name}: devour ${dv}`, note: `Sacrifice any number of creatures; it gets ${dv} +1/+1 counter${dv === 1 ? '' : 's'} for each.`, ids: food, min: 0, max: food.length, ok: 'Devour', cancel: 'None' },
+          picks => act(() => { picks.forEach(i => Game.move(game, i, game.cards[i].commander ? 'command' : 'graveyard')); if (picks.length && inst.zone === 'battlefield') Game.counter(game, inst.iid, '+1/+1', dv * picks.length, { effect: true }); })), 0);
+      }
       const siege = !inst.chosenMode && Bot.siegeModes(inst, def);
       if (siege && siege.length) later('mustModes', { modes: siege, pick: 1, src: inst.name, self: inst.iid });
       // Serra's Emissary: "As this creature enters, choose a card type."
@@ -3689,6 +3772,7 @@
     }
     // Offspring paid: "when this creature enters, create a 1/1 token copy of it".
     if (s === game && inst.offspringPaid) { delete inst.offspringPaid; Bot.offspringCopy(game, inst); }
+    if (s === game && inst.squadCount) { const n = inst.squadCount; delete inst.squadCount; Bot.squadCopies(game, inst, n); }
     // "As this land enters, you may pay 3 life. If you don't, it enters tapped." (Boggart Bog): you're asked.
     if (s === game && !inst.faceDown && Game.isLand(inst) && inst.entersTapped && inst.entersTapped.payLife) later('mustShock', { iid: inst.iid, n: inst.entersTapped.payLife });
     // Wall of Stolen Identity: you pick what it copies; Opp's copies your best creature.
@@ -3708,7 +3792,9 @@
     // "When this enters, destroy target creature an opponent controls", "… create two 1/1 tokens": you pick targets; Opp picks its own.
     // Heraldic Banner: "As this artifact enters, choose a color." (the color most of the deck's creatures are)
     if (!inst.faceDown && !inst.chosenColor && Game.choosesColor(oracleOf(inst))) {
-      inst.chosenColor = Bot.bestColor(s, def);
+      // Flickering Ward: "protection from the chosen color" (the color most of the other deck's creatures are)
+      const foe = /protection from the chosen colou?r/i.test(oracleOf(inst)) && hasBot() ? (s === game ? game.bot.s : game) : s;
+      inst.chosenColor = Bot.bestColor(foe, def);
       Game.log(s, `${inst.name}: chose ${{ W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' }[inst.chosenColor]}.`);
     }
     // A ninja coming in mid-combat picks its own targets (combat doesn't wait for a prompt).
@@ -3720,6 +3806,13 @@
     if (hasBot() && s === game.bot.s) {
       if (Game.isLand(inst) && !inst.faceDown) Bot.landEntered(game, inst, def, null, s);
       Bot.creatureEntered(game, inst, def, null, s);
+    }
+    // Evoke (Mulldrifter): sacrificed as it enters, after its enter triggers.
+    if (inst.evoked && inst.zone === 'battlefield') {
+      delete inst.evoked;
+      Game.log(s, `${inst.name} was evoked, so it's sacrificed.`);
+      Game.move(s, inst.iid, 'graveyard');
+      return Bot.sacrificed(game, s, inst, def, s === game ? effectCtx() : null); // Ashling: "Whenever you sacrifice a nontoken Elemental, …"
     }
     // "Choose one —": you tick the modes (after the move finishes, like the type prompt below).
     if (s === game && Bot.spellModes(inst, def)) return setTimeout(() => chooseModes(inst.iid), 0);
@@ -3811,6 +3904,9 @@
     const inst = game.cards[iid];
     if (!inst || inst.zone !== 'battlefield') return;
     if (ab.loyalty != null) return activateLoyalty(iid, ab);
+    // Tamiyo's Logbook: "This ability costs {1} less to activate for each other artifact you control."
+    const less = (ab.lessFor ? ab.lessFor.n * game.zones.battlefield.filter(id => id !== iid && Bot.cardFits(game.cards[id], ab.lessFor.what)).length : 0)
+      + (ab.lessCounter ? ab.lessCounter.n * ((inst.counters || {})[ab.lessCounter.kind] || 0) : 0); // Exploding Barrel
     if (ab.tap && inst.tapped) return status(`${inst.name} is already tapped.`, 'warn');
     // "{X}: …" (Crypt Rats): ask for X, then it's a cost like any other ("Spend only black mana on X": {B} each).
     if (/\{X\}/i.test(ab.mana) && !ab.x) {
@@ -3838,7 +3934,7 @@
     if (ab.mana) {
       const copy = light();
       if (ab.tap) copy.cards[iid].tapped = true; // it can't tap for its own cost
-      if (!Game.autoPay(copy, ab.mana)) return status(`Not enough untapped mana for ${inst.name} (${ab.mana}), so nothing happened.`, 'warn', 8000);
+      if (!Game.autoPay(copy, ab.mana, -less)) return status(`Not enough untapped mana for ${inst.name} (${ab.mana}${less ? ` − ${less}` : ''}), so nothing happened.`, 'warn', 8000);
     }
     // "Discard a card: …": pick what to discard first. Cancel and nothing happens.
     if (ab.discard && !discards) {
@@ -3847,6 +3943,26 @@
         title: `Discard ${ab.discard === 1 ? 'a card' : ab.discard + ' cards'} for ${inst.name}`,
         note: ab.text, ids: [...game.zones.hand], max: ab.discard, ok: 'Discard and activate', cancel: 'Cancel',
       }, picks => activate(iid, ab, picks, sacs));
+    }
+    // Endless Atlas, Speaker of the Heavens: "Activate only if …".
+    if (ab.onlyIf && !Bot.condition(game, ab.onlyIf, { self: inst, defOf: def, other: hasBot() ? game.bot.s : null })) return status(`${inst.name}: activate only if ${ab.onlyIf}.`, 'warn', 8000);
+    // Whirler Rogue, Cryptbreaker: "Tap two untapped artifacts you control" — pick which.
+    if (ab.tapOthers && !ab.tapPicks) {
+      const ids = game.zones.battlefield.filter(id => id !== iid && !game.cards[id].tapped && Bot.cardFits(game.cards[id], ab.tapOthers.what));
+      const n = ab.tapOthers.n;
+      if (ids.length < n) return status(`${inst.name} needs ${n} untapped ${ab.tapOthers.what}s to tap, and you have ${ids.length}.`, 'warn', 8000);
+      return pickCards({ title: `Tap ${n} untapped ${ab.tapOthers.what}s for ${inst.name}`, note: ab.text, ids, min: n, max: n, ok: 'Tap and activate', cancel: 'Cancel' }, picks => activate(iid, { ...ab, tapPicks: picks }, discards, sacs));
+    }
+    // Master Transmuter: "Return an artifact you control to its owner's hand" — pick which.
+    if (ab.bounceOther && !ab.bouncePick) {
+      const ids = game.zones.battlefield.filter(id => Bot.cardFits(game.cards[id], ab.bounceOther));
+      if (!ids.length) return status(`${inst.name} needs you to return a ${ab.bounceOther} you control.`, 'warn', 8000);
+      return pickCards({ title: `Return a ${ab.bounceOther} to your hand for ${inst.name}`, note: ab.text, ids, min: 1, max: 1, ok: 'Return and activate', cancel: 'Cancel' }, picks => activate(iid, { ...ab, bouncePick: picks[0] }, discards, sacs));
+    }
+    // War Room: life equal to the number of colors in your commanders' color identity.
+    if (ab.lifeIdentity && !ab.life) {
+      const colors = new Set(Object.values(game.cards).filter(c => c.commander).flatMap(c => (def(c.id) || {}).colorIdentity || (def(c.id) || {}).colors || []));
+      ab = { ...ab, life: colors.size };
     }
     // "Sacrifice a creature with defender: …" (Towering Titan): pick which.
     if (ab.sacOther && !sacs) {
@@ -3857,20 +3973,32 @@
       return pickCards({ title: `Sacrifice ${what} for ${inst.name}`, note: ab.text, ids, min: n, max: n, ok: 'Sacrifice and activate', cancel: 'Cancel' }, picks => activate(iid, ab, discards, picks));
     }
     act(() => {
-      (sacs || []).forEach(id => { const c = game.cards[id]; if (c) { Game.log(game, `Sacrificed ${c.name} for ${inst.name}.`); Game.move(game, id, c.commander ? 'command' : 'graveyard'); } });
+      (sacs || []).forEach(id => {
+        const c = game.cards[id];
+        if (!c) return;
+        game.lastSacPower = Math.max(0, Bot.stats(c, def(c.id)).pow); // Greater Good: "the sacrificed creature's power"
+        game.lastSacMv = Bot.cmcOfInst(c, def); // Broadside Bombardiers: "the sacrificed permanent's mana value"
+        Game.log(game, `Sacrificed ${c.name} for ${inst.name}.`);
+        Game.move(game, id, c.commander ? 'command' : 'graveyard');
+      });
       if (discards) {
         discards.forEach(id => Game.move(game, id, 'graveyard'));
         Game.log(game, `Discarded ${discards.map(id => game.cards[id].name).join(' and ')} for ${inst.name}.`);
       }
       if (ab.tap) inst.tapped = true;
+      if (ab.exert) inst.skipUntap = true; // Arena of Glory: it doesn't untap during your next untap step
       const spent = [];
       if (ab.mana) {
-        const paid = Game.autoPay(game, ab.mana);
+        const paid = Game.autoPay(game, ab.mana, -less);
         spent.push(...(paid.pool ? [`${paid.pool} floating mana`] : []), ...paid.sources, ...(paid.life ? [`${paid.life} life`] : []));
       }
       if (ab.remove) Game.counter(game, iid, ab.remove.kind, -ab.remove.n);
       if (ab.life) game.life -= ab.life;
       if (ab.exileSelf) Game.move(game, iid, 'exile'); // Underdark Rift: exiled as a cost
+      if (ab.bounceSelf) Game.move(game, iid, inst.commander ? 'command' : 'hand'); // Rootha: "Return Rootha to its owner's hand" (a commander may go to the command zone)
+      (ab.tapPicks || []).forEach(id => { const c = game.cards[id]; if (c) { c.tapped = true; c.tappedFor = null; } });
+      if (ab.bouncePick && game.cards[ab.bouncePick]) Game.move(game, ab.bouncePick, 'hand');
+      if (ab.addCounter) Game.counter(game, iid, ab.addCounter, 1); // Mazemind Tome's page counter
       const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
       Game.log(game, `Activated ${inst.name}: ${ab.effect}${spent.length ? ` (paid with ${spent.join(', ')})` : ''}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
       if (ab.sacrifice) Game.move(game, iid, inst.commander ? 'command' : 'graveyard');
@@ -4044,6 +4172,7 @@
         ...(!inst.faceDown && Game.choosesType(c.oracle) ? [{ label: inst.chosenType ? `Change creature type (${inst.chosenType})…` : 'Choose creature type…', action: () => chooseTypePrompt(iid) }] : []),
         ...(Game.isVehicle(inst) && !inst.faceDown && Bot.crewOf(inst, def) != null && !inst.crewed ? [{ label: `Crew ${Bot.crewOf(inst, def)}…`, action: () => openCrew(iid) }] : []),
         ...(inst.crewed ? [{ label: 'Uncrew', action: () => act(() => Game.uncrew(game, iid)) }] : []),
+        ...(inst.prepared && !inst.faceDown && Bot.preparedSpell(inst, def) ? [{ label: `Cast a copy of ${Bot.preparedSpell(inst, def).name} (prepared, ${Bot.preparedSpell(inst, def).cost})`, action: () => castPreparedCopy(iid) }] : []),
         ...(inst.faceDown ? [] : Bot.activatedAbilities(inst, def).map(ab => ({
           label: `Activate: ${ab.text.length > 60 ? ab.text.slice(0, 57) + '…' : ab.text}`, action: () => activate(iid, ab),
         }))),
@@ -4105,7 +4234,13 @@
 
   function pileMenu(zone, x, y) {
     if (zone === 'library') {
+      // Thundermane Dragon: you may look at the top card any time, and cast it if it's a creature with power 4 or greater.
+      const top = game.cards[game.zones.library[0]];
+      const peek = top && game.zones.battlefield.map(i => game.cards[i]).some(c => /^you may look at the top card of your library any time\.?$/im.test(oracleOf(c)));
+      const by = top && Bot.topCastable(game, top, def);
       showMenu(x, y, [
+        ...(peek ? [{ label: `Top card: ${top.name}`, action: () => { viewer = { zone: 'library', top: 1, ids: [top.iid], filter: '', shuffleOnClose: false }; renderViewer(); } }] : []),
+        ...(by ? [{ label: `Cast ${top.name} from the top (${by.name})`, action: () => tryPlay(top.iid, { fromTop: true }) }, { sep: true }] : []),
         { label: 'Draw', hint: 'D', action: () => act(() => Game.drawCards(game, 1)) },
         { label: 'Draw several…', action: () => libraryAction('draw') },
         { label: 'Look at top / scry…', action: () => libraryAction('top') },
@@ -5209,6 +5344,17 @@
     const dc = e.target.closest('[data-discard]');
     if (dc && game) return discardDown(dc.dataset.discard);
 
+    // Oft-Nabbed Goat on Opp's side: "{1}: Draw a card. Gain control of this creature … Only your opponents may activate this ability and only as a sorcery."
+    const og = game && hasBot() && !game.offTurn && e.target.closest('[data-oiid]');
+    const goat = og && og.dataset.opid === BOT && game.bot.s.cards[og.dataset.oiid];
+    const nab = goat && goat.zone === 'battlefield' && Bot.nabCost(goat, def);
+    if (nab) {
+      return showMenu(e.clientX, e.clientY, [{ label: `Take ${goat.name}`, hint: `${nab.cost}: draw a card, a ${nab.kind} counter on it`, action: () => {
+        if (!Game.autoPay(JSON.parse(JSON.stringify(game)), nab.cost)) return status(`Not enough untapped mana to take ${goat.name} (${nab.cost}).`, 'warn', 8000);
+        act(() => { Game.autoPay(game, nab.cost); Bot.nab(game, game, goat, def); });
+      } }]);
+    }
+
     const vc = e.target.closest('[data-viewer]');
     if (vc) {
       const iid = vc.dataset.viewer;
@@ -5220,10 +5366,58 @@
       // Aftermath (Dusk // Dawn): the back half from your graveyard; it's exiled after.
       // Flashback (Revenge of the Rats): cast from your graveyard for its flashback cost, then exiled.
       const fb = inst.zone === 'graveyard' && Bot.flashbackOf(inst, def);
-      if (fb) cast.push({ label: `Cast with flashback (${fb})`, action: () => { closeModal(); tryPlay(iid, { cast: true, flashback: true, cost: fb }); } });
+      if (fb) cast.push({ label: `Cast with flashback (${fb}), then exile it`, action: () => { closeModal(); tryPlay(iid, { cast: true, flashback: true, cost: fb }); } });
+      // Raffine's Guidance: from your graveyard for another cost (it isn't exiled after).
+      const alt = inst.zone === 'graveyard' && Bot.graveAltCost(inst, def);
+      if (alt) cast.push({ label: `Cast from graveyard (${alt})`, action: () => { closeModal(); tryPlay(iid, { cast: true, cost: alt }); } });
       const after = inst.zone === 'graveyard' && Bot.aftermathOf(inst, def);
       if (after) cast.push({ label: `Cast ${after.name} (aftermath, ${after.cost})`, action: () => { closeModal(); tryPlay(iid, { cast: true, aftermath: true, cost: after.cost }); } });
-      if (inst.zone === 'exile' && inst.playable) cast.push({ label: inst.playable.free ? 'Cast without paying its mana cost' : `Play it${inst.playable.anyMana ? ' (any mana)' : ''}`, action: () => { closeModal(); tryPlay(iid); } });
+      // Escape (Woe Strider): pick the other graveyard cards to exile, then cast it for its escape cost.
+      const es = inst.zone === 'graveyard' && Bot.escapeOf(inst, def);
+      if (es) cast.push({ label: `Cast with escape (${es.cost}, exile ${es.exile} other cards)`, action: () => {
+        closeModal();
+        const others = game.zones.graveyard.filter(i => i !== iid);
+        if (others.length < es.exile) return status(`Escape needs ${es.exile} other cards in your graveyard.`, 'warn');
+        if (!Game.autoPay(JSON.parse(JSON.stringify(game)), es.cost)) return status(`Not enough untapped mana for escape (${es.cost}).`, 'warn', 8000);
+        pickCards({ title: `Exile ${es.exile} other cards for ${inst.name}'s escape`, ids: others, min: es.exile, max: es.exile, ok: 'Exile and cast', cancel: 'Cancel' }, picks => {
+          act(() => { picks.forEach(i => Game.move(game, i, 'exile')); inst.escaped = true; });
+          tryPlay(iid, { cast: true, cost: es.cost, escape: true });
+        });
+      } });
+      // Mayhem (Chameleon): from your graveyard for its mayhem cost, the turn you discarded it.
+      const mh = inst.zone === 'graveyard' && Bot.mayhemOf(inst, def);
+      if (mh) cast.push({ label: Bot.mayhemOk(game, inst, def) ? `Cast with mayhem (${mh})` : `Mayhem (${mh}): only the turn you discard it`, action: () => { closeModal(); if (!Bot.mayhemOk(game, inst, def)) return status(`${inst.name} wasn't discarded this turn.`, 'warn'); tryPlay(iid, { cast: true, cost: mh }); } });
+      // Conduit of Worlds: "You may play lands from your graveyard." (your land for the turn)
+      if (inst.zone === 'graveyard' && Game.isLand(inst) && Bot.landsFromGrave(game, def)) {
+        cast.push({ label: game.landPlayed ? 'Play this land (you already played one)' : 'Play this land', action: () => { closeModal(); if (game.landPlayed) return status("You've already played a land this turn.", 'warn'); act(() => { Game.move(game, iid, 'battlefield'); game.landPlayed = true; Game.log(game, `Played ${inst.name} from your graveyard.`); }); } });
+      }
+      // T'Chaka: "{3}, Exile this card from your graveyard: You become the monarch. Activate only if you control your commander."
+      if (inst.zone === 'graveyard') {
+        for (const ab of Bot.graveAbilities(inst, def)) {
+          cast.push({ label: `${ab.effect} (${ab.cost}, exile it)`, action: () => {
+            closeModal();
+            const c = Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx());
+            if (ab.onlyIf && !Bot.condition(game, ab.onlyIf, c)) return status(`${inst.name}: only if ${ab.onlyIf}.`, 'warn', 8000);
+            if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana for ${ab.cost}.`, 'warn', 8000);
+            act(() => { const paid = Game.autoPay(game, ab.cost); Game.log(game, `Paid ${ab.cost} for ${inst.name}${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`); Bot.useGraveAbility(game, game, inst, ab, def, c); });
+          } });
+        }
+      }
+      // Unearth (Tri-Sentinel): back with haste, exiled at the next end step.
+      const ue = inst.zone === 'graveyard' && Bot.unearthOf(inst, def);
+      if (ue) cast.push({ label: `Unearth (${ue})`, action: () => {
+        closeModal();
+        if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ue)) return status(`Not enough untapped mana to unearth (${ue}).`, 'warn', 8000);
+        act(() => { const paid = Game.autoPay(game, ue); Game.log(game, `Paid ${ue} to unearth ${inst.name}${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`); Bot.unearth(game, game, inst); });
+      } });
+      // Encore (Impulsivity): pay, exile it, and a hasty token copy attacks this turn (sacrificed at the next end step).
+      const enc = inst.zone === 'graveyard' && Bot.encoreOf(inst, def);
+      if (enc) cast.push({ label: `Encore (${enc})`, action: () => {
+        closeModal();
+        if (!Game.autoPay(JSON.parse(JSON.stringify(game)), enc)) return status(`Not enough untapped mana for encore (${enc}).`, 'warn', 8000);
+        act(() => { const paid = Game.autoPay(game, enc); Game.log(game, `Paid ${enc} for encore${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`); Bot.encore(game, game, inst, def); });
+      } });
+      if (inst.zone === 'exile' && inst.playable && !(inst.playable.from > game.turn)) cast.push({ label: inst.playable.free ? 'Cast without paying its mana cost' : inst.playable.cost ? `Cast it foretold (${inst.playable.cost})` : `Play it${inst.playable.anyMana ? ' (any mana)' : ''}`, action: () => { closeModal(); tryPlay(iid); } });
       return showMenu(e.clientX, e.clientY, [...cast, ...(cast.length ? [{ sep: true }] : []), ...moveItems(iid, inst.zone).filter(i => !(viewer && viewer.top && i.label === 'Top of library'))]);
     }
 

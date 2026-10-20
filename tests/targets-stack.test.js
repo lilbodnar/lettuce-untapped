@@ -50,7 +50,7 @@ test('reads targeted effects and what they can target', () => {
   assert.equal(Bot.targetEffect('Target creature gets +3/+3 until end of turn').pow, 3);
   assert.equal(Bot.targetEffect('Put a +1/+1 counter on target creature').kind, '+1/+1');
   assert.equal(Bot.targetEffect('Destroy target creature with flying').action, 'destroy');
-  assert.equal(Bot.targetEffect('Destroy target attacking creature'), null); // left to you
+  assert.equal(Bot.targetEffect('Destroy target attacking creature').action, 'destroy'); // attackers are marked while they attack
   assert.equal(Bot.targetEffect('Draw two cards'), null);
 
   const game = vsOpp(['bear', 'drake', 'hexer'], []);
