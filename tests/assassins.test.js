@@ -611,6 +611,7 @@ test("Ugin, Eye of the Storms' −11 search exiles colorless nonland cards to ca
   const spec = Bot.searchSpec('Search your library for any number of colorless nonland cards, exile them');
   assert.deepEqual([spec.to, spec.what], ['exile', 'colorless nonland']);
   const game = vsOpp();
+  [...game.zones.hand].forEach(i => Game.move(game, i, 'library', { bottom: true })); // both copies could be in the opening hand
   const ids2 = Bot.searchable(game, spec).map(i => game.cards[i].name);
   assert.ok(ids2.includes('Mind Stone') && ids2.includes('Geist-Fueled Scarecrow'));
   assert.ok(!ids2.includes('Swamp') && !ids2.includes('Grizzly Bears'));

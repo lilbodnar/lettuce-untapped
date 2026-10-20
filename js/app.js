@@ -182,19 +182,27 @@
     await Store.set('state', state);
     await Store.set('cards', cards);
     await Store.set('history', history);
-    if (account) schedulePush();
+    if (account) {
+      noteLocalChange();
+      schedulePush();
+    }
   }
 
   // ---------- account (the same data on every device) ----------
   // Logged out, everything is saved only in this browser. Logged in, it's still saved here too
   // (so the app works offline), and every change is also uploaded to the account a few seconds later.
   // The sign-in is kept in browser storage, never in backups, and lasts until you log out.
+  // There's never a "which data do you keep?" question: logging in uses the account's data, and
+  // if this device and another both changed things, the most recently saved changes win.
 
-  let account = null;  // { server, email, token, rev, hash } — hash: this device's data as of the last upload/download
+  // { server, email, token, rev, hash, localHash, changedAt } — hash: this device's data as of the
+  // last upload/download; changedAt: when this device last changed it (localHash: to what).
+  let account = null;
   let pushTimer = null;
   let syncing = false;
   const sync = { msg: '', kind: '' }; // shown on the Account & backup tab
   const PUSH_DELAY = 3000;
+  const SYNC_EVERY = 30000; // while the app is open, check for changes from other devices this often
 
   const cloudText = () => JSON.stringify(backupObject(state.profiles));
   // A short fingerprint of the data, to tell whether anything changed since the last sync.
@@ -205,6 +213,15 @@
   }
   const hasLocalChanges = () => !!account && textHash(cloudText()) !== account.hash;
   const saveAccount = () => Store.set('account', account);
+
+  // Remembers when this device's data last changed, to tell which device saved last.
+  function noteLocalChange() {
+    const hash = textHash(cloudText());
+    if (hash === account.hash || hash === account.localHash) return;
+    account.localHash = hash;
+    account.changedAt = Date.now();
+    saveAccount();
+  }
 
   function setSync(msg, kind = '') {
     sync.msg = msg;
@@ -221,7 +238,7 @@
   async function push() {
     clearTimeout(pushTimer);
     pushTimer = null;
-    if (!account || ui.syncChoice) return;
+    if (!account) return;
     if (syncing) { schedulePush(); return; }
     const text = cloudText();
     const hash = textHash(text);
@@ -247,7 +264,7 @@
 
   // Downloads the account's data if another device saved something newer.
   async function pull() {
-    if (!account || syncing || ui.syncChoice) return;
+    if (!account || syncing) return;
     syncing = true;
     let res;
     try {
@@ -261,12 +278,12 @@
     if (res.rev === account.rev || !res.data) {
       if (hasLocalChanges()) push();
       else setSync('All changes are saved to your account.', 'ok');
-    } else if (!hasLocalChanges()) {
+    } else if (!hasLocalChanges() || (res.updatedAt || 0) >= (account.changedAt || 0)) {
       await applyCloud(res);
     } else {
-      // Changed here and on another device: let the person pick which one to keep.
-      ui.syncChoice = { kind: 'conflict', res };
-      renderSyncNote();
+      // Changed here and on another device, and this device's changes are newer: they replace the account's.
+      account.rev = res.rev;
+      push();
     }
   }
 
@@ -300,6 +317,8 @@
     state.profiles.forEach(p => { if (!p.wishlist) p.wishlist = []; });
     account.rev = res.rev;
     account.hash = textHash(cloudText());
+    account.localHash = null;
+    account.changedAt = 0;
     await saveAccount();
     await saveNow();
     setSync('Up to date with your account.', 'ok');
@@ -320,11 +339,11 @@
       await saveAccount();
       ui.accountForm = null;
       const cloud = await Account.pull(account);
-      if (cloud.rev && cloud.data) ui.syncChoice = { kind: 'login', res: cloud };
       setStatus(register ? 'Account created. This device\'s data is being saved to it.' : 'Logged in.', 'ok');
       setTimeout(() => setStatus(''), 4000);
       render();
-      if (!ui.syncChoice) push(); // a new or empty account starts with this device's data
+      if (cloud.rev && cloud.data) await applyCloud(cloud); // an account with data always wins on login
+      else push(); // a new or empty account starts with this device's data
     } catch (e) {
       setStatus(e.message, 'error');
     }
@@ -332,10 +351,9 @@
 
   async function logOut() {
     if (!confirm('Log out? Your collection and decks stay on this device, but changes here won\'t reach your account until you log in again.')) return;
-    if (!ui.syncChoice && hasLocalChanges()) await push();
+    if (hasLocalChanges()) await push();
     const acc = account;
     account = null;
-    ui.syncChoice = null;
     await Store.set('account', null);
     Account.logout(acc).catch(() => {});
     setStatus('Logged out. Your data is now saved only on this device.', 'ok');
@@ -354,22 +372,6 @@
     } catch (e) {
       setStatus(e.message, 'error');
     }
-  }
-
-  // The bar shown when logging in to an account that already has data, or when this device
-  // and another one both changed things: pick which data to keep.
-  function renderSyncNote() {
-    const el = $('#syncNote');
-    const c = ui.syncChoice;
-    el.hidden = !c;
-    if (!c) return;
-    const when = c.res.updatedAt ? new Date(c.res.updatedAt).toLocaleString() : '';
-    el.innerHTML = `<span>${c.kind === 'login'
-      ? `Your account already has saved data${when ? ` (last saved ${esc(when)})` : ''}. Which do you want to keep?`
-      : `Your account was changed on another device${when ? ` (${esc(when)})` : ''} while this one had changes that weren't uploaded yet. Which do you want to keep?`}</span>
-      <button class="btn sm" data-action="syncUseAccount" title="Replace the data on this device with your account's">Use my account's data</button>
-      <button class="btn sm ghost" data-action="syncKeepDevice" title="Replace the data in your account with this device's">Keep this device's data</button>
-      <button class="btn sm ghost" data-action="backupAll" title="Download this device's data first, just in case">Download backup</button>`;
   }
 
   function renderAccountPanel() {
@@ -419,7 +421,7 @@
           <button class="btn">${register ? 'Create account' : 'Log in'}</button>
           <p class="muted small">${register
             ? "Whatever is on this device now becomes your account's data. There's no password reset, so keep your password somewhere safe."
-            : "If your account already has data, you'll choose whether to use it or replace it with this device's data."}</p>
+            : "If your account already has data, it replaces what's on this device."}</p>
         </form>` : ''}
       </div>`;
   }
@@ -877,7 +879,6 @@
       simShown = ui.tab;
       ui.simQuiet = false;
       renderBackupNote();
-      renderSyncNote();
       syncNav();
       return;
     }
@@ -889,7 +890,6 @@
     else if (ui.tab === 'settings') view.innerHTML = renderSettings();
     else if (ui.tab === 'shared') view.innerHTML = renderShared();
     renderBackupNote();
-    renderSyncNote();
     syncNav();
   }
 
@@ -2459,20 +2459,6 @@
     },
     logOut: () => logOut(),
     syncNow: () => { if (hasLocalChanges()) push(); else pull(); },
-    syncUseAccount: async () => {
-      const c = ui.syncChoice;
-      ui.syncChoice = null;
-      renderSyncNote();
-      await applyCloud(c.res);
-    },
-    syncKeepDevice: () => {
-      const c = ui.syncChoice;
-      ui.syncChoice = null;
-      renderSyncNote();
-      account.rev = c.res.rev;
-      account.hash = null;
-      push();
-    },
     deckPrivacy: el => {
       const deck = currentDeck();
       if (!deck || !account) return;
@@ -2537,6 +2523,13 @@
       }
     });
     window.addEventListener('online', () => { if (account) { if (hasLocalChanges()) push(); else pull(); } });
+    // Keep checking while the app is open, so changes from other devices show up without reopening it.
+    // Skipped while typing, since new data from the account redraws the page.
+    setInterval(() => {
+      if (!account || document.hidden || !navigator.onLine || pushTimer) return;
+      if (document.activeElement && document.activeElement.matches('input, textarea, select')) return;
+      if (hasLocalChanges()) push(); else pull();
+    }, SYNC_EVERY);
 
     window.addEventListener('popstate', e => {
       navDepth = (e.state && e.state.depth) || 0;

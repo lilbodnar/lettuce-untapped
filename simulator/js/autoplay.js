@@ -101,6 +101,11 @@ const Autoplay = (() => {
   function takeTurn(active, defender, defOf) {
     const view = defender.bot.s;
     view.bot = active.bot;
+    // Each table here plays as Opp on its own turn and as "you" on the other's. Cards that came over
+    // while it was "you" (Dack Fayden's gifts, stolen creatures, tokens made then) have no Opp facts yet.
+    for (const c of Object.values(active.bot.s.cards)) {
+      if (!c.bot) c.bot = B.parts.facts(c.id && defOf(c.id) ? defOf(c.id) : { typeLine: c.typeLine, power: c.custom && String(c.custom.pt).split('/')[0], toughness: c.custom && String(c.custom.pt).split('/')[1], oracle: c.custom && c.custom.text });
+    }
     view.life = defender.life;
     view.oppLife = active.life;
     let res = B.beginTurn(view, defOf);

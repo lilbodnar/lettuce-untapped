@@ -316,7 +316,8 @@ test('Swarmyard regenerates a Rat; Persistent Marshstalker returns with threshol
   Game.move(game, m.iid, 'graveyard');
   const rat = put(game, 'typhoid');
   assert.equal(Bot.graveAttackers(game, [rat], defOf).length, 0);
-  for (let i = 0; i < 7; i++) Game.move(game, game.zones.library[0], 'graveyard');
+  // Seven more cards in the graveyard (not another Marshstalker, which would come back too).
+  game.zones.library.filter(i => game.cards[i].id !== 'marsh').slice(0, 7).forEach(i => Game.move(game, i, 'graveyard'));
   assert.equal(Bot.graveAttackers(game, [rat], defOf).length, 1);
 });
 

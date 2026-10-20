@@ -952,17 +952,34 @@
 
   // Cycling and transmute from your hand: pay, discard it, then draw (cycling) or search for a card
   // with the same mana value (transmute).
-  function handAbility(iid, ab) {
+  // Basic landcycling (Sylvan Reclamation): search for a basic land card instead of drawing. A cycling
+  // cost with {X} (Shark Typhoon) asks for X; then "When you cycle this card, …" happens (with that X).
+  function handAbility(iid, ab, x) {
     const inst = game.cards[iid];
     if (!inst || inst.zone !== 'hand') return;
-    if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana for ${ab.label}.`, 'warn', 8000);
+    if (/\{X\}/i.test(ab.cost) && x == null) {
+      return ask(`X for ${ab.label}`, 1).then(v => { if (v != null && !Number.isNaN(Number(v)) && v >= 0) handAbility(iid, ab, Math.floor(Number(v))); });
+    }
+    const cost = ab.cost.replace(/\{X\}/gi, x ? `{${x}}` : '');
+    if (!Game.autoPay(JSON.parse(JSON.stringify(game)), cost)) return status(`Not enough untapped mana for ${ab.label}.`, 'warn', 8000);
     act(() => {
-      const paid = Game.autoPay(game, ab.cost);
+      const paid = Game.autoPay(game, cost);
       Game.log(game, `${ab.label}: discarded ${inst.name}${paid && paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`);
       const mv = inst.cmc || 0;
       Game.move(game, iid, 'graveyard');
       if (ab.kind === 'cycling') Game.drawCards(game, 1);
+      else if (ab.kind === 'basic landcycling') later('mustLibrary', { kind: 'search', spec: { n: 1, what: 'basic land', to: 'hand', tapped: false, rest: null }, src: `${inst.name} (basic landcycling)` });
       else later('mustLibrary', { kind: 'search', spec: { n: 1, what: '', to: 'hand', tapped: false, rest: null, mv }, src: `${inst.name} (transmute, mana value ${mv})` });
+      // Shark Typhoon, Decree of Savagery: "When you cycle this card, …"
+      if (/cycling/.test(ab.kind)) {
+        for (const line of oracleOf(inst).split('\n')) {
+          const m = /^when you cycle (?:this card|.+?), (?:you may )?(.+)$/i.exec(line.replace(/\([^)]*\)/g, '').trim());
+          if (!m) continue;
+          const text = m[1].replace(/\bX\b/g, String(x || 0));
+          const left = Bot.runEffect(game, text, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
+          Game.log(game, `${inst.name} (cycled): ${text}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+        }
+      }
     });
   }
 
@@ -1029,6 +1046,8 @@
     if (game.endStepDone === game.turn) return then(); // already asked (End turn pressed again)
     if (Bot.phaseTriggers(game, game, 'end step', def, null, true)) act(() => Bot.phaseTriggers(game, game, 'end step', def, effectCtx())); // "At the beginning of your end step, …"
     if (game.flickerBack) act(() => Bot.flickerReturn(game)); // Eerie Interlude
+    // "At the beginning of the next end step" (Venser's copies, Avacyn, Synthetic Destiny) and impending's time counters.
+    act(() => { Bot.runAtEnd(game, def, effectCtx()); Bot.endImpending(game); });
     const todo = Bot.endStepTriggers(game, def);
     const finish = () => {
       if (amMonarch()) act(() => { Game.drawCards(game, 1); Game.log(game, 'You are the monarch, so you drew a card at your end step.'); });
@@ -1109,10 +1128,15 @@
   function startNextTurn() {
     act(() => {
       delete game.offTurn;
+      game.inDrawStep = true; // Xyris: the first card drawn in the draw step doesn't count
       Game.nextTurn(game);
+      delete game.inDrawStep;
+      if (hasBot()) Bot.endGoads(game, 'you'); // goads you made last turn wear off
       Bot.upkeepDraws(game); // Arcane Denial: "at the beginning of the next turn's upkeep"
+      Bot.upkeepSuspend(game, game, def); // suspended cards lose a time counter
       Bot.phaseTriggers(game, game, 'upkeep', def, effectCtx()); // "At the beginning of your upkeep, …" that it can do
       Bot.phaseTriggers(game, game, 'draw step', def, effectCtx()); // The Immortal Sun: "draw an additional card"
+      Bot.phaseTriggers(game, game, 'main', def, effectCtx()); // Coalition Relic: "At the beginning of your first main phase, …"
       markUpkeep();
     });
     const upkeep = upkeepIids();
@@ -1682,6 +1706,13 @@
     modalBox.querySelectorAll('[data-target]').forEach(sel => { aim[sel.dataset.target] = sel.value; });
     const targets = new Map(attackTargets().map(t => [t.value, t]));
     const picks = [...modalBox.querySelectorAll('[data-attacker]:checked')].map(x => ({ iid: x.dataset.attacker, to: targets.get(aim[x.dataset.attacker]) })).filter(p => p.to);
+    // Chaos Dragon lost its roll: it can't attack this combat.
+    const held = picks.filter(p => game.cards[p.iid] && game.cards[p.iid].noAttackTurn === game.turn);
+    if (held.length) return status(`${held.map(p => game.cards[p.iid].name).join(' and ')} can't attack this combat (an opponent won the roll).`, 'warn');
+    // Goaded creatures and "attacks each combat if able" (Chaos Dragon) have to attack when they can.
+    const must = [...modalBox.querySelectorAll('[data-attacker]')].map(x => x.dataset.attacker)
+      .filter(iid => !picks.some(p => p.iid === iid) && game.cards[iid] && Bot.mustAttack(game.cards[iid], def) && game.cards[iid].noAttackTurn !== game.turn);
+    if (must.length) return status(`${must.map(iid => game.cards[iid].name).join(' and ')} must attack this combat if able (goaded, or "attacks each combat if able"). Tick ${must.length === 1 ? 'it' : 'them'} too.`, 'warn', 8000);
     if (!picks.length) return status('Tick at least one creature to attack with.');
     // Silent Arbiter caps every attacker; Mirri only the ones attacking her controller, not their planeswalkers.
     const limits = attackLimits();
@@ -2173,6 +2204,8 @@
     }
     const c = castCost(inst, opts);
     if (!c || Game.autoPay(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less)) return act(() => playCard(iid, opts));
+    // Convoke (Fallaji Wayfarer): your untapped creatures can make up the difference.
+    if (Bot.hasConvoke(game, inst, def) && Bot.convokeTap(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less, def)) return act(() => playCard(iid, { ...opts, convoke: true }));
     openModal(`<div class="ask"><h3>Not enough mana</h3>
       <p>You don't have enough untapped mana to cast ${esc(inst.name)} (${esc(c.label)}).</p>
       <div class="toolbar end"><button type="button" class="btn ghost" data-nm="cancel">Cancel</button><button type="button" class="btn" data-nm="go">Play anyway (tap mana manually)</button></div></div>`);
@@ -2226,6 +2259,7 @@
     }
     if (c) {
       const { cost, less } = c;
+      if (opts.convoke) { const tapped = Bot.convokeTap(game, cost, c.tax - less, def); if (tapped && tapped.length) Game.log(game, `Convoked ${inst.name}: tapped ${tapped.join(', ')}.`); }
       const paid = !opts.manual && Game.autoPay(game, cost, c.tax - less);
       if (paid) inst.spentColors = paid.colors || 0; // converge (Radiant Flames)
       if (!paid) {
@@ -3366,6 +3400,28 @@
     const hasCommander = game.zones.battlefield.some(id => game.cards[id].commander);
     const max = hasCommander ? info.commanderPick : info.pick;
     const why = info.commanderPick > info.pick ? (hasCommander ? ' (your commander is out)' : ' (more with your commander out)') : '';
+    // Unite the Coalition: "Choose five. You may choose the same mode more than once." — how many of each.
+    if (info.repeat) {
+      openModal(`<form class="ask" id="modeForm"><h3>${esc(inst.name)}</h3>
+        <p class="muted small">Choose ${max} in all; the same one can be picked more than once.</p>
+        <div class="block-picks">${info.modes.map((m, i) => `<label class="check"><input type="number" min="0" max="${max}" value="0" data-times="${i}" style="width:4em"> ${esc(m)}</label>`).join('')}</div>
+        <div class="toolbar end"><button type="button" class="btn ghost" data-ask="cancel">Cancel</button><button class="btn">Cast</button></div></form>`);
+      const rform = $('#modeForm');
+      rform.querySelector('[data-ask=cancel]').onclick = () => { modal.hidden = true; modalBox.innerHTML = ''; };
+      rform.onsubmit = e => {
+        e.preventDefault();
+        const chosen = [...rform.querySelectorAll('[data-times]')].flatMap(el => Array(Math.max(0, Math.floor(Number(el.value) || 0))).fill(Number(el.dataset.times)));
+        if (!chosen.length) return status('Pick at least one mode.', 'warn');
+        if (chosen.length > max) return status(`That's ${chosen.length}; choose ${max} at most.`, 'warn');
+        modal.hidden = true;
+        modalBox.innerHTML = '';
+        act(() => {
+          Bot.runModes(game, inst, def, chosen, Object.assign({ other: hasBot() ? game.bot.s : null }, effectCtx(), { target: (eff, part, src) => effectCtx().target(eff, part, src || inst) }));
+          if (inst.zone === 'battlefield') Game.move(game, inst.iid, 'graveyard');
+        });
+      };
+      return;
+    }
     openModal(`<form class="ask" id="modeForm"><h3>${esc(inst.name)}</h3>
       <p class="muted small">Choose ${max === info.modes.length && max > 1 ? (max === 2 ? 'one or both' : 'any number') : max === 1 ? 'one' : `up to ${max}`}${esc(why)}.</p>
       <div class="block-picks">${info.modes.map((m, i) => `<label class="check"><input type="checkbox" value="${i}"> ${esc(m)}</label>`).join('')}</div>
@@ -3582,8 +3638,10 @@
   // The Darkness Crystal: "If a nontoken creature an opponent controls would die, instead exile it …"
   Game.hooks.wouldDie = (s, inst) => (game && (s === game || (hasBot() && s === game.bot.s)) ? Bot.wouldDie(game, s, inst, def) : null);
   // Madness: a card of yours you discard goes to exile, and you're asked whether to cast it (mustMadnessPrompt).
+  // Currency Converter (either table): "Whenever you discard a card, you may exile that card from your graveyard."
   Game.hooks.discard = (s, inst) => {
-    if (!game || s !== game || inst.faceDown || !Bot.madnessCost(inst, def)) return null;
+    if (!game || !(s === game || (hasBot() && s === game.bot.s))) return null;
+    if (s !== game || inst.faceDown || !Bot.madnessCost(inst, def)) return Bot.discardWatch(s, inst, def);
     later('mustMadness', { iid: inst.iid });
     return 'exile';
   };
@@ -3615,6 +3673,20 @@
 
   // Landfall on your cards ("Whenever a land enters under your control, …").
   Game.hooks.entered = (s, inst) => {
+    // Primeval Spawn: "If this creature would enter and it wasn't cast or no mana was spent to cast it, exile it instead."
+    if ((s === game || (hasBot() && s === game.bot.s)) && Bot.exiledOnEntry(inst, def)) {
+      Game.log(s, `${inst.name} wasn't cast with mana, so it's exiled instead.`);
+      return Game.move(s, inst.iid, 'exile');
+    }
+    if (s === game && !inst.faceDown) {
+      // Windcrag Siege, Outpost Siege: "As this enchantment enters, choose …" — you pick.
+      const siege = !inst.chosenMode && Bot.siegeModes(inst, def);
+      if (siege && siege.length) later('mustModes', { modes: siege, pick: 1, src: inst.name, self: inst.iid });
+      // Serra's Emissary: "As this creature enters, choose a card type."
+      if (!inst.chosenCardType && Bot.choosesCardType(inst, def)) later('mustModes', { modes: Bot.cardTypeModes(), pick: 1, src: inst.name, self: inst.iid });
+      // Maddening Hex (enchant player): it goes on an opponent.
+      if (/^enchant player\b/im.test(oracleOf(inst))) { inst.enchantPlayer = 'opp'; Game.log(game, `${inst.name} enchants ${hasBot() ? 'Opp' : 'an opponent'}.`); }
+    }
     // Offspring paid: "when this creature enters, create a 1/1 token copy of it".
     if (s === game && inst.offspringPaid) { delete inst.offspringPaid; Bot.offspringCopy(game, inst); }
     // "As this land enters, you may pay 3 life. If you don't, it enters tapped." (Boggart Bog): you're asked.
@@ -3749,6 +3821,16 @@
         activate(iid, { ...ab, x: String(x), mana, effect: ab.effect.replace(/\bx\b/gi, String(x)) }, discards, sacs);
       });
     }
+    // Crucible of the Spirit Dragon: "Remove X storage counters from this land: Add X mana …" — you say X.
+    if (ab.removeX && !ab.x) {
+      const have = inst.counters[ab.removeX] || 0;
+      if (!have) return status(`${inst.name} has no ${ab.removeX} counters.`, 'warn');
+      return ask(`X for ${inst.name} (it has ${have} ${ab.removeX} counter${have === 1 ? '' : 's'})`, have).then(x => {
+        if (x == null || Number.isNaN(Number(x)) || x < 1) return;
+        const n = Math.min(have, Math.floor(Number(x)));
+        activate(iid, { ...ab, x: String(n), remove: { n, kind: ab.removeX }, effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
+      });
+    }
     if (ab.remove && (inst.counters[ab.remove.kind] || 0) < ab.remove.n) {
       return status(`${inst.name} needs ${ab.remove.n} ${ab.remove.kind} counters (it has ${inst.counters[ab.remove.kind] || 0}).`, 'warn', 8000);
     }
@@ -3788,7 +3870,8 @@
       }
       if (ab.remove) Game.counter(game, iid, ab.remove.kind, -ab.remove.n);
       if (ab.life) game.life -= ab.life;
-      const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst }, effectCtx()));
+      if (ab.exileSelf) Game.move(game, iid, 'exile'); // Underdark Rift: exiled as a cost
+      const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
       Game.log(game, `Activated ${inst.name}: ${ab.effect}${spent.length ? ` (paid with ${spent.join(', ')})` : ''}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
       if (ab.sacrifice) Game.move(game, iid, inst.commander ? 'command' : 'graveyard');
       Bot.abilityActivated(game, game, inst, def, effectCtx()); // Crackdown Construct
@@ -3942,11 +4025,17 @@
         { label: inst.tapped ? 'Untap' : 'Tap', hint: 'click', action: () => tapCard(iid, x, y) },
         ...(manaDork ? inst.mana.colors.map(k => ({ label: `Tap for ${MANA_NAMES[k]} mana`, hint: k, action: () => act(() => Game.setTapped(game, iid, true, k)) })) : []),
         ...(c.backImage ? [{ label: inst.flipped ? 'Flip to front' : 'Flip / transform', hint: 'F', action: () => act(() => Game.toggle(game, iid, 'flipped')) }] : []),
-        { label: inst.faceDown ? 'Turn face up' : 'Turn face down', action: () => act(() => {
-          const wasDown = inst.faceDown;
-          Game.toggle(game, iid, 'faceDown');
-          if (wasDown) Bot.turnedFaceUp(game, inst, def, effectCtx()); // Roshan
-        }) },
+        { label: inst.faceDown ? `Turn face up${Bot.morphCost(inst, def) ? ` (morph ${Bot.morphCost(inst, def)})` : ''}` : 'Turn face down', action: () => {
+          // Morph: turning it up costs its morph cost (Akroma, Angel of Fury: {3}{R}{R}{R}).
+          const cost = inst.faceDown && Bot.morphCost(inst, def);
+          if (cost && !Game.autoPay(JSON.parse(JSON.stringify(game)), cost)) return status(`Not enough untapped mana to turn ${inst.name} face up (${cost}).`, 'warn', 8000);
+          act(() => {
+            const wasDown = inst.faceDown;
+            if (cost) { const paid = Game.autoPay(game, cost); Game.log(game, `Paid ${cost} to turn ${inst.name} face up${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`); }
+            Game.toggle(game, iid, 'faceDown');
+            if (wasDown) Bot.turnedFaceUp(game, inst, def, effectCtx()); // Roshan
+          });
+        } },
         ...(Game.isAttachment(inst) && !inst.faceDown ? [{ sep: true }, {
           label: inst.attachedTo ? 'Move to another creature…' : Game.isAura(inst) ? 'Attach to…' : `Equip…${equipCostOf(inst) ? ` (${equipCostOf(inst)})` : ''}`,
           hint: 'E', action: () => startAttach(iid),

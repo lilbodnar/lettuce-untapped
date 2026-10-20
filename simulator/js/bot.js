@@ -912,10 +912,11 @@ const Bot = (() => {
   // Ugin, Eye of the Storms: "Search your library for any number of colorless nonland cards, exile them".
   const SEARCH_EXILE = /^search your library for any number of (.*?)\s*cards?, exile (?:them|those cards)$/i;
   function searchSpec(part) {
-    const x = SEARCH_EXILE.exec(String(part).trim().replace(/\.$/, ''));
+    part = String(part).trim().replace(/^then /i, ''); // Wild Endeavor: "Then search your library for …"
+    const x = SEARCH_EXILE.exec(part.replace(/\.$/, ''));
     if (x && x[1].split(/\s+/).filter(Boolean).every(w => SEARCH_WORDS.test(w))) return { n: 99, what: x[1].trim(), to: 'exile', tapped: false, rest: null };
     // Shield-Wall Sentinel: "… for a creature card with defender, reveal it, …" (kw).
-    let text = String(part).trim().replace(/\.$/, '');
+    let text = part.replace(/\.$/, '');
     const k = /^(search your library for .*?\bcards?) with ([a-z]+(?: [a-z]+)?)(,.*)$/i.exec(text);
     const kw = k && KEYWORDS.includes(k[2].toLowerCase()) ? k[2].toLowerCase() : null;
     if (kw) text = k[1] + k[3];
@@ -1896,7 +1897,7 @@ const Bot = (() => {
       G.log(g, `${src}: chose ${n}.`);
       destroyAll(g, ctx, m[3].replace(/the chosen number/gi, String(n)));
     }],
-    [new RegExp(`^(?:you )?draw ${COUNT} cards?$`, 'i'), (g, m) => G.drawCards(g, toNumber(m[1]))],
+    [new RegExp(`^(?:then )?(?:you )?draw ${COUNT} cards?$`, 'i'), (g, m) => G.drawCards(g, toNumber(m[1]))],
     [new RegExp(`^(?:you )?gain ${COUNT} life$`, 'i'), (g, m) => { g.life += toNumber(m[1]); }], // "you may gain 1 life" comes without its "you"
     [new RegExp(`^(?:you )?lose ${COUNT} life$`, 'i'), (g, m) => { g.life -= toNumber(m[1]); }],
     [new RegExp(`^each opponent loses ${COUNT} life$`, 'i'), (g, m, ctx) => ctx.hitOpps(toNumber(m[1])), (m, ctx) => !!ctx.hitOpps],
@@ -1928,7 +1929,7 @@ const Bot = (() => {
       m => !/\btarget\b/i.test(m[0])],
     [new RegExp(`^mill ${COUNT} cards?$`, 'i'), (g, m) => { G.mill(g, toNumber(m[1])); }],
     // Searching your library: you pick (ctx.search, app.js); Opp and automatic games pick for themselves.
-    [/^search your library .+$/i, (g, m, ctx) => {
+    [/^(?:then )?search your library .+$/i, (g, m, ctx) => {
       const spec = searchSpec(m[0]);
       const src = (ctx.self && ctx.self.name) || 'Effect';
       if (!ctx.search) return autoSearch(g, spec, src, ctx.defOf || (() => null));
@@ -2270,7 +2271,7 @@ const Bot = (() => {
   // hand onto the battlefield", "Put target creature card exiled with The Darkness Crystal onto the
   // battlefield tapped under your control with two additional +1/+1 counters on it".
   // Returns { min, max, what, from: 'mine' | 'any' | 'theirs' | 'hand' | 'exiled', exiledWith, to, tapped, counters } or null.
-  const CARD_MOVE = new RegExp(`^(?:return|put) (up to )?(one or two|any number of|${COUNT.slice(1, -1)}|eight|nine|ten)? ?(?:target )?(.+?) cards? from (your graveyard|a graveyard|graveyards|an opponent's graveyard|that player's graveyard|your hand) (to your hand|to its owner's hand|onto the battlefield( tapped)?(?: under your control)?)$`, 'i');
+  const CARD_MOVE = new RegExp(`^(?:return|put) (up to )?(one or two|any number of|${COUNT.slice(1, -1)}|eight|nine|ten)? ?(?:target )?(.+?) cards? from (your graveyard|a graveyard|graveyards|an opponent's graveyard|that player's graveyard|your hand) (to your hand|to its owner's hand|(?:onto|to) the battlefield( tapped)?(?: under your control)?)$`, 'i');
   const EXILED_MOVE = /^put target (.+?) cards? exiled with (.+?) onto the battlefield( tapped)? under your control(?: with (\w+) additional ([\w+/-]+) counters? on it)?$/i;
   // Also "put any number of creature cards from your hand onto the battlefield" (Last March of the
   // Ents) and "You may put a land card from your hand onto the battlefield" (Growth Spiral).
@@ -2527,7 +2528,7 @@ const Bot = (() => {
     else if ((m = /^choose target (.+)$/i.exec(p)) && more.length) out = { action: 'steal', what: m[1] };
     // Venser: "Create two tokens that are copies of target permanent an opponent controls. They gain haste. At the beginning of the next end step, sacrifice them."
     else if ((m = new RegExp(`^create ${COUNT} tokens? that (?:are|is a) cop(?:ies|y) of target (.+)$`, 'i').exec(p))) out = { action: 'copy', n: toNumber(m[1]), what: m[2] };
-    else if ((m = /^(tap|untap) (?:up to one )?target (.+)$/i.exec(p))) out = { action: m[1].toLowerCase(), what: m[2] };
+    else if ((m = /^(tap|untap) (?:up to (one|two|three) )?target (.+)$/i.exec(p))) out = take({ action: m[1].toLowerCase(), what: m[3] }, m[2]); // Authority: "Tap up to two target creatures …"
     else if ((m = /^(another )?target (.+?) gets ([+-]\d+)\/([+-]\d+)(?: and gains (.+?))?( and can attack as though it didn['’]?t have defender)? until end of turn$/i.exec(p))) {
       // It can also gain a quoted ability ("Whenever this creature deals combat damage …") as lines.
       const lines = [...String(m[5] || '').matchAll(/"([^"]+)"/g)].map(q => q[1].replace(/[,.]$/, ''));
@@ -2918,6 +2919,7 @@ const Bot = (() => {
   // everything after Wild Endeavor's "choose one result".
   const REVEAL_TAIL = /^(?:put (?:that card|those (?:creature )?cards|all creature cards revealed this way)|you put that card|the player puts that card|that player puts the rest|shuffle(?: the rest of the revealed cards into your library)?$|they're goaded for the rest of the game|for each of those permanents, choose a different opponent|each opponent gains control of the permanent)/i;
   function joinsLast(last, p) {
+    if (/^exile the top \w+ cards of your library$/i.test(last)) return /^you may cast any number of spells with total mana value/i.test(p); // Primeval Spawn
     if (/^put a card exiled with this \w+ into its owner's graveyard\b/i.test(last)) return /^if it's an? (?:land|nonland) card\b/i.test(p); // Currency Converter
     if (/\b(?:reveal|exile)s? cards from the top of (?:your|their) library until\b/i.test(last)) return REVEAL_TAIL.test(p);
     if (/^reveal the top card of your library\b/i.test(last)) return /^(?:if it's an? \w+ card|otherwise,)/i.test(p);
@@ -3021,7 +3023,8 @@ const Bot = (() => {
     if (/^opponents? you have$/.test(p)) return g ? g.opponents || 1 : 1;
     if (/^(?:creatures?|cards?|permanents?) (?:destroyed|exiled|sacrificed) this way$|^(?:\w+ )?counters? removed this way$/.test(p)) return g ? g.wayCount || 0 : 1;
     if (/^creatures on the battlefield$/.test(p)) return g ? creatures(g).length + (other ? creatures(other).length : 0) : 1;
-    if (/^colors of mana spent to cast this spell$/.test(p)) return g ? (self && self.spentColors != null ? self.spentColors : null) : 1;
+    // Converge. A spell whose payment wasn't watched (Opp's, a free one) counts the colors in its cost.
+    if (/^colou?rs? of mana spent to cast this spell$/.test(p)) return g ? (self && self.spentColors != null ? self.spentColors : self ? (self.freeCast ? 0 : colorsOf(factsOf(self, defOfCtx(ctx))).length) : null) : 1;
     if (/^the result$/.test(p)) return g ? (ctx && ctx.roll) || 0 : 1;
     if (/^colors that spell is$/.test(p)) return g ? (ctx && ctx.castSpell ? colorsOfInst(ctx.castSpell, defOfCtx(ctx)).length : null) : 1; // Mana Cannons
     if (/^card types? among cards discarded this way$/.test(p)) return g ? new Set((g.lastDiscarded || []).flatMap(t => CARD_TYPE_NAMES.filter(k => new RegExp(`\\b${k}\\b`, 'i').test(front(t))))).size : 1;
@@ -3030,11 +3033,13 @@ const Bot = (() => {
   }
   // On a whole effect (before it's split into parts, so "… and you gain X life, where X is …" keeps
   // it), and again on each part as it runs (so "… exiled this way" counts what the part before did).
+  // The X is only in its own sentence; what comes after ("Surveil X, where X is …. Then draw three
+  // cards.") is kept as it is.
   function fillWhereX(text, g, self, ctx) {
-    const m = /^(.+?),? where x is (?:the number of )?(.+?)\.?$/i.exec(String(text));
+    const m = /^(.+?),? where x is (?:the number of )?([^.]+?)(\.(?:\s+[\s\S]*)?)?$/i.exec(String(text));
     if (!m || /^create .*\bcreature tokens?\b/i.test(m[1]) || /\.\s/.test(m[1]) || revealSpec(text)) return text; // tokens count their own X (triggerTokens)
     const n = countOf(g, m[2], self, ctx);
-    return n == null ? text : m[1].replace(/\bx\b/gi, String(n));
+    return n == null ? text : m[1].replace(/\bx\b/gi, String(n)) + (m[3] && m[3].trim() !== '.' ? m[3] : '');
   }
   // On one part: "loses 1 life for each creature you control" → "loses 3 life".
   function fillForEach(part, g, self, ctx) {
@@ -4815,7 +4820,10 @@ const Bot = (() => {
         // Nightmare Sower: "during an opponent's turn" (s.offTurn while someone else's turn is on).
         if (m[3] && /opponent/i.test(m[3]) !== !!s.offTurn) continue;
         // Jenson: "If that spell was all colors, …" is settled now (a scry before it waits for you).
-        const effect = m[4].trim().replace(/\s*if that spell was all colors, ([^.]+)\.?/i, (all, e) => (colorsOfInst(spell, defOf).length === 5 ? ` ${e}.` : ''));
+        // Shark Typhoon: "create an X/X … token …, where X is that spell's mana value".
+        const mv = cmcOfInst(spell, defOf);
+        const effect = m[4].trim().replace(/\s*if that spell was all colors, ([^.]+)\.?/i, (all, e) => (colorsOfInst(spell, defOf).length === 5 ? ` ${e}.` : ''))
+          .replace(/\bX\/X\b(.*?),? where X is that spell's mana value/i, (all, mid) => `${mv}/${mv}${mid}`);
         const p = /^(.+?) gets? ([+-]\d+)\/([+-]\d+) until end of turn\.?$/i.exec(effect);
         if (p && isSelf(p[1], w)) {
           pumpBy(w, Number(p[2]), Number(p[3]));
@@ -5284,13 +5292,18 @@ const Bot = (() => {
       G.log(s, '— Turn 1 —');
     } else {
       const empty = !s.zones.library.length;
+      s.inDrawStep = true; // Xyris: its first draw this step doesn't count
       G.nextTurn(s);
+      delete s.inDrawStep;
       if (empty) notes.push("couldn't draw from its empty library, so it loses");
     }
     s.opponents = 1;
+    endGoads(game, 'opp'); // Opp's goads from last turn wear off
     upkeepDraws(game); // Arcane Denial
+    upkeepSuspend(game, s, defOf);
     phaseTriggers(game, s, 'upkeep', defOf, null);
     phaseTriggers(game, s, 'draw step', defOf, null); // The Immortal Sun
+    phaseTriggers(game, s, 'main', defOf, null); // Coalition Relic
     const landsBefore = s.zones.battlefield.length;
     onOpp(game, () => playLand(s));
     if (s.zones.battlefield.length > landsBefore) notes.push(`played ${s.cards[s.zones.battlefield[s.zones.battlefield.length - 1]].name}`);
@@ -5368,9 +5381,11 @@ const Bot = (() => {
     // "Whenever this attacks" triggers, exalted, battle cry, annihilator; tokens that enter attacking join in.
     attackers.push(...declareAttack(s, attackers.map(iid => s.cards[iid]), defOf, { sacrifice: (n, why) => youSacrifice(game, n, why), game }).map(([, iid]) => iid));
     if (attackers.length) attackWatch(game, s, defOf, null, attackers.map(iid => s.cards[iid]));
-    if (attackers.length) s.attackedYou = true; // Weathered Sentinels (until its next turn, G.nextTurn)
-    bot.pending = attackers.length ? { attackers, targets: chooseTargets(game, attackers, defOf) } : null;
-    return { attackers, notes };
+    // An attack trigger can take an attacker away (sacrificed, bounced): it's out of the combat.
+    const live = attackers.filter(iid => s.cards[iid] && s.cards[iid].zone === 'battlefield');
+    if (live.length) s.attackedYou = true; // Weathered Sentinels (until its next turn, G.nextTurn)
+    bot.pending = live.length ? { attackers: live, targets: chooseTargets(game, live, defOf) } : null;
+    return { attackers: live, notes };
   }
 
   // ---------- costs, graveyards and other rules for a few cards ----------
@@ -5422,6 +5437,29 @@ const Bot = (() => {
       else if ((m = /^suspend (\d+)\s*[—-]\s*((?:\{[^}]+\})+)/i.exec(line))) out.push({ key: 'suspend', label: `Suspend ${m[1]} (${m[2]}): exile it with ${m[1]} time counters, cast it free when the last comes off`, cost: m[2], suspend: Number(m[1]) });
     }
     return out;
+  }
+  // Convoke: the spell's own keyword, or Fallaji Wayfarer's "Multicolored spells you cast have convoke."
+  const hasConvoke = (s, spell, defOf) => /^convoke\b/im.test(oracleText(spell, defOf))
+    || (colorsOfInst(spell, defOf).length > 1 && permanents(s).some(c => oracleLines(c, defOf).some(l => /^multicolored spells you cast have convoke\.?$/i.test(l))));
+  // Taps your untapped creatures (least valuable first) for the mana a spell is short of: each adds
+  // one mana of a color it is that the cost still needs, or one of its colors (or {C}) for the generic
+  // part. Stops as soon as the cost can be paid. Returns the creatures' names, or null if it still can't be.
+  function convokeTap(s, cost, extra, defOf) {
+    const canPay = () => !!G.autoPay(JSON.parse(JSON.stringify({ zones: s.zones, cards: s.cards, mana: s.mana, turn: s.turn, life: s.life, log: [] })), cost, extra);
+    const need = (String(cost).match(/\{([WUBRG])\}/gi) || []).map(x => x[1].toUpperCase());
+    const tapped = [];
+    const list = creatures(s, c => !c.tapped).sort((a, b) => value(stats(a, factsOf(a, defOf))) - value(stats(b, factsOf(b, defOf))));
+    for (const c of list) {
+      if (canPay()) break;
+      const cols = colorsOfInst(c, defOf);
+      const k = need.find(n => cols.includes(n)) || cols[0] || 'C';
+      if (need.includes(k)) need.splice(need.indexOf(k), 1);
+      c.tapped = true;
+      c.tappedFor = null;
+      s.mana[k] = (s.mana[k] || 0) + 1;
+      tapped.push(c.name);
+    }
+    return canPay() ? tapped : null;
   }
   // Morph: the cost to turn a face-down card up ("Morph {3}{R}{R}{R}"), or null.
   const morphCost = (inst, defOf) => { const m = /^(?:morph|megamorph) ((?:\{[^}]+\})+)/im.exec(oracleText(Object.assign({}, inst, { faceDown: false }), defOf)); return m ? m[1] : null; };
@@ -5717,7 +5755,10 @@ const Bot = (() => {
     // Mirri attacking (or Silent Arbiter): only so many of Opp's creatures can block.
     const limit = blockRules(botRules(game, defOf).all, attackers.map(a => a.inst), defOf);
     if (limit.why) G.log(game, `${limit.why[0].toUpperCase()}${limit.why.slice(1)}.`);
-    const blocks = pickBlocks(attackers, free, game.oppLife, limit.cap, s);
+    let blocks = pickBlocks(attackers, free, game.oppLife, limit.cap, s);
+    // Berserker's Frenzy: Opp's creatures must block this turn (all), or block the way you'd choose (worst).
+    const forced = s.forcedBlock && s.forcedBlock.turn === game.turn ? s.forcedBlock : null;
+    if (forced) blocks = forcedBlocks(attackers, free, forced.worst ? new Map() : blocks, forced, s);
 
     // Opp's "whenever this blocks" triggers, then everyone's stats again with the pumps.
     // Tokens made "blocking that creature" (Brimaz) block the same attacker.
@@ -5729,6 +5770,24 @@ const Bot = (() => {
       [...blocks.values()].flat().forEach(b => { b.st = botStats(b.inst); });
     }
     return { attackers, blocks, answered };
+  }
+
+  // Berserker's Frenzy on the defending side's blocks. all: every creature that isn't blocking yet and
+  // can block does (the attacker it kills, else the biggest). worst: you choose, so each blocks an
+  // attacker it dies to without killing, and the rest don't block.
+  function forcedBlocks(attackers, free, blocks, forced, defender) {
+    const busy = new Set([...blocks.values()].flat().map(b => b.inst));
+    const add = (a, b) => { blocks.set(a, [...(blocks.get(a) || []), b]); busy.add(b.inst); };
+    for (const b of free) {
+      if (busy.has(b.inst)) continue;
+      const can = attackers.filter(a => canBlock(b.st, a.st, defender) && !(a.st.kw.has('menace')));
+      if (!can.length) continue;
+      if (forced.worst) {
+        const doomed = can.find(a => { const r = combat(a.st, [b.st]); return r.b[0].dead && !r.a.dead; });
+        if (doomed) add(doomed, b);
+      } else add(can.find(a => combat(a.st, [b.st]).a.dead) || can[0], b);
+    }
+    return blocks;
   }
 
   // How the defending side blocks: kill an attacker without dying, trade for something at least as
@@ -5890,8 +5949,9 @@ const Bot = (() => {
     handAbilities, aftermathOf, sacChoices, keepByPower, combatOver, creatureDamaged, playerShielded, grantKws,
     choiceIds, applyChoice, autoChoice, siegeModes, choosesCardType, cardTypeModes, runAtEnd, endImpending, upkeepSuspend, endGoads,
     discardWatch, exiledOnEntry, mustAttack, morphCost, mutateHosts, mutate, rollDice, revealSpec, condition, colorsOfInst,
+    hasConvoke, convokeTap, revealUntil, damageEach, forcedBlocks,
     // For coverage.js, which reads card text the same way the rest of this file does.
-    parts: { OTHER_KEYWORDS, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,
+    parts: { ROLL_ROW, SIEGE, DICE_PLUS, ROLL_WATCH, ATTACK_TWICE, DESERT, CAST_ONLY, CLONE_EOT, condition, OTHER_KEYWORDS, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,
       OLD_MENACE, UNBLOCKABLE, ATTACK_TAX, SPELL_TAX, NO_GAIN, ARBORIA, ATTACK_CAP, BLOCK_CAP, ATTACK_BLOCK_CAP, isSelf,
       counterSpell, plainSpell, facts, destroyTheirs, COUNT, ENTER_WATCH, ATTACK_WATCH, BLOCK_WATCH, TOUGH_RULE, DEFENDER_RULE, SELF_DISCOUNT, WIPE, CHOOSE_WIPE, plainLine,
       LEAVES_WATCH, ACTIVATE_WATCH, CLONE, TAX_WATCH, COUNTER_EXTRAS, counterExtraParts, EXTRA_BLOCK, RETURN_STUNNED, KONRAD, RECOVER, GRAVE_CAST, GRAVE_ATTACK, CRYSTAL, DEALT_WATCH, TARGET_WATCH, GAIN_WATCH, LOSS_WATCH, landfallText, settleIfYouDo, enteredElsewhere } };

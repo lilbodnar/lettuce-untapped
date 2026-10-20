@@ -122,8 +122,8 @@ main { max-width: 1400px; margin: 0 auto; padding: 1.25rem; }
 .status.ok { border-color: var(--ok); }
 .status.warn { border-color: var(--warn); }
 .status.error { border-color: var(--bad); }
-#backupNote:not([hidden]), #syncNote:not([hidden]) { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
-#backupNote span, #syncNote span { flex: 1 1 16rem; }
+#backupNote:not([hidden]) { display: flex; flex-wrap: wrap; align-items: center; gap: .5rem; }
+#backupNote span { flex: 1 1 16rem; }
 .account-form { display: flex; flex-direction: column; gap: .5rem; max-width: 22rem; margin-top: .8rem; }
 .account-form .btn { align-self: flex-start; }
 .account-form p { margin: 0; }

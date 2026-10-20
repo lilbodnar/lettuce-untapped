@@ -25,7 +25,8 @@ const Coverage = (() => {
   // opponents and do the other things both sides can (Opp's in bot.js's oppCtx, yours in app.js's effectCtx).
   const noop = () => {};
   const ctxFor = inst => ({ self: inst, other: true, defOf: () => null, hitOpps: noop, hitTarget: noop, target: noop, oppsSacrifice: noop, loseHalf: noop,
-    oppsExileGreatest: noop, exileGrave: noop, oppsHandPick: noop, oppsDraw: noop, oppsDiscard: noop, exileTop: noop, sacToPlay: noop, flicker: noop, blocked: {} });
+    oppsExileGreatest: noop, exileGrave: noop, oppsHandPick: noop, oppsDraw: noop, oppsDiscard: noop, exileTop: noop, sacToPlay: noop, flicker: noop, blocked: {},
+    dead: {}, choose: noop, chooseModes: noop }); // dead: the creature a "dies" trigger is about (Avacyn's "return that card")
   const runs = (text, inst) => P.canRunAll(text, ctxFor(inst));
   // The parts of an effect runEffect can't do.
   const notRun = (text, inst) => P.effectParts(P.settleIfYouDo(text, null)).filter(p => !P.canRunAll(p, ctxFor(inst)));
@@ -34,19 +35,24 @@ const Coverage = (() => {
   const NOTHING_TO_DO = ['partner', 'partner with', 'friends forever', 'choose a background', 'doctor\'s companion', 'flash', 'enchant',
     'changeling']; // every creature type: bot.js's isA reads it
   // Done for you when you cast it (app.js asks), but Opp never uses them.
-  const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback'];
+  const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback',
+    'impending', 'bestow', 'mutate', 'morph', 'megamorph', 'suspend', 'basic landcycling'];
+  // Done on every table (bot.js).
+  const DONE_KEYWORDS = ['hideaway'];
 
   // ---------- one keyword line ----------
 
   function keywordLine(card, line) {
     const parts = line.toLowerCase().replace(/\.$/, '').split(/,\s*|;\s*/).map(p => p.trim()).filter(Boolean);
-    const known = p => P.isKeyword(p, B.KEYWORDS) || P.isKeyword(p, P.OTHER_KEYWORDS) || P.isKeyword(p, YOURS_ONLY) || NOTHING_TO_DO.some(k => p === k || p.startsWith(k + ' '));
+    const starts = (p, k) => p === k || p.startsWith(k + ' ') || p.startsWith(k + '—');
+    const known = p => P.isKeyword(p, B.KEYWORDS) || P.isKeyword(p, P.OTHER_KEYWORDS) || YOURS_ONLY.some(k => starts(p, k)) || DONE_KEYWORDS.some(k => starts(p, k)) || NOTHING_TO_DO.some(k => p === k || p.startsWith(k + ' '));
     if (!parts.length || !parts.every(known)) return null;
     const out = { you: true, opp: true, gaps: [] };
     for (const p of parts) {
       const name = p.split(/[\s—{]/)[0];
-      if (NOTHING_TO_DO.some(k => p === k || p.startsWith(k + ' '))) continue;
-      if (YOURS_ONLY.includes(name)) { gap(out, 'opp', 'keyword', `${name} (Opp never uses it)`); continue; }
+      if (NOTHING_TO_DO.some(k => p === k || p.startsWith(k + ' ')) || DONE_KEYWORDS.some(k => starts(p, k))) continue;
+      const mine = YOURS_ONLY.find(k => starts(p, k));
+      if (mine) { gap(out, 'opp', 'keyword', `${mine} (Opp never uses it)`); continue; }
       if (/^protection\b/.test(p)) {
         if (!P.protectionKw(p)) gap(out, 'both', 'keyword', p.replace(/\{[^}]+\}/g, '{M}'));
         continue;
@@ -123,6 +129,39 @@ const Coverage = (() => {
     const self = words => P.isSelf(words, inst);
     let m;
 
+    // The Commander precons' triggers (bot.js): done as they are, or the effect after them runs.
+    const DONE = [
+      /^at the beginning of combat on each opponent's turn, they may pay \{\d+\}\. if they don't, creatures they control can't attack jaces you control this turn\.?$/i, // Jace (Opp leaves Jaces alone)
+      /^whenever one or more creatures deal combat damage to you while you're the monarch, tap those creatures and put a stun counter on each of them\.?$/i, // Tamiyo
+      /^whenever you discard a card, (?:you may )?exile that card from your graveyard\.?$/i, // Currency Converter
+      /^whenever an? \w+ you control becomes the target of a spell or ability an opponent controls, .+? deals \d+ damage to that player\.?$/i, // Thunderbreak Regent
+      /^whenever a goaded creature attacks, it deals \d+ damage to its controller\.?$/i, // Vengeful Ancestor
+      /^whenever a land you control enters tapped, choose one\s*[—-]?$/i, // Tiller Engine (its modes are read below)
+    ];
+    if (DONE.some(re => re.test(line))) return out;
+    const THEN = [
+      /^whenever you create one or more creature tokens, (?:you may )?(.+)$/i, // Staff of the Storyteller
+      /^whenever you cast your first .+? spell each turn, (?:you may )?(.+)$/i, // Plan for All Outcomes
+      P.ROLL_WATCH, // Vrondiss, Barbarian Class
+      /^whenever an opponent casts a spell, (?:you may )?((?:(?!\bunless\b).)+)$/i, // Taurean Mauler
+      /^whenever a source you control deals \w+ or more damage to a player, (?:you may )?(.+)$/i, // Dragonborn Champion
+      /^whenever an opponent draws a card except the first one they draw in each of their draw steps, (?:you may )?(.+)$/i, // Xyris
+      /^whenever you cast a spell with \{x\} in its mana cost, (?:you may )?(.+)$/i, // Zaxara
+    ];
+    for (const re of THEN) {
+      if ((m = re.exec(line))) { effectGaps('both', m[1].replace(/\bX\b/g, '1')); return out; }
+    }
+    // Primeval Spawn: "When this creature leaves the battlefield, …"
+    if ((m = /^when (.+?) leaves the battlefield, (?:you may )?(.+)$/i.exec(line)) && self(m[1])) { effectGaps('both', m[2]); return out; }
+    // Shark Typhoon, Decree of Savagery: "When you cycle this card, …" (X is what you paid)
+    if ((m = /^when you cycle (?:this card|.+?), (?:you may )?(.+)$/i.exec(line))) { effectGaps('you', m[1].replace(/\bX\b/g, '1')); gap(out, 'opp', 'trigger', 'when you cycle (Opp never cycles)'); return out; }
+    // Equipment: "Whenever equipped creature attacks / deals combat damage / dies, …" (Sword of Hours, Heirloom Blade)
+    if ((m = /^whenever equipped creature (?:attacks|deals combat damage|dies), (?:you may )?(.+)$/i.exec(line))) { effectGaps('you', m[1]); gap(out, 'opp', 'keyword', 'equip (Opp never equips)'); return out; }
+    // Maddening Hex (on an opponent)
+    if ((m = /^whenever enchanted player casts a noncreature spell, (.+)$/i.exec(line))) { effectGaps('you', m[1]); return out; }
+    // Illuna, Nethroi: "Whenever this creature mutates, …" (Opp never mutates)
+    if ((m = /^whenever this creature mutates, (?:you may )?(.+)$/i.exec(line))) { effectGaps('you', m[1]); gap(out, 'opp', 'trigger', 'mutate (Opp never mutates)'); return out; }
+
     // "When this enters (or attacks), …"
     if ((m = /^when(?:ever)? (.+?) enters(?: the battlefield)?(?: or ([^,]+))?, (?:you may )?(.+)$/i.exec(line)) && self(m[1])) {
       const text = P.settleIfYouDo(m[3], null);
@@ -195,7 +234,7 @@ const Coverage = (() => {
       if (fits) {
         if (P.destroyTheirs(m[2])) return out;
         // Desmond Miles: "surveil X, where X is the amount of damage it dealt to that player"
-        effectGaps('both', m[2].replace(/\b(surveil|scry|draw|mill) x(?: cards)?, where x is the amount of damage .+? dealt to that player\b/i, '$1 1'));
+        effectGaps('both', m[2].replace(/\b(surveil|scry|draw|mill) x(?: cards)?, where x is the amount of damage .+? dealt to that player\b/i, '$1 1').replace(/\bthat many\b/gi, '1')); // Glint-Eye, Xyris: "draw that many cards"
         return out;
       }
     }
@@ -233,7 +272,10 @@ const Coverage = (() => {
       gap(out, 'opp', 'loyalty', 'planeswalker loyalty abilities (Opp never casts planeswalkers)');
       return out;
     }
-    if (/^add\b/i.test(m[2])) {
+    // A Class's "{1}{R}: Level 2" (Barbarian Class); Desert's end-of-combat ping (used for whoever's defending).
+    if (/^level \d+\.?$/i.test(m[2].trim())) { gap(out, 'opp', 'activated', 'class levels (Opp never levels up)'); return out; }
+    if (P.DESERT.test(line)) return out;
+    if (/^add\b/i.test(m[2]) && !/\bremove x\b/i.test(m[1])) {
       // A land's plain "{T}: Add {B}." (Scryfall's produced_mana); others need manaAbility (Cabal Coffers).
       if ((is(card, 'land') && /^\{T\}$/i.test(m[1].trim()) && !/for each|chosen|equal to|\bx\b/i.test(m[2])) || G.manaAbility(card.name, line)) return out;
       gap(out, 'both', 'mana', `mana ability: ${m[1]}: ${m[2]}`);
@@ -255,9 +297,32 @@ const Coverage = (() => {
 
   const LORD = /^(other )?(.+?) you control(?: with ([a-z]+(?: [a-z]+)?))? (?:get ([+-]\d+)\/([+-]\d+)(?: and have (.+?))?|have (.+?))\.?$/i;
 
+  // Always-on lines from the Commander precons that bot.js and game.js read.
+  const STATIC_DONE = [
+    /\bcan be your commander\.?$/i,
+    /^.+? gets \+1\/\+1 for each (?:unspent mana you have|color among permanents you control)\.?$/i, // Omnath, Faeburrow Elder
+    /^if you would lose unspent mana, that mana becomes colorless instead\.?$/i, // Omnath
+    /^you can't lose the game and your opponents can't win the game\.?$/i, /^creatures you control can't have -1\/-1 counters put on them\.?$/i, // Darksteel Angel
+    /^if a creature you control would deal damage to a permanent or player, it deals double that damage instead\.?$/i, // Gratuitous Violence
+    /^each other (?:multicolored )?creature you control gets \+1\/\+1 for each of its colors\.?$/i, // Knight of New Alara
+    /^.+? is all colors\b/i, // Transguild Courier, Fallaji Wayfarer
+    /^as long as .+? is (?:un)?tapped, other permanents enter (?:un)?tapped\.?$/i, // Archelos
+    /^creature spells you control can't be countered\.?$/i, // Surrak
+    /^as (?:this|.+?) enters, choose a card type\.?$/i, /^you and creatures you control have protection from the chosen card type\.?$/i, // Serra's Emissary
+    P.SIEGE, P.CLONE_EOT, P.DICE_PLUS, P.ATTACK_TWICE,
+    /^enchanted creature's controller may have it assign its combat damage as though it weren't blocked\.?$/i, // Indomitable Might
+    /^as (?:this creature|.+?) enters, roll x d\d+\. it enters with a number of [\w+/-]+ counters on it equal to the total of those results\.?$/i, // Neverwinter Hydra
+    /^.+? attacks each combat if able\.?$/i, // Chaos Dragon
+    /^if this creature would enter and it wasn't cast or no mana was spent to cast it, exile it instead\.?$/i, // Primeval Spawn
+    /^the first spell you cast each turn has cascade\.?$/i, // Maelstrom Nexus
+    /^multicolored spells you cast have convoke\.?$/i, // Fallaji Wayfarer
+    /^enchanted land has "\{T\}: add one mana of any colou?r\.?"\.?$/i, // Abundant Growth
+  ];
+
   function staticLine(card, line, inst) {
     const out = { you: true, opp: true, gaps: [] };
     let m;
+    if (STATIC_DONE.some(re => re.test(line))) return out;
     // Banners: "Creatures you control of the chosen type / color get +1/+1" read like grantsOnce reads them.
     line = line.replace(/^(other )?(\w+) you control of the chosen type\b/i, '$1Elf $2 you control').replace(/ you control of the chosen colou?r\b/i, ' you control');
     // Marrow-Gnawer ("All Rats have fear."); Dirty Wererat (threshold); Coat of Arms; Heraldic Banner's color; Rat Colony.
@@ -336,8 +401,9 @@ const Coverage = (() => {
 
   function spell(card, lines, inst) {
     const out = { you: true, opp: true, gaps: [] };
-    // X is asked for when you cast it (app.js), so read it as a number.
-    const text = lines.join(' ').replace(/\bX\b/g, /\{X\}/i.test(card.manaCost || '') ? '1' : 'X');
+    // X is asked for when you cast it (app.js), so read it as a number. Lines only about casting it
+    // (Flawless Maneuver's free cast, Berserker's Frenzy's timing) are offered when you cast it.
+    const text = lines.filter(l => !P.CAST_ONLY.test(l)).join(' ').replace(/\bX\b/g, /\{X\}/i.test(card.manaCost || '') ? '1' : 'X');
     const modes = B.spellModes(inst, () => card);
     if (modes) {
       modes.modes.forEach(mode => {
@@ -376,8 +442,19 @@ const Coverage = (() => {
     const isSpell = is(card, 'instant') || is(card, 'sorcery');
     const out = [];
     const spellLines = [];
-    for (const text of lines) {
-      if (/^•/.test(text) || /^choose (one|two|three|one or more|one or both|any number)\b/i.test(text)) {
+    const siege = lines.some(l => P.SIEGE.test(l));
+    for (let text of lines) {
+      // A die's table ("1—9 | Each player sacrifices a permanent of their choice."): its effect runs on that roll.
+      const row = P.ROLL_ROW.exec(text);
+      if (row) {
+        const r = { you: true, opp: true, gaps: [] };
+        notRun(row[3], inst).forEach(p => gap(r, 'both', 'effect', p));
+        out.push({ text, ...r });
+        continue;
+      }
+      // A Siege's "• Khans — At the beginning of your upkeep, …": read as its own line once chosen.
+      if (siege && /^•\s*\w+\s*[—-]\s*/.test(text)) text = text.replace(/^•\s*\w+\s*[—-]\s*/, '');
+      if (/^•/.test(text) || /^choose (one|two|three|four|five|one or more|one or both|any number)\b/i.test(text)) {
         if (isSpell) { spellLines.push(text); continue; }
         // A mode of the trigger above ("Choose one —"): runEffect does it once it's picked.
         if (/^•/.test(text)) {
