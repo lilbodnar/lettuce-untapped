@@ -517,7 +517,7 @@
       fn();
       runThen(req);
     });
-    const place = d => (d.to === 'hand' ? 'into your hand' : d.to === 'exile' ? 'into exile' : `onto the battlefield${d.tapped ? ' tapped' : ''}`);
+    const place = d => (d.to === 'hand' ? 'into your hand' : d.to === 'exile' ? 'into exile' : d.to === 'top' ? 'on top of your library' : `onto the battlefield${d.tapped ? ' tapped' : ''}`);
     if (req.kind === 'number') return numberPrompt(req, next);
     if (req.kind === 'search') {
       const { spec } = req;
@@ -884,7 +884,7 @@
     const req = game && game.mustTax && game.mustTax[0];
     if (!req || !modal.hidden || !hasBot()) return;
     const canPay = !!Game.autoPay(JSON.parse(JSON.stringify(game)), req.cost);
-    const theyGet = req.draw ? `Opp draws ${req.draw === 1 ? 'a card' : req.draw + ' cards'}` : `Opp gets a ${req.token} token`;
+    const theyGet = req.draw ? `Opp draws ${req.draw === 1 ? 'a card' : req.draw + ' cards'}` : req.sac ? 'you sacrifice a permanent' : `Opp gets a ${req.token} token`;
     askButtons('mustTax', `Opp's ${req.why}`, `Pay ${req.cost}? If you don't, ${theyGet}.${canPay ? '' : " (Your untapped mana can't pay it.)"}`, [
       { label: "Don't pay", ghost: true, run: () => Bot.applyTax(game, req, false) },
       ...(canPay ? [{ label: `Pay ${req.cost}`, run: () => Bot.applyTax(game, req, true) }] : []),
@@ -969,6 +969,22 @@
         inst.foretold = true;
         inst.playable = { forever: true, cost: ab.castCost, from: game.turn + 1 };
         Game.log(game, `Foretold ${inst.name} (castable from your next turn for ${ab.castCost}).`);
+      });
+    }
+    // Emrakul, the Exigent Doom: exiled (castable from there), and a land of yours taps for {C}{C} until then (Game.sourceOf). The land
+    // picked is the one that adds the least (a basic of the color you have most of), and that one now adds only the {C}{C}.
+    if (ab.kind === 'landMana') {
+      const lands = game.zones.battlefield.map(id => game.cards[id]).filter(c => Game.isLand(c) && !c.landMana);
+      if (!lands.length) return status('You need a land for that.', 'warn');
+      if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana for ${ab.label}.`, 'warn', 8000);
+      return act(() => {
+        Game.autoPay(game, ab.cost);
+        Game.move(game, iid, 'exile');
+        inst.playable = { forever: true };
+        const count = k => lands.filter(c => Game.producesOf(c).includes(k)).length;
+        const land = [...lands].sort((a, b) => (Game.producesOf(a).length - Game.producesOf(b).length) || (count(Game.producesOf(b)[0]) - count(Game.producesOf(a)[0])))[0];
+        land.landMana = { by: iid, n: ab.mana };
+        Game.log(game, `Exiled ${inst.name}: ${land.name} taps for ${'{C}'.repeat(ab.mana)} until you cast it from exile.`);
       });
     }
     if (/\{X\}/i.test(ab.cost) && x == null) {
@@ -1148,6 +1164,11 @@
       game.inDrawStep = true; // Xyris: the first card drawn in the draw step doesn't count
       Game.nextTurn(game);
       delete game.inDrawStep;
+      // Opp's Emrakul, the Promised End: Opp controlled that turn (you did nothing), now your extra turn.
+      for (; game.lostTurn > 0; game.lostTurn--) {
+        Game.log(game, 'That turn was controlled by Opp (nothing was done); now your extra turn.');
+        Game.nextTurn(game);
+      }
       if (hasBot()) Bot.endGoads(game, 'you'); // goads you made last turn wear off
       Bot.upkeepDraws(game); // Arcane Denial: "at the beginning of the next turn's upkeep"
       Bot.upkeepSuspend(game, game, def); // suspended cards lose a time counter
@@ -2188,6 +2209,10 @@
     if (!inst) return;
     // Serra Avenger: "You can't cast Serra Avenger during your first, second, or third turns of the game."
     if (Bot.castTooEarly(game, inst, def)) return status(`You can't cast ${inst.name} during your first three turns.`, 'warn');
+    // Opp's Silence: "Your opponents can't cast spells this turn."
+    if (game.cantCast && !Game.isLand(inst)) return status(`You can't cast spells this turn (${game.cantCast}).`, 'warn');
+    // Soulless Jailer: "Players can't cast noncreature spells from graveyards or exile."
+    if (game.noGraveCast && (inst.zone === 'graveyard' || inst.zone === 'exile') && !Game.isLand(inst) && !Game.isCreature(inst)) return status(`You can't cast noncreature spells from your ${inst.zone} (Soulless Jailer).`, 'warn');
     // Dragon Man: "You may cast this card from your graveyard by discarding a card in addition to paying its other costs." (pick it)
     if (inst.zone === 'graveyard' && opts.cast && !opts.flashback && !opts.aftermath && !opts.graveDiscard && Bot.graveDiscards(inst, def) && inst.graveOkTurn !== game.turn) {
       if (!game.zones.hand.length) return status(`You need a card in hand to discard for ${inst.name}.`, 'warn');
@@ -2259,6 +2284,7 @@
     if (opts.choice === 'impending') { inst.impending = true; inst.counters = { ...inst.counters, time: opts.impending || 1 }; }
     if (opts.choice === 'bestow') inst.bestowed = true; // Chromanticore: an aura on a creature (you pick it)
     if (opts.choice === 'kicked') inst.kicked = true; // Josu Vess: "if he was kicked"
+    if (opts.choice === 'buyback') inst.boughtBack = true; // Capsize: back to your hand as it resolves (Game.move)
     if (opts.choice === 'squad') inst.squadCount = opts.kicks || 1; // squad: that many token copies as it enters
     if (opts.choice === 'fuse') inst.fused = true; // both halves (Bot.spellResolve)
     else if (opts.kicks) { inst.kickCount = opts.kicks; inst.kicked = true; } // Batroc's multikicker
@@ -3691,7 +3717,7 @@
   });
 
   // Opp counters your spell as you cast it (its counterspells; see Bot.oppCounters).
-  Game.hooks.casting = (s, inst) => s === game && hasBot() && Bot.oppCounters(game, inst, def);
+  Game.hooks.casting = (s, inst) => s === game && ((hasBot() && Bot.oppCounters(game, inst, def)) || Bot.doveCounter(game, game, inst, def, false)); // Dovescape: any table's
 
   // Opp's spells wait for your answer when you have an instant (or flash card) you can pay for.
   Bot.setResponder((g, spell) => g === game && hasBot() && ui.respond !== false && game.zones.hand.some(iid => {
@@ -3840,9 +3866,10 @@
   function counterNewest(by) {
     // Opp's spell waiting on the stack for your answer is the newest.
     if (hasBot() && game.bot.s.stack) {
+      const mv = Bot.cmcOfInst(game.bot.s.cards[game.bot.s.stack.iid], def);
       const name = Bot.counterStack(game);
       Game.log(game, `${by.name}: countered Opp's ${name}.`);
-      Bot.counterExtras(game, game, game.bot.s, oracleOf(by), by.name); // An Offer You Can't Refuse, Arcane Denial
+      Bot.counterExtras(game, game, game.bot.s, oracleOf(by), by.name, mv); // An Offer You Can't Refuse, Arcane Denial, Mana Drain
       game.notice = `${by.name} countered Opp's ${name}. Click Let it resolve (or End turn) to let Opp carry on.${game.notice ? ' ' + game.notice : ''}`;
       return;
     }
@@ -3858,6 +3885,8 @@
     }
     const pick = picks.sort((a, b) => b.at - a.at)[0];
     let msg;
+    const hitCard = pick && !pick.pid && pick.s.lastCast && pick.s.cards[pick.s.lastCast.iid];
+    const mv = hitCard ? Bot.cmcOfInst(hitCard, def) : 0; // Mana Drain
     if (!pick) msg = 'there was no spell to counter.';
     else if (pick.pid) {
       Online.send({ t: 'counter', iid: pick.iid, by: by.name }, pick.pid);
@@ -3867,7 +3896,7 @@
       const done = Game.counterLast(pick.s);
       msg = done ? (pick.opp ? `Opp's ${done}` : done) : 'the last spell already resolved, so undo what it did by hand.';
     }
-    if (pick) Bot.counterExtras(game, game, pick.pid ? null : pick.s, oracleOf(by), by.name); // An Offer You Can't Refuse, Arcane Denial
+    if (pick) Bot.counterExtras(game, game, pick.pid ? null : pick.s, oracleOf(by), by.name, mv); // An Offer You Can't Refuse, Arcane Denial, Mana Drain
     Game.log(game, `${by.name}: ${msg}`);
     game.notice = `${by.name}: ${msg}${game.notice ? ' ' + game.notice : ''}`;
   }

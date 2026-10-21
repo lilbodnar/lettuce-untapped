@@ -40,7 +40,7 @@ const Coverage = (() => {
     'impending', 'bestow', 'mutate', 'morph', 'megamorph', 'suspend', 'basic landcycling',
     'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse'];
   // Done on every table (bot.js).
-  const DONE_KEYWORDS = ['hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve'];
+  const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve'];
 
   // ---------- one keyword line ----------
 
@@ -144,15 +144,16 @@ const Coverage = (() => {
       /^when there are \w+ or more [\w+/-]+ counters on (?:this \w+|it), exile it\. if you do, you gain \w+ life\.?$/i, // Mazemind Tome (refreshGrants)
       /^when this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking\.?$/i, // Misleading Signpost (one opponent here)
     ];
-    if (DONE.some(re => re.test(line))) return out;
+    if (DONE.some(re => re.test(line)) || P.DOVESCAPE.test(line)) return out; // Dovescape (bot.js's doveCounter)
     const THEN = [
       /^whenever you create one or more creature tokens, (?:you may )?(.+)$/i, // Staff of the Storyteller
       /^whenever you cast your (?:first|second|third|fourth|fifth) (?:[\w,]+ )*?spell each turn, (?:you may )?(.+)$/i, // Plan for All Outcomes, The Fantasticar, Lady Loki
       /^whenever an opponent casts their (?:first|second|third) (?:\w+ )*?spell each turn, (?:you may )?(?!draw a card unless that player pays)(.+)$/i, // Monologue Tax, Mind's Dilation (Esper Sentinel: TAX_WATCH)
       P.ROLL_WATCH, // Vrondiss, Barbarian Class
+      P.SEARCH_WATCH, // Archivist of Oghma (refreshGrants)
       /^whenever an opponent casts (?:an? )?(?:(?!first|second)[^,])*?\s*spell, (?:you may )?((?:(?!\bunless\b).)+)$/i, // Taurean Mauler, Arasta
       /^whenever a player casts (?:an? )?[^,]*?spell, (?:you may )?(.+)$/i, // Managorger Hydra
-      /^whenever an opponent draws a card, (?!that player may pay)(.+)$/i, // Scrawling Crawler, Mind's Eye
+      /^whenever an opponent draws a card, (?!that player may pay)(?:you may (?=draw ))?(.+)$/i, // Scrawling Crawler, Mind's Eye, Consecrated Sphinx
       /^whenever you draw (?:a card|your second card each turn), (?:you may )?(.+)$/i, // Psychosis Crawler, Thopter Fabricator
       /^whenever an opponent draws (?:their|his or her) second card each turn, (?:you may )?(.+)$/i,
       /^whenever a creature attacks you(?: or a planeswalker you control)?, (?:you may )?(.+)$/i, // Search the Premises, Marchesa's Decree
@@ -205,7 +206,8 @@ const Coverage = (() => {
       if (P.TOKEN_TEXT.test(m[2].trim()) || P.RETURN_STUNNED.test(m[2].trim())) return out;
       // Oft-Nabbed Goat (bot.js's died)
       if (/^if it had one or more [\w+/-]+ counters on it, its owner draws that many cards and each other player loses that much life\.?$/i.test(m[2].trim())) return out;
-      effectGaps('both', m[2].replace(/\bequal to its power\b/i, 'equal to 1')); // Goldvein, Lifeblood Hydra (died fills it in)
+      effectGaps('both', m[2].replace(/\bequal to its power\b/i, 'equal to 1') // Goldvein, Lifeblood Hydra (died fills it in)
+        .replace(/^if it had no [\w+/-]+ counters on it, (?:you may )?/i, '')); // Lost Auramancers (died)
       return out;
     }
     // "Whenever this attacks / blocks, …", "Whenever this creature attacks a player, …", "… for the first time each turn", "… while you don't control another Dinosaur"
@@ -271,6 +273,7 @@ const Coverage = (() => {
     if (/^whenever an opponent taps a land for mana, that land doesn't untap during its controller's next untap step\.?$/i.test(line)) return out;
     // Suture Priest (creatureEntered)
     if (/^whenever a creature an opponent controls enters, (?:you may )?have that player lose \w+ life\.?$/i.test(line)) return out;
+    if ((m = /^whenever a creature an opponent controls enters, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; } // Authority of the Consuls
     // Selvala (creatureEntered), Fertile Ground (game.js's sourceOf)
     if (/^whenever another creature enters, its controller may draw a card if its power is greater than each other creature's power\.?$/i.test(line)) return out;
     if (/^whenever enchanted land is tapped for mana, its controller adds an additional one mana of any colou?r\.?$/i.test(line)) return out;
@@ -412,6 +415,8 @@ const Coverage = (() => {
     // T'Chaka: "{3}, Exile this card from your graveyard: You become the monarch. Activate only if you control your commander." (Bot.graveAbilities)
     const ga = B.graveAbilities(inst, () => ({ oracle: line }))[0];
     if (ga) { notRun(ga.effect, inst).forEach(p => gap(out, 'both', 'activated', p)); return out; }
+    // Emrakul, the Exigent Doom: "{3}, Exile this card from your hand: …" (Bot.handAbilities; app.js's hand menu)
+    if (B.handAbilities(inst, () => ({ oracle: line })).some(a => a.kind === 'landMana')) { gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
     const ab = B.activatedAbilities(inst, () => ({ oracle: line }))[0];
     if (!ab) { gap(out, 'both', 'cost', m[1]); return out; }
     const left = notRun(/\{X\}/i.test(ab.mana) ? ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats: you pick X
@@ -577,7 +582,7 @@ const Coverage = (() => {
     if ((m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) (?:you control|on the battlefield)\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
     if (/^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.test(line)) return out;
     if (P.TOUGH_RULE.test(line) || P.DEFENDER_RULE.test(line)) return out; // Arcades, Doran, High Alert
-    if (P.SELF_DISCOUNT.test(line)) return out; // The Pride of Hull Clade
+    if (P.SELF_DISCOUNT.test(line) || P.GRAVE_TYPES_DISCOUNT.test(line)) return out; // The Pride of Hull Clade, Emrakul
     if (P.ATTACK_TAX.test(line) || P.NO_GAIN.test(line) || P.ARBORIA.test(line) || P.ATTACK_CAP.test(line) || P.BLOCK_CAP.test(line)) return out;
     if (P.SPELL_TAX.test(line) && !/\btarget/i.test(line)) return out;
     if (P.OLD_MENACE.test(line) || P.UNBLOCKABLE.test(line) || P.CANT.test(line)) return out;
@@ -605,6 +610,9 @@ const Coverage = (() => {
     // Raffine's Guidance: cast from your graveyard (app.js's graveyard menu, Bot.graveAltCost)
     if (P.GRAVE_ALT.test(line)) { gap(out, 'opp', 'static', "Opp doesn't cast it from its graveyard"); return out; }
     // Void Winnower: Opp can't cast or block with even mana values (castOptions, Opp's blocks); Opp's doesn't stop you.
+    // Grand Abolisher, Drannith Magistrate: Opp can't cast (castOptions, oppCounters); Opp's doesn't stop you.
+    if ([P.OPPS_ENTER_TAPPED, P.DRAW_CAP, P.GRAVE_LOCK, P.NO_GRAVE_CAST, P.SEARCH_TOP, P.KW_LOST, P.ALL_ISLANDS, P.GROUNDED, P.PRO_FROM_OPPS].some(re => re.test(line))) return out; // Blind Obedience, Thalia, Narset, Soulless Jailer (refreshGrants)
+    if (P.ABOLISHER.test(line) || P.HAND_ONLY.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells"); return out; }
     if (P.WINNOW_CAST.test(line) || P.WINNOW_BLOCK.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells or blocks"); return out; }
     // Coin of Mastery (game.js's autoPay counts artifact mana; creatureEntered)
     if (P.COIN_MASTERY.test(line)) return out;

@@ -205,6 +205,9 @@ const Game = (() => {
   // Creatures can't tap for mana the turn they arrive.
   // Forsaken Monument (s.extraC, from bot.js): a source that makes only {C} makes that many more.
   function sourceOf(s, inst) {
+    // Emrakul, the Exigent Doom: 'Target land gains "{T}: Add {C}{C}" until this card is cast from exile.' (inst.landMana, app.js's handAbility)
+    const lm = inst.landMana;
+    if (lm && s.cards[lm.by] && s.cards[lm.by].zone === 'exile' && !inst.faceDown) return { colors: ['C'], amount: lm.n, sacrifice: false };
     const src = baseSource(s, inst);
     // Goldspan Dragon: 'Treasures you control have "{T}, Sacrifice this artifact: Add two mana of any one color."' (s.treasureMana, bot.js's refreshGrants)
     if (src && s.treasureMana && src.sacrifice && /\btreasure\b/i.test(inst.typeLine || '')) return { ...src, amount: Math.max(src.amount, s.treasureMana) };
@@ -388,6 +391,7 @@ const Game = (() => {
       const line = raw.replace(/\([^)]*\)/g, '').trim();
       let m;
       if ((m = /^modular (\d+)\b/i.exec(line))) out['+1/+1'] = (out['+1/+1'] || 0) + Number(m[1]);
+      if ((m = /^vanishing (\d+)$/i.exec(line))) out.time = (out.time || 0) + Number(m[1]); // Lost Auramancers (bot.js's upkeepSuspend takes them off)
       for (const sentence of line.split(/(?<=\.)\s+/)) {
         m = /^.+? enters(?: the battlefield)? with (\w+) ([+-]\d+\/[+-]\d+|[a-z]+) counters? on it\.?$/i.exec(sentence);
         if (m && toNumber(m[1]) && m[2].toLowerCase() !== 'loyalty') out[m[2].toLowerCase()] = (out[m[2].toLowerCase()] || 0) + toNumber(m[1]);
@@ -677,6 +681,9 @@ const Game = (() => {
     // Archelos: "As long as Archelos is tapped, other permanents enter tapped. As long as Archelos is
     // untapped, other permanents enter untapped." (s.enterState, kept by bot.js's refreshGrants)
     if (s.enterState && s.enterState.src !== inst.iid && !inst.faceDown) return s.enterState.tapped;
+    // Thalia, Heretic Cathar (the opponent's): "Creatures and nonbasic lands your opponents control enter tapped." (s.tapKinds, bot.js's refreshGrants)
+    const type = (inst.typeLine || '').split('//')[0];
+    if ((s.tapKinds || []).some(k => (k === 'nonbasic land' ? isLand(inst) && !/\bbasic\b/i.test(type) : new RegExp(`\\b${k}\\b`, 'i').test(type)))) return true;
     const et = inst.entersTapped;
     if (!et || inst.faceDown) return false;
     if (et === true) return true;
@@ -777,7 +784,8 @@ const Game = (() => {
     if (/^if one or more creature tokens would be created under your control, that many 4\/4 white angel creature tokens with flying and vigilance are created instead\.?$/im.test(String(def.oracle || ''))) inst.angelTokens = true; // Divine Visitation (createToken)
     // Ifnir Deadlands: "{T}, Pay 1 life: Add {B}." That color isn't auto-tapped (producesOf); you activate it (bot.js's activatedAbilities).
     const lines = String(def.oracle || '').split('\n');
-    const lifeOnly = MANA.filter(k => lines.some(l => new RegExp(`^\\{T\\}, pay \\w+ life: add \\{${k}\\}\\.?$`, 'i').test(l.trim()))
+    // Boseiju, Who Shelters All: "… Add {C}. If that mana is spent on an instant or sorcery spell, that spell can't be countered."
+    const lifeOnly = MANA.filter(k => lines.some(l => new RegExp(`^\\{T\\}, pay \\w+ life: add \\{${k}\\}(?:\\. if that mana is spent on .+)?\\.?$`, 'i').test(l.trim()))
       && !lines.some(l => new RegExp(`^\\{T\\}: add [^.]*\\{${k}\\}`, 'i').test(l.trim())));
     if (lifeOnly.length) inst.lifeColors = lifeOnly;
     s.cards[iid] = inst;
@@ -817,6 +825,7 @@ const Game = (() => {
     shuffleArray(s.zones.library);
     log(s, `New game with ${deck.name}${s.onDraw ? ' (on the draw)' : ' (on the play)'}.`);
     drawCards(s, 7, true);
+    delete s.drawnThisTurn; // the opening hand isn't a draw this turn (Narset)
     firstDraw(s);
     return s;
   }
@@ -838,6 +847,11 @@ const Game = (() => {
   // The opening hand doesn't (quiet), except the first-turn card on the draw.
   function drawCards(s, n = 1, quiet) {
     let drawn = 0;
+    // Narset, Parter of Veils (the opponent's): "Each opponent can't draw more than one card each turn." (s.drawCap, bot.js's refreshGrants)
+    if (s.drawCap != null && n > s.drawCap - (s.drawnThisTurn || 0)) {
+      n = Math.max(0, s.drawCap - (s.drawnThisTurn || 0));
+      log(s, `Can't draw more than ${s.drawCap === 1 ? 'one card' : `${s.drawCap} cards`} this turn.`);
+    }
     const now = Date.now();
     for (let i = 0; i < n; i++) {
       const iid = s.zones.library.shift();
@@ -850,6 +864,7 @@ const Game = (() => {
       addToHand(s, iid);
       drawn++;
     }
+    s.drawnThisTurn = (s.drawnThisTurn || 0) + drawn;
     if (!quiet && drawn) log(s, `Drew ${drawn === 1 ? 'a card' : drawn + ' cards'}.`);
     if (drawn && hooks.drew) hooks.drew(s, drawn);
     return drawn;
@@ -1147,6 +1162,8 @@ const Game = (() => {
     delete s.delayed;
     delete s.deathsThisTurn;
     delete s.leftThisTurn;
+    delete s.cantCast; // Silence
+    delete s.drawnThisTurn; // Narset
   }
 
   // "Counter target spell" (or "…creature spell", "…noncreature spell", "…unless its controller pays {3}").
@@ -1205,10 +1222,17 @@ const Game = (() => {
     // Rebound (Terramorph): cast from your hand, it's exiled as it resolves, to be cast again at your next upkeep (bot.js's upkeepSuspend).
     // Gravestorm (Ominous Harvest): permanents put into a graveyard from the battlefield this turn.
     if (from === 'battlefield' && to === 'graveyard' && !inst.faceDown) { if (s.toGraveTurn !== s.turn) { s.toGraveTurn = s.turn; s.toGraveN = 0; } s.toGraveN++; }
+    // Buyback (Capsize): the paid-for spell goes back to its owner's hand.
+    if (from === 'battlefield' && to === 'graveyard' && inst.boughtBack && /\b(instant|sorcery)\b/i.test(inst.typeLine || '')) { delete inst.boughtBack; to = 'hand'; }
     let rebound = false;
     if (from === 'battlefield' && to === 'graveyard' && inst.reboundArmed && /\b(instant|sorcery)\b/i.test(inst.typeLine || '')) { to = 'exile'; rebound = true; }
     // Quintorius, Loremaster: "If that spell would be put into a graveyard, put it on the bottom of its owner's library instead."
     if (from === 'battlefield' && to === 'graveyard' && inst.bottomInstead && /\b(instant|sorcery)\b/i.test(inst.typeLine || '')) { delete inst.bottomInstead; return move(s, iid, 'library', { bottom: true }); }
+    // Soulless Jailer: "Permanent cards in graveyards can't enter the battlefield." (s.graveLocked, bot.js's refreshGrants)
+    if (from === 'graveyard' && to === 'battlefield' && s.graveLocked && !(opts.cast && !isLand(inst))) { // a spell cast from there goes by the stack
+      log(s, `${inst.name} can't enter the battlefield from a graveyard.`);
+      return;
+    }
     const list = s.zones[from];
     const at = list.indexOf(iid);
     if (at >= 0) list.splice(at, 1);
@@ -1428,6 +1452,7 @@ const Game = (() => {
     shuffleArray(s.zones.library);
     s.mulligans++;
     drawCards(s, 7, true);
+    delete s.drawnThisTurn; // the opening hand isn't a draw this turn (Narset)
     firstDraw(s);
     log(s, `Mulligan #${s.mulligans}: drew a new 7${drawsTurnOne(s) && s.turn === 1 ? ' plus your first-turn card' : ''}. Put ${s.mulligans} on the bottom (right-click a card → Bottom of library).`);
   }
