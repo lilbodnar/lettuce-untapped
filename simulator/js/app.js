@@ -230,7 +230,8 @@
 
   // Makes sure every card in the deck has card info (images, types). Fetches any that are missing.
   async function ensureDefs(ids, full) {
-    const missing = [...new Set(ids)].filter(id => id && (!def(id) || (full && !Array.isArray(def(id).producedMana))));
+    // (cards kept before backPT was: two-faced ones are fetched again for it)
+    const missing = [...new Set(ids)].filter(id => id && (!def(id) || (full && (!Array.isArray(def(id).producedMana) || (def(id).backPT === undefined && (def(id).names || []).length > 2)))));
     if (!missing.length) return;
     status(`Getting card info from Scryfall (${missing.length} cards)…`);
     const { found } = await Scryfall.collection(missing.map(id => ({ id })));
@@ -969,6 +970,14 @@
         inst.foretold = true;
         inst.playable = { forever: true, cost: ab.castCost, from: game.turn + 1 };
         Game.log(game, `Foretold ${inst.name} (castable from your next turn for ${ab.castCost}).`);
+      });
+    }
+    // Elvish Spirit Guide, Simian Spirit Guide: exiled from your hand, its mana into your pool.
+    if (ab.kind === 'handMana') {
+      return act(() => {
+        Game.move(game, iid, 'exile');
+        ab.mana.forEach(k => { game.mana[k] = (game.mana[k] || 0) + 1; });
+        Game.log(game, `Exiled ${inst.name} from your hand for ${ab.mana.map(k => `{${k}}`).join('')}.`);
       });
     }
     // Emrakul, the Exigent Doom: exiled (castable from there), and a land of yours taps for {C}{C} until then (Game.sourceOf). The land
@@ -2289,6 +2298,7 @@
     if (opts.choice === 'fuse') inst.fused = true; // both halves (Bot.spellResolve)
     else if (opts.kicks) { inst.kickCount = opts.kicks; inst.kicked = true; } // Batroc's multikicker
     if (opts.choice === 'evoke') inst.evoked = true; // Mulldrifter: sacrificed as it enters (the entered hook)
+    if (opts.choice === 'blitz' || opts.choice === 'dash') inst.fastCast = opts.choice; // Jaxis, Ragavan (the entered hook: Bot.fastCast)
     if (opts.choice === 'overload') inst.overloaded = true; // Vandalblast: "each" instead of "target" (Bot.spellText)
     // Gift: the opponent gets it first ("If the gift was promised, …").
     if (opts.choice === 'gift') { inst.giftPromised = true; effectCtx().oppsDraw(1); Game.log(game, `${inst.name}: promised the gift, so an opponent drew a card.`); }
@@ -2363,7 +2373,7 @@
   function tapCard(iid, x, y) {
     const inst = game.cards[iid];
     if (!inst) return;
-    const colors = Game.isLand(inst) ? Game.producesOf(inst) : inst.mana && !Game.isCreature(inst) ? inst.mana.colors : [];
+    const colors = Game.isLand(inst) ? Game.producesOf(inst) : inst.mana && !Game.isCreature(inst) ? (inst.mana.imprint ? inst.imprintColors || [] : inst.mana.colors) : []; // Chrome Mox: its card's colors
     // "{1}, {T}: Add {G}{W}" (Sungrass Prairie): pays the {1} and adds both, no question to ask.
     if (inst.tapped || inst.faceDown || colors.length < 2 || (inst.mana && inst.mana.filter)) return act(() => Game.setTapped(game, iid));
     if (x == null) {
@@ -3769,6 +3779,8 @@
   // "Whenever a creature you control enters, …" (Ajani's Welcome) counts tokens too.
   Game.hooks.tokenEntered = (s, inst) => {
     Bot.enterTrigger(s, inst, def); // a token copy of Spider-Man
+    // A token copy of a card has that card's "When this enters, …" (Heat Shimmer on Etali, Primal Conqueror).
+    if (!inst.custom && inst.id && (s === game || (hasBot() && s === game.bot.s))) Bot.enterEffects(game, s, inst, def, effectCtx());
     if (s === game) Bot.creatureEntered(game, inst, def, effectCtx());
     else if (hasBot() && s === game.bot.s) Bot.creatureEntered(game, inst, def, null, s);
   };
@@ -3840,6 +3852,7 @@
       Game.move(s, inst.iid, 'graveyard');
       return Bot.sacrificed(game, s, inst, def, s === game ? effectCtx() : null); // Ashling: "Whenever you sacrifice a nontoken Elemental, …"
     }
+    if (inst.fastCast) Bot.fastCast(game, s, inst); // blitz, dash
     // "Choose one —": you tick the modes (after the move finishes, like the type prompt below).
     if (s === game && Bot.spellModes(inst, def)) return setTimeout(() => chooseModes(inst.iid), 0);
     // "Creatures you control get +2/+2 until end of turn": done, so the spell goes to the graveyard.
@@ -4001,7 +4014,19 @@
       if (ids.length < n) return status(`${inst.name} needs you to sacrifice ${what}, and you don't have enough.`, 'warn', 8000);
       return pickCards({ title: `Sacrifice ${what} for ${inst.name}`, note: ab.text, ids, min: n, max: n, ok: 'Sacrifice and activate', cancel: 'Cancel' }, picks => activate(iid, ab, discards, picks));
     }
+    // Food Chain: "Exile a creature you control: …" — pick which.
+    if (ab.exileOther && !ab.exilePick) {
+      const ids = game.zones.battlefield.filter(id => id !== iid && Bot.cardFits(game.cards[id], ab.exileOther));
+      if (!ids.length) return status(`${inst.name} needs you to exile a ${ab.exileOther} you control.`, 'warn', 8000);
+      return pickCards({ title: `Exile a ${ab.exileOther} for ${inst.name}`, note: ab.text, ids, min: 1, max: 1, ok: 'Exile and activate', cancel: 'Cancel' }, picks => activate(iid, { ...ab, exilePick: picks[0] }, discards, sacs));
+    }
     act(() => {
+      if (ab.exilePick && game.cards[ab.exilePick]) {
+        const c = game.cards[ab.exilePick];
+        game.lastExiledMv = Bot.cmcOfInst(c, def); // Food Chain: "1 plus the exiled creature's mana value"
+        Game.log(game, `Exiled ${c.name} for ${inst.name}.`);
+        Game.move(game, c.iid, c.commander ? 'command' : 'exile');
+      }
       (sacs || []).forEach(id => {
         const c = game.cards[id];
         if (!c) return;

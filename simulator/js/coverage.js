@@ -38,9 +38,9 @@ const Coverage = (() => {
   // Done for you when you cast it (app.js asks), but Opp never uses them.
   const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback', 'harmonize',
     'impending', 'bestow', 'mutate', 'morph', 'megamorph', 'suspend', 'basic landcycling',
-    'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse'];
+    'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash'];
   // Done on every table (bot.js).
-  const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve'];
+  const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot'];
 
   // ---------- one keyword line ----------
 
@@ -277,6 +277,8 @@ const Coverage = (() => {
     // Selvala (creatureEntered), Fertile Ground (game.js's sourceOf)
     if (/^whenever another creature enters, its controller may draw a card if its power is greater than each other creature's power\.?$/i.test(line)) return out;
     if (/^whenever enchanted land is tapped for mana, its controller adds an additional one mana of any colou?r\.?$/i.test(line)) return out;
+    // Wild Growth, Utopia Sprawl (game.js's auraMana)
+    if (/^whenever enchanted (?:land|forest) is tapped for mana, its controller adds an additional (?:\{[WUBRGC]\}|one mana of the chosen colou?r)\.?$/i.test(line)) return out;
     // Mirrorwing Dragon (spellTargeted: the spell's effect on each of the caster's other creatures)
     if (/^whenever a player casts an instant or sorcery spell that targets only (?:this creature|.+?), that player copies that spell for each other creature they control that the spell could target\. each copy targets a different one of those creatures\.?$/i.test(line)) return out;
     if (/^whenever you discard one or more nonland cards, you may exile one of them from your graveyard\. if you do, you may cast it this turn\.?$/i.test(line)) return out; // Conspiracy Theorist
@@ -405,6 +407,8 @@ const Coverage = (() => {
       // A land's plain "{T}: Add {B}." (Scryfall's produced_mana); others need manaAbility (Cabal Coffers).
       if ((is(card, 'land') && /^\{T\}$/i.test(m[1].trim()) && !/for each|chosen|equal to|\bx\b/i.test(m[2])) || G.manaAbility(card.name, line)) return out;
       if (/^tap an untapped legendary creature you control$/i.test(m[1].trim()) && /^add one mana of any colou?r\.?$/i.test(m[2].trim())) return out; // Relic of Legends (game.js manaUnits)
+      // Elvish Spirit Guide (Bot.handAbilities; app.js's hand menu)
+      if (B.handAbilities(inst, () => ({ oracle: line })).some(a => a.kind === 'handMana')) { gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
       // Skirk Prospector: "Sacrifice a Goblin: Add {R}." Not auto-tapped, but you activate it (its "add {R}" fills your mana pool).
       const sac = B.activatedAbilities(inst, () => ({ oracle: line }))[0];
       if (!(sac && !notRun(sac.effect, inst).length)) { gap(out, 'both', 'mana', `mana ability: ${m[1]}: ${m[2]}`); return out; }
@@ -532,6 +536,13 @@ const Coverage = (() => {
     /^you may cast creature spells with power \d+ or greater from the top of your library\. if you cast a creature spell this way, it gains haste until end of turn\.?$/i, // (topCastable)
     /^as long as a card exiled with this creature is a creature card, this creature has the power, toughness, and creature types of the last creature card exiled with it\. it's still an? \w+\.?$/i, // Duplicant (targetEffect, grantsOnce)
     /^(?:this creature|.+?) enters with an? [\w+/-]+ counter on it for each .+? cards? in your graveyard\.?$/i, // Diregraf Colossus
+    // "Is Your Turn Over Yet?" (Etali, Primal Conqueror).
+    /^you may play an additional land on each of your turns\.?$/i, // Exploration (game.js's move)
+    /^if an artifact or creature entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time\.?$/i, // Panharmonicon (extraTriggers)
+    /^(?:nontoken )?creatures you control have riot\.?$/i, // Rhythm of the Wild (enterTrigger)
+    /^\w+ spells you cast have prowl (?:\{[^}]+\})+\.?$/i, // Hunting Velociraptor (costChoices; Opp pays the mana cost)
+    /^creatures you control can boast twice during each of your turns rather than once\.?$/i, // Birgi: boast isn't held to once a turn here
+    /^cumulative upkeep\s*[—-]\s*add (?:\{[WUBRGC]\})+\.?$/i, // Braid of Fire (phaseTriggers)
   ];
 
   function staticLine(card, line, inst) {
@@ -548,10 +559,11 @@ const Coverage = (() => {
     // 'Commander creatures you own have "Whenever this creature attacks a player, …"': the ability it gives.
     if ((m = /^(?:other )?(.+?) you (?:control|own) have "(.+)"\.?$/i.exec(line)) && !m[1].includes(':')) {
       const given = { id: 'given', name: 'this creature', typeLine: 'Creature' };
+      if (B.grantKws(`"${m[2]}"`).length && keywordLine(card, m[2])) return keywordLine(card, m[2]); // Hexing Squelcher: 'have "Ward—Pay 2 life."'
       return triggerLine(card, m[2], given) || activatedLine(card, m[2], given) || staticLine(card, m[2], given);
     }
     // Roshan; recover (Garza's Assassin); Ebondeath from the graveyard; The Darkness Crystal; The Immortal Sun; Rune of Mortality.
-    if (/^other creatures you control are \w+ in addition to their other types\./i.test(line) || P.RECOVER.test(line) || P.GRAVE_CAST.test(line)
+    if (/^other creatures you control are \w+ in addition to their other types\./i.test(line) || P.RECOVER.test(line) || P.GRAVE_CAST.test(line) || P.GRAVE_CAST3.test(line)
       || P.CRYSTAL.test(line) || /^players can't activate planeswalkers' loyalty abilities\.?$/i.test(line)) return out;
     // Tetsuko Umezawa; Weathered Sentinels; Reliquary Tower; Crystal Barricade and Teyo (hexproof, damage
     // prevention); Wall of Glare and Brave the Sands; Wall of Stolen Identity; Towering Titan.

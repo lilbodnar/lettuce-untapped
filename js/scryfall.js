@@ -68,6 +68,7 @@ const Scryfall = (() => {
       oracle: c.oracle_text || faces.map(f => `${f.name}: ${f.oracle_text || ''}`).join('\n\n'),
       power: c.power || face.power || null,
       toughness: c.toughness || face.toughness || null,
+      backPT: faces[1] && faces[1].power != null ? `${faces[1].power}/${faces[1].toughness}` : null, // a transformed creature's (Etali, Primal Sickness)
       loyalty: c.loyalty || face.loyalty || null,
       producedMana: c.produced_mana || [],
       tokens: (c.all_parts || [])

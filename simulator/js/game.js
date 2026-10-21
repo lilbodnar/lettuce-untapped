@@ -121,6 +121,8 @@ const Game = (() => {
       // either color; its hybrid {G/U} is paid like a {1} here.
       const h = line.trim().match(/^\{([WUBRG])\/([WUBRG])\},\s*\{T\}:\s*add \{\1\}\{\1\}, \{\1\}\{\2\}, or \{\2\}\{\2\}\.?$/i);
       if (h) { const pair = [h[1].toUpperCase(), h[2].toUpperCase()]; return { colors: pair, amount: 2, sacrifice: false, filter: 1, makes: [pair, pair] }; }
+      // Chrome Mox: "{T}: Add one mana of any of the exiled card's colors." (inst.imprintColors, bot.js's imprint)
+      if (/^\{T\}:\s*add one mana of any of the exiled card's colou?rs\.?$/i.test(line.trim())) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, imprint: true };
       // Heraldic Banner: "{T}: Add one mana of the chosen color." (inst.chosenColor)
       if (/^\{T\}:\s*add one mana of the chosen colou?r\.?$/i.test(line.trim())) return { colors: ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, chosenColor: true };
       // Throne of Eldraine: "{T}: Add four mana of the chosen color. Spend this mana only to cast monocolored spells of that color." (spendable)
@@ -214,14 +216,18 @@ const Game = (() => {
     // Fertile Ground: "Whenever enchanted land is tapped for mana, its controller adds an additional one mana of any color."
     // Mirari's Wake, Vorinclex: "Whenever you tap a land for mana, add one mana of any type that land produced." (s.landDouble, bot.js's refreshGrants)
     if (src && isLand(inst) && s.landDouble && !src.filter) {
-      const aura = attachmentsOf(s, inst.iid).filter(id => s.cards[id].extraManaAura).length;
-      return { ...src, amount: src.amount * (1 + s.landDouble) + aura, makes: [...Array(src.amount * (1 + s.landDouble)).fill(src.colors), ...Array(aura).fill(MANA.slice(0, 5))] };
+      const aura = auraMana(s, inst);
+      return { ...src, amount: src.amount * (1 + s.landDouble) + aura.length, makes: [...Array(src.amount * (1 + s.landDouble)).fill(src.colors), ...aura] };
     }
-    const extra = src && isLand(inst) ? attachmentsOf(s, inst.iid).filter(id => s.cards[id].extraManaAura).length : 0;
-    if (extra) return { ...src, amount: src.amount + extra, makes: [...Array(src.amount).fill(src.colors), ...Array(extra).fill(MANA.slice(0, 5))] };
+    const extra = src && isLand(inst) ? auraMana(s, inst) : [];
+    if (extra.length) return { ...src, amount: src.amount + extra.length, colors: MANA.filter(k => src.colors.includes(k) || extra.some(e => e.includes(k))), makes: [...Array(src.amount).fill(src.colors), ...extra] };
     if (!src || !s.extraC || !src.colors.every(k => k === 'C') || src.filter) return src;
     return { ...src, amount: src.amount + s.extraC };
   }
+  // The extra mana the auras on a land add as it's tapped, each as the colors it can be: Fertile Ground (any color),
+  // Wild Growth ({G}), Utopia Sprawl (the chosen color).
+  const auraMana = (s, land) => attachmentsOf(s, land.iid).map(id => s.cards[id]).filter(a => a.extraManaAura)
+    .map(a => (a.extraManaAura === 'chosen' ? [a.chosenColor || 'G'] : MANA.includes(a.extraManaAura) ? [a.extraManaAura] : MANA.slice(0, 5)));
   // The creature Springleaf Drum would tap (an untapped one, tokens first), or null.
   const drumFodder = (s, inst) => {
     const list = s.zones.battlefield.map(id => s.cards[id]).filter(c => c !== inst && !c.tapped && !c.phasedOut && !c.attacking && isCreature(c));
@@ -251,6 +257,10 @@ const Game = (() => {
       if (!isLand(inst)) return null;
       const colors = producesOf(inst).filter(k => k === 'C'); // Cabal Stronghold's {T}: Add {C}
       return colors.length ? { colors, amount: 1, sacrifice: false } : null;
+    }
+    if (inst.mana && inst.mana.imprint) {
+      const cols = (inst.imprintColors || []).filter(k => MANA.includes(k));
+      return cols.length ? { ...inst.mana, colors: cols } : null;
     }
     if (inst.mana && inst.mana.chosenColor) {
       const cols = [...new Set([inst.mana.base, inst.chosenColor].filter(Boolean))]; // Thriving lands: their own color too
@@ -779,8 +789,11 @@ const Game = (() => {
     if (/^.+? is all colors\b/im.test(String(def.oracle || ''))) inst.allColors = true; // Transguild Courier
     if (/^tap an untapped legendary creature you control: add one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.tapLegend = true; // Relic of Legends (manaUnits)
     if (/^rebound\b/im.test(String(def.oracle || ''))) inst.hasRebound = true; // Terramorph (move)
+    if (/^you may play an additional land on each of your turns\.?$/im.test(String(def.oracle || ''))) inst.extraLandDrop = true; // Exploration (move)
     if (/^compleated\b/im.test(String(def.oracle || ''))) inst.compleated = true; // Vraska, Betrayal's Sting (startLoyalty)
     if (/^whenever enchanted land is tapped for mana, its controller adds an additional one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.extraManaAura = true; // Fertile Ground (sourceOf)
+    const auraAdds = /^whenever enchanted (?:land|forest) is tapped for mana, its controller adds an additional (?:\{([WUBRGC])\}|one mana of the (chosen) colou?r)\.?$/im.exec(String(def.oracle || ''));
+    if (auraAdds) inst.extraManaAura = auraAdds[1] ? auraAdds[1].toUpperCase() : 'chosen'; // Wild Growth, Utopia Sprawl (auraMana)
     if (/^if one or more creature tokens would be created under your control, that many 4\/4 white angel creature tokens with flying and vigilance are created instead\.?$/im.test(String(def.oracle || ''))) inst.angelTokens = true; // Divine Visitation (createToken)
     // Ifnir Deadlands: "{T}, Pay 1 life: Add {B}." That color isn't auto-tapped (producesOf); you activate it (bot.js's activatedAbilities).
     const lines = String(def.oracle || '').split('\n');
@@ -1293,7 +1306,11 @@ const Game = (() => {
         inst.tapped = true;
         inst.tappedFor = null;
       }
-      if (from === 'hand' && isLand(inst) && !opts.put) s.landPlayed = true;
+      // Exploration: "You may play an additional land on each of your turns." (inst.extraLandDrop)
+      if (from === 'hand' && isLand(inst) && !opts.put) {
+        s.landsThisTurn = (s.landsThisTurn || 0) + 1;
+        s.landPlayed = s.landsThisTurn > s.zones.battlefield.filter(id => s.cards[id].extraLandDrop && !s.cards[id].faceDown).length;
+      }
       if (from === 'command' && inst.commander) inst.castCount = (inst.castCount || 0) + 1;
       // Cast, not just put onto the battlefield (The Sibsig Ceremony's "if you cast it").
       if (from !== 'battlefield' && !opts.put && (from === 'hand' || from === 'command' || opts.cast) && !isLand(inst) && !opts.faceDown) { inst.wasCast = true; inst.castFrom = from; } // Dirgur Focusmage: "… from your hand"
@@ -1347,7 +1364,7 @@ const Game = (() => {
     if (!next && inst.filterPaid) return untapFilter(s, inst);
     inst.tapped = next;
     if (next) {
-      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && (inst.mana.countKw || inst.mana.chosenColor) ? sourceOf(s, inst) : inst.mana;
+      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && (inst.mana.countKw || inst.mana.chosenColor || inst.mana.imprint) ? sourceOf(s, inst) : inst.mana;
       if (!src || inst.faceDown) return;
       let c = color;
       if (c === undefined) c = src.colors.length === 1 && !(isCreature(inst) && !isLand(inst)) ? src.colors[0] : null;
@@ -1355,9 +1372,14 @@ const Game = (() => {
         s.mana[c] += src.amount;
         inst.tappedFor = c;
         inst.tappedAmount = src.amount;
+        // Wild Growth, Utopia Sprawl, Fertile Ground: their extra mana too (any color: the same as the land's; click the pool to change it)
+        const extra = isLand(inst) ? auraMana(s, inst).map(cs => (cs.includes(c) ? c : cs[0])) : [];
+        if (extra.length) { extra.forEach(k => { s.mana[k]++; }); inst.auraTapped = extra; }
       }
     } else if (inst.tappedFor) {
       s.mana[inst.tappedFor] = Math.max(0, s.mana[inst.tappedFor] - (inst.tappedAmount || 1));
+      (inst.auraTapped || []).forEach(k => { s.mana[k] = Math.max(0, s.mana[k] - 1); });
+      delete inst.auraTapped;
       inst.tappedFor = null;
       inst.tappedAmount = 0;
     }
@@ -1422,6 +1444,7 @@ const Game = (() => {
     endOfTurn(s);
     s.turn++;
     s.landPlayed = false;
+    s.landsThisTurn = 0;
     emptyMana(s);
     const stunned = [];
     // Teferi's Protection: "Until your next turn, …" ends, and phased-out permanents come back.

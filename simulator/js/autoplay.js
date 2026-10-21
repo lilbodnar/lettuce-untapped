@@ -48,6 +48,7 @@ const Autoplay = (() => {
     G.hooks.tokenEntered = (s, inst) => {
       B.enterTrigger(s, inst, defOf);
       const v = view();
+      if (v && v.bot && !inst.custom && inst.id) B.enterEffects(v, s, inst, defOf, null); // a token copy's "When this enters, …"
       if (v && v.bot && s === v.bot.s) B.creatureEntered(v, inst, defOf, null, s);
     };
     G.hooks.cast = null;
