@@ -485,10 +485,12 @@
     const min = o.min == null ? o.max : o.min;
     const cardOf = o.cardOf || (iid => (o.cards || game.cards)[iid]);
     const label = o.whoOf ? id => `<span class="small">${esc(o.whoOf(id))}</span>` : () => '';
+    blockPreviews = {};
+    for (const iid of o.ids) blockPreviews['p' + iid] = cardOf(iid);
     const draw = () => {
       openModal(`<div class="page-head"><h3>${esc(o.title)}</h3>${o.cancel ? `<button class="btn ghost sm" data-pick-cancel>${esc(o.cancel)}</button>` : ''}</div>
         ${o.note ? `<p class="muted small">${esc(o.note)}</p>` : ''}
-        <div class="viewer-grid">${o.ids.map(iid => `<div class="viewer-card"><div class="card${chosen.has(iid) ? ' picked' : ''}" data-pick="${esc(iid)}" title="Click to pick">${faceHtml(cardOf(iid))}</div>${label(iid)}</div>`).join('')}</div>
+        <div class="viewer-grid">${o.ids.map(iid => `<div class="viewer-card"><div class="card${chosen.has(iid) ? ' picked' : ''}" data-pick="${esc(iid)}" data-peek="p${esc(iid)}" title="Click to pick">${faceHtml(cardOf(iid))}</div>${label(iid)}</div>`).join('')}</div>
         <div class="toolbar end"><button class="btn" data-pick-ok ${chosen.size < min ? 'disabled' : ''}>${esc(o.ok)}${o.max > 1 ? ` (${chosen.size}/${o.max})` : ''}</button></div>`);
       modalBox.querySelectorAll('[data-pick]').forEach(el => {
         el.onclick = () => {
@@ -1569,7 +1571,7 @@
   // Pick blockers for each attacker (more than one can block the same attacker; menace needs two).
   // list: [{ key, card, st, aim }], aim being what it's going after. limit: { cap, why }, the most
   // creatures you can block with this combat (Mirri).
-  let blockPreviews = {}; // data-peek key → card, for hovering cards in the block popup
+  let blockPreviews = {}; // data-peek key → card, for hovering cards in the block and pick-cards popups
   let blockLimit = { cap: Infinity, why: '' };
   function openBlockModal(title, before, list, doneAct, laterTip, limit) {
     blockLimit = limit && limit.cap < Infinity ? limit : { cap: Infinity, why: '' };
@@ -5735,7 +5737,7 @@
     const theirs = e.target.closest('[data-oiid]');
     if (theirs && theirs.dataset.opid + '|' + theirs.dataset.oiid !== hoverOpp) showOppPreview(theirs.dataset.opid, theirs.dataset.oiid);
   });
-  // Hovering a card in the block popup shows it in the preview pane, lifted above the popup's shade.
+  // Hovering a card in the block or pick-cards popup shows it in the preview pane, lifted above the popup's shade.
   modalBox.addEventListener('mouseover', e => {
     const peek = e.target.closest('[data-peek]');
     const inst = peek && blockPreviews[peek.dataset.peek];
