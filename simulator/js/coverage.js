@@ -40,7 +40,8 @@ const Coverage = (() => {
     'impending', 'bestow', 'mutate', 'morph', 'megamorph', 'suspend', 'basic landcycling',
     'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash'];
   // Done on every table (bot.js).
-  const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot'];
+  const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
+    'miracle', 'undaunted']; // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
 
@@ -145,6 +146,13 @@ const Coverage = (() => {
       /^when this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking\.?$/i, // Misleading Signpost (one opponent here)
     ];
     if (DONE.some(re => re.test(line)) || P.DOVESCAPE.test(line)) return out; // Dovescape (bot.js's doveCounter)
+    if (P.ERESTOR.test(line) || P.UNITY.test(line)) return out; // Erestor of the Council, Model of Unity (bot.js's votingDone)
+    if (P.CHAMPIONS.test(line)) return out; // Champions of Minas Tirith (bot.js's tableRules: handTax)
+    if (P.MONARCH_DRAW.test(line) || P.FORTH.test(line) || P.HARSH.test(line)) return out;
+    if (P.NABBER.test(line)) return out; // Treasure Nabber (bot.js's manaTapped, refreshGrants, returnLent) // Archivist of Gondor (monarchExtra), Forth Eorlingas! (spellCast), Harsh Mentor (abilityActivated)
+    if ((m = P.PREVENT_GROW.exec(line)) && self(m[2])) return out; // Selfless Squire (bot.js's damagePrevented)
+    if ((m = P.SCRY_GROW.exec(line)) && self(m[1])) return out; // Celeborn the Wise (bot.js's applyScry)
+    if ((m = P.TOKEN_WATCH.exec(line))) { effectGaps('both', m[1]); return out; } // Rosie Cotton, Mirkwood Bats (creatureEntered, sacrificed)
     const THEN = [
       /^whenever you create one or more creature tokens, (?:you may )?(.+)$/i, // Staff of the Storyteller
       /^whenever you cast your (?:first|second|third|fourth|fifth) (?:[\w,]+ )*?spell each turn, (?:you may )?(.+)$/i, // Plan for All Outcomes, The Fantasticar, Lady Loki
@@ -297,7 +305,10 @@ const Coverage = (() => {
     if (/^whenever a creature with \w+ attacks you, .+? deals damage equal to (?:his|her|its) power to that creature\.?$/i.test(line)) return out;
     if (/^whenever a creature attacks one of your opponents, if that player is the monarch, that creature gets [+-]\d+\/[+-]\d+(?: and gains .+?)? until end of turn\.?$/i.test(line)) return out;
     if ((m = /^whenever equipped creature attacks the monarch, (.+)$/i.exec(line))) { effectGaps('you', m[1]); gap(out, 'opp', 'keyword', 'equip (Opp never equips)'); return out; }
-    if ((m = /^whenever one or more \w+ you control(?: with mana value \d+ or less)? enter, (?:you may )?(.+?)(?:\.\s*this ability triggers only once each turn)?\.?$/i.exec(line))) { effectGaps('both', m[1]); return out; }
+    if ((m = /^whenever one or more (?:other )?\w+ you control(?: with mana value \d+ or less)? enter, (?:you may )?(.+?)(?:\.\s*this ability triggers only once each turn)?\.?$/i.exec(line))) { effectGaps('both', m[1]); return out; }
+    // The Lord of the Rings precons (bot.js's attackWatch): Mirkwood Trapper, Frontier Warmonger, Frontline Medic's battalion.
+    if (P.MIRKWOOD.test(line) || P.WARMONGER.test(line) || P.NOT_ATTACKING_YOU.test(line)) return out;
+    if ((m = P.BATTALION.exec(line)) && self(m[1])) { effectGaps('both', m[3]); return out; }
     // Nakia (creatureEntered), W'Kabi (attackWatch).
     if ((m = /^whenever (?:your commander enters(?: or attacks)?|you attack with your commander), (?:you may )?(.+)$/i.exec(line)) && !/if this card is in your graveyard/i.test(m[1])) { effectGaps('both', m[1]); return out; }
     // Quintorius (cardMoved); Ultron, Iron Monger (connived).
@@ -312,7 +323,7 @@ const Coverage = (() => {
     // or blocks), …". "with defender" needs a keyword it knows; other "with …" words it can't check.
     // Noxious Ghoul: "Whenever this creature or another Zombie enters" (bot.js reads it for its own side).
     const watchHead = /you control|under your control/i.test(line.split(',')[0]) || /^whenever this creature or another \w+ enters,/i.test(line);
-    const withOk = w => !/ with /i.test(w[4]) && (!w[5] || w[6] || B.KEYWORDS.includes(w[5].replace(/^\s*with\s+/i, '').toLowerCase()));
+    const withOk = w => !/ with /i.test(w[4]) && (!w[5] || w[6] || /mana value/i.test(w[5]) || B.KEYWORDS.includes(w[5].replace(/^\s*with\s+/i, '').toLowerCase()));
     // Thornbite Staff, Hero's Blade ("Whenever a legendary creature you control enters, you may attach this Equipment to it.")
     if (/^whenever an? (.+?) enters, (?:you may )?attach this (?:equipment|aura) to (?:it|that creature)\.?$/i.test(line)) return out; // Shielded by Faith too
     for (const watch of [P.ENTER_WATCH, P.ATTACK_WATCH, P.BLOCK_WATCH]) {
@@ -360,7 +371,7 @@ const Coverage = (() => {
     }
     if ((m = /^when you cast this spell, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; } // Ugin, Eye of the Storms
     if ((m = /^whenever you gain life( for the first time each turn)?, (?:you may )?(.+)$/i.exec(line))) {
-      effectGaps('both', m[2].replace(/\bthat much life\b/gi, '1 life').replace(/\bthat many\b/gi, '1'));
+      effectGaps('both', P.gainFill(m[2], 1));
       return out;
     }
     // Odds and Ends: Marvo's clash, Aboleth Spawn (creatureEntered), Inniaz (attackWatch), Aerial Extortionist (opponentActed).
@@ -517,7 +528,7 @@ const Coverage = (() => {
     // The Strixhaven precons.
     /^escape\s*[—-]\s*(?:\{[^}]+\})+, exile \w+ other cards from your graveyard\.?$/i, // Woe Strider (escapeOk; app.js's graveyard menu)
     /^(?:this creature|.+?) escapes with \w+ [\w+/-]+ counters? on it\.?$/i, // (enterTrigger)
-    /^devour \d+$/i, // Mycoloth (app.js asks; Opp devours its small tokens)
+    /^devour (?:food )?\d+$/i, // Mycoloth (app.js asks; Opp devours its small tokens), Feasting Hobbit (Foods)
     /^nontoken creatures you control enter with an additional \+1\/\+1 counter on them for each creature that died under your control this turn\.?$/i, // Gorma (enterTrigger)
     /^nonland cards in your hand have miracle \{0\}\.?$/i, // Molecule Man (opponentActed's draw: the first card drawn each turn)
     /^multikicker (?:\{[^}]+\})+$/i, // Batroc (costChoices; Opp casts it unkicked)
@@ -543,6 +554,13 @@ const Coverage = (() => {
     /^\w+ spells you cast have prowl (?:\{[^}]+\})+\.?$/i, // Hunting Velociraptor (costChoices; Opp pays the mana cost)
     /^creatures you control can boast twice during each of your turns rather than once\.?$/i, // Birgi: boast isn't held to once a turn here
     /^cumulative upkeep\s*[—-]\s*add (?:\{[WUBRGC]\})+\.?$/i, // Braid of Fire (phaseTriggers)
+    // The Lord of the Rings precons.
+    P.ARWEN, P.DEARLY, P.REALM, // Arwen, Dearly Departed, Realm Seekers (enterTrigger)
+    P.ABILITY_DISCOUNT, P.NO_SAC, // Sam, Loyal Attendant (app.js's activate; oppEats); Hithlain Rope (choiceIds, oppSacrifices)
+    P.VERGE, // Verge Rangers (playLand; app.js's library menu)
+    /^the monarch controls enchanted creature\.?$/i, // Fealty to the Realm (bot.js's syncAuras)
+    P.NO_UNTAP, P.NOTION, // Basalt Monolith (game.js's nextTurn); Notion Thief (bot.js's drawInstead)
+    P.HOARD, // Cavern-Hoard Dragon (selfDiscount)
   ];
 
   function staticLine(card, line, inst) {
@@ -582,7 +600,7 @@ const Coverage = (() => {
       if (m[3] && !B.KEYWORDS.includes(m[3].toLowerCase())) { gap(out, 'both', 'static', line); return out; } // "with power 4 or greater"
       // "protection from black and from red" (Akroma's Memorial) is one keyword it gives.
       const raw = m[6] || m[7] || '';
-      const pro = /protection from [a-z]+(?:,? (?:and )?from [a-z]+)*/i.exec(raw);
+      const pro = /protection from [a-z-]+(?:,? (?:and )?from [a-z-]+)*/i.exec(raw);
       const kws = kwOnly(pro ? raw.replace(pro[0], '') : raw).concat(pro && !B.grantKws(pro[0]).length ? ['protection'] : []);
       const unknown = kws.filter(k => !B.KEYWORDS.includes(k) && !B.grantKws(k).length); // "toxic 1" is toxic
       if (!kws.length || !unknown.length) return out;
@@ -632,7 +650,7 @@ const Coverage = (() => {
     if (P.NO_KIND_ATTACK.test(line) || P.NO_COUNTERED_ATTACK.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your attacks"); return out; }
     // Flickering Ward (attachBonus's proChosen; its color is picked as it enters). Darksteel Mutation (attachBonus).
     if (/^enchanted creature has protection from the chosen colou?r\. this effect doesn't remove this aura\.?$/i.test(line)) return out;
-    if (/^enchanted creature is an? \w+ artifact creature with base power and toughness/i.test(line) && B.attachBonus(line).loseAll) return out;
+    if (/^enchanted creature is an? \w+ (?:artifact creature )?with base power and toughness/i.test(line) && B.attachBonus(line).loseAll) return out; // Lignify too
     if ((m = /^(?:equipped|enchanted) creature (.+?)\.?$/i.exec(line))) {
       const b = B.attachBonus(line);
       // Angelic Destiny: "… and is an Angel in addition to its other types" (b.types).
@@ -645,7 +663,7 @@ const Coverage = (() => {
         const r = triggerLine(card, l, given) || activatedLine(card, l, given) || staticLine(card, l, given);
         r.gaps.filter(g => g.side !== 'opp').forEach(g => gap(out, 'you', g.kind, g.phrase));
       });
-      if (b.pow || b.tou || b.kw.length || b.cantAttack || b.cantBlock || b.noAbilities || (b.lines || []).length) {
+      if (b.pow || b.tou || b.kw.length || b.cantAttack || b.cantBlock || b.noAbilities || b.fealty || (b.lines || []).length) {
         unknown.forEach(k => gap(out, 'you', 'static', `equipped/enchanted creature has ${k}`));
         if (line.replace(/"[^"]*"/g, '"…"').split(/(?<=\.)\s+/).length > 1) gap(out, 'you', 'static', `${/^equipped/i.test(line) ? 'equipped' : 'enchanted'} creature: ${line.split(/(?<=\.)\s+/).slice(1).join(' ')}`);
       } else gap(out, 'you', 'static', line);

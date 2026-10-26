@@ -31,6 +31,8 @@ const Autoplay = (() => {
     G.hooks.oppDamaged = (s, n) => { const v = view(); if (v && v.bot) B.opponentDamaged(v, s, n, defOf); };
     G.hooks.discard = (s, inst) => { const v = view(); return v && v.bot ? B.discardWatch(s, inst, defOf, v) : null; };
     G.hooks.drew = (s, n) => { const v = view(); if (v && v.bot) B.opponentActed(v, s, 'draw', n, defOf, null); };
+    G.hooks.manaTapped = (s, inst) => B.manaTapped(s, inst); // Treasure Nabber
+    G.hooks.drawInstead = (s, first) => { const v = view(); return !!(v && v.bot && B.drawInstead(v, s, first, defOf)); }; // Notion Thief
     G.hooks.counters = (s, inst, kind, n) => { const v = view(); if (v && v.bot) B.countersPut(v, s, inst, kind, n, defOf, null); };
     G.hooks.entered = (s, inst) => {
       if (!inst.faceDown) {

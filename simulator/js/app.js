@@ -1091,10 +1091,10 @@
     if (Bot.phaseTriggers(game, game, 'end step', def, null, true)) act(() => Bot.phaseTriggers(game, game, 'end step', def, effectCtx())); // "At the beginning of your end step, …"
     if (game.flickerBack) act(() => Bot.flickerReturn(game)); // Eerie Interlude
     // "At the beginning of the next end step" (Venser's copies, Avacyn, Synthetic Destiny) and impending's time counters.
-    act(() => { Bot.runAtEnd(game, def, effectCtx()); Bot.endImpending(game); });
+    act(() => { Bot.runAtEnd(game, def, effectCtx()); Bot.endImpending(game); if (hasBot()) Bot.returnLent(game, game, def); }); // Treasure Nabber's loot goes back
     const todo = Bot.endStepTriggers(game, def);
     const finish = () => {
-      if (amMonarch()) act(() => { Game.drawCards(game, 1); Game.log(game, 'You are the monarch, so you drew a card at your end step.'); });
+      if (amMonarch()) act(() => { const n = 1 + (hasBot() ? Bot.monarchExtra(game, def) : 0); Game.drawCards(game, n); Game.log(game, `You are the monarch, so you drew ${n === 1 ? 'a card' : `${n} cards`} at your end step.`); }); // Archivist of Gondor: one more
       game.endStepDone = game.turn;
       then();
     };
@@ -1170,6 +1170,11 @@
   const upkeepIids = () => (game && game.upkeep && game.upkeep.turn === game.turn ? game.upkeep.iids.filter(iid => game.cards[iid] && game.cards[iid].zone === 'battlefield') : []);
 
   function startNextTurn() {
+    // Opp's Plea for Power: it takes an extra turn, so yours is skipped (Bot.beginTurn skips Opp's the same way).
+    if (hasBot() && game.skipTurn > 0) {
+      act(() => { game.skipTurn--; Game.log(game, 'You skip this turn: Opp takes an extra turn.'); });
+      return oppTurn(true);
+    }
     act(() => {
       delete game.offTurn;
       game.inDrawStep = true; // Xyris: the first card drawn in the draw step doesn't count
@@ -1554,7 +1559,7 @@
       .map(x => ({ what: String(x.what || '').slice(0, 60), n: n(x.n) || 0, opps: !!x.opps }));
     const g = r.noGain && typeof r.noGain === 'object' ? r.noGain : {};
     return { arboria: !!r.arboria, acted: r.acted !== false, attackCap: n(r.attackCap), allAttackCap: n(r.allAttackCap), blockCap: n(r.blockCap),
-      attackTax: n(r.attackTax) || 0, spellTaxes: taxes, noGain: { all: !!g.all, opps: !!g.opps, self: !!g.self } };
+      attackTax: n(r.attackTax) || 0, handTax: !!r.handTax, spellTaxes: taxes, noGain: { all: !!g.all, opps: !!g.opps, self: !!g.self } };
   }
 
   // Arboria, Mirri, Silent Arbiter: every table's combat rules. { mine, byPid, all }.
@@ -1584,13 +1589,14 @@
     const multi = mine.filter(c => allowed[c.inst.iid] > 1);
     const rows = list.map(x => {
       const can = mine.filter(c => Bot.canBlock(c.st, x.st, game));
-      const menace = x.st.kw.has('menace');
+      const three = x.st.kw.has('three blockers'); // Troll of Khazad-dûm
+      const menace = three ? 3 : x.st.kw.has('menace') ? 2 : 0;
       return `<div class="block-row">
         <div class="viewer-card" data-peek="a${esc(x.key)}"><div class="card readonly">${faceHtml(x.card)}</div></div>
         <div><b>${esc(x.card.name)}</b> <span class="muted">${x.st.pow}/${x.st.tou}${esc(kwText(x.st))}</span>
           <div class="block-aim">→ ${esc(x.aim)}</div>
-          ${menace ? '<div class="muted small">Menace: block it with two or more creatures, or none.</div>' : ''}
-          ${can.length ? `<div class="block-picks">${can.map(c => `<label class="check" data-peek="b${esc(c.inst.iid)}"><input type="checkbox" data-block="${esc(x.key)}" data-name="${esc(x.card.name)}" ${menace ? 'data-menace="1"' : ''} data-max="${allowed[c.inst.iid] === Infinity ? 999 : allowed[c.inst.iid]}" value="${esc(c.inst.iid)}"> ${esc(c.inst.name)} <span class="muted">(${c.st.pow}/${c.st.tou})</span></label>`).join('')}</div>`
+          ${menace ? `<div class="muted small">${three ? 'Block it with three or more creatures, or none.' : 'Menace: block it with two or more creatures, or none.'}</div>` : ''}
+          ${can.length ? `<div class="block-picks">${can.map(c => `<label class="check" data-peek="b${esc(c.inst.iid)}"><input type="checkbox" data-block="${esc(x.key)}" data-name="${esc(x.card.name)}" ${menace ? `data-menace="${menace}"` : ''} data-max="${allowed[c.inst.iid] === Infinity ? 999 : allowed[c.inst.iid]}" value="${esc(c.inst.iid)}"> ${esc(c.inst.name)} <span class="muted">(${c.st.pow}/${c.st.tou})</span></label>`).join('')}</div>`
             : '<div class="muted small">None of your untapped creatures can block it.</div>'}
         </div></div>`;
     });
@@ -1620,11 +1626,11 @@
       }
       used.set(box.value, n);
       (blocks[box.dataset.block] = blocks[box.dataset.block] || []).push(box.value);
-      if (box.dataset.menace) menace[box.dataset.block] = box.dataset.name;
+      if (box.dataset.menace) menace[box.dataset.block] = { name: box.dataset.name, need: Number(box.dataset.menace) || 2 };
     }
     if (used.size > blockLimit.cap) { status(`${capText(blockLimit.why)}.`, 'warn'); return null; }
-    for (const [key, name] of Object.entries(menace)) {
-      if (blocks[key].length < 2) { status(`${name} has menace: block it with two or more creatures, or none.`, 'warn'); return null; }
+    for (const [key, { name, need }] of Object.entries(menace)) {
+      if (blocks[key].length < need) { status(need > 2 ? `${name} can't be blocked except by ${need} or more creatures.` : `${name} has menace: block it with two or more creatures, or none.`, 'warn'); return null; }
     }
     return blocks;
   }
@@ -1774,7 +1780,9 @@
       if (n > l.cap) return status(`${nameOf(pid)}: ${l.why}. You picked ${n}.`, 'warn');
     }
     // Ghostly Prison, Propaganda: pay for each creature attacking that player.
-    const tax = Object.entries(limits.byPid).reduce((sum, [pid, l]) => sum + l.tax * picks.filter(p => p.to.pid === pid && !p.to.pw).length, 0);
+    // Champions of Minas Tirith: attacking the monarch costs {X}, X the cards in your hand.
+    const tax = Object.entries(limits.byPid).reduce((sum, [pid, l]) => sum + l.tax * picks.filter(p => p.to.pid === pid && !p.to.pw).length
+      + (l.handTax && picks.some(p => p.to.pid === pid && !p.to.pw) ? game.zones.hand.length : 0), 0);
     if (tax && !Game.autoPay(JSON.parse(JSON.stringify(game)), `{${tax}}`)) return status(`Attacking with these costs {${tax}} (Ghostly Prison and the like), and your untapped mana can't pay it.`, 'warn');
     const payTax = () => {
       if (!tax) return;
@@ -2201,7 +2209,7 @@
     let cost = opts.cost != null ? opts.cost : (def(inst.id) || {}).manaCost || '';
     if (opts.x != null) cost = cost.replace(/\{X\}/gi, opts.x ? `{${opts.x}}` : ''); // X you picked, each {X}
     if (inst.zone === 'exile' && inst.playable && inst.playable.free) cost = '';
-    if (inst.zone === 'hand' && inst.miracleTurn === game.turn) cost = ''; // Molecule Man: miracle {0}
+    if (inst.zone === 'hand' && inst.miracleTurn === game.turn) cost = inst.miracleCost || ''; // Molecule Man: miracle {0}; Devastation Tide's own
     if (inst.zone === 'exile' && inst.playable && inst.playable.anyMana) cost = cost.replace(/\{[WUBRG](?:\/[WUBRGP2])?\}/gi, '{1}');
     if (inst.zone === 'exile' && inst.playable && inst.playable.cost) cost = inst.playable.cost; // a foretold card: its foretell cost
     const cmdTax = inst.zone === 'command' && inst.commander ? (inst.castCount || 0) * 2 : 0;
@@ -3766,6 +3774,8 @@
   // Smothering Tithe: a player drew, and the other side's "whenever an opponent draws a card" sees it.
   Game.hooks.drew = (s, n) => { if (game && hasBot() && (s === game || s === game.bot.s)) Bot.opponentActed(game, s, 'draw', n, def, s === game ? effectCtx() : null); };
   // Exemplar of Light: "Whenever you put one or more +1/+1 counters on this creature, …"
+  Game.hooks.drawInstead = (s, first) => !!(game && hasBot() && (s === game || s === game.bot.s) && Bot.drawInstead(game, s, first, def)); // Notion Thief
+  Game.hooks.manaTapped = (s, inst) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.manaTapped(s, inst); }; // Treasure Nabber
   Game.hooks.counters = (s, inst, kind, n) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.countersPut(game, s, inst, kind, n, def, s === game ? effectCtx() : null); };
   // "When this enters, it deals 2 damage to each opponent": Massacre Girl, Most Wanted sees it.
   Game.hooks.oppDamaged = (s, n) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.opponentDamaged(game, s, n, def, s === game ? effectCtx() : null); };
@@ -3798,9 +3808,10 @@
       // Windcrag Siege, Outpost Siege: "As this enchantment enters, choose …" — you pick.
       // Devour N (Mycoloth): pick the creatures it eats; N +1/+1 counters for each.
       const dv = Bot.devourOf(inst, def);
-      const food = dv ? game.zones.battlefield.filter(i => i !== inst.iid && Game.isCreature(game.cards[i])) : [];
+      const eats = dv && Bot.devourWhat(inst, def); // Feasting Hobbit: "Devour Food 3"
+      const food = dv ? game.zones.battlefield.filter(i => i !== inst.iid && (eats === 'food' ? Bot.cardFits(game.cards[i], 'food') : Game.isCreature(game.cards[i]))) : [];
       if (food.length) {
-        setTimeout(() => pickCards({ title: `${inst.name}: devour ${dv}`, note: `Sacrifice any number of creatures; it gets ${dv} +1/+1 counter${dv === 1 ? '' : 's'} for each.`, ids: food, min: 0, max: food.length, ok: 'Devour', cancel: 'None' },
+        setTimeout(() => pickCards({ title: `${inst.name}: devour ${eats === 'food' ? 'Food ' : ''}${dv}`, note: `Sacrifice any number of ${eats === 'food' ? 'Foods' : 'creatures'}; it gets ${dv} +1/+1 counter${dv === 1 ? '' : 's'} for each.`, ids: food, min: 0, max: food.length, ok: 'Devour', cancel: 'None' },
           picks => act(() => { picks.forEach(i => Game.move(game, i, game.cards[i].commander ? 'command' : 'graveyard')); if (picks.length && inst.zone === 'battlefield') Game.counter(game, inst.iid, '+1/+1', dv * picks.length, { effect: true }); })), 0);
       }
       const siege = !inst.chosenMode && Bot.siegeModes(inst, def);
@@ -3950,7 +3961,8 @@
     if (ab.loyalty != null) return activateLoyalty(iid, ab);
     // Tamiyo's Logbook: "This ability costs {1} less to activate for each other artifact you control."
     const less = (ab.lessFor ? ab.lessFor.n * game.zones.battlefield.filter(id => id !== iid && Bot.cardFits(game.cards[id], ab.lessFor.what)).length : 0)
-      + (ab.lessCounter ? ab.lessCounter.n * ((inst.counters || {})[ab.lessCounter.kind] || 0) : 0); // Exploding Barrel
+      + (ab.lessCounter ? ab.lessCounter.n * ((inst.counters || {})[ab.lessCounter.kind] || 0) : 0) // Exploding Barrel
+      + Bot.activationDiscount(game, inst, def); // Sam, Loyal Attendant: Foods' abilities cost {1} less
     if (ab.tap && inst.tapped) return status(`${inst.name} is already tapped.`, 'warn');
     // "{X}: …" (Crypt Rats): ask for X, then it's a cost like any other ("Spend only black mana on X": {B} each).
     if (/\{X\}/i.test(ab.mana) && !ab.x) {
@@ -4036,10 +4048,18 @@
         game.lastSacMv = Bot.cmcOfInst(c, def); // Broadside Bombardiers: "the sacrificed permanent's mana value"
         Game.log(game, `Sacrificed ${c.name} for ${inst.name}.`);
         Game.move(game, id, c.commander ? 'command' : 'graveyard');
+        if (hasBot()) Bot.sacrificed(game, game, c, def, effectCtx()); // Rapacious Guest: "Whenever you sacrifice a Food, …"
       });
       if (discards) {
+        game.lastDiscarded = discards.map(id => game.cards[id].typeLine); // Moria Scavenger: "If the discarded card was a creature card, …"
         discards.forEach(id => Game.move(game, id, 'graveyard'));
         Game.log(game, `Discarded ${discards.map(id => game.cards[id].name).join(' and ')} for ${inst.name}.`);
+      }
+      // Shelob, Dread Weaver: a card exiled with it goes to its owner's graveyard (the cheapest one).
+      if (ab.exiledToGrave) {
+        const pool = [game, ...(hasBot() ? [game.bot.s] : [])].flatMap(t => t.zones.exile.map(id => ({ t, c: t.cards[id] })))
+          .filter(x => x.c.exiledWith === inst.name && Bot.cardFits(x.c, ab.exiledToGrave)).sort((a, b) => Bot.cmcOfInst(a.c, def) - Bot.cmcOfInst(b.c, def));
+        if (pool[0]) { Game.move(pool[0].t, pool[0].c.iid, 'graveyard'); Game.log(game, `Put ${pool[0].c.name} (exiled with ${inst.name}) into its owner's graveyard.`); }
       }
       if (ab.tap) inst.tapped = true;
       if (ab.exert) inst.skipUntap = true; // Arena of Glory: it doesn't untap during your next untap step
@@ -4057,7 +4077,10 @@
       if (ab.addCounter) Game.counter(game, iid, ab.addCounter, 1); // Mazemind Tome's page counter
       const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
       Game.log(game, `Activated ${inst.name}: ${ab.effect}${spent.length ? ` (paid with ${spent.join(', ')})` : ''}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
-      if (ab.sacrifice) Game.move(game, iid, inst.commander ? 'command' : 'graveyard');
+      if (ab.sacrifice) {
+        Game.move(game, iid, inst.commander ? 'command' : 'graveyard');
+        if (hasBot()) Bot.sacrificed(game, game, inst, def, effectCtx()); // a Food eaten: Rapacious Guest, Mirkwood Bats
+      }
       Bot.abilityActivated(game, game, inst, def, effectCtx()); // Crackdown Construct
     });
   }
@@ -4297,6 +4320,11 @@
       showMenu(x, y, [
         ...(peek ? [{ label: `Top card: ${top.name}`, action: () => { viewer = { zone: 'library', top: 1, ids: [top.iid], filter: '', shuffleOnClose: false }; renderViewer(); } }] : []),
         ...(by ? [{ label: `Cast ${top.name} from the top (${by.name})`, action: () => tryPlay(top.iid, { fromTop: true }) }, { sep: true }] : []),
+        // Verge Rangers: "As long as an opponent controls more lands than you, you may play lands from the top of your library."
+        ...(top && Game.isLand(top) && hasBot() && Bot.landsFromTop(game, def) ? [{ label: `Play ${top.name} from the top`, action: () => {
+          if (game.landPlayed) return status("You've already played a land this turn.", 'warn');
+          act(() => { Game.move(game, top.iid, 'battlefield'); game.landPlayed = true; Game.log(game, `Played ${top.name} from the top of your library.`); });
+        } }, { sep: true }] : []),
         { label: 'Draw', hint: 'D', action: () => act(() => Game.drawCards(game, 1)) },
         { label: 'Draw several…', action: () => libraryAction('draw') },
         { label: 'Look at top / scry…', action: () => libraryAction('top') },

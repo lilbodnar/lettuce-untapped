@@ -29,7 +29,8 @@ const Game = (() => {
   // opponent" happens on entering (Massacre Girl, Most Wanted).
   // hooks.drew(s, n) runs after a player draws (Smothering Tithe).
   // hooks.counters(s, inst, kind, n) runs after counters are put on a permanent (Exemplar of Light).
-  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null };
+  // hooks.manaTapped(s, inst) after a permanent is tapped for mana (Treasure Nabber); hooks.drawInstead(s, first) can take a draw away (Notion Thief).
+  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -136,6 +137,12 @@ const Game = (() => {
       // defender." (Axebane Guardian): as much as s.kwCount says (kept by bot.js's refreshGrants).
       const each = line.trim().match(/^\{T\}:\s*add (?:\{([WUBRGC])\} for each|x mana in any combination of colors, where x is the number of) creatures? you control with ([a-z ]+?)\.?$/i);
       if (each) return { colors: each[1] ? [each[1].toUpperCase()] : ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, countKw: each[2].toLowerCase() };
+      // Everflowing Chalice: "{T}: Add {C} for each charge counter on this artifact." (sourceOf counts them)
+      const pc = line.trim().match(/^\{T\}:\s*add \{([WUBRGC])\} for each ([\w-]+) counter on this \w+\.?$/i);
+      if (pc) return { colors: [pc[1].toUpperCase()], amount: 1, sacrifice: false, perCounter: pc[2].toLowerCase() };
+      // Relic of Sauron: "{T}: Add two mana in any combination of {U}, {B}, and/or {R}."
+      const combo = line.trim().match(/^\{T\}:\s*add (\w+) mana in any combination of ((?:\{[WUBRG]\},? )+(?:and\/or|or) \{[WUBRG]\})\.?$/i);
+      if (combo && toNumber(combo[1])) { const cols = combo[2].toUpperCase().match(/\{[WUBRG]\}/g).map(k => k[1]); return { colors: cols, amount: toNumber(combo[1]), sacrifice: false, makes: Array(toNumber(combo[1])).fill(cols) }; }
       // Prophetic Prism: "{1}, {T}: Add one mana of any color."; Cascading Cataracts: "{5}, {T}: Add five
       // mana in any combination of colors." (each mana any color)
       // Orb of Dragonkind: "… Spend this mana only to cast Dragon spells or activate abilities of Dragons." (onlyFor: autoPay's spell)
@@ -269,6 +276,11 @@ const Game = (() => {
     if (inst.mana && inst.mana.countKw) {
       if (isCreature(inst) && inst.enteredTurn === s.turn) return null;
       const n = (s.kwCount || {})[inst.mana.countKw] || 0;
+      return n ? { ...inst.mana, amount: n } : null;
+    }
+    // Everflowing Chalice: "{T}: Add {C} for each charge counter on this artifact."
+    if (inst.mana && inst.mana.perCounter) {
+      const n = (inst.counters || {})[inst.mana.perCounter] || 0;
       return n ? { ...inst.mana, amount: n } : null;
     }
     if (Object.values(inst.boosts || {}).some(b => b && b.noAbilities)) return null; // Arrest
@@ -537,6 +549,7 @@ const Game = (() => {
       if (inst.mana && inst.mana.mill && s.zones.library.length) move(s, s.zones.library[0], 'graveyard'); // Millikin
       if (inst.mana && inst.mana.tapCreature) { const c = drumFodder(s, inst); if (c) { c.tapped = true; c.tappedFor = null; } } // Springleaf Drum
       if (s.landsFrozen && isLand(inst)) inst.skipUntap = true; // the opponent's Vorinclex: it doesn't untap during your next untap step
+      if (hooks.manaTapped) hooks.manaTapped(s, inst); // Treasure Nabber (bot.js)
       if (sourceOf(s, inst) && inst.mana && inst.mana.sacrifice) move(s, inst.iid, 'graveyard');
       if (inst.mana && inst.mana.sacOther) { const f = sacFodder(s, inst); if (f) move(s, f.iid, 'graveyard'); } // Gilded Goose's Food
     }
@@ -658,7 +671,7 @@ const Game = (() => {
     if (!oracle) return false;
     const front = (name || '').split(' // ')[0].toLowerCase();
     // "As this land enters, you may pay 3 life. If you don't, it enters tapped." (Boggart Bog, shock lands)
-    const shock = /\bas this land enters, you may pay (\w+) life\. if you don't, it enters tapped\b/i.exec(oracle);
+    const shock = /\bas (?:this land|[^.,]+?) enters, you may pay (\w+) life\. if you don't, it enters tapped\b/i.exec(oracle); // The Black Gate: by its name
     if (shock && toNumber(shock[1])) return { payLife: toNumber(shock[1]) };
     // Game Trail, Murmuring Bosk: "As this land enters, you may reveal a Mountain or Forest card from
     // your hand. If you don't, this land enters tapped." (revealed for you when you have one)
@@ -867,6 +880,9 @@ const Game = (() => {
     }
     const now = Date.now();
     for (let i = 0; i < n; i++) {
+      // Notion Thief (the opponent's): "If an opponent would draw a card except the first one they draw in each of their draw steps,
+      // instead that player skips that draw and you draw a card." (bot.js's drawInstead)
+      if (hooks.drawInstead && hooks.drawInstead(s, !!s.inDrawStep && i === 0)) continue;
       const iid = s.zones.library.shift();
       if (!iid) {
         log(s, 'Tried to draw from an empty library.');
@@ -1153,6 +1169,7 @@ const Game = (() => {
   function endOfTurn(s) {
     for (const inst of Object.values(s.cards)) {
       delete inst.pump;
+      delete inst.basePTUntil; // Lord of the Nazgûl's 9/9 (bot.js's grantsOnce)
       delete inst.regen;
       delete inst.undoPump; // the pump it gave is gone anyway
       delete inst.exileIfDies;
@@ -1259,6 +1276,7 @@ const Game = (() => {
       if (inst.attachedTo) detach(s, iid);
     }
     if (from === 'battlefield' && to !== 'battlefield') {
+      inst.lastInfo = { counters: info.counters, pump: info.pump, anthem: info.anthem }; // Rapacious Guest: "equal to its power" as it left (bot.js)
       // A creature leaving takes nothing with it: auras go to the graveyard, equipment stays, unattached.
       for (const id of attachmentsOf(s, iid)) {
         const a = s.cards[id];
@@ -1364,7 +1382,7 @@ const Game = (() => {
     if (!next && inst.filterPaid) return untapFilter(s, inst);
     inst.tapped = next;
     if (next) {
-      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && (inst.mana.countKw || inst.mana.chosenColor || inst.mana.imprint) ? sourceOf(s, inst) : inst.mana;
+      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && (inst.mana.countKw || inst.mana.perCounter || inst.mana.chosenColor || inst.mana.imprint) ? sourceOf(s, inst) : inst.mana;
       if (!src || inst.faceDown) return;
       let c = color;
       if (c === undefined) c = src.colors.length === 1 && !(isCreature(inst) && !isLand(inst)) ? src.colors[0] : null;
@@ -1375,6 +1393,7 @@ const Game = (() => {
         // Wild Growth, Utopia Sprawl, Fertile Ground: their extra mana too (any color: the same as the land's; click the pool to change it)
         const extra = isLand(inst) ? auraMana(s, inst).map(cs => (cs.includes(c) ? c : cs[0])) : [];
         if (extra.length) { extra.forEach(k => { s.mana[k]++; }); inst.auraTapped = extra; }
+        if (hooks.manaTapped) hooks.manaTapped(s, inst); // Treasure Nabber (bot.js)
       }
     } else if (inst.tappedFor) {
       s.mana[inst.tappedFor] = Math.max(0, s.mana[inst.tappedFor] - (inst.tappedAmount || 1));
@@ -1457,6 +1476,7 @@ const Game = (() => {
       if (c.tapped && c.counters && c.counters.stun > 0) { counter(s, iid, 'stun', -1); stunned.push(c.name); return; }
       // Wall of Frost ("doesn't untap during its controller's next untap step"), Wall of Stolen Identity's copied creature.
       if (c.tapped && (c.skipUntap || c.frozenBy)) { delete c.skipUntap; stunned.push(c.name); return; }
+      if (c.tapped && c.noUntap) { stunned.push(c.name); return; } // Basalt Monolith: "doesn't untap during your untap step" (bot.js's refreshGrants)
       // Fall from Favor: it stays tapped unless its controller is the monarch.
       if (c.tapped && !s.monarch && Object.values(c.boosts || {}).some(b => b && b.noUntapUnlessMonarch)) { stunned.push(c.name); return; }
       c.tapped = false;
