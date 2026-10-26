@@ -313,6 +313,7 @@ const Online = (() => {
       turn: game.turn,
       life: game.life,
       poison: game.poison,
+      energy: game.energy || 0,
       monarch: game.monarch || 0, // when this player became the monarch (the newest one is)
       cmdDamage: game.cmdDamage || {},
       hand: game.zones.hand.length,

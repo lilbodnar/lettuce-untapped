@@ -41,7 +41,7 @@ const Coverage = (() => {
     'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash'];
   // Done on every table (bot.js).
   const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
-    'miracle', 'undaunted', 'soulbond']; // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
+    'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace']; // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
 
@@ -253,7 +253,7 @@ const Coverage = (() => {
     if ((m = /^whenever (.+?) is dealt damage(?: for the first time each turn)?, (?:you may )?(.+)$/i.exec(line)) && self(m[1])) { effectGaps('both', m[2].replace(/\bthat (?:much|many)\b/gi, '1')); return out; } // Metropolis Reformer: "you gain that much life"; Hercules
     // The Marvel precons.
     // Shang-Chi: "When the tenth +1/+1 counter is put on Shang-Chi, …" (countersPut)
-    if ((m = /^when the (?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth) [\w+/-]+ counter is put on (.+?), (.+)$/i.exec(line)) && self(m[1])) { effectGaps('both', m[2]); return out; }
+    if ((m = /^when the (?:first|second|third|fourth|fifth|sixth|seventh|eighth|ninth|tenth|eleventh|twelfth) [\w+/-]+ counter is put on (.+?), (.+)$/i.exec(line)) && self(m[1])) { effectGaps('both', m[2]); return out; }
     // Love on the Battlefield (attackWatch)
     if ((m = /^whenever you attack with exactly \w+ creatures, those creatures gain (.+?) until end of turn(?:, then (.+?))?(?:\. whenever either of those creatures deals combat damage to a player this combat, (.+?))?\.?$/i.exec(line))) {
       effectGaps('both', [m[2], m[3]].filter(Boolean).join('. '));
@@ -261,6 +261,24 @@ const Coverage = (() => {
     }
     // Captain America, Living Legend (vigilance on your turn, staticExtra); She-Hulk (becameBlocked).
     if (P.CAP_UNTAP.test(line) || P.BLOCKED_GROW.test(line) || P.BLOCKED_PUMP.test(line)) return out; // Somberwald Alpha (becameBlocked)
+    // Szarel, Evendo Brushrazer, Scouring Swarm, Baloth Prime (sacrificed); Centaur Vinecrasher, The Gitrog Monster, Eumidian Hatchery (graveWatch)
+    if ((m = P.SAC_WATCH.exec(line)) && !/\. the token gains haste until end of turn\. at the beginning of your next end step, sacrifice it unless you pay/i.test(line)) { effectGaps('both', m[5]); return out; } // (Ashling's: below)
+    if (P.VINECRASHER.test(line)) return out;
+    if ((m = /^whenever one or more land cards are put into your graveyard from anywhere, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; }
+    if ((m = /^when this land is put into a graveyard from the battlefield, (.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; }
+    // Darksteel Reactor (refreshGrants)
+    if (/^when (?:this \w+|.+?) has \w+ or more [\w+/-]+ counters on it, you win the game\.?$/i.test(line)) return out;
+    // Patrolling Peacemaker (spellTargeted)
+    if ((m = P.CRIME.exec(line))) { effectGaps('both', m[1]); return out; }
+    // Kilo: "Whenever Kilo becomes tapped, …" (tappedWatch; attacking: plainLine)
+    if ((m = /^whenever (.+?) becomes tapped, (?:you may )?(.+)$/i.exec(line)) && self(m[1])) { effectGaps('both', m[2]); return out; }
+    // Resourceful Defense (graveWatch)
+    if (P.DEFENSE.test(line)) return out;
+    // Lazotep Chancellor, Hashaton (discardWatch); Wizened Mentor (abilityActivated)
+    if (P.DISCARD_PAY.test(line)) return out;
+    if ((m = P.MENTOR.exec(line))) { effectGaps('both', m[1]); return out; }
+    // Aetherworks Marvel (graveWatch)
+    if ((m = P.MARVEL.exec(line))) { effectGaps('both', m[1]); return out; }
     // Silverfur Partisan (spellTargeted)
     if ((m = P.SILVERFUR.exec(line))) { effectGaps('both', m[2]); return out; }
     // Jocasta: back from the graveyard attacking with your commander (declareAttack).
@@ -450,7 +468,7 @@ const Coverage = (() => {
     if (hd) { notRun(hd.effect, inst).forEach(p => gap(out, 'you', 'activated', p)); gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
     const ab = B.activatedAbilities(inst, () => ({ oracle: line }))[0];
     if (!ab) { gap(out, 'both', 'cost', m[1]); return out; }
-    const left = notRun(/\{X\}/i.test(ab.mana) ? ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats: you pick X
+    const left = notRun(/\{X\}/i.test(ab.mana) || ab.removeAnyX ? ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats, Moxite Refinery: you pick X
     left.forEach(p => gap(out, 'you', 'activated', p));
     // Opp uses only "…: Regenerate this" (to save a creature) and its fetch lands (crackFetches).
     const regen = /^regenerate (.+?)\.?$/i.exec(ab.effect.trim());
@@ -621,6 +639,7 @@ const Coverage = (() => {
       return out;
     }
     if (/^you may pay (?:\{[^}]+\})+ rather than pay this spell's mana cost\.?$/i.test(line)) { gap(out, 'opp', 'static', 'other cost (Opp pays the mana cost)'); return out; }
+    if (/^other \w+?s you control have afflict \d+\.?$/i.test(line)) return out; // Lost Monarch of Ifnir (becameBlocked's afflictOf)
     if ((m = LORD.exec(line)) && !m[2].includes(':')) {
       if (m[3] && !B.KEYWORDS.includes(m[3].toLowerCase())) { gap(out, 'both', 'static', line); return out; } // "with power 4 or greater"
       // "protection from black and from red" (Akroma's Memorial) is one keyword it gives.
@@ -662,7 +681,17 @@ const Coverage = (() => {
     // Door of Destinies: "Creatures you control of the chosen type get +1/+1 for each charge counter on this artifact." (grantsOnce)
     if (/^.+? you control(?: of the chosen type)? get [+-]\d+\/[+-]\d+ for each [\w+/-]+ counter on (?:this \w+|it)\.?$/i.test(line)) return out;
     // Donatello: a Mutagen token with each batch of tokens (game.js's tokenCount)
-    if (P.PLUS_MUTAGEN.test(line)) return out;
+    if (P.PLUS_MUTAGEN.test(line) || P.PLUS_THOPTER.test(line)) return out; // Donatello, Stridehangar Automaton (game.js's tokenCount)
+    // Eternal Might: On Wings of Gold, Maskwood Nexus, Rhet-Tomb Mystic, Vizier of Many Faces, Zombie Master, Lost Monarch (afflict)
+    if (P.BRUSHRAZER.test(line) || P.LANDS_FROM_TOP.test(line) || P.AUGUR.test(line) || P.BROOD.test(line) || P.ENTER_EQUAL.test(line)) return out;
+    if (/^(?:this creature|.+?) enters tapped with \w+ [\w+/-]+ counters on it\.?$/i.test(line) || /^each creature you control gets \+\d+\/\+0 for each time it has attacked this turn\.?$/i.test(line) || /^lands you control enter untapped\.?$/i.test(line)) return out;
+    if (P.CONVERGE_ENTER.test(line) || /^when (?:this \w+|.+?) has \w+ or more [\w+/-]+ counters on it, you win the game\.?$/i.test(line)) return out; // Crystalline Crawler, Darksteel Reactor
+    if (/^spells you cast of the chosen type cost \{\d+\} less to cast\.?$/i.test(line) || /^as (?:this|.+?) enters, choose artifact, creature, enchantment, instant, or sorcery\.?$/i.test(line)) return out; // Cloud Key
+    if (/^if you would proliferate, proliferate twice instead\.?$/i.test(line)) return out; // Tekuthal (proliferate)
+    if (/^equipped creature gets \+\d+\/\+\d+ for each counter on this equipment\.?$/i.test(line) || /^as long as this equipment has \w+ or more counters on it, equipped creature has .+$/i.test(line)) return out; // Gavel (staticExtra)
+    if (P.WINGS.test(line) || P.MASKWOOD.test(line) || P.RHET_TOMB.test(line) || P.VIZIER.test(line)) return out;
+    if (/^other \w+ creatures have [a-z]+\.?$/i.test(line) || /^other \w+?s have "\{[^}]+\}: regenerate this permanent\."\.?$/i.test(line) || /^other \w+?s you control have afflict \d+\.?$/i.test(line)) return out;
+    if (P.NISSA.test(line)) { gap(out, 'opp', 'static', "Nissa's energy cost (Opp pays mana)"); return out; } // Nissa, Worldsoul Speaker (costChoices)
     // Pearl-Ear: affinity for Auras given to enchantment spells (game.js's discount)
     if (G.AFFINITY_GRANT.test(line)) return out;
     // Raffine's Guidance: cast from your graveyard (app.js's graveyard menu, Bot.graveAltCost)
@@ -757,6 +786,9 @@ const Coverage = (() => {
     const siege = lines.some(l => P.SIEGE.test(l));
     for (let text of lines) {
       isSpell = isSpellLine(text);
+      // Station: "8+ | Flying" is read as the ability it is (bot.js's byLevel turns it on).
+      const st = P.STATION_ROW.exec(text);
+      if (st) text = st[2];
       // A die's table ("1—9 | Each player sacrifices a permanent of their choice."): its effect runs on that roll.
       const row = P.ROLL_ROW.exec(text);
       const chapter = !row && /\bsaga\b/i.test(card.typeLine || '') && P.CHAPTER.exec(text); // a Saga's "II — …" (bot.js's loreUp)
@@ -773,7 +805,7 @@ const Coverage = (() => {
         // A mode of the trigger above ("Choose one —"): runEffect does it once it's picked.
         if (/^•/.test(text)) {
           const mode = { you: true, opp: true, gaps: [] };
-          notRun(text.replace(/^•\s*/, '').replace(/^[A-Z][A-Za-z'’ -]{1,40}? — /, ''), inst).forEach(p => gap(mode, 'both', 'effect', p)); // a mode's name ("AV Bead — ") only names it
+          notRun(text.replace(/^•\s*/, '').replace(/\bX\b/g, x => (/\bwhere x is\b/i.test(text) ? x : '1')).replace(/^[A-Z][A-Za-z'’ -]{1,40}? — /, ''), inst).forEach(p => gap(mode, 'both', 'effect', p)); // a mode's name ("AV Bead — ") only names it
           out.push({ text, ...mode });
           continue;
         }

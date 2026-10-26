@@ -1743,6 +1743,30 @@
     return { byPid, total };
   }
 
+  // Soulbond: pair iid with another creature you control (mate: its iid), or unpair it (null). Both remember the other (bot.js's soulMate).
+  function pairWith(iid, mate) {
+    const inst = game.cards[iid];
+    if (!inst) return;
+    const old = inst.pairedWith && game.cards[inst.pairedWith];
+    if (old && old.pairedWith === iid) delete old.pairedWith;
+    delete inst.pairedWith;
+    if (!mate) { inst.noPair = true; Game.log(game, `${inst.name} is no longer paired.`); return; }
+    const m = game.cards[mate];
+    const mOld = m.pairedWith && game.cards[m.pairedWith];
+    if (mOld && mOld.pairedWith === mate) delete mOld.pairedWith;
+    inst.pairedWith = mate;
+    m.pairedWith = iid;
+    delete inst.noPair;
+    Game.log(game, `${inst.name} is paired with ${m.name}.`);
+  }
+  function pairPrompt(iid) {
+    const inst = game.cards[iid];
+    const ids = game.zones.battlefield.filter(id => id !== iid && Game.isCreature(game.cards[id]) && !game.cards[id].faceDown);
+    if (!ids.length) return status(`You have no other creature to pair ${inst.name} with.`, 'warn');
+    pickCards({ title: `Pair ${inst.name} with…`, note: 'Soulbond: they stay paired while both are on the battlefield.', ids, min: 1, max: 1, ok: 'Pair', cancel: 'Cancel' },
+      picks => act(() => pairWith(iid, picks[0])));
+  }
+
   // Crew: tick untapped creatures whose total power is at least the Vehicle's crew number.
   // back: 'attack' to return to the attack screen afterwards.
   function openCrew(iid, back) {
@@ -2272,7 +2296,7 @@
             closeAsk();
             if (b.dataset.cc === 'cancel') return;
             const c = choices[Number(b.dataset.cc)];
-            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend, tapOthers: c.tapOthers, kicks: c.kicks });
+            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend, tapOthers: c.tapOthers, kicks: c.kicks, energy: c.energy });
           };
         });
         return;
@@ -2299,6 +2323,8 @@
       return;
     }
     const c = castCost(inst, opts);
+    // Nissa, Worldsoul Speaker: eight energy instead of the mana cost.
+    if (opts.energy) return act(() => { game.energy = Math.max(0, (game.energy || 0) - opts.energy); Game.log(game, `Paid ${opts.energy} energy for ${inst.name}.`); playCard(iid, opts); });
     if (!c || Game.autoPay(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less, inst)) return act(() => playCard(iid, opts));
     // Convoke (Fallaji Wayfarer): your untapped creatures can make up the difference.
     if (Bot.hasConvoke(game, inst, def) && Bot.convokeTap(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less, def)) return act(() => playCard(iid, { ...opts, convoke: true }));
@@ -2868,6 +2894,7 @@
             <div class="life" title="Your life"><span>You</span><button data-act="life" data-d="-1">−</button><b id="lifeNo"></b><button data-act="life" data-d="1">+</button></div>
             ${online || bot ? '' : '<div class="life goldfish" title="Opponent\'s life (for goldfishing)"><span>Opp</span><button data-act="opp" data-d="-1">−</button><b id="oppNo"></b><button data-act="opp" data-d="1">+</button></div>'}
             <div class="life poison" title="Poison counters"><span>☠</span><button data-act="poison" data-d="-1">−</button><b id="poisonNo"></b><button data-act="poison" data-d="1">+</button></div>
+            <div class="life energy" id="energyBox" title="Energy ({E})" hidden><span>⚡</span><button data-act="energy" data-d="-1">−</button><b id="energyNo"></b><button data-act="energy" data-d="1">+</button></div>
             <span class="opp-stat" id="monarchNo" title="You're the monarch: you draw a card at the end of your turn. A player whose creature deals you combat damage takes it." hidden>👑 Monarch</span>
             <label class="toggle" title="When you play a spell, tap the lands it needs (uses floating mana first)"><input type="checkbox" data-act="autotap" ${ui.autoTap ? 'checked' : ''}> Auto-tap lands</label>
             <label class="toggle" title="At the start of your turn, highlight cards with upkeep triggers until you click Done"><input type="checkbox" data-act="upkeephelp" ${ui.upkeepOff ? '' : 'checked'}> Upkeep reminders</label>
@@ -3113,6 +3140,7 @@
       ${activePid === p.pid ? '<span class="turn-badge">Their turn</span>' : ''}
       <div class="life" title="${esc(p.name)}'s life. − and + change it for them."><span>♥</span><button data-act="hit" data-pid="${esc(p.pid)}" data-d="-1">−</button><b>${b.life}</b><button data-act="hit" data-pid="${esc(p.pid)}" data-d="1">+</button></div>
       ${b.poison ? `<span class="opp-stat poison">☠ <b>${b.poison}</b></span>` : ''}
+      ${b.energy ? `<span class="opp-stat" title="Energy">⚡ <b>${b.energy}</b></span>` : ''}
       ${p.pid === BOT && game.bot.s.stack && game.bot.s.cards[game.bot.s.stack.iid] ? `<button class="opp-stat poison" data-act="respond-open" title="Waiting for your answer. Click to let it resolve or answer it.">Casting ${esc(game.bot.s.cards[game.bot.s.stack.iid].name)}…</button>` : ''}
       ${(p.pid === BOT ? Bot.monarchOf(game) === 'opp' : b.monarch) ? '<span class="opp-stat" title="The monarch draws a card at the end of their turn. Deal them combat damage to take it.">👑 Monarch</span>' : ''}
       ${Object.entries(b.cmdDamage || {}).filter(([, n]) => n).map(([k, n]) => `<span class="opp-stat ${n >= 21 ? 'poison' : ''}" title="Commander damage ${esc(p.name)} has taken from ${esc(k.replace('|', "'s "))}">⚔ ${esc(k.split('|')[1])} <b>${n}</b></span>`).join('')}
@@ -3182,6 +3210,7 @@
     $('#lifeNo').textContent = game.life;
     if ($('#oppNo')) $('#oppNo').textContent = game.oppLife;
     $('#poisonNo').textContent = game.poison;
+    if ($('#energyBox')) { $('#energyBox').hidden = !game.energy; $('#energyNo').textContent = game.energy || 0; }
     if ($('#monarchNo')) $('#monarchNo').hidden = !amMonarch();
 
     const bf = $('#battlefield');
@@ -4014,6 +4043,22 @@
         activate(iid, { ...ab, x: String(n), remove: { n, kind: ab.removeX }, effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
       });
     }
+    // Moxite Refinery: "Remove X counters from an artifact or creature you control" — you say X; they come off the one with the most counters.
+    const counterTotal = c => Object.values(c.counters || {}).reduce((n, v) => n + Math.max(0, v), 0);
+    if (ab.removeAnyX && !ab.x) {
+      const most = Math.max(0, ...game.zones.battlefield.map(id => game.cards[id]).filter(c => Game.isCreature(c) || /\bartifact\b/i.test(c.typeLine || '')).map(counterTotal));
+      if (!most) return status(`${inst.name} needs counters on an artifact or creature you control.`, 'warn');
+      return ask(`X for ${inst.name} (counters to remove, up to ${most})`, most).then(x => {
+        if (x == null || Number.isNaN(Number(x)) || x < 1) return;
+        const n = Math.min(most, Math.floor(Number(x)));
+        activate(iid, { ...ab, x: String(n), effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
+      });
+    }
+    // Tekuthal: "Remove three counters from among other artifacts, creatures, and planeswalkers you control"
+    const others = () => game.zones.battlefield.map(id => game.cards[id]).filter(c => c.iid !== iid && (Game.isCreature(c) || /\b(artifact|planeswalker)\b/i.test(c.typeLine || '')));
+    if (ab.removeAmong && others().reduce((n, c) => n + counterTotal(c), 0) < ab.removeAmong) return status(`${inst.name} needs ${ab.removeAmong} counters on your other artifacts, creatures and planeswalkers.`, 'warn', 8000);
+    // Energy: "Pay {E}{E}: …", "Pay eight {E}: …"
+    if (ab.energy && (game.energy || 0) < ab.energy) return status(`${inst.name} needs ${ab.energy} energy (you have ${game.energy || 0}).`, 'warn', 8000);
     if (ab.remove && (inst.counters[ab.remove.kind] || 0) < ab.remove.n) {
       return status(`${inst.name} needs ${ab.remove.n} ${ab.remove.kind} counters (it has ${inst.counters[ab.remove.kind] || 0}).`, 'warn', 8000);
     }
@@ -4103,6 +4148,18 @@
       }
       if (ab.remove) Game.counter(game, iid, ab.remove.kind, -ab.remove.n);
       if (ab.life) game.life -= ab.life;
+      if (ab.energy) { game.energy -= ab.energy; spent.push(`${ab.energy} energy`); }
+      // Counters as a cost: Moxite Refinery's X from the one with the most; Tekuthal's from the others (charge counters first, then the least useful).
+      const takeCounters = (list, n) => {
+        for (const c of list) {
+          for (const kind of Object.keys(c.counters || {}).sort((a, b) => (b === 'charge') - (a === 'charge'))) {
+            while (n > 0 && (c.counters[kind] || 0) > 0) { Game.counter(game, c.iid, kind, -1); n--; }
+          }
+          if (n <= 0) break;
+        }
+      };
+      if (ab.removeAnyX) takeCounters(game.zones.battlefield.map(id => game.cards[id]).filter(c => Game.isCreature(c) || /\bartifact\b/i.test(c.typeLine || '')).sort((a, b) => counterTotal(b) - counterTotal(a)).slice(0, 1), Number(ab.x) || 0);
+      if (ab.removeAmong) takeCounters(others().sort((a, b) => (Bot.cmcOfInst(a, def) - Bot.cmcOfInst(b, def))), ab.removeAmong);
       if (ab.exileSelf) Game.move(game, iid, 'exile'); // Underdark Rift: exiled as a cost
       // Necropolis Fiend: "Exile X cards from your graveyard" (the X you picked; lands and the cheapest first)
       if (ab.exileGraveX) {
@@ -4112,6 +4169,9 @@
       }
       if (ab.bounceSelf) Game.move(game, iid, inst.commander ? 'command' : 'hand'); // Rootha: "Return Rootha to its owner's hand" (a commander may go to the command zone)
       (ab.tapPicks || []).forEach(id => { const c = game.cards[id]; if (c) { c.tapped = true; c.tappedFor = null; } });
+      // Station: the tapped creature's power (Bot's "put charge counters equal to the tapped creature's power"); Kilo: "Whenever Kilo becomes tapped, …"
+      game.lastTappedPower = (ab.tapPicks || []).reduce((n, id) => n + (game.cards[id] ? Math.max(0, Bot.stats(game.cards[id], def(game.cards[id].id)).pow) : 0), 0);
+      (ab.tapPicks || []).forEach(id => { if (game.cards[id]) Bot.tappedWatch(game, game, game.cards[id], def, effectCtx()); });
       if (ab.bouncePick && game.cards[ab.bouncePick]) Game.move(game, ab.bouncePick, 'hand');
       if (ab.addCounter) Game.counter(game, iid, ab.addCounter, 1); // Mazemind Tome's page counter
       const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
@@ -4290,6 +4350,11 @@
         ...(!inst.faceDown && Game.choosesType(c.oracle) ? [{ label: inst.chosenType ? `Change creature type (${inst.chosenType})…` : 'Choose creature type…', action: () => chooseTypePrompt(iid) }] : []),
         ...(Game.isVehicle(inst) && !inst.faceDown && Bot.crewOf(inst, def) != null && !inst.crewed ? [{ label: `Crew ${Bot.crewOf(inst, def)}…`, action: () => openCrew(iid) }] : []),
         ...(inst.crewed ? [{ label: 'Uncrew', action: () => act(() => Game.uncrew(game, iid)) }] : []),
+        // Soulbond (Wolfir Silverheart): it pairs with your biggest creature by itself (bot.js's soulMate); pick another here, or unpair.
+        ...(!inst.faceDown && /^soulbond\b/im.test(c.oracle || '') ? [
+          { label: `Pair with…${inst.pairedWith && game.cards[inst.pairedWith] && game.cards[inst.pairedWith].zone === 'battlefield' ? ` (now ${game.cards[inst.pairedWith].name})` : ''}`, action: () => pairPrompt(iid) },
+          ...(inst.pairedWith ? [{ label: 'Unpair', action: () => act(() => pairWith(iid, null)) }] : []),
+        ] : []),
         ...(inst.prepared && !inst.faceDown && Bot.preparedSpell(inst, def) ? [{ label: `Cast a copy of ${Bot.preparedSpell(inst, def).name} (prepared, ${Bot.preparedSpell(inst, def).cost})`, action: () => castPreparedCopy(iid) }] : []),
         ...(inst.faceDown ? [] : Bot.activatedAbilities(inst, def).map(ab => ({
           label: `Activate: ${ab.text.length > 60 ? ab.text.slice(0, 57) + '…' : ab.text}`, action: () => activate(iid, ab),
@@ -5633,6 +5698,7 @@
       case 'life': return act(() => { game.life += Number(b.dataset.d); });
       case 'opp': return act(() => { game.oppLife += Number(b.dataset.d); });
       case 'poison': return act(() => { game.poison = Math.max(0, game.poison + Number(b.dataset.d)); });
+      case 'energy': return act(() => { game.energy = Math.max(0, (game.energy || 0) + Number(b.dataset.d)); });
       case 'cmd-dmg': return commanderDamage('cmdDamage', b.dataset.key, Number(b.dataset.d));
       case 'cmd-dealt': return commanderDamage('cmdDealt', b.dataset.key, Number(b.dataset.d));
       case 'upkeep-done': return act(() => { game.upkeep = null; });

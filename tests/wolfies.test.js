@@ -116,6 +116,20 @@ test('Wolfir Silverheart pairs with another creature (soulbond): both get +4/+4'
   Bot.refreshGrants(game, defOf);
   assert.equal(pt(wolfir), '8/8');
   assert.equal(pt(bear), '6/6');
+  // Paired by hand (app.js's "Pair with…"): the one you picked keeps it, even if it's smaller.
+  const hunter = put(game, 'Duskwatch Hunter');
+  delete bear.pairedWith;
+  wolfir.pairedWith = hunter.iid;
+  hunter.pairedWith = wolfir.iid;
+  Bot.refreshGrants(game, defOf);
+  assert.equal(pt(hunter), '7/5');
+  assert.equal(pt(bear), '2/2');
+  // Unpaired by hand: no bonus until you pair it again.
+  delete wolfir.pairedWith;
+  delete hunter.pairedWith;
+  wolfir.noPair = true;
+  Bot.refreshGrants(game, defOf);
+  assert.equal(pt(wolfir), '4/4');
 });
 
 test("Cemetery Prowler exiles a graveyard card, and spells sharing its card type cost {1} less", () => {

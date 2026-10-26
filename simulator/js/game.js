@@ -58,7 +58,8 @@ const Game = (() => {
   // A crewed Vehicle counts as a creature until the turn ends, and so does a Restless land animated
   // until end of turn (inst.becomes). A card cast for impending (time counters left) or bestowed on a
   // creature (it's an aura then) isn't one, and a card mutated onto another is part of that creature.
-  const isCreature = inst => (!!inst.crewed || !!inst.becomes || /\bcreature\b/i.test(faceType(inst))) && !inst.impending && !inst.bestowed && !inst.mutatedOnto;
+  const stationed = inst => inst.stationAt > 0 && ((inst.counters || {}).charge || 0) >= inst.stationAt; // Spacecraft (station)
+  const isCreature = inst => (!!inst.crewed || !!inst.becomes || stationed(inst) || /\bcreature\b/i.test(faceType(inst))) && !inst.impending && !inst.bestowed && !inst.mutatedOnto;
   const isVehicle = inst => /\bvehicle\b/i.test(faceType(inst));
   // The turn is over: Vehicles stop being creatures.
   const endCrew = s => s.zones.battlefield.forEach(iid => { delete s.cards[iid].crewed; delete s.cards[iid].crewedBy; });
@@ -712,6 +713,7 @@ const Game = (() => {
     // Archelos: "As long as Archelos is tapped, other permanents enter tapped. As long as Archelos is
     // untapped, other permanents enter untapped." (s.enterState, kept by bot.js's refreshGrants)
     if (s.enterState && s.enterState.src !== inst.iid && !inst.faceDown) return s.enterState.tapped;
+    if (s.landsUntapped && isLand(inst)) return false;
     // Thalia, Heretic Cathar (the opponent's): "Creatures and nonbasic lands your opponents control enter tapped." (s.tapKinds, bot.js's refreshGrants)
     const type = (inst.typeLine || '').split('//')[0];
     if ((s.tapKinds || []).some(k => (k === 'nonbasic land' ? isLand(inst) && !/\bbasic\b/i.test(type) : new RegExp(`\\b${k}\\b`, 'i').test(type)))) return true;
@@ -1161,8 +1163,16 @@ const Game = (() => {
     ? doublers(s, d => d.counters === 'all' || (d.counters === '+1/+1' && kind === '+1/+1' && isCreature(inst))) : []);
 
   // How many tokens an effect that makes n of them really makes on this table: { n, by: [names] }.
-  function tokenCount(s, n) {
+  // typeLine: the tokens' type line, when it's known (Stridehangar Automaton: one more Thopter when they're artifacts).
+  function tokenCount(s, n, typeLine) {
     const by = doublers(s, d => d.tokens);
+    // Stridehangar Automaton: "If one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless
+    // Thopter artifact creature token with flying are created instead." (s.plusThopter: how many, from bot.js's refreshGrants)
+    if (s.plusThopter && n > 0 && /\bartifact\b/i.test(typeLine || '') && !s.thopterBusy) {
+      s.thopterBusy = true;
+      try { for (let i = 0; i < s.plusThopter; i++) createToken(s, { custom: true, name: 'Thopter', typeLine: 'Token Artifact Creature — Thopter', pt: '1/1', text: 'Flying', oracle: 'Flying' }, { quiet: true }); } finally { s.thopterBusy = false; }
+      log(s, 'Stridehangar Automaton: a Thopter token too.');
+    }
     // Donatello, the Brains: "… those tokens plus a Mutagen token are created instead." (s.plusMutagen: its text, from bot.js's refreshGrants)
     if (s.plusMutagen && n > 0 && !s.mutagenBusy) {
       s.mutagenBusy = true;
@@ -1607,7 +1617,7 @@ const Game = (() => {
   function copyAsToken(s, iid, opts = {}) {
     const src = s.cards[iid];
     if (!src) return;
-    const { n, by } = tokenCount(s, opts.n || 1); // Doubling Season, Parallel Lives…
+    const { n, by } = tokenCount(s, opts.n || 1, src.typeLine); // Doubling Season, Parallel Lives…
     const def = { id: src.id, name: src.name, typeLine: src.typeLine, custom: !!src.custom, pt: src.custom && src.custom.pt, text: src.custom && src.custom.text, producedMana: src.produces, enterLife: src.enterLife, enterDraw: src.enterDraw || 0, mana: src.mana || null, loyalty: src.loyalty, doubles: src.doubles || null };
     let last;
     for (let i = 1; i <= n; i++) {
