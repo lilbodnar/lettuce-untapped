@@ -30,7 +30,8 @@ const Game = (() => {
   // hooks.drew(s, n) runs after a player draws (Smothering Tithe).
   // hooks.counters(s, inst, kind, n) runs after counters are put on a permanent (Exemplar of Light).
   // hooks.manaTapped(s, inst) after a permanent is tapped for mana (Treasure Nabber); hooks.drawInstead(s, first) can take a draw away (Notion Thief).
-  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null };
+  // hooks.graveInstead(s, inst) true sends a card on its way to a graveyard to exile instead (Dauthi Voidwalker).
+  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null, graveInstead: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -137,6 +138,9 @@ const Game = (() => {
       // defender." (Axebane Guardian): as much as s.kwCount says (kept by bot.js's refreshGrants).
       const each = line.trim().match(/^\{T\}:\s*add (?:\{([WUBRGC])\} for each|x mana in any combination of colors, where x is the number of) creatures? you control with ([a-z ]+?)\.?$/i);
       if (each) return { colors: each[1] ? [each[1].toUpperCase()] : ['W', 'U', 'B', 'R', 'G'], amount: 1, sacrifice: false, countKw: each[2].toLowerCase() };
+      // Wall of Roots: "Put a -0/-1 counter on this creature: Add {G}. Activate only once each turn." (tapped once used, like Mana Bloom; the counter goes on as it's used)
+      const roots = line.trim().match(/^put an? ([\w+/-]+) counter on this creature: add \{([WUBRGC])\}\. activate only once each turn\.?$/i);
+      if (roots) return { colors: [roots[2].toUpperCase()], amount: 1, sacrifice: false, addCounter: roots[1].toLowerCase() };
       // Everflowing Chalice: "{T}: Add {C} for each charge counter on this artifact." (sourceOf counts them)
       const pc = line.trim().match(/^\{T\}:\s*add \{([WUBRGC])\} for each ([\w-]+) counter on this \w+\.?$/i);
       if (pc) return { colors: [pc[1].toUpperCase()], amount: 1, sacrifice: false, perCounter: pc[2].toLowerCase() };
@@ -677,6 +681,10 @@ const Game = (() => {
     // your hand. If you don't, this land enters tapped." (revealed for you when you have one)
     const reveal = /\bas this land enters, you may reveal an? (\w+)(?: or (\w+))? card from your hand\. if you don't, (?:this land|it) enters tapped\b/i.exec(oracle);
     if (reveal) return { revealHand: [reveal[1], reveal[2]].filter(Boolean).map(t => t.toLowerCase()) };
+    // Temple of the Dragon Queen: "As this land enters, you may reveal a Dragon card from your hand. This land enters tapped unless you revealed a
+    // Dragon card this way or you control a Dragon."
+    const temple = /\bas this land enters, you may reveal an? (\w+) card from your hand\. this land enters tapped unless you revealed an? \1 card this way or you control an? \1\b/i.exec(oracle);
+    if (temple) return { revealHand: [temple[1].toLowerCase()], orControl: temple[1].toLowerCase() };
     let out = false;
     oracle.split(/\n+|(?<=\.)\s+(?=[A-Z])/).forEach(line => {
       const m = line.match(/^(.+?) enters(?: the battlefield)? tapped(?: unless (.+?))?\.$/i);
@@ -713,7 +721,8 @@ const Game = (() => {
     if (et.payLife) return false;
     // s.oppLandCount: how many lands the opponent has (bot.js); online it isn't known, so it's tapped.
     if (et.oppLands) return !(s.oppLandCount >= et.oppLands);
-    if (et.revealHand) return !s.zones.hand.some(iid => et.revealHand.some(t => new RegExp(`\\b${t}\\b`, 'i').test(s.cards[iid].typeLine || '')));
+    if (et.revealHand) return !s.zones.hand.some(iid => et.revealHand.some(t => new RegExp(`\\b${t}\\b`, 'i').test(s.cards[iid].typeLine || '')))
+      && !(et.orControl && s.zones.battlefield.some(iid => s.cards[iid] !== inst && new RegExp(`\\b${et.orControl}\\b`, 'i').test(s.cards[iid].typeLine || ''))); // Temple of the Dragon Queen
     const others = s.zones.battlefield.map(iid => s.cards[iid]).filter(c => c !== inst);
     const otherLands = others.filter(isLand).length;
     if (et.opponents) return s.opponents != null && s.opponents < et.opponents;
@@ -1160,7 +1169,8 @@ const Game = (() => {
       try { createToken(s, { custom: true, name: 'Mutagen', typeLine: 'Token Artifact — Mutagen', text: s.plusMutagen, oracle: s.plusMutagen }, { quiet: true }); } finally { s.mutagenBusy = false; }
       log(s, 'Donatello: a Mutagen token too.');
     }
-    return { n: n * 2 ** by.length, by };
+    const kaya = s.tokensTwiceTurn === s.turn ? 2 : 1; // Kaya, Geist Hunter's −2 (bot.js)
+    return { n: n * 2 ** by.length * kaya, by: kaya > 1 ? [...by, 'Kaya, Geist Hunter'] : by };
   }
 
   // "Until end of turn" pumps and regeneration shields wear off, and so do the turn's "if it would
@@ -1191,6 +1201,7 @@ const Game = (() => {
     delete s.marked;
     delete s.delayed;
     delete s.deathsThisTurn;
+    delete s.nontokenDeaths; // Gadrak (bot.js)
     delete s.leftThisTurn;
     delete s.cantCast; // Silence
     delete s.drawnThisTurn; // Narset
@@ -1249,8 +1260,12 @@ const Game = (() => {
     if (from === 'battlefield' && to === 'graveyard' && (inst.counters || {}).finality > 0) to = 'exile';
     // Madness: a discarded card can go to exile instead, to be cast from there.
     if (from === 'hand' && to === 'graveyard' && hooks.discard) to = hooks.discard(s, inst) || to;
+    // Dauthi Voidwalker (the opponent's): "If a card would be put into an opponent's graveyard from anywhere, instead exile it with a void counter on it."
+    if (to === 'graveyard' && from !== 'graveyard' && !inst.token && hooks.graveInstead && hooks.graveInstead(s, inst)) { to = 'exile'; inst.voidCounter = true; }
     // Rebound (Terramorph): cast from your hand, it's exiled as it resolves, to be cast again at your next upkeep (bot.js's upkeepSuspend).
     // Gravestorm (Ominous Harvest): permanents put into a graveyard from the battlefield this turn.
+    // Welcome the Dead: "cards that were put into your graveyard from your hand or library this turn" (mill counts too)
+    if ((from === 'hand' || from === 'library') && to === 'graveyard') noteHandLibGrave(s);
     if (from === 'battlefield' && to === 'graveyard' && !inst.faceDown) { if (s.toGraveTurn !== s.turn) { s.toGraveTurn = s.turn; s.toGraveN = 0; } s.toGraveN++; }
     // Buyback (Capsize): the paid-for spell goes back to its owner's hand.
     if (from === 'battlefield' && to === 'graveyard' && inst.boughtBack && /\b(instant|sorcery)\b/i.test(inst.typeLine || '')) { delete inst.boughtBack; to = 'hand'; }
@@ -1316,7 +1331,7 @@ const Game = (() => {
         placeAttached(s, inst); // its equipment and auras come along
       }
       s.zones.battlefield.push(iid); // last = drawn on top
-      if (from !== 'battlefield') { inst.enteredTurn = s.turn; delete inst.attackedTurn; startLoyalty(s, inst); countEntered(s, inst); }
+      if (from !== 'battlefield') { inst.enteredTurn = s.turn; inst.enteredFrom = from; delete inst.attackedTurn; startLoyalty(s, inst); countEntered(s, inst); }
       // A spell cast or a nontoken permanent put onto the battlefield on this player's own turn
       // (s.offTurn is set while someone else's turn is on), for Arboria.
       if (from !== 'battlefield' && !inst.token && !s.offTurn) s.actedTurn = s.turn;
@@ -1500,14 +1515,17 @@ const Game = (() => {
     log(s, `Mulligan #${s.mulligans}: drew a new 7${drawsTurnOne(s) && s.turn === 1 ? ' plus your first-turn card' : ''}. Put ${s.mulligans} on the bottom (right-click a card → Bottom of library).`);
   }
 
+  const noteHandLibGrave = s => { if (s.handLibGraveTurn !== s.turn) { s.handLibGraveTurn = s.turn; s.handLibGrave = 0; } s.handLibGrave++; };
   function mill(s, n) {
     let count = 0;
     s.lastMilled = []; // The Ur-Sphinx: "a card that player milled this way"
     for (let i = 0; i < n && s.zones.library.length; i++) {
       const iid = s.zones.library.shift();
+      if (hooks.graveInstead && hooks.graveInstead(s, s.cards[iid])) { s.cards[iid].zone = 'exile'; s.zones.exile.push(iid); s.cards[iid].voidCounter = true; count++; continue; } // Dauthi Voidwalker
       s.cards[iid].zone = 'graveyard';
       s.zones.graveyard.push(iid);
       s.lastMilled.push(iid);
+      noteHandLibGrave(s);
       count++;
       if (hooks.moved) hooks.moved(s, s.cards[iid], 'library', 'graveyard');
     }
@@ -1568,6 +1586,8 @@ const Game = (() => {
     });
     if (angel) { inst.extraKw = ['flying', 'vigilance']; inst.tokenColors = ['W']; }
     s.tokenTurn = s.turn; // Idol of Oblivion: "if you created a token this turn"
+    if (s.tokensMadeTurn !== s.turn) { s.tokensMadeTurn = s.turn; s.tokensMade = 0; }
+    s.tokensMade++; // Thalisse: "the number of tokens you created this turn"
     startLoyalty(s, inst);
     countEntered(s, inst);
     if (opts.x != null) {

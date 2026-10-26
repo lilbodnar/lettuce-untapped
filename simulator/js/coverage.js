@@ -36,12 +36,12 @@ const Coverage = (() => {
   const NOTHING_TO_DO = ['partner', 'partner with', 'friends forever', 'choose a background', 'doctor\'s companion', 'flash', 'enchant',
     'changeling', 'devoid']; // changeling: every creature type (bot.js's isA reads it); devoid: colorless (the card's colors say so)
   // Done for you when you cast it (app.js asks), but Opp never uses them.
-  const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback', 'harmonize',
+  const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback', 'harmonize', 'dredge',
     'impending', 'bestow', 'mutate', 'morph', 'megamorph', 'suspend', 'basic landcycling',
     'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash'];
   // Done on every table (bot.js).
   const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
-    'miracle', 'undaunted']; // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
+    'miracle', 'undaunted', 'soulbond']; // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
 
@@ -149,7 +149,15 @@ const Coverage = (() => {
     if (P.ERESTOR.test(line) || P.UNITY.test(line)) return out; // Erestor of the Council, Model of Unity (bot.js's votingDone)
     if (P.CHAMPIONS.test(line)) return out; // Champions of Minas Tirith (bot.js's tableRules: handTax)
     if (P.MONARCH_DRAW.test(line) || P.FORTH.test(line) || P.HARSH.test(line)) return out;
-    if (P.NABBER.test(line)) return out; // Treasure Nabber (bot.js's manaTapped, refreshGrants, returnLent) // Archivist of Gondor (monarchExtra), Forth Eorlingas! (spellCast), Harsh Mentor (abilityActivated)
+    if (P.NABBER.test(line)) return out; // Treasure Nabber (bot.js's manaTapped, refreshGrants, returnLent)
+    if (P.URN.test(line)) return out; // Colfenor's Urn (bot.js's cardMoved)
+    if (P.BIBLIOPHILE.test(line)) return out; // Voracious Bibliophile (bot.js's spellCast)
+    if ((m = P.AINOK.exec(line))) { effectGaps('both', m[1]); return out; } // Ainok Strike Leader (bot.js's attackWatch)
+    // Crawling Sensation, Kishla Skimmer, River Kelpie, Colossal Grave-Reaver (bot.js's graveWatch)
+    if ((m = P.LAND_TO_GRAVE.exec(line) || P.LEAVE_GRAVE.exec(line) || P.KELPIE.exec(line))) { effectGaps('both', m[1]); return out; }
+    if (P.REAVER.test(line)) return out;
+    if ((m = P.KELPIE_CAST.exec(line))) { effectGaps('both', m[1]); return out; } // River Kelpie (bot.js's spellCast)
+    if ((m = /^when (?:this creature|.+?) becomes monstrous, (.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; } // Stormbreath Dragon (bot.js's monstrosity) // Archivist of Gondor (monarchExtra), Forth Eorlingas! (spellCast), Harsh Mentor (abilityActivated)
     if ((m = P.PREVENT_GROW.exec(line)) && self(m[2])) return out; // Selfless Squire (bot.js's damagePrevented)
     if ((m = P.SCRY_GROW.exec(line)) && self(m[1])) return out; // Celeborn the Wise (bot.js's applyScry)
     if ((m = P.TOKEN_WATCH.exec(line))) { effectGaps('both', m[1]); return out; } // Rosie Cotton, Mirkwood Bats (creatureEntered, sacrificed)
@@ -159,7 +167,7 @@ const Coverage = (() => {
       /^whenever an opponent casts their (?:first|second|third) (?:\w+ )*?spell each turn, (?:you may )?(?!draw a card unless that player pays)(.+)$/i, // Monologue Tax, Mind's Dilation (Esper Sentinel: TAX_WATCH)
       P.ROLL_WATCH, // Vrondiss, Barbarian Class
       P.SEARCH_WATCH, // Archivist of Oghma (refreshGrants)
-      /^whenever an opponent casts (?:an? )?(?:(?!first|second)[^,])*?\s*spell, (?:you may )?((?:(?!\bunless\b).)+)$/i, // Taurean Mauler, Arasta
+      /^whenever an opponent casts (?:an? )?(?:(?!first|second)[^,])*?\s*spell(?: during your turn)?, (?:you may )?((?:(?!\bunless\b).)+)$/i, // Taurean Mauler, Arasta, Witchstalker
       /^whenever a player casts (?:an? )?[^,]*?spell, (?:you may )?(.+)$/i, // Managorger Hydra
       /^whenever an opponent draws a card, (?!that player may pay)(?:you may (?=draw ))?(.+)$/i, // Scrawling Crawler, Mind's Eye, Consecrated Sphinx
       /^whenever you draw (?:a card|your second card each turn), (?:you may )?(.+)$/i, // Psychosis Crawler, Thopter Fabricator
@@ -252,7 +260,9 @@ const Coverage = (() => {
       return out;
     }
     // Captain America, Living Legend (vigilance on your turn, staticExtra); She-Hulk (becameBlocked).
-    if (P.CAP_UNTAP.test(line) || P.BLOCKED_GROW.test(line)) return out;
+    if (P.CAP_UNTAP.test(line) || P.BLOCKED_GROW.test(line) || P.BLOCKED_PUMP.test(line)) return out; // Somberwald Alpha (becameBlocked)
+    // Silverfur Partisan (spellTargeted)
+    if ((m = P.SILVERFUR.exec(line))) { effectGaps('both', m[2]); return out; }
     // Jocasta: back from the graveyard attacking with your commander (declareAttack).
     if (/^whenever you attack with your commander, if this card is in your graveyard, (?:you may )?return it to the battlefield tapped and attacking\.?$/i.test(line)) return out;
     // Witherbloom Pestilence: Morbid Opportunist, Nether Traitor (afterDeath); sacrifice watchers (sacrificed).
@@ -305,7 +315,7 @@ const Coverage = (() => {
     if (/^whenever a creature with \w+ attacks you, .+? deals damage equal to (?:his|her|its) power to that creature\.?$/i.test(line)) return out;
     if (/^whenever a creature attacks one of your opponents, if that player is the monarch, that creature gets [+-]\d+\/[+-]\d+(?: and gains .+?)? until end of turn\.?$/i.test(line)) return out;
     if ((m = /^whenever equipped creature attacks the monarch, (.+)$/i.exec(line))) { effectGaps('you', m[1]); gap(out, 'opp', 'keyword', 'equip (Opp never equips)'); return out; }
-    if ((m = /^whenever one or more (?:other )?\w+ you control(?: with mana value \d+ or less)? enter, (?:you may )?(.+?)(?:\.\s*this ability triggers only once each turn)?\.?$/i.exec(line))) { effectGaps('both', m[1]); return out; }
+    if ((m = /^whenever one or more (?:other )?\w+ you control(?: with (?:mana value|power) \d+ or less)? enter, (?:you may )?(.+?)(?:\.\s*this ability triggers only once each turn)?\.?$/i.exec(line))) { effectGaps('both', m[1]); return out; }
     // The Lord of the Rings precons (bot.js's attackWatch): Mirkwood Trapper, Frontier Warmonger, Frontline Medic's battalion.
     if (P.MIRKWOOD.test(line) || P.WARMONGER.test(line) || P.NOT_ATTACKING_YOU.test(line)) return out;
     if ((m = P.BATTALION.exec(line)) && self(m[1])) { effectGaps('both', m[3]); return out; }
@@ -353,7 +363,8 @@ const Coverage = (() => {
         // Desmond Miles: "surveil X, where X is the amount of damage it dealt to that player"
         effectGaps('both', m[2].replace(/\b(surveil|scry|draw|mill) x(?: cards)?, where x is the amount of damage .+? dealt to that player\b/i, '$1 1').replace(/\bthat many\b/gi, '1') // Glint-Eye, Xyris: "draw that many cards"
           .replace(/ with mana value x or less (.+?), where x is the amount of damage .+? dealt to that player\.?$/i, ' with mana value 1 or less $1') // Venerable Warsinger (hitTrigger)
-          .replace(/\bequal to the damage dealt\b/i, 'equal to 1')); // Primo (hitTrigger)
+          .replace(/\bequal to the damage dealt\b/i, 'equal to 1') // Primo (hitTrigger)
+          .replace(/\bwith mana value less than or equal to that damage\b/i, 'with mana value 1 or less')); // Broodcaller Scourge (hitTrigger)
         return out;
       }
     }
@@ -363,6 +374,8 @@ const Coverage = (() => {
     // "Whenever you cast …" (Nightmare Sower: "… during an opponent's turn")
     if ((m = P.CAST_WATCH.exec(line.replace(/ with mana value \d+ or greater(?=,| from your hand,)/i, '').replace(/ from your hand(?=,)/i, '').replace(/^whenever you cast a spell that's one or more colors, /i, 'whenever you cast a colored spell, '))) && !/\b(first|second)\b/i.test(line)) { // Zuri: "… with mana value 4 or greater"; Dirgur Focusmage: "… from your hand"
       const e = m[4].trim().replace(/\+X\/\+0 until end of turn, where X is that spell's mana value/i, '+1/+0 until end of turn') // Renegade Bull (spellCast)
+        .replace(/\bwith mana value less than or equal to that spell's mana value\b/i, 'with mana value 1 or less') // Hammerhead Tyrant (spellCast)
+        .replace(/\bwhere x is the amount of mana spent to cast that spell\b/i, "where X is that spell's mana value") // Manaform Hellkite
         .replace(/\bX\b(.*?),? where X is that spell's mana value/i, '1$1'); // Deekah (spellCast)
       const p = /^(.+?) gets? ([+-]\d+)\/([+-]\d+) until end of turn\.?$/i.exec(e);
       if ((p && self(p[1])) || PUMP_SENTENCE.test(e)) return out;
@@ -432,6 +445,9 @@ const Coverage = (() => {
     if (ga) { notRun(ga.effect, inst).forEach(p => gap(out, 'both', 'activated', p)); return out; }
     // Emrakul, the Exigent Doom: "{3}, Exile this card from your hand: …" (Bot.handAbilities; app.js's hand menu)
     if (B.handAbilities(inst, () => ({ oracle: line })).some(a => a.kind === 'landMana')) { gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
+    // Magma Opus: "{U/R}{U/R}, Discard this card: Create a Treasure token." (app.js's hand menu)
+    const hd = B.handAbilities(inst, () => ({ oracle: line })).find(a => a.kind === 'discardEffect');
+    if (hd) { notRun(hd.effect, inst).forEach(p => gap(out, 'you', 'activated', p)); gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
     const ab = B.activatedAbilities(inst, () => ({ oracle: line }))[0];
     if (!ab) { gap(out, 'both', 'cost', m[1]); return out; }
     const left = notRun(/\{X\}/i.test(ab.mana) ? ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats: you pick X
@@ -476,7 +492,9 @@ const Coverage = (() => {
     /^you may pay (?:\{[^}]+\})+ and tap \w+ untapped .+? you control(?: with \w+)? rather than pay this spell's mana cost\.?$/i, // Sephara (costChoices)
     /^if a nontoken creature an opponent controls would die, instead exile that card and create .+? creature token\.?$/i, // Kalitas
     /^you may cast this card from your graveyard as long as you control an? \w+\.?$/i, // Gravecrawler
-    /^each (?:other )?\w+ you control(?: of the chosen type)? enters with an additional [\w+/-]+ counter on it\.?$/i, // Metallic Mimic, Dragonstorm Globe (enterTrigger)
+    /^each (?:other )?\w+(?: or \w+)? you control(?: of the chosen type)? enters with an additional [\w+/-]+ counter on it\.?$/i, // Metallic Mimic, Dragonstorm Globe, Arlinn (enterTrigger)
+    /^if a creature an opponent controls would die, exile it instead\. when you do, create .+? creature token\.?$/i, // Head of the Hunt (wouldDie)
+    /^if a triggered ability of another \w+ or battle you control triggers, that ability triggers an additional time\.?$/i, // Chief of the Wilds (extraTriggers)
     /^(?:this creature|.+?) enters with x [\w+/-]+ counters on it\.?$/i, // Shivan Devastator
     // The Marvel precons.
     /^if a triggered ability of another creature you control of the chosen type triggers, it triggers an additional time\.?$/i, // Roaming Throne (extraTriggers)
@@ -561,6 +579,13 @@ const Coverage = (() => {
     /^the monarch controls enchanted creature\.?$/i, // Fealty to the Realm (bot.js's syncAuras)
     P.NO_UNTAP, P.NOTION, // Basalt Monolith (game.js's nextTurn); Notion Thief (bot.js's drawInstead)
     P.HOARD, // Cavern-Hoard Dragon (selfDiscount)
+    // Tarkir: Dragonstorm precons.
+    /^untap all permanents you control during each other player's untap step\.?$/i, // Seedborn Muse (upkeepSuspend)
+    /^during your turn, each creature assigns combat damage equal to its toughness rather than its power\.?$/i, // Baldin (combatRuleOf)
+    /^spells can't be countered\.?$/i, P.LIER, // Lier (oppCounters; refreshGrants' lierFlashback)
+    P.DIED_COUNTERS, // Bone Devourer (enterTrigger)
+    P.DAUTHI, // Dauthi Voidwalker (game.js's graveInstead hook)
+    P.STEWARD, P.KOTIS, // Steward of the Harvest (grantsOnce: the exiled lands' mana); Kotis (graveCast, payKotis)
   ];
 
   function staticLine(card, line, inst) {
@@ -588,7 +613,7 @@ const Coverage = (() => {
     if (/^(.+?) you control with power or toughness \d+ or less can't be blocked\.?$/i.test(line)
       || /^(.+?) can attack players who attacked you during their last turn as though it didn't have defender\.?$/i.test(line)
       || /^you have (?:no maximum hand size|hexproof)\.?$/i.test(line) || /^prevent all noncombat damage that would be dealt to other creatures you control\.?$/i.test(line)
-      || P.EXTRA_BLOCK.test(line) || P.CLONE.test(line) || P.CLONE_OWN.test(line) || P.CLONE_X.test(line)
+      || P.EXTRA_BLOCK.test(line) || P.CLONE.test(line) || P.CLONE_OWN.test(line) || P.CLONE_X.test(line) || P.CLONE_POWER.test(line)
       || (/^(.+?) enters(?: the battlefield)? with x ([\w+/-]+) counters on it, where x is the total (power|toughness) of other (.+?) you control\.?$/i.test(line))) return out;
     if ((m = /^as long as enchanted permanent is an? (creature|equipment), it has (.+?)\.?$/i.exec(line))) {
       const kws = kwOnly(m[2].replace(/^"equipped creature has (.+?)\.?"$/i, '$1'));
@@ -610,9 +635,12 @@ const Coverage = (() => {
     if (/^(other )?(.+?) you control can't be blocked except by two or more creatures\.?$/i.test(line)) return out;
     if ((m = /^(.+?) gets ([+-]\d+)\/([+-]\d+) for each (other )?(.+?) you control(?: and each (.+?) cards? in your graveyard)?\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
     if ((m = /^(.+?)['’]s (power and toughness are each|power is|toughness is) equal to the number of (other )?(.+?) (?:you control|on the battlefield)\.?$/i.exec(line)) && P.isSelf(m[1], inst)) return out;
+    if ((m = P.GRAVE_CDA.exec(line)) && P.isSelf(m[1], inst)) return out; // Haughty Djinn, Consuming Aberration, Lord of Extinction (grantsOnce)
     if (/^(.+?) your opponents control get ([+-]\d+)\/([+-]\d+)\.?$/i.test(line)) return out;
     if (P.TOUGH_RULE.test(line) || P.DEFENDER_RULE.test(line)) return out; // Arcades, Doran, High Alert
     if (P.SELF_DISCOUNT.test(line) || P.GRAVE_TYPES_DISCOUNT.test(line)) return out; // The Pride of Hull Clade, Emrakul
+    // Wolfies: Cemetery Prowler (selfDiscount), Ascendant Packleader (enterTrigger), Wolfir Silverheart, Wolf Pack (staticExtra)
+    if (P.PROWLER.test(line) || P.PACKLEADER.test(line) || P.SOULBOND.test(line) || P.LONE_WOLF.test(line)) return out;
     if (P.ATTACK_TAX.test(line) || P.NO_GAIN.test(line) || P.ARBORIA.test(line) || P.ATTACK_CAP.test(line) || P.BLOCK_CAP.test(line)) return out;
     if (P.SPELL_TAX.test(line) && !/\btarget/i.test(line)) return out;
     if (P.OLD_MENACE.test(line) || P.UNBLOCKABLE.test(line) || P.CANT.test(line)) return out;
@@ -654,7 +682,8 @@ const Coverage = (() => {
     if ((m = /^(?:equipped|enchanted) creature (.+?)\.?$/i.exec(line))) {
       const b = B.attachBonus(line);
       // Angelic Destiny: "… and is an Angel in addition to its other types" (b.types).
-      const has = /\bhas (.+?)(?:\.|$)/i.exec(m[1].replace(/"[^"]*"/g, '').replace(/,? and is an? \w+ in addition to its other types/i, ''));
+      const has = /\bhas (.+?)(?:\.|$)/i.exec(m[1].replace(/"[^"]*"/g, '').replace(/,? and is an? \w+ in addition to its other types/i, '')
+        .replace(/ and mobilize x, where x is its power$/i, '')); // Infantry Shield (attachBonus' line)
       // Also "annihilator 2", "ward {2}", "protection from creatures" and "is goaded" (attachBonus, syncAuras).
       const unknown = has ? kwOnly(has[1]).filter(k => !B.KEYWORDS.includes(k.replace(/ \d+$/, '')) && !/^ward \{\d+\}$|^is goaded$/.test(k) && !P.protectionKw(k)) : [];
       // Thornbite Staff: abilities it gives in quotes are read like the creature's own.

@@ -32,6 +32,7 @@ const Autoplay = (() => {
     G.hooks.discard = (s, inst) => { const v = view(); return v && v.bot ? B.discardWatch(s, inst, defOf, v) : null; };
     G.hooks.drew = (s, n) => { const v = view(); if (v && v.bot) B.opponentActed(v, s, 'draw', n, defOf, null); };
     G.hooks.manaTapped = (s, inst) => B.manaTapped(s, inst); // Treasure Nabber
+    G.hooks.graveInstead = (s, inst) => { const v = view(); return !!(v && v.bot && B.graveInstead(v, s, inst, defOf)); }; // Dauthi Voidwalker
     G.hooks.drawInstead = (s, first) => { const v = view(); return !!(v && v.bot && B.drawInstead(v, s, first, defOf)); }; // Notion Thief
     G.hooks.counters = (s, inst, kind, n) => { const v = view(); if (v && v.bot) B.countersPut(v, s, inst, kind, n, defOf, null); };
     G.hooks.entered = (s, inst) => {

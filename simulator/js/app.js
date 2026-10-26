@@ -974,6 +974,23 @@
         Game.log(game, `Foretold ${inst.name} (castable from your next turn for ${ab.castCost}).`);
       });
     }
+    // Magma Opus: "{U/R}{U/R}, Discard this card: Create a Treasure token." (pay, discard it, then the effect)
+    if (ab.kind === 'discardEffect') {
+      // Shigeki's channel: "{X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards …" — you say X.
+      if (/\{X\}/i.test(ab.cost)) {
+        return ask(`X for ${inst.name}`, 1).then(x => {
+          if (x == null || Number.isNaN(Number(x)) || x < 0) return;
+          handAbility(iid, { ...ab, cost: ab.cost.replace(/\{X\}/gi, x ? `{${x}}` : ''), effect: ab.effect.replace(/\bx\b/gi, String(x)) });
+        });
+      }
+      if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana for ${ab.label}.`, 'warn', 8000);
+      return act(() => {
+        Game.autoPay(game, ab.cost);
+        Game.move(game, iid, 'graveyard');
+        const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
+        Game.log(game, `Discarded ${inst.name}: ${ab.effect}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+      });
+    }
     // Elvish Spirit Guide, Simian Spirit Guide: exiled from your hand, its mana into your pool.
     if (ab.kind === 'handMana') {
       return act(() => {
@@ -2236,6 +2253,12 @@
     if (inst.zone === 'graveyard' && opts.cast && !opts.flashback && !opts.aftermath && !opts.graveDiscard && Bot.graveDiscards(inst, def) && inst.graveOkTurn !== game.turn) {
       if (!game.zones.hand.length) return status(`You need a card in hand to discard for ${inst.name}.`, 'warn');
       return pickCards({ title: `Discard a card to cast ${inst.name}`, ids: game.zones.hand.slice(), min: 1, max: 1, ok: 'Discard and cast', cancel: 'Cancel' }, picks => tryPlay(iid, { ...opts, graveDiscard: picks[0] }));
+    }
+    // Kotis, Sibsig Champion: three other cards from your graveyard are exiled to cast a creature from it (once a turn).
+    if (inst.zone === 'graveyard' && opts.cast && !opts.flashback && !opts.kotisPaid && Bot.kotisOk(game, inst, def) && inst.graveOkTurn !== game.turn) {
+      if (!Game.autoPay(JSON.parse(JSON.stringify(game)), (def(inst.id) || {}).manaCost || '')) return status(`Not enough untapped mana for ${inst.name}.`, 'warn', 8000);
+      act(() => Bot.payKotis(game, inst, def));
+      return tryPlay(iid, { ...opts, kotisPaid: true });
     }
     // Offspring, freerunning, "You may pay {1}{B} rather than pay this spell's mana cost": pick how.
     if ((inst.zone === 'hand' || inst.zone === 'command') && !Game.isLand(inst) && !opts.flip && !opts.faceDown && !opts.choice) {
@@ -3774,7 +3797,8 @@
   // Smothering Tithe: a player drew, and the other side's "whenever an opponent draws a card" sees it.
   Game.hooks.drew = (s, n) => { if (game && hasBot() && (s === game || s === game.bot.s)) Bot.opponentActed(game, s, 'draw', n, def, s === game ? effectCtx() : null); };
   // Exemplar of Light: "Whenever you put one or more +1/+1 counters on this creature, …"
-  Game.hooks.drawInstead = (s, first) => !!(game && hasBot() && (s === game || s === game.bot.s) && Bot.drawInstead(game, s, first, def)); // Notion Thief
+  Game.hooks.graveInstead = (s, inst) => !!(game && hasBot() && (s === game || s === game.bot.s) && Bot.graveInstead(game, s, inst, def)); // Dauthi Voidwalker
+  Game.hooks.drawInstead = (s, first) => !!(game && (s === game || (hasBot() && s === game.bot.s)) && Bot.drawInstead(game, s, first, def)); // Notion Thief, dredge
   Game.hooks.manaTapped = (s, inst) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.manaTapped(s, inst); }; // Treasure Nabber
   Game.hooks.counters = (s, inst, kind, n) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.countersPut(game, s, inst, kind, n, def, s === game ? effectCtx() : null); };
   // "When this enters, it deals 2 damage to each opponent": Massacre Girl, Most Wanted sees it.
@@ -3973,6 +3997,13 @@
         activate(iid, { ...ab, x: String(x), mana, effect: ab.effect.replace(/\bx\b/gi, String(x)) }, discards, sacs);
       });
     }
+    // Gix, Yawgmoth Praetor: "…, Discard X cards: Exile the top X cards …" — you say X, then pick the cards.
+    if (ab.discardX && !ab.x) {
+      return ask(`X for ${inst.name} (cards to discard)`, 1).then(x => {
+        if (x == null || Number.isNaN(Number(x)) || x < 1) return;
+        activate(iid, { ...ab, x: String(x), discard: Number(x), effect: ab.effect.replace(/\bx\b/gi, String(x)) }, discards, sacs);
+      });
+    }
     // Crucible of the Spirit Dragon: "Remove X storage counters from this land: Add X mana …" — you say X.
     if (ab.removeX && !ab.x) {
       const have = inst.counters[ab.removeX] || 0;
@@ -3994,10 +4025,11 @@
     }
     // "Discard a card: …": pick what to discard first. Cancel and nothing happens.
     if (ab.discard && !discards) {
-      if (game.zones.hand.length < ab.discard) return status(`${inst.name} needs you to discard ${ab.discard === 1 ? 'a card' : ab.discard + ' cards'}, and your hand is too small.`, 'warn', 8000);
+      const hand = game.zones.hand.filter(id => !ab.discardWhat || Bot.cardFits(game.cards[id], ab.discardWhat)); // Floral Evoker: "Discard a creature card"
+      if (hand.length < ab.discard) return status(`${inst.name} needs you to discard ${ab.discard === 1 ? `a ${ab.discardWhat || ''} card`.replace('  ', ' ') : ab.discard + ' cards'}, and your hand doesn't have that.`, 'warn', 8000);
       return pickCards({
         title: `Discard ${ab.discard === 1 ? 'a card' : ab.discard + ' cards'} for ${inst.name}`,
-        note: ab.text, ids: [...game.zones.hand], max: ab.discard, ok: 'Discard and activate', cancel: 'Cancel',
+        note: ab.text, ids: hand, max: ab.discard, ok: 'Discard and activate', cancel: 'Cancel',
       }, picks => activate(iid, ab, picks, sacs));
     }
     // Endless Atlas, Speaker of the Heavens: "Activate only if …".
@@ -4046,6 +4078,7 @@
         if (!c) return;
         game.lastSacPower = Math.max(0, Bot.stats(c, def(c.id)).pow); // Greater Good: "the sacrificed creature's power"
         game.lastSacMv = Bot.cmcOfInst(c, def); // Broadside Bombardiers: "the sacrificed permanent's mana value"
+        game.lastSacTough = Math.max(0, Bot.stats(c, def(c.id)).tou); // Felothar: "the sacrificed creature's toughness"
         Game.log(game, `Sacrificed ${c.name} for ${inst.name}.`);
         Game.move(game, id, c.commander ? 'command' : 'graveyard');
         if (hasBot()) Bot.sacrificed(game, game, c, def, effectCtx()); // Rapacious Guest: "Whenever you sacrifice a Food, …"
@@ -4071,6 +4104,12 @@
       if (ab.remove) Game.counter(game, iid, ab.remove.kind, -ab.remove.n);
       if (ab.life) game.life -= ab.life;
       if (ab.exileSelf) Game.move(game, iid, 'exile'); // Underdark Rift: exiled as a cost
+      // Necropolis Fiend: "Exile X cards from your graveyard" (the X you picked; lands and the cheapest first)
+      if (ab.exileGraveX) {
+        const pick = [...game.zones.graveyard].sort((a, b) => (Game.isLand(game.cards[b]) - Game.isLand(game.cards[a])) || (Bot.cmcOfInst(game.cards[a], def) - Bot.cmcOfInst(game.cards[b], def))).slice(0, Number(ab.x) || 0);
+        pick.forEach(id => Game.move(game, id, 'exile'));
+        if (pick.length) Game.log(game, `Exiled ${pick.length} card${pick.length === 1 ? '' : 's'} from your graveyard for ${inst.name}.`);
+      }
       if (ab.bounceSelf) Game.move(game, iid, inst.commander ? 'command' : 'hand'); // Rootha: "Return Rootha to its owner's hand" (a commander may go to the command zone)
       (ab.tapPicks || []).forEach(id => { const c = game.cards[id]; if (c) { c.tapped = true; c.tappedFor = null; } });
       if (ab.bouncePick && game.cards[ab.bouncePick]) Game.move(game, ab.bouncePick, 'hand');
@@ -5471,6 +5510,9 @@
       // Mayhem (Chameleon): from your graveyard for its mayhem cost, the turn you discarded it.
       const mh = inst.zone === 'graveyard' && Bot.mayhemOf(inst, def);
       if (mh) cast.push({ label: Bot.mayhemOk(game, inst, def) ? `Cast with mayhem (${mh})` : `Mayhem (${mh}): only the turn you discard it`, action: () => { closeModal(); if (!Bot.mayhemOk(game, inst, def)) return status(`${inst.name} wasn't discarded this turn.`, 'warn'); tryPlay(iid, { cast: true, cost: mh }); } });
+      // Dredge N (Life from the Loam): it comes back to your hand instead of your next draw (Bot.drawInstead mills N).
+      const dredge = inst.zone === 'graveyard' && /^dredge (\d+)/im.exec(oracleOf(inst));
+      if (dredge) cast.push({ label: inst.dredgeNext ? `Dredge ${dredge[1]}: set for your next draw (click to cancel)` : `Dredge ${dredge[1]}: return it instead of your next draw`, action: () => { closeModal(); act(() => { inst.dredgeNext = !inst.dredgeNext; Game.log(game, inst.dredgeNext ? `${inst.name} will be dredged instead of your next draw.` : `${inst.name} won't be dredged.`); }); } });
       // Conduit of Worlds: "You may play lands from your graveyard." (your land for the turn)
       if (inst.zone === 'graveyard' && Game.isLand(inst) && Bot.landsFromGrave(game, def)) {
         cast.push({ label: game.landPlayed ? 'Play this land (you already played one)' : 'Play this land', action: () => { closeModal(); if (game.landPlayed) return status("You've already played a land this turn.", 'warn'); act(() => { Game.move(game, iid, 'battlefield'); game.landPlayed = true; Game.log(game, `Played ${inst.name} from your graveyard.`); }); } });
