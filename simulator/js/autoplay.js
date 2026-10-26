@@ -26,6 +26,7 @@ const Autoplay = (() => {
       if (v) B.afterDeath(v, s, inst, info || {}, defOf, null);
     };
     G.hooks.wouldDie = (s, inst) => { const v = view(); return v && v.bot ? B.wouldDie(v, s, inst, defOf) : null; };
+    G.hooks.spent = (s, before, after) => { const v = view(); if (v && v.bot) B.manaSpent(v, s, before, after, defOf, null); }; // expend
     G.hooks.moved = (s, inst, from, to) => { const v = view(); if (v && v.bot) B.cardMoved(v, s, inst, from, to, defOf, null); };
     G.hooks.sendHome = (s, inst, to) => { const v = view(); if (v && v.bot) B.sendHome(v, s, inst, to, defOf); };
     G.hooks.oppDamaged = (s, n) => { const v = view(); if (v && v.bot) B.opponentDamaged(v, s, n, defOf); };

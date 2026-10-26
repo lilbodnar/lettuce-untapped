@@ -41,7 +41,7 @@ const Coverage = (() => {
     'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash'];
   // Done on every table (bot.js).
   const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
-    'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace']; // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
+    'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace', 'ravenous']; // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
 
@@ -192,7 +192,7 @@ const Coverage = (() => {
       /^whenever you cast a spell with \{x\} in its mana cost, (?:you may )?(.+)$/i, // Zaxara
     ];
     for (const re of THEN) {
-      if ((m = re.exec(line))) { effectGaps('both', m[1].replace(/\bX\b/g, '1').replace(/\bthat much damage\b/gi, '1 damage')); return out; } // Casey Jones: "that much" (countersPut)
+      if ((m = re.exec(line))) { effectGaps('both', m[1].replace(/\bX\b/g, '1').replace(/\bthat much damage\b/gi, '1 damage').replace(/\bthat many\b/gi, '1')); return out; } // Simic Ascendancy: "that many" (countersPut) // Casey Jones: "that much" (countersPut)
     }
     // Primeval Spawn: "When this creature leaves the battlefield, …"
     if ((m = /^when (.+?) leaves the battlefield, (?:you may )?(.+)$/i.exec(line)) && self(m[1])) { effectGaps('both', m[2]); return out; }
@@ -266,6 +266,14 @@ const Coverage = (() => {
     if (P.VINECRASHER.test(line)) return out;
     if ((m = /^whenever one or more land cards are put into your graveyard from anywhere, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; }
     if ((m = /^when this land is put into a graveyard from the battlefield, (.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; }
+    // Bloomburrow: expend (manaSpent), gifts (giftGiven), Bloodroot Apothecary (sacrificed), Rapid Augmenter (creatureEntered), Pollywog Prodigy (opponentActed)
+    if ((m = P.EXPEND.exec(line))) { effectGaps('both', m[2]); return out; }
+    if ((m = /^whenever you give a gift, (?:you may )?(.+)$/i.exec(line))) { effectGaps('you', m[1]); gap(out, 'opp', 'trigger', 'gifts (Opp never promises one)'); return out; }
+    if (P.OPP_SAC_POISON.test(line)) return out;
+    if (/^whenever another creature you control with base power \d+ enters, it gains .+ until end of turn\.?$/i.test(line)) return out;
+    if ((m = /^whenever an opponent casts an? \w+ spell with mana value less than (?:this creature's|its) power, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; }
+    // Tenuous Truce: the enchanted opponent's end step (both draw), and it goes when either of you attacks the other (tenuousTruce)
+    if (/^at the beginning of enchanted opponent's end step, you and that player each draw a card\.?$/i.test(line) || /^when you attack enchanted opponent or a planeswalker they control or when they attack you or a planeswalker you control, sacrifice this aura\.?$/i.test(line)) return out;
     // Darksteel Reactor (refreshGrants)
     if (/^when (?:this \w+|.+?) has \w+ or more [\w+/-]+ counters on it, you win the game\.?$/i.test(line)) return out;
     // Patrolling Peacemaker (spellTargeted)
@@ -390,7 +398,7 @@ const Coverage = (() => {
     // Boggart Shenanigans: "Whenever another Goblin you control is put into a graveyard from the battlefield, …" (the same as dying)
     if ((m = P.DIES_WATCH.exec(line.replace(/ is put into a graveyard from the battlefield, /i, " dies, ")))) { effectGaps('both', m[6].replace(/^if its toughness was less than \d+, /i, '').replace(/^if it had an? [\w+/-]+ counter on it, /i, '')); return out; } // Blowfly Infestation
     // "Whenever you cast …" (Nightmare Sower: "… during an opponent's turn")
-    if ((m = P.CAST_WATCH.exec(line.replace(/ with mana value \d+ or greater(?=,| from your hand,)/i, '').replace(/ from your hand(?=,)/i, '').replace(/^whenever you cast a spell that's one or more colors, /i, 'whenever you cast a colored spell, '))) && !/\b(first|second)\b/i.test(line)) { // Zuri: "… with mana value 4 or greater"; Dirgur Focusmage: "… from your hand"
+    if ((m = P.CAST_WATCH.exec(line.replace(/ with mana value \d+ or greater(?=,| from your hand,)/i, '').replace(/ from your hand(?=,)/i, '').replace(/^whenever you cast a spell that's one or more colors, /i, 'whenever you cast a colored spell, '))) && !/\b(first|second)\b/i.test(line.replace(/\bthe second time this ability has resolved\b/i, ''))) { // (Ms. Bumbleflower's "the second time …" is its effect's) Zuri: "… with mana value 4 or greater"; Dirgur Focusmage: "… from your hand"
       const e = m[4].trim().replace(/\+X\/\+0 until end of turn, where X is that spell's mana value/i, '+1/+0 until end of turn') // Renegade Bull (spellCast)
         .replace(/\bwith mana value less than or equal to that spell's mana value\b/i, 'with mana value 1 or less') // Hammerhead Tyrant (spellCast)
         .replace(/\bwhere x is the amount of mana spent to cast that spell\b/i, "where X is that spell's mana value") // Manaform Hellkite
@@ -468,7 +476,7 @@ const Coverage = (() => {
     if (hd) { notRun(hd.effect, inst).forEach(p => gap(out, 'you', 'activated', p)); gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
     const ab = B.activatedAbilities(inst, () => ({ oracle: line }))[0];
     if (!ab) { gap(out, 'both', 'cost', m[1]); return out; }
-    const left = notRun(/\{X\}/i.test(ab.mana) || ab.removeAnyX ? ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats, Moxite Refinery: you pick X
+    const left = notRun(/\{X\}/i.test(ab.mana) || ab.removeAnyX || ab.sacX || ab.tapX ? ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats, Moxite Refinery: you pick X
     left.forEach(p => gap(out, 'you', 'activated', p));
     // Opp uses only "…: Regenerate this" (to save a creature) and its fetch lands (crackFetches).
     const regen = /^regenerate (.+?)\.?$/i.exec(ab.effect.trim());
@@ -510,7 +518,7 @@ const Coverage = (() => {
     /^you may pay (?:\{[^}]+\})+ and tap \w+ untapped .+? you control(?: with \w+)? rather than pay this spell's mana cost\.?$/i, // Sephara (costChoices)
     /^if a nontoken creature an opponent controls would die, instead exile that card and create .+? creature token\.?$/i, // Kalitas
     /^you may cast this card from your graveyard as long as you control an? \w+\.?$/i, // Gravecrawler
-    /^each (?:other )?\w+(?: or \w+)? you control(?: of the chosen type)? enters with an additional [\w+/-]+ counter on it\.?$/i, // Metallic Mimic, Dragonstorm Globe, Arlinn (enterTrigger)
+    /^each (?:other )?(?:non-)?\w+(?: creature)?(?: or \w+)? you control(?: of the chosen type)? enters with an additional [\w+/-]+ counter on it\.?$/i, // Metallic Mimic, Dragonstorm Globe, Arlinn (enterTrigger)
     /^if a creature an opponent controls would die, exile it instead\. when you do, create .+? creature token\.?$/i, // Head of the Hunt (wouldDie)
     /^if a triggered ability of another \w+ or battle you control triggers, that ability triggers an additional time\.?$/i, // Chief of the Wilds (extraTriggers)
     /^(?:this creature|.+?) enters with x [\w+/-]+ counters on it\.?$/i, // Shivan Devastator
@@ -683,6 +691,19 @@ const Coverage = (() => {
     // Donatello: a Mutagen token with each batch of tokens (game.js's tokenCount)
     if (P.PLUS_MUTAGEN.test(line) || P.PLUS_THOPTER.test(line)) return out; // Donatello, Stridehangar Automaton (game.js's tokenCount)
     // Eternal Might: On Wings of Gold, Maskwood Nexus, Rhet-Tomb Mystic, Vizier of Many Faces, Zombie Master, Lost Monarch (afflict)
+    if (P.TOKEN_SWAP.test(line) || P.BELLO.test(line)) return out;
+    if (/^(?:this creature|.+?) enters with a number of [\w+/-]+ counters on it equal to one plus the number of other creatures you control\.?$/i.test(line)) return out; // Boss's Chauffeur (enterTrigger) // Fisher's Talent (game.js's createToken), Bello (refreshGrants)
+    if (/^if one or more tokens would be created under your control, those tokens plus that many 1\/1 green squirrel creature tokens are created instead\.?$/i.test(line)) return out; // Chatterfang (tokenCount)
+    if (/^if you would create a clue, food, or treasure token, instead create one of each\.?$/i.test(line)) return out; // Academy Manufactor (artifactTokens)
+    if (/^(?:this creature|.+?) gets \+x\/\+0, where x is the number of other creatures you control with base power \d+\.?$/i.test(line)) return out; // Zinnia
+    if (/^creature spells you cast gain offspring (?:\{[^}]+\})+ as you cast them\.?$/i.test(line)) { gap(out, 'opp', 'static', 'offspring (Opp never pays it)'); return out; } // Zinnia (costChoices)
+    if (/^during your turn, artifacts you control are foods in addition to their other types and have ".+"\.?$/i.test(line)) return out; // Gourmand's Talent
+    if (/^foods you control have all activated abilities of all creature cards exiled with this creature\.?$/i.test(line)) return out; // Hazel's Brewmaster
+    if (/^each fungus and saproling you control has "\{t\}: add \{g\}\."\.?$/i.test(line)) return out; // Brightcap Badger (grantedMana)
+    if (/^enchantment spells you cast from your hand have cascade\.?$/i.test(line) || /^the first spell you cast each turn that mana from a treasure was spent to cast has cascade\.?$/i.test(line)) return out; // Wildsear, Rain of Riches (spellCast)
+    if (/^(?:enchanted land|it) has "\{t\}: create an? .+ token\."\.?$/i.test(line)) return out; // Squirrel Nest (attachBonus)
+    if (/^(?:as long as you've cast a spell this turn, )?you may play cards from the top of your library\.?$/i.test(line)) return out; // Fortune Teller's Talent (topCastable)
+    if (/^each player may play an additional land on each of their turns\.?$/i.test(line)) return out; // Rites of Flourishing, Ghirapur Orrery (refreshGrants)
     if (P.BRUSHRAZER.test(line) || P.LANDS_FROM_TOP.test(line) || P.AUGUR.test(line) || P.BROOD.test(line) || P.ENTER_EQUAL.test(line)) return out;
     if (/^(?:this creature|.+?) enters tapped with \w+ [\w+/-]+ counters on it\.?$/i.test(line) || /^each creature you control gets \+\d+\/\+0 for each time it has attacked this turn\.?$/i.test(line) || /^lands you control enter untapped\.?$/i.test(line)) return out;
     if (P.CONVERGE_ENTER.test(line) || /^when (?:this \w+|.+?) has \w+ or more [\w+/-]+ counters on it, you win the game\.?$/i.test(line)) return out; // Crystalline Crawler, Darksteel Reactor

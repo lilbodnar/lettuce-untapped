@@ -31,7 +31,7 @@ const Game = (() => {
   // hooks.counters(s, inst, kind, n) runs after counters are put on a permanent (Exemplar of Light).
   // hooks.manaTapped(s, inst) after a permanent is tapped for mana (Treasure Nabber); hooks.drawInstead(s, first) can take a draw away (Notion Thief).
   // hooks.graveInstead(s, inst) true sends a card on its way to a graveyard to exile instead (Dauthi Voidwalker).
-  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null, graveInstead: null };
+  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null, graveInstead: null, spent: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -560,7 +560,14 @@ const Game = (() => {
     }
     // Coin of Mastery: "for each mana from an artifact source spent to cast it"
     const artifactMana = [...used].filter(u => units[u] && units[u].inst && /\bartifact\b/i.test(String(units[u].inst.typeLine || '').split('//')[0])).length;
-    return { sources: sources.map(i => i.name + (i.mana && i.mana.sacrifice ? ' (sacrificed)' : '')), life, pool: plan.fromPool, colors: spent.size, artifactMana };
+    const treasureMana = [...used].filter(u => units[u] && units[u].inst && /\btreasure\b/i.test(String(units[u].inst.typeLine || '') + ' ' + (units[u].inst.name || ''))).length;
+    if (spell && treasureMana) spell.treasureSpent = treasureMana;
+    const key = `${s.turn}${s.offTurn ? 'o' : ''}`;
+    if (s.spentKey !== key) { s.spentKey = key; s.spent = 0; }
+    const before = s.spent;
+    s.spent += need.generic + need.pips.length;
+    if (hooks.spent && s.spent > before) hooks.spent(s, before, s.spent);
+    return { sources: sources.map(i => i.name + (i.mana && i.mana.sacrifice ? ' (sacrificed)' : '')), life, pool: plan.fromPool, colors: spent.size, artifactMana, treasureMana };
   }
 
   // Turns on the filter sources in set one at a time: each one's {N} is paid by pool mana or other
@@ -1166,6 +1173,11 @@ const Game = (() => {
   // typeLine: the tokens' type line, when it's known (Stridehangar Automaton: one more Thopter when they're artifacts).
   function tokenCount(s, n, typeLine) {
     const by = doublers(s, d => d.tokens);
+    if (s.plusSquirrels && n > 0 && !s.squirrelBusy) {
+      s.squirrelBusy = true;
+      try { for (let i = 0; i < n * s.plusSquirrels; i++) createToken(s, { custom: true, name: 'Squirrel', typeLine: 'Token Creature — Squirrel', pt: '1/1', text: '', oracle: '', colors: ['G'] }, { quiet: true }); } finally { s.squirrelBusy = false; }
+      log(s, `Chatterfang: ${n * s.plusSquirrels} Squirrel token${n * s.plusSquirrels === 1 ? '' : 's'} too.`);
+    }
     // Stridehangar Automaton: "If one or more artifact tokens would be created under your control, those tokens plus an additional 1/1 colorless
     // Thopter artifact creature token with flying are created instead." (s.plusThopter: how many, from bot.js's refreshGrants)
     if (s.plusThopter && n > 0 && /\bartifact\b/i.test(typeLine || '') && !s.thopterBusy) {
@@ -1301,7 +1313,7 @@ const Game = (() => {
       if (inst.attachedTo) detach(s, iid);
     }
     if (from === 'battlefield' && to !== 'battlefield') {
-      inst.lastInfo = { counters: info.counters, pump: info.pump, anthem: info.anthem }; // Rapacious Guest: "equal to its power" as it left (bot.js)
+      inst.lastInfo = { counters: info.counters, pump: info.pump, anthem: info.anthem, damage: info.damageTaken || 0 }; // Rapacious Guest: "equal to its power" as it left (bot.js)
       // A creature leaving takes nothing with it: auras go to the graveyard, equipment stays, unattached.
       for (const id of attachmentsOf(s, iid)) {
         const a = s.cards[id];
@@ -1352,7 +1364,7 @@ const Game = (() => {
       // Exploration: "You may play an additional land on each of your turns." (inst.extraLandDrop)
       if (from === 'hand' && isLand(inst) && !opts.put) {
         s.landsThisTurn = (s.landsThisTurn || 0) + 1;
-        s.landPlayed = s.landsThisTurn > s.zones.battlefield.filter(id => s.cards[id].extraLandDrop && !s.cards[id].faceDown).length;
+        s.landPlayed = s.landsThisTurn > s.zones.battlefield.filter(id => s.cards[id].extraLandDrop && !s.cards[id].faceDown).length + (s.extraLandAll || 0); // Rites of Flourishing (bot.js)
       }
       if (from === 'command' && inst.commander) inst.castCount = (inst.castCount || 0) + 1;
       // Cast, not just put onto the battlefield (The Sibsig Ceremony's "if you cast it").
@@ -1578,6 +1590,7 @@ const Game = (() => {
 
   // def: a Scryfall card, or { custom: true, name, pt, text } for a hand-made token.
   function createToken(s, def, opts = {}) {
+    for (let k = 0; k < 3 && s.tokenSwap && s.tokenSwap[String(def.name || '').toLowerCase()]; k++) def = { ...s.tokenSwap[String(def.name).toLowerCase()] };
     // Divine Visitation: "If one or more creature tokens would be created under your control, that many 4/4 white
     // Angel creature tokens with flying and vigilance are created instead."
     const angel = /\bcreature\b/i.test(def.typeLine || '') && s.zones.battlefield.some(iid => s.cards[iid].angelTokens && !s.cards[iid].phasedOut && !s.cards[iid].faceDown);

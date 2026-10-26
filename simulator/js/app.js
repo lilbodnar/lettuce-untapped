@@ -2296,7 +2296,7 @@
             closeAsk();
             if (b.dataset.cc === 'cancel') return;
             const c = choices[Number(b.dataset.cc)];
-            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend, tapOthers: c.tapOthers, kicks: c.kicks, energy: c.energy });
+            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend, tapOthers: c.tapOthers, kicks: c.kicks, energy: c.energy, gift: c.gift });
           };
         });
         return;
@@ -2360,7 +2360,17 @@
     if (opts.choice === 'blitz' || opts.choice === 'dash') inst.fastCast = opts.choice; // Jaxis, Ragavan (the entered hook: Bot.fastCast)
     if (opts.choice === 'overload') inst.overloaded = true; // Vandalblast: "each" instead of "target" (Bot.spellText)
     // Gift: the opponent gets it first ("If the gift was promised, …").
-    if (opts.choice === 'gift') { inst.giftPromised = true; effectCtx().oppsDraw(1); Game.log(game, `${inst.name}: promised the gift, so an opponent drew a card.`); }
+    // A card, a Treasure, a Food, a tapped Fish, or an extra turn (you skip your next one); then "Whenever you give a gift" (Jolly Gerbils).
+    if (opts.choice === 'gift') {
+      inst.giftPromised = true;
+      const kind = opts.gift || 'card';
+      if (kind === 'card') effectCtx().oppsDraw(1);
+      else if (kind === 'extra turn') game.skipTurn = (game.skipTurn || 0) + 1;
+      else if (hasBot() && kind === 'tapped fish') Bot.runEffect(game.bot.s, 'create a tapped 1/1 blue Fish creature token', { other: game, defOf: def });
+      else if (hasBot()) Bot.artifactTokens(game.bot.s, null, 1, kind);
+      Game.log(game, `${inst.name}: promised the gift (${kind === 'card' ? 'an opponent drew a card' : kind === 'extra turn' ? 'the opponent takes an extra turn' : `the opponent got a ${kind}`}).`);
+      if (hasBot()) Bot.giftGiven(game, game, def, effectCtx());
+    }
     // Sephara: tap four untapped creatures with flying as part of the cost.
     if (opts.choice === 'altTap') (opts.tapOthers || []).forEach(id => { const c = game.cards[id]; if (c) { c.tapped = true; c.tappedFor = null; } });
     // Morph: face down as a 2/2 for {3}.
@@ -3829,6 +3839,7 @@
   Game.hooks.graveInstead = (s, inst) => !!(game && hasBot() && (s === game || s === game.bot.s) && Bot.graveInstead(game, s, inst, def)); // Dauthi Voidwalker
   Game.hooks.drawInstead = (s, first) => !!(game && (s === game || (hasBot() && s === game.bot.s)) && Bot.drawInstead(game, s, first, def)); // Notion Thief, dredge
   Game.hooks.manaTapped = (s, inst) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.manaTapped(s, inst); }; // Treasure Nabber
+  Game.hooks.spent = (s, before, after) => { if (game && hasBot() && (s === game || s === game.bot.s)) Bot.manaSpent(game, s, before, after, def, s === game ? effectCtx() : null); }; // expend
   Game.hooks.counters = (s, inst, kind, n) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.countersPut(game, s, inst, kind, n, def, s === game ? effectCtx() : null); };
   // "When this enters, it deals 2 damage to each opponent": Massacre Girl, Most Wanted sees it.
   Game.hooks.oppDamaged = (s, n) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.opponentDamaged(game, s, n, def, s === game ? effectCtx() : null); };
@@ -4052,6 +4063,26 @@
         if (x == null || Number.isNaN(Number(x)) || x < 1) return;
         const n = Math.min(most, Math.floor(Number(x)));
         activate(iid, { ...ab, x: String(n), effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
+      });
+    }
+    // Chatterfang, Insatiable Frugivore: "Sacrifice X Squirrels" / "Sacrifice X Foods" — you say X, then pick them.
+    if (ab.sacX && !ab.x) {
+      const have = Bot.sacChoices(game, inst, ab.sacX, def).length;
+      if (!have) return status(`${inst.name} needs a ${ab.sacX} to sacrifice.`, 'warn');
+      return ask(`X for ${inst.name} (${ab.sacX}s to sacrifice, up to ${have})`, have).then(x => {
+        if (x == null || Number.isNaN(Number(x)) || x < 1) return;
+        const n = Math.min(have, Math.floor(Number(x)));
+        activate(iid, { ...ab, x: String(n), sacOther: ab.sacX, sacCount: n, effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
+      });
+    }
+    // Hazel of the Rootbloom: "Tap X untapped tokens you control" — you say X; the tokens are tapped for you.
+    if (ab.tapX && !ab.x) {
+      const ids = game.zones.battlefield.filter(id => id !== iid && game.cards[id].token && !game.cards[id].tapped);
+      if (!ids.length) return status(`${inst.name} needs untapped tokens to tap.`, 'warn');
+      return ask(`X for ${inst.name} (untapped tokens to tap, up to ${ids.length})`, ids.length).then(x => {
+        if (x == null || Number.isNaN(Number(x)) || x < 1) return;
+        const n = Math.min(ids.length, Math.floor(Number(x)));
+        activate(iid, { ...ab, x: String(n), tapPicks: ids.slice(0, n), effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
       });
     }
     // Tekuthal: "Remove three counters from among other artifacts, creatures, and planeswalkers you control"
