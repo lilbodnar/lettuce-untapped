@@ -1,0 +1,725 @@
+{
+ "Acclaimed Contender": {
+  "id": "Acclaimed Contender",
+  "name": "Acclaimed Contender",
+  "typeLine": "Creature — Human Knight",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, if you control another Knight, look at the top five cards of your library. You may reveal a Knight, Aura, Equipment, or legendary artifact card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Akoum Hellkite": {
+  "id": "Akoum Hellkite",
+  "name": "Akoum Hellkite",
+  "typeLine": "Creature — Dragon",
+  "manaCost": "{4}{R}{R}",
+  "cmc": 6,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Flying\nLandfall — Whenever a land you control enters, this creature deals 1 damage to any target. If that land is a Mountain, this creature deals 2 damage instead.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Ancient Stone Idol": {
+  "id": "Ancient Stone Idol",
+  "name": "Ancient Stone Idol",
+  "typeLine": "Artifact Creature — Golem",
+  "manaCost": "{10}",
+  "cmc": 10,
+  "colors": [],
+  "oracle": "Flash\nThis spell costs {1} less to cast for each attacking creature.\nTrample\nWhen this creature dies, create a 6/12 colorless Construct artifact creature token with trample.",
+  "power": "12",
+  "toughness": "12"
+ },
+ "Aryel, Knight of Windgrace": {
+  "id": "Aryel, Knight of Windgrace",
+  "name": "Aryel, Knight of Windgrace",
+  "typeLine": "Legendary Creature — Human Knight",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Vigilance\n{2}{W}, {T}: Create a 2/2 white Knight creature token with vigilance.\n{B}, {T}, Tap X untapped Knights you control: Destroy target creature with power X or less.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Atarka Monument": {
+  "id": "Atarka Monument",
+  "name": "Atarka Monument",
+  "typeLine": "Artifact",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "{T}: Add {R} or {G}.\n{4}{R}{G}: This artifact becomes a 4/4 red and green Dragon artifact creature with flying until end of turn.",
+  "producedMana": [
+   "G",
+   "R"
+  ]
+ },
+ "Brimaz, Blight of Oreskos": {
+  "id": "Brimaz, Blight of Oreskos",
+  "name": "Brimaz, Blight of Oreskos",
+  "typeLine": "Legendary Creature — Phyrexian Cat",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Whenever you cast a Phyrexian creature or artifact creature spell, incubate X, where X is that spell's mana value. (Create an Incubator token with X +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)\nAt the beginning of each end step, if a Phyrexian died under your control this turn, proliferate.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Cataclysmic Gearhulk": {
+  "id": "Cataclysmic Gearhulk",
+  "name": "Cataclysmic Gearhulk",
+  "typeLine": "Artifact Creature — Construct",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Vigilance\nWhen this creature enters, each player chooses an artifact, a creature, an enchantment, and a planeswalker from among the nonland permanents they control, then sacrifices the rest.",
+  "power": "4",
+  "toughness": "5"
+ },
+ "Champion of Lambholt": {
+  "id": "Champion of Lambholt",
+  "name": "Champion of Lambholt",
+  "typeLine": "Creature — Human Warrior",
+  "manaCost": "{1}{G}{G}",
+  "cmc": 3,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Creatures with power less than this creature's power can't block creatures you control.\nWhenever another creature you control enters, put a +1/+1 counter on this creature.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Citywide Bust": {
+  "id": "Citywide Bust",
+  "name": "Citywide Bust",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all creatures with toughness 4 or greater."
+ },
+ "Conjurer's Mantle": {
+  "id": "Conjurer's Mantle",
+  "name": "Conjurer's Mantle",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature gets +1/+1 and has vigilance.\nWhenever equipped creature attacks, look at the top six cards of your library. You may reveal a card that shares a creature type with that creature from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\nEquip {1}"
+ },
+ "Crippling Fear": {
+  "id": "Crippling Fear",
+  "name": "Crippling Fear",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a creature type. Creatures that aren't of the chosen type get -3/-3 until end of turn."
+ },
+ "Curse of Bounty": {
+  "id": "Curse of Bounty",
+  "name": "Curse of Bounty",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{1}{G}",
+  "cmc": 2,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Enchant player\nWhenever enchanted player is attacked, untap all nonland permanents you control. Each opponent attacking that player untaps all nonland permanents they control."
+ },
+ "Curse of Disturbance": {
+  "id": "Curse of Disturbance",
+  "name": "Curse of Disturbance",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nWhenever enchanted player is attacked, create a 2/2 black Zombie creature token. Each opponent attacking that player does the same."
+ },
+ "Devouring Light": {
+  "id": "Devouring Light",
+  "name": "Devouring Light",
+  "typeLine": "Instant",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nExile target attacking or blocking creature."
+ },
+ "Dragonkin Berserker": {
+  "id": "Dragonkin Berserker",
+  "name": "Dragonkin Berserker",
+  "typeLine": "Creature — Human Berserker",
+  "manaCost": "{1}{R}",
+  "cmc": 2,
+  "colors": [
+   "R"
+  ],
+  "oracle": "First strike\nBoast abilities you activate cost {1} less to activate for each Dragon you control.\nBoast — {4}{R}: Create a 5/5 red Dragon creature token with flying. (Activate only if this creature attacked this turn and only once each turn.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Dream Pillager": {
+  "id": "Dream Pillager",
+  "name": "Dream Pillager",
+  "typeLine": "Creature — Dragon",
+  "manaCost": "{5}{R}{R}",
+  "cmc": 7,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Flying\nWhenever this creature deals combat damage to a player, exile that many cards from the top of your library. Until end of turn, you may cast spells from among those exiled cards.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Elenda and Azor": {
+  "id": "Elenda and Azor",
+  "name": "Elenda and Azor",
+  "typeLine": "Legendary Creature — Vampire Knight Sphinx",
+  "manaCost": "{3}{W}{U}{B}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "U",
+   "W"
+  ],
+  "oracle": "Flying, ward {2}\nWhenever Elenda and Azor attacks, you may pay {X}{W}{U}{B}. If you do, draw X cards.\nAt the beginning of each end step, you may pay 4 life. If you do, create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the number of cards you've drawn this turn.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Enter the God-Eternals": {
+  "id": "Enter the God-Eternals",
+  "name": "Enter the God-Eternals",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{U}{U}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "U"
+  ],
+  "oracle": "Enter the God-Eternals deals 4 damage to target creature and you gain life equal to the damage dealt this way. Target player mills four cards. Amass Zombies 4. (Put four +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)"
+ },
+ "Excise the Imperfect": {
+  "id": "Excise the Imperfect",
+  "name": "Excise the Imperfect",
+  "typeLine": "Instant",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target nonland permanent. Its controller incubates X, where X is its mana value. (They create an Incubator token with X +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)"
+ },
+ "Exsanguinator Cavalry": {
+  "id": "Exsanguinator Cavalry",
+  "name": "Exsanguinator Cavalry",
+  "typeLine": "Creature — Vampire Knight",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Menace, lifelink\nWhenever a Knight you control deals combat damage to a player, put a +1/+1 counter on that creature and create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Filigree Vector": {
+  "id": "Filigree Vector",
+  "name": "Filigree Vector",
+  "typeLine": "Artifact Creature — Phyrexian Construct",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, put a +1/+1 counter on each of any number of target creatures and a charge counter on each of any number of target artifacts.\n{1}, {T}, Sacrifice another artifact: Proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Flameblast Dragon": {
+  "id": "Flameblast Dragon",
+  "name": "Flameblast Dragon",
+  "typeLine": "Creature — Dragon",
+  "manaCost": "{4}{R}{R}",
+  "cmc": 6,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Flying\nWhenever this creature attacks, you may pay {X}{R}. If you do, it deals X damage to any target.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Foe-Razer Regent": {
+  "id": "Foe-Razer Regent",
+  "name": "Foe-Razer Regent",
+  "typeLine": "Creature — Dragon",
+  "manaCost": "{5}{G}{G}",
+  "cmc": 7,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Flying\nWhen this creature enters, you may have it fight target creature you don't control.\nWhenever a creature you control fights, put two +1/+1 counters on it at the beginning of the next end step.",
+  "power": "4",
+  "toughness": "5"
+ },
+ "Fractured Powerstone": {
+  "id": "Fractured Powerstone",
+  "name": "Fractured Powerstone",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{T}: Add {C}.\n{T}: Roll the planar die. Activate only as a sorcery.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Gisa and Geralf": {
+  "id": "Gisa and Geralf",
+  "name": "Gisa and Geralf",
+  "typeLine": "Legendary Creature — Human Wizard",
+  "manaCost": "{2}{U}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "U"
+  ],
+  "oracle": "When Gisa and Geralf enters, mill four cards.\nOnce during each of your turns, you may cast a Zombie creature spell from your graveyard.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Grimoire of the Dead": {
+  "id": "Grimoire of the Dead",
+  "name": "Grimoire of the Dead",
+  "typeLine": "Legendary Artifact — Book",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "{1}, {T}, Discard a card: Put a study counter on Grimoire of the Dead.\n{T}, Remove three study counters from Grimoire of the Dead and sacrifice it: Put all creature cards from all graveyards onto the battlefield under your control. They're black Zombies in addition to their other colors and types."
+ },
+ "Haakon, Stromgald Scourge": {
+  "id": "Haakon, Stromgald Scourge",
+  "name": "Haakon, Stromgald Scourge",
+  "typeLine": "Legendary Creature — Zombie Knight",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may cast this card from your graveyard, but not from anywhere else.\nAs long as Haakon is on the battlefield, you may cast Knight spells from your graveyard.\nWhen Haakon dies, you lose 2 life.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Harvest Season": {
+  "id": "Harvest Season",
+  "name": "Harvest Season",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{G}",
+  "cmc": 3,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Search your library for up to X basic land cards, where X is the number of tapped creatures you control, put those cards onto the battlefield tapped, then shuffle."
+ },
+ "Havengul Lich": {
+  "id": "Havengul Lich",
+  "name": "Havengul Lich",
+  "typeLine": "Creature — Zombie Wizard",
+  "manaCost": "{3}{U}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "U"
+  ],
+  "oracle": "{1}: You may cast target creature card in a graveyard this turn. When you cast it this turn, this creature gains all activated abilities of that card until end of turn.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Herald of Hoofbeats": {
+  "id": "Herald of Hoofbeats",
+  "name": "Herald of Hoofbeats",
+  "typeLine": "Creature — Human Knight",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Horsemanship (This creature can't be blocked except by creatures with horsemanship.)\nOther Knights you control have horsemanship.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Hunter's Insight": {
+  "id": "Hunter's Insight",
+  "name": "Hunter's Insight",
+  "typeLine": "Instant",
+  "manaCost": "{2}{G}",
+  "cmc": 3,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Choose target creature you control. Whenever that creature deals combat damage to a player or planeswalker this turn, draw that many cards."
+ },
+ "Ichor Elixir": {
+  "id": "Ichor Elixir",
+  "name": "Ichor Elixir",
+  "typeLine": "Artifact",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "If you would roll one or more planar dice, instead roll that many planar dice plus one and ignore one.\n{T}: Add {C}{C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Keskit, the Flesh Sculptor": {
+  "id": "Keskit, the Flesh Sculptor",
+  "name": "Keskit, the Flesh Sculptor",
+  "typeLine": "Legendary Creature — Phyrexian Human Artificer",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{T}, Sacrifice three other artifacts and/or creatures: Look at the top three cards of your library. Put two of them into your hand and the other into your graveyard.\nPartner (You can have two commanders if both have partner.)",
+  "power": "1",
+  "toughness": "3"
+ },
+ "Knights of the Black Rose": {
+  "id": "Knights of the Black Rose",
+  "name": "Knights of the Black Rose",
+  "typeLine": "Creature — Human Knight",
+  "manaCost": "{3}{W}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "When this creature enters, you become the monarch.\nWhenever an opponent becomes the monarch, if you were the monarch as the turn began, that player loses 2 life and you gain 2 life.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Laboratory Drudge": {
+  "id": "Laboratory Drudge",
+  "name": "Laboratory Drudge",
+  "typeLine": "Creature — Zombie Horror",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "At the beginning of each end step, draw a card if you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Liliana's Devotee": {
+  "id": "Liliana's Devotee",
+  "name": "Liliana's Devotee",
+  "typeLine": "Creature — Human Warlock",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Zombies you control get +1/+0.\nAt the beginning of your end step, if a creature died this turn, you may pay {1}{B}. If you do, create a 2/2 black Zombie creature token.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Liliana, Untouched by Death": {
+  "id": "Liliana, Untouched by Death",
+  "name": "Liliana, Untouched by Death",
+  "typeLine": "Legendary Planeswalker — Liliana",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Mill three cards. If at least one Zombie card is milled this way, each opponent loses 2 life and you gain 2 life.\n−2: Target creature gets -X/-X until end of turn, where X is the number of Zombies you control.\n−3: You may cast Zombie spells from your graveyard this turn.",
+  "loyalty": "4"
+ },
+ "Loaming Shaman": {
+  "id": "Loaming Shaman",
+  "name": "Loaming Shaman",
+  "typeLine": "Creature — Centaur Shaman",
+  "manaCost": "{2}{G}",
+  "cmc": 3,
+  "colors": [
+   "G"
+  ],
+  "oracle": "When this creature enters, target player shuffles any number of target cards from their graveyard into their library.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Moira and Teshar": {
+  "id": "Moira and Teshar",
+  "name": "Moira and Teshar",
+  "typeLine": "Legendary Creature — Phyrexian Spirit Bird",
+  "manaCost": "{3}{W}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Flying\nWhenever you cast a historic spell, return target nonland permanent card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step. If it would leave the battlefield, exile it instead of putting it anywhere else. (Artifacts, legendaries, and Sagas are historic.)",
+  "power": "4",
+  "toughness": "5"
+ },
+ "Path of the Enigma": {
+  "id": "Path of the Enigma",
+  "name": "Path of the Enigma",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{U}",
+  "cmc": 5,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Target player draws four cards.\nWill of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues."
+ },
+ "Path of the Schemer": {
+  "id": "Path of the Schemer",
+  "name": "Path of the Schemer",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player mills two cards. Then you put a creature card from a graveyard onto the battlefield under your control. It's an artifact in addition to its other types.\nWill of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues."
+ },
+ "Phyrexian Scriptures": {
+  "id": "Phyrexian Scriptures",
+  "name": "Phyrexian Scriptures",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Put a +1/+1 counter on up to one target creature. That creature becomes an artifact in addition to its other types.\nII — Destroy all nonartifact creatures.\nIII — Exile all opponents' graveyards."
+ },
+ "Provoke the Trolls": {
+  "id": "Provoke the Trolls",
+  "name": "Provoke the Trolls",
+  "typeLine": "Instant",
+  "manaCost": "{3}{R}",
+  "cmc": 4,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Provoke the Trolls deals 3 damage to any target. If a creature is dealt damage this way, it gets +5/+0 until end of turn."
+ },
+ "Sarkhan, the Dragonspeaker": {
+  "id": "Sarkhan, the Dragonspeaker",
+  "name": "Sarkhan, the Dragonspeaker",
+  "typeLine": "Legendary Planeswalker — Sarkhan",
+  "manaCost": "{3}{R}{R}",
+  "cmc": 5,
+  "colors": [
+   "R"
+  ],
+  "oracle": "+1: Until end of turn, Sarkhan becomes a legendary 4/4 red Dragon creature with flying, indestructible, and haste. (He doesn't lose loyalty while he's not a planeswalker.)\n−3: Sarkhan deals 4 damage to target creature.\n−6: You get an emblem with \"At the beginning of your draw step, draw two additional cards\" and \"At the beginning of your end step, discard your hand.\"",
+  "loyalty": "4"
+ },
+ "Scourge of Nel Toth": {
+  "id": "Scourge of Nel Toth",
+  "name": "Scourge of Nel Toth",
+  "typeLine": "Creature — Zombie Dragon",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flying\nYou may cast this creature from your graveyard by paying {B}{B} and sacrificing two creatures rather than paying its mana cost.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Scrap Trawler": {
+  "id": "Scrap Trawler",
+  "name": "Scrap Trawler",
+  "typeLine": "Artifact Creature — Construct",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Whenever this creature dies or another artifact you control is put into a graveyard from the battlefield, return to your hand target artifact card in your graveyard with lesser mana value.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Sculpting Steel": {
+  "id": "Sculpting Steel",
+  "name": "Sculpting Steel",
+  "typeLine": "Artifact",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "You may have this artifact enter as a copy of any artifact on the battlefield."
+ },
+ "Sidar Jabari of Zhalfir": {
+  "id": "Sidar Jabari of Zhalfir",
+  "name": "Sidar Jabari of Zhalfir",
+  "typeLine": "Legendary Creature — Human Knight",
+  "manaCost": "{1}{W}{U}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "U",
+   "W"
+  ],
+  "oracle": "Eminence — Whenever you attack with one or more Knights, if Sidar Jabari is in the command zone or on the battlefield, draw a card, then discard a card.\nFlying, first strike\nWhenever Sidar Jabari deals combat damage to a player, return target Knight creature card from your graveyard to the battlefield.",
+  "power": "4",
+  "toughness": "3"
+ },
+ "Sinister Sabotage": {
+  "id": "Sinister Sabotage",
+  "name": "Sinister Sabotage",
+  "typeLine": "Instant",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target spell.\nSurveil 1. (Look at the top card of your library. You may put it into your graveyard.)"
+ },
+ "Slate of Ancestry": {
+  "id": "Slate of Ancestry",
+  "name": "Slate of Ancestry",
+  "typeLine": "Artifact",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "{4}, {T}, Discard your hand: Draw a card for each creature you control."
+ },
+ "Syr Elenora, the Discerning": {
+  "id": "Syr Elenora, the Discerning",
+  "name": "Syr Elenora, the Discerning",
+  "typeLine": "Legendary Creature — Human Knight",
+  "manaCost": "{3}{U}{U}",
+  "cmc": 5,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Syr Elenora's power is equal to the number of cards in your hand.\nWhen Syr Elenora enters, draw a card.\nSpells your opponents cast that target Syr Elenora cost {2} more to cast.",
+  "power": "*",
+  "toughness": "4"
+ },
+ "Thundermaw Hellkite": {
+  "id": "Thundermaw Hellkite",
+  "name": "Thundermaw Hellkite",
+  "typeLine": "Creature — Dragon",
+  "manaCost": "{3}{R}{R}",
+  "cmc": 5,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Flying\nHaste (This creature can attack and {T} as soon as it comes under your control.)\nWhen this creature enters, it deals 1 damage to each creature with flying your opponents control. Tap those creatures.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Unbreathing Horde": {
+  "id": "Unbreathing Horde",
+  "name": "Unbreathing Horde",
+  "typeLine": "Creature — Zombie",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This creature enters with a +1/+1 counter on it for each other Zombie you control and each Zombie card in your graveyard.\nIf this creature would be dealt damage, prevent that damage and remove a +1/+1 counter from it.",
+  "power": "0",
+  "toughness": "0"
+ },
+ "Undermine": {
+  "id": "Undermine",
+  "name": "Undermine",
+  "typeLine": "Instant",
+  "manaCost": "{U}{U}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "U"
+  ],
+  "oracle": "Counter target spell. Its controller loses 3 life."
+ },
+ "Unleash Fury": {
+  "id": "Unleash Fury",
+  "name": "Unleash Fury",
+  "typeLine": "Instant",
+  "manaCost": "{1}{R}",
+  "cmc": 2,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Double the power of target creature until end of turn."
+ },
+ "Voice of Many": {
+  "id": "Voice of Many",
+  "name": "Voice of Many",
+  "typeLine": "Creature — Elf Druid",
+  "manaCost": "{2}{G}{G}",
+  "cmc": 4,
+  "colors": [
+   "G"
+  ],
+  "oracle": "When this creature enters, draw a card for each opponent who controls fewer creatures than you.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Vulpine Harvester": {
+  "id": "Vulpine Harvester",
+  "name": "Vulpine Harvester",
+  "typeLine": "Creature — Phyrexian Fox",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever one or more Phyrexians you control attack, return target artifact card from your graveyard to the battlefield if its mana value is less than or equal to their total power.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Xerex Strobe-Knight": {
+  "id": "Xerex Strobe-Knight",
+  "name": "Xerex Strobe-Knight",
+  "typeLine": "Creature — Human Knight",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flying, vigilance\n{T}: Create a 2/2 white and blue Knight creature token with vigilance. Activate only if you've cast two or more spells this turn.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Zombie Apocalypse": {
+  "id": "Zombie Apocalypse",
+  "name": "Zombie Apocalypse",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return all Zombie creature cards from your graveyard to the battlefield tapped, then destroy all Humans."
+ }
+}

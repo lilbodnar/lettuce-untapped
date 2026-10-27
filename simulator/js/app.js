@@ -923,7 +923,8 @@
     if (!choices.length) return finish(null);
     const key = c => `${c.s === game ? 'y' : 'o'}:${c.inst.iid}`;
     const byKey = new Map(choices.map(c => [key(c), c]));
-    pickCards({ title: `${inst.name}: copy a creature`, note: 'It enters as a copy (a Wall with defender too). The copied creature is tapped and stays tapped while you control the copy.',
+    const artifacts = !!(Bot.cloneLine(inst, def) || {}).artifactOnly; // Sculpting Steel
+    pickCards({ title: `${inst.name}: copy ${artifacts ? 'an artifact' : 'a creature'}`, note: artifacts ? 'It enters as a copy of that artifact.' : 'It enters as a copy (a Wall with defender too). The copied creature is tapped and stays tapped while you control the copy.',
       ids: [...byKey.keys()], min: 1, max: 1, ok: 'Copy', cardOf: k => byKey.get(k).inst, whoOf: k => (k[0] === 'y' ? 'Yours' : "Opp's"),
       cancel: "Don't copy", onCancel: () => finish(null) }, picks => finish(byKey.get(picks[0])));
   }
@@ -1663,6 +1664,8 @@
       return { key: a.iid, card: a, st: Bot.botStats(a), aim: pw && pw.zone === 'battlefield' ? `your ${pw.name}${loyaltyText(pw)}` : 'you' };
     });
     const limit = Bot.blockRules(combatRules().all, list.map(x => x.card), def);
+    // Archangel of Tithes attacking: each blocker costs {1} (paid in blocksDone), so only as many as you can pay for.
+    if (limit.tax) limit.cap = Math.min(limit.cap, Math.floor(Game.available(game).total / limit.tax));
     openBlockModal('Opp attacks you', before, list, 'blocks-done', 'Look at the table first. The End turn button brings this back.', limit);
   }
 
@@ -1670,9 +1673,14 @@
     const blocks = readBlocks();
     if (!blocks) return;
     const yoursNext = game.bot.pending.yoursNext;
+    const tax = (blockLimit && blockLimit.tax) || 0;
+    const blockers = new Set(Object.values(blocks).flat()).size;
     closeModal();
     let msg;
-    act(() => { msg = Bot.resolveOppAttack(game, blocks, def); });
+    act(() => {
+      if (tax && blockers) { const paid = Game.autoPay(game, `{${tax * blockers}}`); Game.log(game, `Paid {${tax * blockers}} to block${paid && paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`); } // Archangel of Tithes
+      msg = Bot.resolveOppAttack(game, blocks, def);
+    });
     finishOppTurn(yoursNext, msg);
   }
 
@@ -2354,7 +2362,8 @@
     if (opts.choice === 'kicked') inst.kicked = true; // Josu Vess: "if he was kicked"
     if (opts.choice === 'buyback') inst.boughtBack = true; // Capsize: back to your hand as it resolves (Game.move)
     if (opts.choice === 'squad') inst.squadCount = opts.kicks || 1; // squad: that many token copies as it enters
-    if (opts.choice === 'fuse') inst.fused = true; // both halves (Bot.spellResolve)
+    if (/^replicate/.test(opts.choice || '')) inst.replicateCount = opts.kicks || 1; // Super Combo, Changing Loyalty: that many copies (Bot.spellCast, enterTrigger)
+    else if (opts.choice === 'fuse') inst.fused = true; // both halves (Bot.spellResolve)
     else if (opts.kicks) { inst.kickCount = opts.kicks; inst.kicked = true; } // Batroc's multikicker
     if (opts.choice === 'evoke') inst.evoked = true; // Mulldrifter: sacrificed as it enters (the entered hook)
     if (opts.choice === 'blitz' || opts.choice === 'dash') inst.fastCast = opts.choice; // Jaxis, Ragavan (the entered hook: Bot.fastCast)
@@ -4075,11 +4084,11 @@
         activate(iid, { ...ab, x: String(n), sacOther: ab.sacX, sacCount: n, effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
       });
     }
-    // Hazel of the Rootbloom: "Tap X untapped tokens you control" — you say X; the tokens are tapped for you.
+    // Hazel of the Rootbloom: "Tap X untapped tokens you control"; Aryel: "Tap X untapped Knights you control" — you say X; they're tapped for you.
     if (ab.tapX && !ab.x) {
-      const ids = game.zones.battlefield.filter(id => id !== iid && game.cards[id].token && !game.cards[id].tapped);
-      if (!ids.length) return status(`${inst.name} needs untapped tokens to tap.`, 'warn');
-      return ask(`X for ${inst.name} (untapped tokens to tap, up to ${ids.length})`, ids.length).then(x => {
+      const ids = game.zones.battlefield.filter(id => id !== iid && !game.cards[id].tapped && (ab.tapX === 'token' ? game.cards[id].token : Bot.cardFits(game.cards[id], ab.tapX)));
+      if (!ids.length) return status(`${inst.name} needs untapped ${ab.tapX}s to tap.`, 'warn');
+      return ask(`X for ${inst.name} (untapped ${ab.tapX}s to tap, up to ${ids.length})`, ids.length).then(x => {
         if (x == null || Number.isNaN(Number(x)) || x < 1) return;
         const n = Math.min(ids.length, Math.floor(Number(x)));
         activate(iid, { ...ab, x: String(n), tapPicks: ids.slice(0, n), effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
@@ -4099,6 +4108,8 @@
       if (ab.tap) copy.cards[iid].tapped = true; // it can't tap for its own cost
       if (!Game.autoPay(copy, ab.mana, -less)) return status(`Not enough untapped mana for ${inst.name} (${ab.mana}${less ? ` − ${less}` : ''}), so nothing happened.`, 'warn', 8000);
     }
+    // Slate of Ancestry: "Discard your hand" (all of it, nothing to pick).
+    if (ab.discardHand && !discards) return activate(iid, ab, game.zones.hand.slice(), sacs);
     // "Discard a card: …": pick what to discard first. Cancel and nothing happens.
     if (ab.discard && !discards) {
       const hand = game.zones.hand.filter(id => !ab.discardWhat || Bot.cardFits(game.cards[id], ab.discardWhat)); // Floral Evoker: "Discard a creature card"
@@ -4116,6 +4127,13 @@
       const n = ab.tapOthers.n;
       if (ids.length < n) return status(`${inst.name} needs ${n} untapped ${ab.tapOthers.what}s to tap, and you have ${ids.length}.`, 'warn', 8000);
       return pickCards({ title: `Tap ${n} untapped ${ab.tapOthers.what}s for ${inst.name}`, note: ab.text, ids, min: n, max: n, ok: 'Tap and activate', cancel: 'Cancel' }, picks => activate(iid, { ...ab, tapPicks: picks }, discards, sacs));
+    }
+    // Halo Fountain: "Untap two tapped creatures you control" — pick which.
+    if (ab.untapOthers && !ab.untapPicks) {
+      const ids = game.zones.battlefield.filter(id => id !== iid && game.cards[id].tapped && Bot.cardFits(game.cards[id], ab.untapOthers.what));
+      const n = ab.untapOthers.n;
+      if (ids.length < n) return status(`${inst.name} needs ${n} tapped ${ab.untapOthers.what}${n === 1 ? '' : 's'} to untap, and you have ${ids.length}.`, 'warn', 8000);
+      return pickCards({ title: `Untap ${n} tapped ${ab.untapOthers.what}${n === 1 ? '' : 's'} for ${inst.name}`, note: ab.text, ids, min: n, max: n, ok: 'Untap and activate', cancel: 'Cancel' }, picks => activate(iid, { ...ab, untapPicks: picks }, discards, sacs));
     }
     // Master Transmuter: "Return an artifact you control to its owner's hand" — pick which.
     if (ab.bounceOther && !ab.bouncePick) {
@@ -4159,7 +4177,7 @@
         Game.move(game, id, c.commander ? 'command' : 'graveyard');
         if (hasBot()) Bot.sacrificed(game, game, c, def, effectCtx()); // Rapacious Guest: "Whenever you sacrifice a Food, …"
       });
-      if (discards) {
+      if (discards && discards.length) {
         game.lastDiscarded = discards.map(id => game.cards[id].typeLine); // Moria Scavenger: "If the discarded card was a creature card, …"
         discards.forEach(id => Game.move(game, id, 'graveyard'));
         Game.log(game, `Discarded ${discards.map(id => game.cards[id].name).join(' and ')} for ${inst.name}.`);
@@ -4200,6 +4218,7 @@
       }
       if (ab.bounceSelf) Game.move(game, iid, inst.commander ? 'command' : 'hand'); // Rootha: "Return Rootha to its owner's hand" (a commander may go to the command zone)
       (ab.tapPicks || []).forEach(id => { const c = game.cards[id]; if (c) { c.tapped = true; c.tappedFor = null; } });
+      (ab.untapPicks || []).forEach(id => { const c = game.cards[id]; if (c) c.tapped = false; }); // Halo Fountain
       // Station: the tapped creature's power (Bot's "put charge counters equal to the tapped creature's power"); Kilo: "Whenever Kilo becomes tapped, …"
       game.lastTappedPower = (ab.tapPicks || []).reduce((n, id) => n + (game.cards[id] ? Math.max(0, Bot.stats(game.cards[id], def(game.cards[id].id)).pow) : 0), 0);
       (ab.tapPicks || []).forEach(id => { if (game.cards[id]) Bot.tappedWatch(game, game, game.cards[id], def, effectCtx()); });
@@ -5588,7 +5607,23 @@
       if (fb) cast.push({ label: `Cast with flashback (${fb}), then exile it`, action: () => { closeModal(); tryPlay(iid, { cast: true, flashback: true, cost: fb }); } });
       // Raffine's Guidance: from your graveyard for another cost (it isn't exiled after).
       const alt = inst.zone === 'graveyard' && Bot.graveAltCost(inst, def);
-      if (alt) cast.push({ label: `Cast from graveyard (${alt})`, action: () => { closeModal(); tryPlay(iid, { cast: true, cost: alt }); } });
+      // Scourge of Nel Toth: "… and sacrificing two creatures": pick them, then it's cast.
+      const altSac = alt ? Bot.graveAltSac(inst, def) : 0;
+      if (alt && !altSac) cast.push({ label: `Cast from graveyard (${alt})`, action: () => { closeModal(); tryPlay(iid, { cast: true, cost: alt }); } });
+      if (alt && altSac) cast.push({ label: `Cast from graveyard (${alt}, sacrifice ${altSac} creatures)`, action: () => {
+        closeModal();
+        const ids = game.zones.battlefield.filter(i => Game.isCreature(game.cards[i]));
+        if (ids.length < altSac) return status(`${inst.name} needs ${altSac} creatures to sacrifice.`, 'warn');
+        if (!Game.autoPay(JSON.parse(JSON.stringify(game)), alt)) return status(`Not enough untapped mana for ${inst.name} (${alt}).`, 'warn', 8000);
+        pickCards({ title: `Sacrifice ${altSac} creatures to cast ${inst.name}`, ids, min: altSac, max: altSac, ok: 'Sacrifice and cast', cancel: 'Cancel' }, picks => {
+          act(() => picks.forEach(i => {
+            const c = game.cards[i];
+            Game.move(game, i, c.commander ? 'command' : 'graveyard');
+            if (hasBot()) Bot.sacrificed(game, game, c, def, effectCtx());
+          }));
+          tryPlay(iid, { cast: true, cost: alt });
+        });
+      } });
       const after = inst.zone === 'graveyard' && Bot.aftermathOf(inst, def);
       if (after) cast.push({ label: `Cast ${after.name} (aftermath, ${after.cost})`, action: () => { closeModal(); tryPlay(iid, { cast: true, aftermath: true, cost: after.cost }); } });
       // Escape (Woe Strider): pick the other graveyard cards to exile, then cast it for its escape cost.
@@ -5616,12 +5651,13 @@
       // T'Chaka: "{3}, Exile this card from your graveyard: You become the monarch. Activate only if you control your commander."
       if (inst.zone === 'graveyard') {
         for (const ab of Bot.graveAbilities(inst, def)) {
-          cast.push({ label: `${ab.effect} (${ab.cost}, exile it)`, action: () => {
+          const cost = Bot.graveCost(ab, hasBot() ? game.bot.s : null); // Razorlash Transmogrant: {4} less against nonbasic lands
+          cast.push({ label: `${ab.effect} (${cost || '{0}'}${ab.keep ? '' : ', exile it'})`, action: () => {
             closeModal();
             const c = Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx());
             if (ab.onlyIf && !Bot.condition(game, ab.onlyIf, c)) return status(`${inst.name}: only if ${ab.onlyIf}.`, 'warn', 8000);
-            if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana for ${ab.cost}.`, 'warn', 8000);
-            act(() => { const paid = Game.autoPay(game, ab.cost); Game.log(game, `Paid ${ab.cost} for ${inst.name}${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`); Bot.useGraveAbility(game, game, inst, ab, def, c); });
+            if (!Game.autoPay(JSON.parse(JSON.stringify(game)), cost)) return status(`Not enough untapped mana for ${cost}.`, 'warn', 8000);
+            act(() => { const paid = Game.autoPay(game, cost); Game.log(game, `Paid ${cost || '{0}'} for ${inst.name}${paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`); Bot.useGraveAbility(game, game, inst, ab, def, c); });
           } });
         }
       }

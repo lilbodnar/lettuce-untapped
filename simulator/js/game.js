@@ -152,7 +152,8 @@ const Game = (() => {
       // mana in any combination of colors." (each mana any color)
       // Orb of Dragonkind: "… Spend this mana only to cast Dragon spells or activate abilities of Dragons." (onlyFor: autoPay's spell)
       // Study Hall: "… When you spend this mana to cast your commander, scry X, …" (the scry isn't done; the mana is).
-      const anyF = line.trim().replace(/\s+when you spend this mana to cast your commander, .+$/i, '').match(/^\{(\d+)\},\s*\{T\}:\s*add (one mana of any colou?r|(\w+) mana in any combination of colou?rs)\.?(?: spend this mana only to cast (\w+) spells(?: or activate abilities of \w+)?\.?)?$/i);
+      // Opal Palace: "… any color in your commander's color identity. If you spend this mana to cast your commander, …" (the counters aren't added)
+      const anyF = line.trim().replace(/\s+(?:when|if) you spend this mana to cast your commander, .+$/i, '').match(/^\{(\d+)\},\s*\{T\}:\s*add (one mana of any colou?r(?: in your commander's colou?r identity)?|(\w+) mana in any combination of colou?rs)\.?(?: spend this mana only to cast (\w+) spells(?: or activate abilities of \w+)?\.?)?$/i);
       if (anyF && Number(anyF[1]) > 0) {
         const k = anyF[3] ? toNumber(anyF[3]) : 1;
         if (k) return { colors: [...MANA.slice(0, 5)], amount: k, sacrifice: false, filter: Number(anyF[1]), makes: Array(k).fill(MANA.slice(0, 5)), ...(anyF[4] ? { onlyFor: anyF[4].toLowerCase() } : {}) };
@@ -200,6 +201,8 @@ const Game = (() => {
       if ((g = add.match(/^((?:\{[WUBRGC]\})+)$/i))) {
         const syms = g[1].toUpperCase().match(/[WUBRGC]/g);
         if (syms.every(c => c === syms[0])) return { colors: [syms[0]], amount: syms.length, sacrifice, ...artifactOnly };
+        // Timeless Lotus: "{T}: Add {W}{U}{B}{R}{G}."
+        if (!sacrifice) return { colors: MANA.filter(c => syms.includes(c)), amount: syms.length, sacrifice, makes: syms, ...artifactOnly };
         continue;
       }
       if (/^\{[WUBRGC]\}(?:,? (?:or )?\{[WUBRGC]\})+$/i.test(add) && /\bor\b/i.test(add)) {
@@ -296,7 +299,9 @@ const Game = (() => {
     if (isLand(inst)) {
       // Abundant Growth: 'Enchanted land has "{T}: Add one mana of any color."'
       const given = Object.values(inst.boosts || {}).some(b => b && (b.lines || []).some(l => /^\{T\}:\s*add one mana of any colou?r\.?$/i.test(l)));
-      const colors = given ? MANA.slice(0, 5) : producesOf(inst);
+      const made = given ? MANA.slice(0, 5) : producesOf(inst);
+      // Yavimaya, Cradle of Growth: every land is a Forest too, so it can tap for {G} (s.allForests, bot.js's refreshGrants)
+      const colors = s.allForests && !made.includes('G') ? MANA.filter(k => made.includes(k) || k === 'G') : made;
       return colors.length ? { colors, amount: 1, sacrifice: false } : null;
     }
     if (!inst.mana) return null;
@@ -472,6 +477,7 @@ const Game = (() => {
   // How much less a spell costs from the permanents on your battlefield. oracleOf(inst) gives a
   // card's rules text. Only generic mana is taken off; autoPay won't go below zero.
   const AFFINITY_GRANT = /^(\w+) spells you cast have affinity for (\w+)\.?$/im;
+  const TARGET_DISCOUNT = /^spells you cast that target an? (\w+) cost \{(\d+)\} less to cast\.?$/im;
   function discount(s, spell, oracleOf) {
     const typeWords = String(spell.typeLine || '').split('//')[0].toLowerCase().split(/[^a-z-]+/).filter(Boolean);
     const has = w => typeWords.includes(w);
@@ -493,6 +499,9 @@ const Game = (() => {
         const kind = aff[2].toLowerCase().replace(/s$/, '');
         total += s.zones.battlefield.filter(id => id !== spell.iid && new RegExp(`\\b${kind}\\b`, 'i').test(String(s.cards[id].typeLine || '').split('//')[0])).length;
       }
+      // Killian, Ink Duelist: "Spells you cast that target a creature cost {2} less to cast." (a spell whose text targets one)
+      const tg = src.zone === 'battlefield' && TARGET_DISCOUNT.exec(String(oracleOf(src) || ''));
+      if (tg && new RegExp(`\\btarget\\b[^.]*?\\b${tg[1]}s?\\b`, 'i').test(String(oracleOf(spell) || ''))) total += Number(tg[2]);
       // Advanced Reconstruction (a Class, from level 3): "Spells you cast from anywhere other than your hand cost {2} less to cast."
       if (src.zone !== 'battlefield' || spell.zone === 'hand') continue;
       let level = 1;
@@ -693,6 +702,9 @@ const Game = (() => {
     // Dragon card this way or you control a Dragon."
     const temple = /\bas this land enters, you may reveal an? (\w+) card from your hand\. this land enters tapped unless you revealed an? \1 card this way or you control an? \1\b/i.exec(oracle);
     if (temple) return { revealHand: [temple[1].toLowerCase()], orControl: temple[1].toLowerCase() };
+    // Den of the Bugbear: "If you control two or more other lands, this land enters tapped." (a fast land with one fewer)
+    const many = /\bif you control (one|two|three|four) or more other lands, (?:this land|it) enters tapped\b/i.exec(oracle);
+    if (many) return { maxOther: COUNT_WORDS[many[1].toLowerCase()] - 1 };
     let out = false;
     oracle.split(/\n+|(?<=\.)\s+(?=[A-Z])/).forEach(line => {
       const m = line.match(/^(.+?) enters(?: the battlefield)? tapped(?: unless (.+?))?\.$/i);
@@ -1101,6 +1113,7 @@ const Game = (() => {
     delete inst.animatedBy; // Animate Dead
     delete inst.overloaded; // Vandalblast
     delete inst.unearthed;
+    delete inst.exileOnLeave;
     delete inst.kickCount;
     delete inst.prepared;
     delete inst.evoked;
@@ -1276,8 +1289,8 @@ const Game = (() => {
       if (inst.exileIfDies) to = 'exile';
       else if (hooks.wouldDie) to = hooks.wouldDie(s, inst) || to;
     }
-    // Unearth: "Exile it … if it would leave the battlefield."
-    if (from === 'battlefield' && to !== 'battlefield' && to !== 'exile' && inst.unearthed) to = 'exile';
+    // Unearth: "Exile it … if it would leave the battlefield." Moira and Teshar: "If it would leave the battlefield, exile it instead …" (exileOnLeave)
+    if (from === 'battlefield' && to !== 'battlefield' && to !== 'exile' && (inst.unearthed || inst.exileOnLeave)) to = 'exile';
     // A finality counter (Shuri's Fabricator): "If a permanent with a finality counter on it would die, exile it instead."
     if (from === 'battlefield' && to === 'graveyard' && (inst.counters || {}).finality > 0) to = 'exile';
     // Madness: a discarded card can go to exile instead, to be cast from there.
@@ -1505,6 +1518,7 @@ const Game = (() => {
     const stunned = [];
     // Teferi's Protection: "Until your next turn, …" ends, and phased-out permanents come back.
     delete s.untilNextTurn;
+    Object.values(s.cards).forEach(c => { delete c.untilNextKw; }); // Elspeth, Storm Slayer: "gain flying until your next turn" (bot.js's stats)
     delete s.attackedYou; // "players who attacked you during their last turn"
     s.zones.battlefield.forEach(iid => { if (!s.cards[iid].heldBy) delete s.cards[iid].phasedOut; }); // Oubliette keeps its one (heldBy)
     s.zones.battlefield.forEach(iid => {
@@ -1646,7 +1660,7 @@ const Game = (() => {
 
   return {
     ZONES, ZONE_NAMES, CELL_W, CELL_H, MANA, layout, hooks, producesOf, available, enterLife, enterDraw, entersTapped, tapsOnEntry, parseCost, autoPay, manaAbility, isCreature,
-    choosesType, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
+    choosesType, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TARGET_DISCOUNT, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
     attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,

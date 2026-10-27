@@ -38,14 +38,16 @@ const Coverage = (() => {
   // Done for you when you cast it (app.js asks), but Opp never uses them.
   const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback', 'harmonize', 'dredge',
     'impending', 'bestow', 'mutate', 'morph', 'megamorph', 'suspend', 'basic landcycling',
-    'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash'];
+    'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash',
+    'replicate']; // replicate: costChoices, then spellCast's copies (an Aura's: enterTrigger's token copies)
   // Done on every table (bot.js).
-  const DONE_KEYWORDS = ['extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
-    'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace', 'ravenous']; // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
+  const DONE_KEYWORDS = ['modular', 'extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
+    'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace', 'ravenous']; // modular: game.js entersWithCounters, afterDeath // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
 
   function keywordLine(card, line) {
+    if (P.BOAST_DISCOUNT.test(line)) return null; // a rule about boast, not the keyword (STATIC_DONE)
     const parts = line.toLowerCase().replace(/\.$/, '').split(/,\s*|;\s*/).map(p => p.trim()).filter(Boolean);
     const starts = (p, k) => p === k || p.startsWith(k + ' ') || p.startsWith(k + '—');
     const known = p => P.isKeyword(p, B.KEYWORDS) || P.isKeyword(p, P.OTHER_KEYWORDS) || YOURS_ONLY.some(k => starts(p, k)) || DONE_KEYWORDS.some(k => starts(p, k)) || NOTHING_TO_DO.some(k => starts(p, k));
@@ -134,6 +136,9 @@ const Coverage = (() => {
 
     // The Commander precons' triggers (bot.js): done as they are, or the effect after them runs.
     const DONE = [
+      P.FIGHT_GROW, // Foe-Razer Regent (bot.js's fought)
+      P.BLACK_ROSE, // Knights of the Black Rose (bot.js's crownTaken)
+      /^whenever one or more [a-z ]+? you control attack, they gain (?:indestructible|flying|first strike|double strike|lifelink|vigilance|trample|menace|hexproof)(?:(?:,|,? and) (?:indestructible|flying|first strike|double strike|lifelink|vigilance|trample|menace|hexproof))* until end of turn\.?$/i, // Angelic Guardian (attackWatch)
       /^at the beginning of combat on each opponent's turn, they may pay \{\d+\}\. if they don't, creatures they control can't attack jaces you control this turn\.?$/i, // Jace (Opp leaves Jaces alone)
       /^whenever one or more creatures deal combat damage to you while you're the monarch, tap those creatures and put a stun counter on each of them\.?$/i, // Tamiyo
       /^whenever you discard a card, (?:you may )?exile that card from your graveyard\.?$/i, // Currency Converter
@@ -146,6 +151,9 @@ const Coverage = (() => {
       /^when this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking\.?$/i, // Misleading Signpost (one opponent here)
     ];
     if (DONE.some(re => re.test(line)) || P.DOVESCAPE.test(line)) return out; // Dovescape (bot.js's doveCounter)
+    if (P.MARVEL_COPY.test(line)) return out; // Captain Marvel, Apex Avenger (bot.js's countersPut)
+    if ((m = P.SELF_TARGETED.exec(line)) && self(m[1])) { effectGaps('both', m[2]); return out; } // Black Bolt (bot.js's applyTarget)
+    if ((m = P.ANY_TARGETED.exec(line)) && self(m[1])) { effectGaps('both', m[3]); return out; } // Angelic Cub (bot.js's applyTarget)
     if (P.ERESTOR.test(line) || P.UNITY.test(line)) return out; // Erestor of the Council, Model of Unity (bot.js's votingDone)
     if (P.CHAMPIONS.test(line)) return out; // Champions of Minas Tirith (bot.js's tableRules: handTax)
     if (P.MONARCH_DRAW.test(line) || P.FORTH.test(line) || P.HARSH.test(line)) return out;
@@ -213,8 +221,8 @@ const Coverage = (() => {
       if (/\bif you do\b/i.test(text)) { gap(out, 'both', 'effect', m[3]); return out; }
       const parts = P.effectParts(P.fillWhereX(text, null, null, ctxFor(inst))); // Shimmercreep's "loses X life …, where X is …"
       const first = text.trim().split(/(?<=\.)\s+/)[0];
-      if (COUNTER_EACH.test(first)) { if (!combatEffect(text, inst)) gap(out, 'both', 'effect', text); return out; }
-      for (const part of parts) if (!enterPart(part, may, inst)) gap(out, 'both', 'effect', part);
+      if (COUNTER_EACH.test(first) && combatEffect(text, inst)) return out;
+      for (const part of parts) if (!enterPart(part, may, inst)) gap(out, 'both', 'effect', part); // Filigree Vector: counters on each, twice
       return out;
     }
     // "When this dies, …" (Unstoppable Slasher: "if it had no counters on it, return it to the battlefield …")
@@ -324,7 +332,7 @@ const Coverage = (() => {
     // Wild Growth, Utopia Sprawl (game.js's auraMana)
     if (/^whenever enchanted (?:land|forest) is tapped for mana, its controller adds an additional (?:\{[WUBRGC]\}|one mana of the chosen colou?r)\.?$/i.test(line)) return out;
     // Mirrorwing Dragon (spellTargeted: the spell's effect on each of the caster's other creatures)
-    if (/^whenever a player casts an instant or sorcery spell that targets only (?:this creature|.+?), that player copies that spell for each other creature they control that the spell could target\. each copy targets a different one of those creatures\.?$/i.test(line)) return out;
+    if (P.SPREAD_COPY.test(line)) return out; // Zada too
     if (/^whenever you discard one or more nonland cards, you may exile one of them from your graveyard\. if you do, you may cast it this turn\.?$/i.test(line)) return out; // Conspiracy Theorist
     if ((m = /^whenever you cycle or discard (?:another|a) card, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; } // Archfiend of Ifnir (discardWatch)
     if ((m = /^whenever (?:you play a card from exile|you attack enchanted player), (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[1]); return out; }
@@ -387,7 +395,7 @@ const Coverage = (() => {
       if (fits) {
         if (P.destroyTheirs(m[2])) return out;
         // Desmond Miles: "surveil X, where X is the amount of damage it dealt to that player"
-        effectGaps('both', m[2].replace(/\b(surveil|scry|draw|mill) x(?: cards)?, where x is the amount of damage .+? dealt to that player\b/i, '$1 1').replace(/\bthat many\b/gi, '1') // Glint-Eye, Xyris: "draw that many cards"
+        effectGaps('both', m[2].replace(/\b(surveil|scry|draw|mill) x(?: cards)?, where x is the amount of damage .+? dealt to that player\b/i, '$1 1').replace(/\bthat (?:many|much)\b/gi, '1') // Glint-Eye, Xyris: "draw that many cards"; Photon: "that much mana"
           .replace(/ with mana value x or less (.+?), where x is the amount of damage .+? dealt to that player\.?$/i, ' with mana value 1 or less $1') // Venerable Warsinger (hitTrigger)
           .replace(/\bequal to the damage dealt\b/i, 'equal to 1') // Primo (hitTrigger)
           .replace(/\bwith mana value less than or equal to that damage\b/i, 'with mana value 1 or less')); // Broodcaller Scourge (hitTrigger)
@@ -398,7 +406,7 @@ const Coverage = (() => {
     // Boggart Shenanigans: "Whenever another Goblin you control is put into a graveyard from the battlefield, …" (the same as dying)
     if ((m = P.DIES_WATCH.exec(line.replace(/ is put into a graveyard from the battlefield, /i, " dies, ")))) { effectGaps('both', m[6].replace(/^if its toughness was less than \d+, /i, '').replace(/^if it had an? [\w+/-]+ counter on it, /i, '')); return out; } // Blowfly Infestation
     // "Whenever you cast …" (Nightmare Sower: "… during an opponent's turn")
-    if ((m = P.CAST_WATCH.exec(line.replace(/ with mana value \d+ or greater(?=,| from your hand,)/i, '').replace(/ from your hand(?=,)/i, '').replace(/^whenever you cast a spell that's one or more colors, /i, 'whenever you cast a colored spell, '))) && !/\b(first|second)\b/i.test(line.replace(/\bthe second time this ability has resolved\b/i, ''))) { // (Ms. Bumbleflower's "the second time …" is its effect's) Zuri: "… with mana value 4 or greater"; Dirgur Focusmage: "… from your hand"
+    if ((m = P.CAST_WATCH.exec(line.replace(/ with mana value \d+ or greater(?=,| from your hand,)/i, '').replace(/ from (?:anywhere other than )?your hand(?=,)/i, '').replace(/^whenever you cast a spell that's one or more colors, /i, 'whenever you cast a colored spell, '))) &&!/\b(first|second)\b/i.test(line.replace(/\bthe second time this ability has resolved\b/i, ''))) { // (Ms. Bumbleflower's "the second time …" is its effect's) Zuri: "… with mana value 4 or greater"; Dirgur Focusmage: "… from your hand"
       const e = m[4].trim().replace(/\+X\/\+0 until end of turn, where X is that spell's mana value/i, '+1/+0 until end of turn') // Renegade Bull (spellCast)
         .replace(/\bwith mana value less than or equal to that spell's mana value\b/i, 'with mana value 1 or less') // Hammerhead Tyrant (spellCast)
         .replace(/\bwhere x is the amount of mana spent to cast that spell\b/i, "where X is that spell's mana value") // Manaform Hellkite
@@ -446,7 +454,8 @@ const Coverage = (() => {
     if (/^\{[^}]+\}: draw a card\. gain control of this creature and put an? [\w+/-]+ counter on it\. only your opponents may activate this ability and only as a sorcery\.?$/i.test(line)) return out;
     // Planeswalker loyalty abilities: "+1: …", "−X: …" (you pick X), "0: Add {C}{C}{C}." Opp never casts planeswalkers.
     if (/^[+−-]?(\d+|x)$/i.test(m[1].trim())) {
-      notRun(m[2].replace(/\bx\b/gi, '1'), inst).forEach(p => gap(out, 'you', 'loyalty', p));
+      // Only a "−X:" asks for X (activateLoyalty); Ajani's "−8: Create X … tokens, where X is your life total" counts its own.
+      notRun(/x$/i.test(m[1].trim()) ? m[2].replace(/\bx\b/gi, '1') : m[2], inst).forEach(p => gap(out, 'you', 'loyalty', p));
       gap(out, 'opp', 'loyalty', 'planeswalker loyalty abilities (Opp never casts planeswalkers)');
       return out;
     }
@@ -492,6 +501,10 @@ const Coverage = (() => {
   // Always-on lines from the Commander precons that bot.js and game.js read.
   const STATIC_DONE = [
     /\bcan be your commander\.?$/i,
+    P.BOAST_DISCOUNT, // Dragonkin Berserker (activatedAbilities' lessFor)
+    P.GRAVE_KIND, P.GRAVE_ONCE, // Haakon, Gisa and Geralf (graveKinds)
+    /^if you would roll one or more planar dice, instead roll that many planar dice plus one and ignore one\.?$/i, // Ichor Elixir (no planar dice here)
+    P.STONE_IDOL, // Ancient Stone Idol (selfDiscount)
     /^.+? gets \+1\/\+1 for each (?:unspent mana you have|color among permanents you control)\.?$/i, // Omnath, Faeburrow Elder
     /^if you would lose unspent mana, that mana becomes colorless instead\.?$/i, // Omnath
     /^you can't lose the game and your opponents can't win the game\.?$/i, /^creatures you control can't have -1\/-1 counters put on them\.?$/i, // Darksteel Angel
@@ -612,6 +625,11 @@ const Coverage = (() => {
     P.DIED_COUNTERS, // Bone Devourer (enterTrigger)
     P.DAUTHI, // Dauthi Voidwalker (game.js's graveInstead hook)
     P.STEWARD, P.KOTIS, // Steward of the Harvest (grantsOnce: the exiled lands' mana); Kotis (graveCast, payKotis)
+    // The 2026 precons' last cards.
+    P.GIADA, // Giada, Font of Hope (enterTrigger)
+    P.LEGEND_TWICE, // Annie Joins Up (extraTriggers)
+    P.BLOCK_TAX, // Archangel of Tithes attacking (blockRules' tax; app.js's blocksDone pays yours)
+    /^as long as (?:this creature|.+?) is untapped, creatures can't attack you(?: or planeswalkers you control)? unless their controller pays \{\d+\} for each of those creatures\.?$/i, // Archangel of Tithes (tableRules' attackTax)
   ];
 
   function staticLine(card, line, inst) {
@@ -714,18 +732,18 @@ const Coverage = (() => {
     if (/^other \w+ creatures have [a-z]+\.?$/i.test(line) || /^other \w+?s have "\{[^}]+\}: regenerate this permanent\."\.?$/i.test(line) || /^other \w+?s you control have afflict \d+\.?$/i.test(line)) return out;
     if (P.NISSA.test(line)) { gap(out, 'opp', 'static', "Nissa's energy cost (Opp pays mana)"); return out; } // Nissa, Worldsoul Speaker (costChoices)
     // Pearl-Ear: affinity for Auras given to enchantment spells (game.js's discount)
-    if (G.AFFINITY_GRANT.test(line)) return out;
+    if (G.AFFINITY_GRANT.test(line) || G.TARGET_DISCOUNT.test(line)) return out; // Pearl-Ear, Killian (game.js's discount)
     // Raffine's Guidance: cast from your graveyard (app.js's graveyard menu, Bot.graveAltCost)
     if (P.GRAVE_ALT.test(line)) { gap(out, 'opp', 'static', "Opp doesn't cast it from its graveyard"); return out; }
     // Void Winnower: Opp can't cast or block with even mana values (castOptions, Opp's blocks); Opp's doesn't stop you.
     // Grand Abolisher, Drannith Magistrate: Opp can't cast (castOptions, oppCounters); Opp's doesn't stop you.
-    if ([P.OPPS_ENTER_TAPPED, P.DRAW_CAP, P.GRAVE_LOCK, P.NO_GRAVE_CAST, P.SEARCH_TOP, P.KW_LOST, P.ALL_ISLANDS, P.GROUNDED, P.PRO_FROM_OPPS].some(re => re.test(line))) return out; // Blind Obedience, Thalia, Narset, Soulless Jailer (refreshGrants)
+    if ([P.OPPS_ENTER_TAPPED, P.DRAW_CAP, P.GRAVE_LOCK, P.NO_GRAVE_CAST, P.SEARCH_TOP, P.KW_LOST, P.ALL_ISLANDS, P.ALL_FORESTS, P.GROUNDED, P.PRO_FROM_OPPS].some(re => re.test(line))) return out; // Blind Obedience, Thalia, Narset, Soulless Jailer (refreshGrants)
     if (P.ABOLISHER.test(line) || P.HAND_ONLY.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells"); return out; }
     if (P.WINNOW_CAST.test(line) || P.WINNOW_BLOCK.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells or blocks"); return out; }
     // Coin of Mastery (game.js's autoPay counts artifact mana; creatureEntered)
     if (P.COIN_MASTERY.test(line)) return out;
     // Combat Calligrapher, Nils: Opp's creatures don't attack you past them (pickAttackers); yours aren't stopped by Opp's.
-    if (P.NO_KIND_ATTACK.test(line) || P.NO_COUNTERED_ATTACK.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your attacks"); return out; }
+    if (P.NO_KIND_ATTACK.test(line) || P.NO_COUNTERED_ATTACK.test(line) || P.NO_ENCHANTED_ATTACK.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your attacks"); return out; } // Eriette too
     // Flickering Ward (attachBonus's proChosen; its color is picked as it enters). Darksteel Mutation (attachBonus).
     if (/^enchanted creature has protection from the chosen colou?r\. this effect doesn't remove this aura\.?$/i.test(line)) return out;
     if (/^enchanted creature is an? \w+ (?:artifact creature )?with base power and toughness/i.test(line) && B.attachBonus(line).loseAll) return out; // Lignify too
