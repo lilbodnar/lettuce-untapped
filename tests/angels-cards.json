@@ -1,0 +1,861 @@
+{
+ "Angelic Guardian": {
+  "id": "Angelic Guardian",
+  "name": "Angelic Guardian",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying (This creature can't be blocked except by creatures with flying or reach.)\nWhenever one or more creatures you control attack, they gain indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy them.)",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Angelic Cub": {
+  "id": "Angelic Cub",
+  "name": "Angelic Cub",
+  "typeLine": "Creature — Cat Angel",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever this creature becomes the target of a spell or ability for the first time each turn, put a +1/+1 counter on it.\nAs long as this creature has three or more +1/+1 counters on it, it has flying.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Angelic Field Marshal": {
+  "id": "Angelic Field Marshal",
+  "name": "Angelic Field Marshal",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nLieutenant — As long as you control your commander, this creature gets +2/+2 and creatures you control have vigilance.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Akroma, Vision of Ixidor": {
+  "id": "Akroma, Vision of Ixidor",
+  "name": "Akroma, Vision of Ixidor",
+  "typeLine": "Legendary Creature — Angel",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying, first strike, vigilance, trample\nAt the beginning of each combat, until end of turn, each other creature you control gets +1/+1 if it has flying, +1/+1 if it has first strike, and so on for double strike, deathtouch, haste, hexproof, indestructible, lifelink, menace, protection, reach, trample, vigilance, and partner.\nPartner",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Angel of Mercy": {
+  "id": "Angel of Mercy",
+  "name": "Angel of Mercy",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this creature enters, you gain 3 life.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Angelic Quartermaster": {
+  "id": "Angelic Quartermaster",
+  "name": "Angelic Quartermaster",
+  "typeLine": "Creature — Angel Soldier",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this creature enters, put a +1/+1 counter on each of up to two other target creatures.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Angel of Finality": {
+  "id": "Angel of Finality",
+  "name": "Angel of Finality",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this creature enters, exile target player's graveyard.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Angel of Indemnity": {
+  "id": "Angel of Indemnity",
+  "name": "Angel of Indemnity",
+  "typeLine": "Creature — Angel Warrior",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying, lifelink\nWhen this creature enters, return target permanent card with mana value 4 or less from your graveyard to the battlefield.\nEncore {6}{W}{W} ({6}{W}{W}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Angel of Renewal": {
+  "id": "Angel of Renewal",
+  "name": "Angel of Renewal",
+  "typeLine": "Creature — Angel Ally",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this creature enters, you gain 1 life for each creature you control.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Dawning Angel": {
+  "id": "Dawning Angel",
+  "name": "Dawning Angel",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this creature enters, you gain 4 life.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Archangel of Thune": {
+  "id": "Archangel of Thune",
+  "name": "Archangel of Thune",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nWhenever you gain life, put a +1/+1 counter on each creature you control.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Dazzling Angel": {
+  "id": "Dazzling Angel",
+  "name": "Dazzling Angel",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever another creature you control enters, you gain 1 life.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Glorious Enforcer": {
+  "id": "Glorious Enforcer",
+  "name": "Glorious Enforcer",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying, lifelink\nAt the beginning of each combat, if you have more life than an opponent, this creature gains double strike until end of turn.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Angel of Vitality": {
+  "id": "Angel of Vitality",
+  "name": "Angel of Vitality",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nIf you would gain life, you gain that much life plus 1 instead.\nThis creature gets +2/+2 as long as you have 25 or more life.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Herald of Faith": {
+  "id": "Herald of Faith",
+  "name": "Herald of Faith",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever this creature attacks, you gain 2 life.",
+  "power": "4",
+  "toughness": "3"
+ },
+ "Exemplar of Light": {
+  "id": "Exemplar of Light",
+  "name": "Exemplar of Light",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever you gain life, put a +1/+1 counter on this creature.\nWhenever you put one or more +1/+1 counters on this creature, draw a card. This ability triggers only once each turn.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Holy Cow": {
+  "id": "Holy Cow",
+  "name": "Holy Cow",
+  "typeLine": "Creature — Ox Angel",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nFlying\nWhen this creature enters, you gain 2 life and scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Lyra, Archangel of Dawn": {
+  "id": "Lyra, Archangel of Dawn",
+  "name": "Lyra, Archangel of Dawn",
+  "typeLine": "Legendary Creature — Angel Knight",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever you gain life, put a +1/+1 counter on each Angel you control.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Resplendent Angel": {
+  "id": "Resplendent Angel",
+  "name": "Resplendent Angel",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nAt the beginning of each end step, if you gained 5 or more life this turn, create a 4/4 white Angel creature token with flying and vigilance.\n{3}{W}{W}{W}: Until end of turn, this creature gets +2/+2 and gains lifelink.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Inspiring Overseer": {
+  "id": "Inspiring Overseer",
+  "name": "Inspiring Overseer",
+  "typeLine": "Creature — Angel Cleric",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this creature enters, you gain 1 life and draw a card.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Righteous Valkyrie": {
+  "id": "Righteous Valkyrie",
+  "name": "Righteous Valkyrie",
+  "typeLine": "Creature — Angel Cleric",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever another Angel or Cleric you control enters, you gain life equal to that creature's toughness.\nAs long as you have at least 7 life more than your starting life total, creatures you control get +2/+2.",
+  "power": "2",
+  "toughness": "4"
+ },
+ "Elspeth, Storm Slayer": {
+  "id": "Elspeth, Storm Slayer",
+  "name": "Elspeth, Storm Slayer",
+  "typeLine": "Legendary Planeswalker — Elspeth",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If one or more tokens would be created under your control, twice that many of those tokens are created instead.\n+1: Create a 1/1 white Soldier creature token.\n0: Put a +1/+1 counter on each creature you control. Those creatures gain flying until your next turn.\n−3: Destroy target creature an opponent controls with mana value 3 or greater.",
+  "loyalty": "5"
+ },
+ "Ajani, Adversary of Tyrants": {
+  "id": "Ajani, Adversary of Tyrants",
+  "name": "Ajani, Adversary of Tyrants",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: Put a +1/+1 counter on each of up to two target creatures.\n−2: Return target creature card with mana value 2 or less from your graveyard to the battlefield.\n−7: You get an emblem with \"At the beginning of your end step, create three 1/1 white Cat creature tokens with lifelink.\"",
+  "loyalty": "4"
+ },
+ "Ajani, Caller of the Pride": {
+  "id": "Ajani, Caller of the Pride",
+  "name": "Ajani, Caller of the Pride",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: Put a +1/+1 counter on up to one target creature.\n−3: Target creature gains flying and double strike until end of turn.\n−8: Create X 2/2 white Cat creature tokens, where X is your life total.",
+  "loyalty": "4"
+ },
+ "Ajani Goldmane": {
+  "id": "Ajani Goldmane",
+  "name": "Ajani Goldmane",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: You gain 2 life.\n−1: Put a +1/+1 counter on each creature you control. Those creatures gain vigilance until end of turn.\n−6: Create a white Avatar creature token. It has \"This token's power and toughness are each equal to your life total.\"",
+  "loyalty": "4"
+ },
+ "Ajani, Strength of the Pride": {
+  "id": "Ajani, Strength of the Pride",
+  "name": "Ajani, Strength of the Pride",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: You gain life equal to the number of creatures you control plus the number of planeswalkers you control.\n−2: Create a 2/2 white Cat Soldier creature token named Ajani's Pridemate with \"Whenever you gain life, put a +1/+1 counter on this token.\"\n0: If you have at least 15 life more than your starting life total, exile Ajani and each artifact and creature your opponents control.",
+  "loyalty": "5"
+ },
+ "Ajani, Inspiring Leader": {
+  "id": "Ajani, Inspiring Leader",
+  "name": "Ajani, Inspiring Leader",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+2: You gain 2 life. Put two +1/+1 counters on up to one target creature.\n−3: Exile target creature. Its controller gains 2 life.\n−10: Creatures you control gain flying and double strike until end of turn.",
+  "loyalty": "5"
+ },
+ "Archangel Elspeth": {
+  "id": "Archangel Elspeth",
+  "name": "Archangel Elspeth",
+  "typeLine": "Legendary Planeswalker — Elspeth",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: Create a 1/1 white Soldier creature token with lifelink.\n−2: Put two +1/+1 counters on target creature. It becomes an Angel in addition to its other types and gains flying.\n−6: Return all nonland permanent cards with mana value 3 or less from your graveyard to the battlefield.",
+  "loyalty": "4"
+ },
+ "Ajani, Outland Chaperone": {
+  "id": "Ajani, Outland Chaperone",
+  "name": "Ajani, Outland Chaperone",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: Create a 1/1 green and white Kithkin creature token.\n−2: Ajani deals 4 damage to target tapped creature.\n−8: Look at the top X cards of your library, where X is your life total. You may put any number of nonland permanent cards with mana value 3 or less from among them onto the battlefield. Then shuffle.",
+  "loyalty": "3"
+ },
+ "Ajani Resolute": {
+  "id": "Ajani Resolute",
+  "name": "Ajani Resolute",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever you gain life, put a loyalty counter on Ajani.\n0: You gain 1 life.\n−4: Create a 2/2 white Cat Soldier creature token named Ajani's Pridemate with \"Whenever you gain life, put a +1/+1 counter on this token.\"\n−10: You get an emblem with \"Creatures you control get +2/+2.\"",
+  "loyalty": "2"
+ },
+ "Ajani, Wise Counselor": {
+  "id": "Ajani, Wise Counselor",
+  "name": "Ajani, Wise Counselor",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+2: You gain 1 life for each creature you control.\n−3: Creatures you control get +2/+2 until end of turn.\n−9: Put X +1/+1 counters on target creature, where X is your life total.",
+  "loyalty": "5"
+ },
+ "Elspeth Tirel": {
+  "id": "Elspeth Tirel",
+  "name": "Elspeth Tirel",
+  "typeLine": "Legendary Planeswalker — Elspeth",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+2: You gain 1 life for each creature you control.\n−2: Create three 1/1 white Soldier creature tokens.\n−5: Destroy all other permanents except for lands and tokens.",
+  "loyalty": "4"
+ },
+ "Brightblade Stoat": {
+  "id": "Brightblade Stoat",
+  "name": "Brightblade Stoat",
+  "typeLine": "Creature — Weasel Soldier",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "First strike, lifelink",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Ajani's Sunstriker": {
+  "id": "Ajani's Sunstriker",
+  "name": "Ajani's Sunstriker",
+  "typeLine": "Creature — Cat Cleric",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Fiendslayer Paladin": {
+  "id": "Fiendslayer Paladin",
+  "name": "Fiendslayer Paladin",
+  "typeLine": "Creature — Human Knight",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "First strike (This creature deals combat damage before creatures without first strike.)\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nThis creature can't be the target of black or red spells your opponents control.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Golden-Tail Disciple": {
+  "id": "Golden-Tail Disciple",
+  "name": "Golden-Tail Disciple",
+  "typeLine": "Enchantment Creature — Fox Monk",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Lifelink (Damage dealt by this creature also causes you to gain that much life.)",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Healer's Hawk": {
+  "id": "Healer's Hawk",
+  "name": "Healer's Hawk",
+  "typeLine": "Creature — Bird",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nLifelink (Damage dealt by this creature also causes you to gain that much life.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Arcbound Mouser": {
+  "id": "Arcbound Mouser",
+  "name": "Arcbound Mouser",
+  "typeLine": "Artifact Creature — Cat",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Lifelink\nModular 1 (This creature enters with a +1/+1 counter on it. When it dies, you may put its +1/+1 counters on target artifact creature.)",
+  "power": "0",
+  "toughness": "0"
+ },
+ "Enduring Innocence": {
+  "id": "Enduring Innocence",
+  "name": "Enduring Innocence",
+  "typeLine": "Enchantment Creature — Sheep Glimmer",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Lifelink\nWhenever one or more other creatures you control with power 2 or less enter, draw a card. This ability triggers only once each turn.\nWhen Enduring Innocence dies, if it was a creature, return it to the battlefield under its owner's control. It's an enchantment. (It's not a creature.)",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Bishop of Wings": {
+  "id": "Bishop of Wings",
+  "name": "Bishop of Wings",
+  "typeLine": "Creature — Human Cleric",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever an Angel you control enters, you gain 4 life.\nWhenever an Angel you control dies, create a 1/1 white Spirit creature token with flying.",
+  "power": "1",
+  "toughness": "4"
+ },
+ "Lyra Dawnbringer": {
+  "id": "Lyra Dawnbringer",
+  "name": "Lyra Dawnbringer",
+  "typeLine": "Legendary Creature — Angel",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nFirst strike (This creature deals combat damage before creatures without first strike.)\nLifelink (Damage dealt by this creature also causes you to gain that much life.)\nOther Angels you control get +1/+1 and have lifelink.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Starnheim Aspirant": {
+  "id": "Starnheim Aspirant",
+  "name": "Starnheim Aspirant",
+  "typeLine": "Creature — Human Cleric",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Angel spells you cast cost {2} less to cast.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Path to Exile": {
+  "id": "Path to Exile",
+  "name": "Path to Exile",
+  "typeLine": "Instant",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature. Its controller may search their library for a basic land card, put that card onto the battlefield tapped, then shuffle."
+ },
+ "Soul Warden": {
+  "id": "Soul Warden",
+  "name": "Soul Warden",
+  "typeLine": "Creature — Human Cleric",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever another creature enters, you gain 1 life.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Emeria Shepherd": {
+  "id": "Emeria Shepherd",
+  "name": "Emeria Shepherd",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nLandfall — Whenever a land you control enters, you may return target nonland permanent card from your graveyard to your hand. If that land is a Plains, you may return that nonland permanent card to the battlefield instead.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Thraben Watcher": {
+  "id": "Thraben Watcher",
+  "name": "Thraben Watcher",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying, vigilance\nOther nontoken creatures you control get +1/+1 and have vigilance.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Esper Sentinel": {
+  "id": "Esper Sentinel",
+  "name": "Esper Sentinel",
+  "typeLine": "Artifact Creature — Human Soldier",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever an opponent casts their first noncreature spell each turn, draw a card unless that player pays {X}, where X is this creature's power.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Seraph Sanctuary": {
+  "id": "Seraph Sanctuary",
+  "name": "Seraph Sanctuary",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "When this land enters, you gain 1 life.\nWhenever an Angel you control enters, you gain 1 life.\n{T}: Add {C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Youthful Valkyrie": {
+  "id": "Youthful Valkyrie",
+  "name": "Youthful Valkyrie",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever another Angel you control enters, put a +1/+1 counter on this creature.",
+  "power": "1",
+  "toughness": "3"
+ },
+ "Pristine Talisman": {
+  "id": "Pristine Talisman",
+  "name": "Pristine Talisman",
+  "typeLine": "Artifact",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "{T}: Add {C}. You gain 1 life.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Marble Diamond": {
+  "id": "Marble Diamond",
+  "name": "Marble Diamond",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "This artifact enters tapped.\n{T}: Add {W}.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Liliana the Faultless": {
+  "id": "Liliana the Faultless",
+  "name": "Liliana the Faultless",
+  "typeLine": "Legendary Creature — Human Cleric",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever another creature or planeswalker you control enters, you gain 1 life.\n{1}, {T}, Discard a card: Another target creature or planeswalker you control gains hexproof until end of turn.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Segovian Angel": {
+  "id": "Segovian Angel",
+  "name": "Segovian Angel",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying, vigilance",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Archaeomancer's Map": {
+  "id": "Archaeomancer's Map",
+  "name": "Archaeomancer's Map",
+  "typeLine": "Artifact",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this artifact enters, search your library for up to two basic Plains cards, reveal them, put them into your hand, then shuffle.\nWhenever a land an opponent controls enters, if that player controls more lands than you, you may put a land card from your hand onto the battlefield."
+ },
+ "Land Tax": {
+  "id": "Land Tax",
+  "name": "Land Tax",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, if an opponent controls more lands than you, you may search your library for up to three basic land cards, reveal them, put them into your hand, then shuffle."
+ },
+ "Shattered Angel": {
+  "id": "Shattered Angel",
+  "name": "Shattered Angel",
+  "typeLine": "Creature — Phyrexian Angel",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever a land an opponent controls enters, you may gain 3 life.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Pearl Medallion": {
+  "id": "Pearl Medallion",
+  "name": "Pearl Medallion",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "White spells you cast cost {1} less to cast."
+ },
+ "Emeria, the Sky Ruin": {
+  "id": "Emeria, the Sky Ruin",
+  "name": "Emeria, the Sky Ruin",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\nAt the beginning of your upkeep, if you control seven or more Plains, you may return target creature card from your graveyard to the battlefield.\n{T}: Add {W}.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Soul's Attendant": {
+  "id": "Soul's Attendant",
+  "name": "Soul's Attendant",
+  "typeLine": "Creature — Human Cleric",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever another creature enters, you may gain 1 life.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "The Wind Crystal": {
+  "id": "The Wind Crystal",
+  "name": "The Wind Crystal",
+  "typeLine": "Legendary Artifact",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "White spells you cast cost {1} less to cast.\nIf you would gain life, you gain twice that much life instead.\n{4}{W}{W}, {T}: Creatures you control gain flying and lifelink until end of turn."
+ },
+ "Stroke of Midnight": {
+  "id": "Stroke of Midnight",
+  "name": "Stroke of Midnight",
+  "typeLine": "Instant",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy target nonland permanent. Its controller creates a 1/1 white Human creature token."
+ },
+ "Sol Ring": {
+  "id": "Sol Ring",
+  "name": "Sol Ring",
+  "typeLine": "Artifact",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "{T}: Add {C}{C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Flawless Maneuver": {
+  "id": "Flawless Maneuver",
+  "name": "Flawless Maneuver",
+  "typeLine": "Instant",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If you control a commander, you may cast this spell without paying its mana cost.\nCreatures you control gain indestructible until end of turn."
+ },
+ "Arcane Signet": {
+  "id": "Arcane Signet",
+  "name": "Arcane Signet",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{T}: Add one mana of any color in your commander's color identity.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Ajani's Welcome": {
+  "id": "Ajani's Welcome",
+  "name": "Ajani's Welcome",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature you control enters, you gain 1 life."
+ },
+ "Folk Hero": {
+  "id": "Folk Hero",
+  "name": "Folk Hero",
+  "typeLine": "Legendary Enchantment — Background",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Commander creatures you own have \"Whenever you cast a spell that shares a creature type with this creature, draw a card. This ability triggers only once each turn.\""
+ },
+ "Swords to Plowshares": {
+  "id": "Swords to Plowshares",
+  "name": "Swords to Plowshares",
+  "typeLine": "Instant",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature. Its controller gains life equal to its power."
+ },
+ "Angelic Accord": {
+  "id": "Angelic Accord",
+  "name": "Angelic Accord",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of each end step, if you gained 4 or more life this turn, create a 4/4 white Angel creature token with flying."
+ },
+ "Serra the Benevolent": {
+  "id": "Serra the Benevolent",
+  "name": "Serra the Benevolent",
+  "typeLine": "Legendary Planeswalker — Serra",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+2: Creatures you control with flying get +1/+1 until end of turn.\n−3: Create a 4/4 white Angel creature token with flying and vigilance.\n−6: You get an emblem with \"If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead.\"",
+  "loyalty": "4"
+ }
+}
