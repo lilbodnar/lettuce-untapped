@@ -10265,6 +10265,9 @@ const Bot = (() => {
     // Rionya: "one plus the number of instant and sorcery spells you've cast this turn"
     const plus = /^(one|two|three|\d+) plus (?:the number of )?(.+)$/.exec(p);
     if (plus && toNumber(plus[1])) { const k = countOf(g, plus[2], self, ctx); return k == null ? null : toNumber(plus[1]) + k; }
+    // Ajani, Strength of the Pride: "the number of creatures you control plus the number of planeswalkers you control"
+    const sum = /^(.+?) plus the number of (.+)$/.exec(p);
+    if (sum) { const a = countOf(g, sum[1], self, ctx), b = countOf(g, sum[2], self, ctx); return a == null || b == null ? null : a + b; }
     // Prismari: "the number of spells you've cast this turn" (Volcanic Torrent), "… instant and sorcery spells you've cast this turn" (Rionya),
     // "the greatest mana value among instant and sorcery spells you've cast this turn" (Rootha). (castThisTurn, kept by spellCast)
     const sp = /^(?:the )?(greatest mana value among )?(instant and sorcery )?spells? you've cast this turn$/.exec(p); // Aetherflux Reservoir: "each spell"

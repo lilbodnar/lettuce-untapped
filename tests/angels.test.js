@@ -175,6 +175,16 @@ test('Ajani, Strength of the Pride 0 needs 15 life more than you started with', 
   assert.equal(ajani.zone, 'exile');
 });
 
+test('Ajani, Strength of the Pride +1 counts creatures plus planeswalkers', () => {
+  const game = vsOpp();
+  const ajani = put(game, 'Ajani, Strength of the Pride');
+  put(game, 'Bear');
+  put(game, 'Angelic Guardian');
+  const left = Bot.runEffect(game, 'You gain life equal to the number of creatures you control plus the number of planeswalkers you control.', ctx(game, { self: ajani }));
+  assert.deepEqual(left, []);
+  assert.equal(game.life, 43);
+});
+
 test('Angelic Cub grows the first time each turn it is targeted', () => {
   const game = vsOpp();
   const cub = put(game, 'Angelic Cub');
