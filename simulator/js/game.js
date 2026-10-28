@@ -301,7 +301,8 @@ const Game = (() => {
       const given = Object.values(inst.boosts || {}).some(b => b && (b.lines || []).some(l => /^\{T\}:\s*add one mana of any colou?r\.?$/i.test(l)));
       const made = given ? MANA.slice(0, 5) : producesOf(inst);
       // Yavimaya, Cradle of Growth: every land is a Forest too, so it can tap for {G} (s.allForests, bot.js's refreshGrants)
-      const colors = s.allForests && !made.includes('G') ? MANA.filter(k => made.includes(k) || k === 'G') : made;
+      // Prismatic Omen: every basic land type, so any color (s.allBasics)
+      const colors = s.allBasics ? MANA.slice(0, 5) : s.allForests && !made.includes('G') ? MANA.filter(k => made.includes(k) || k === 'G') : made;
       return colors.length ? { colors, amount: 1, sacrifice: false } : null;
     }
     if (!inst.mana) return null;
@@ -425,7 +426,7 @@ const Game = (() => {
       if ((m = /^modular (\d+)\b/i.exec(line))) out['+1/+1'] = (out['+1/+1'] || 0) + Number(m[1]);
       if ((m = /^vanishing (\d+)$/i.exec(line))) out.time = (out.time || 0) + Number(m[1]); // Lost Auramancers (bot.js's upkeepSuspend takes them off)
       for (const sentence of line.split(/(?<=\.)\s+/)) {
-        m = /^.+? enters(?: the battlefield)? with (\w+) ([+-]\d+\/[+-]\d+|[a-z]+) counters? on it\.?$/i.exec(sentence);
+        m = /^.+? enters(?: the battlefield)? with (\w+) ([+-]\d+\/[+-]\d+|[a-z]+) counters? on (?:it|him|her)\.?$/i.exec(sentence); // The Duke: "… on him"
         if (m && toNumber(m[1]) && m[2].toLowerCase() !== 'loyalty') out[m[2].toLowerCase()] = (out[m[2].toLowerCase()] || 0) + toNumber(m[1]);
       }
     }
@@ -478,6 +479,12 @@ const Game = (() => {
   // card's rules text. Only generic mana is taken off; autoPay won't go below zero.
   const AFFINITY_GRANT = /^(\w+) spells you cast have affinity for (\w+)\.?$/im;
   const TARGET_DISCOUNT = /^spells you cast that target an? (\w+) cost \{(\d+)\} less to cast\.?$/im;
+  // Gran-Gran: "Noncreature spells you cast cost {1} less to cast as long as there are three or more Lesson cards in your graveyard."
+  const GRAVE_DISCOUNT = /^(\w+) spells you cast cost \{(\d+)\} less to cast as long as there are (\w+) or more (\w+) cards in your graveyard\.?$/im;
+  // Momo, Friendly Flier: "The first non-Lemur creature spell with flying you cast during each of your turns costs {1} less to cast."
+  // (s.castThisTurn: bot.js's spellCast, which marks the fliers)
+  const FIRST_FLIER = /^the first non-(\w+) creature spell with flying you cast during each of your turns costs \{(\d+)\} less to cast\.?$/im;
+  const hasFlying = text => /(?:^|\n)(?:[a-z ]+, )*flying(?:,|\n|$)/i.test(String(text || ''));
   function discount(s, spell, oracleOf) {
     const typeWords = String(spell.typeLine || '').split('//')[0].toLowerCase().split(/[^a-z-]+/).filter(Boolean);
     const has = w => typeWords.includes(w);
@@ -502,6 +509,12 @@ const Game = (() => {
       // Killian, Ink Duelist: "Spells you cast that target a creature cost {2} less to cast." (a spell whose text targets one)
       const tg = src.zone === 'battlefield' && TARGET_DISCOUNT.exec(String(oracleOf(src) || ''));
       if (tg && new RegExp(`\\btarget\\b[^.]*?\\b${tg[1]}s?\\b`, 'i').test(String(oracleOf(spell) || ''))) total += Number(tg[2]);
+      const gd = src.zone === 'battlefield' && GRAVE_DISCOUNT.exec(String(oracleOf(src) || ''));
+      if (gd && (gd[1].toLowerCase() === 'noncreature' ? !has('creature') : has(gd[1].toLowerCase()))
+        && s.zones.graveyard.filter(id => new RegExp(`\\b${gd[4]}\\b`, 'i').test(String(s.cards[id].typeLine || ''))).length >= (COUNT_WORDS[gd[3].toLowerCase()] || Number(gd[3]) || 0)) total += Number(gd[2]);
+      const ff = src.zone === 'battlefield' && FIRST_FLIER.exec(String(oracleOf(src) || ''));
+      if (ff && !s.offTurn && has('creature') && !has(ff[1].toLowerCase()) && hasFlying(oracleOf(spell))
+        && !(s.spellTurn === s.turn && (s.castThisTurn || []).some(x => x.flying && /\bcreature\b/i.test(String(x.typeLine || '').split('//')[0]) && !new RegExp(`\\b${ff[1]}\\b`, 'i').test(String(x.typeLine || ''))))) total += Number(ff[2]);
       // Advanced Reconstruction (a Class, from level 3): "Spells you cast from anywhere other than your hand cost {2} less to cast."
       if (src.zone !== 'battlefield' || spell.zone === 'hand') continue;
       let level = 1;
@@ -721,6 +734,7 @@ const Game = (() => {
       else if ((c = cond.match(new RegExp(`^you control an? ${BASICS}(?:,? or an? ${BASICS})?$`)))) out = { control: [c[1], c[2]].filter(Boolean) };
       else if ((c = cond.match(/^your opponents control (\w+) or more lands$/))) out = { oppLands: toNumber(c[1]) }; // Turbulent lands
       else if ((c = cond.match(/^you control (\w+) or more other (\w+?)s$/))) out = { minOtherType: { n: toNumber(c[1]), type: c[2] } }; // Witch's Cottage: "three or more other Swamps"
+      else if ((c = cond.match(/^you control an? ((?:legendary )?(?:creature|artifact|enchantment|planeswalker))$/))) out = { controlKind: c[1].split(' ') }; // Minas Tirith: "a legendary creature"
     });
     return out;
   }
@@ -752,6 +766,7 @@ const Game = (() => {
     if (et.minBasics != null) return others.filter(c => isLand(c) && /\bbasic\b/i.test(c.typeLine || '')).length < et.minBasics;
     if (et.control) return !others.some(c => et.control.some(t => new RegExp(`\\b${t}\\b`, 'i').test(c.typeLine || '')));
     if (et.minOtherType) return others.filter(c => new RegExp(`\\b${et.minOtherType.type}\\b`, 'i').test(c.typeLine || '')).length < et.minOtherType.n;
+    if (et.controlKind) return !others.some(c => et.controlKind.every(t => new RegExp(`\\b${t}\\b`, 'i').test(faceType(c))));
     return false;
   }
 
@@ -874,6 +889,7 @@ const Game = (() => {
       const def = defs[row.id] || { id: row.id, name: row.name, typeLine: '' };
       for (let i = 0; i < (row.qty || 1); i++) {
         const inst = makeInstance(s, def, { commander: !!row.commander, castCount: 0, cmc: def.cmc || 0, cost: def.manaCost || '', produces: def.producedMana || null, enterLife: enterLife(def.name, def.oracle), enterDraw: enterDraw(def.name, def.oracle), mana: manaAbility(def.name, def.oracle), entersTapped: entersTapped(def.name, def.oracle), loyalty: def.loyalty == null ? null : def.loyalty, doubles: doublesOf(def.oracle) });
+        if (LEYLINE.test(def.oracle || '')) inst.leyline = true;
         inst.zone = row.commander ? 'command' : 'library';
         s.zones[inst.zone].push(inst.iid);
       }
@@ -883,7 +899,27 @@ const Game = (() => {
     drawCards(s, 7, true);
     delete s.drawnThisTurn; // the opening hand isn't a draw this turn (Narset)
     firstDraw(s);
+    beginLeylines(s);
     return s;
+  }
+
+  // Leyline of the Guildpact, Quicksilver: "If this card is in your opening hand, you may begin the game with it on the battlefield."
+  // (always; a mulligan takes them back first: inst.leylineStart)
+  const LEYLINE = /^if (?:this card|.+?) is in your opening hand, you may begin the game with (?:it|him|her|them) on the battlefield\.?$/im;
+  function beginLeylines(s) {
+    for (const iid of s.zones.hand.filter(i => s.cards[i].leyline)) {
+      move(s, iid, 'battlefield', { put: true });
+      s.cards[iid].leylineStart = true;
+      s.cards[iid].enteredTurn = 0;
+      log(s, `${s.cards[iid].name} began the game on the battlefield.`);
+    }
+  }
+  // Before a mulligan: the ones that began on the battlefield go back with the hand.
+  function takeBackLeylines(s) {
+    for (const iid of s.zones.battlefield.filter(i => s.cards[i].leylineStart)) {
+      move(s, iid, 'library');
+      delete s.cards[iid].leylineStart;
+    }
   }
 
   // Does turn 1 start with a draw? On the draw, yes. On the play only in Commander, where nobody
@@ -1140,7 +1176,7 @@ const Game = (() => {
     delete inst.damageTaken;
     // The Commander precons' choices and states (bot.js).
     ['becomes', 'impending', 'bestowed', 'mutatedOnto', 'chosenMode', 'chosenCardType', 'level', 'heldBy', 'goad', 'noAttackTurn',
-      'firstTurn', 'freeCast', 'xValue', 'spentColors', 'suspended', 'foretold'].forEach(k => delete inst[k]);
+      'firstTurn', 'freeCast', 'xValue', 'spentColors', 'suspended', 'foretold', 'retype'].forEach(k => delete inst[k]);
     // A copy (Wall of Stolen Identity) is itself again.
     if (inst.original) { Object.assign(inst, inst.original); delete inst.original; }
     delete inst.keepLines; // Irma's own ability, kept while she was a copy
@@ -1518,6 +1554,8 @@ const Game = (() => {
     const stunned = [];
     // Teferi's Protection: "Until your next turn, …" ends, and phased-out permanents come back.
     delete s.untilNextTurn;
+    delete s.lockNoncreature; // Hope of Ghirapur (bot.js)
+    delete s.shrinkAttackers; // Tamiyo, Seasoned Scholar (bot.js)
     Object.values(s.cards).forEach(c => { delete c.untilNextKw; }); // Elspeth, Storm Slayer: "gain flying until your next turn" (bot.js's stats)
     delete s.attackedYou; // "players who attacked you during their last turn"
     s.zones.battlefield.forEach(iid => { if (!s.cards[iid].heldBy) delete s.cards[iid].phasedOut; }); // Oubliette keeps its one (heldBy)
@@ -1539,6 +1577,7 @@ const Game = (() => {
   }
 
   function mulligan(s) {
+    takeBackLeylines(s);
     for (const iid of s.zones.hand.splice(0)) {
       s.cards[iid].zone = 'library';
       s.zones.library.push(iid);
@@ -1548,6 +1587,7 @@ const Game = (() => {
     drawCards(s, 7, true);
     delete s.drawnThisTurn; // the opening hand isn't a draw this turn (Narset)
     firstDraw(s);
+    beginLeylines(s);
     log(s, `Mulligan #${s.mulligans}: drew a new 7${drawsTurnOne(s) && s.turn === 1 ? ' plus your first-turn card' : ''}. Put ${s.mulligans} on the bottom (right-click a card → Bottom of library).`);
   }
 
@@ -1592,6 +1632,7 @@ const Game = (() => {
     const n = (inst.counters[name] || 0) + delta;
     if (n <= 0) delete inst.counters[name];
     else inst.counters[name] = n;
+    if (name === '+1/+1' && delta > 0) inst.plusTurn = s.turn; // Kid Loki: "that you've put one or more +1/+1 counters on this turn" (bot.js)
     // Exemplar of Light: "Whenever you put one or more +1/+1 counters on this creature, …" (bot.js)
     if (delta > 0 && inst.zone === 'battlefield' && hooks.counters) hooks.counters(s, inst, name, delta);
     return delta;
@@ -1660,10 +1701,10 @@ const Game = (() => {
 
   return {
     ZONES, ZONE_NAMES, CELL_W, CELL_H, MANA, layout, hooks, producesOf, available, enterLife, enterDraw, entersTapped, tapsOnEntry, parseCost, autoPay, manaAbility, isCreature,
-    choosesType, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TARGET_DISCOUNT, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
+    choosesType, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TARGET_DISCOUNT, GRAVE_DISCOUNT, FIRST_FLIER, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
-    attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,
+    beginLeylines, takeBackLeylines, LEYLINE, attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,
     place: autoPlace,
   };
 })();

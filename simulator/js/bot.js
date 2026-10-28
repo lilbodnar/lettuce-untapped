@@ -288,7 +288,7 @@ const Bot = (() => {
     // another card on top (a boost's setPT), a token or hand-made card (custom.pt).
     const top = Object.values(inst.boosts || {}).find(b => b && b.setPT);
     // basePT: set by another card (Graaz's 5/3, Goddric's 4/4, Duplicant, Kenrith's Transformation's 3/3 via setPT).
-    const ptText = (inst.becomes && inst.becomes.pt) || (top && top.setPT) || inst.basePT || (inst.custom && inst.custom.pt);
+    const ptText = (inst.becomes && inst.becomes.pt) || (top && top.setPT) || inst.basePT || (inst.retype && inst.retype.pt) || (inst.custom && inst.custom.pt);
     const pt = ptText && /^(\S+)\/(\S+)$/.exec(String(ptText).trim());
     if (pt) { pow = num(pt[1]); tou = num(pt[2]); } else { pow = num(card.power); tou = inst.baseTou != null ? inst.baseTou : num(card.toughness); } // baseTou: Tree of Redemption's exchange
     const c = inst.counters || {};
@@ -308,6 +308,7 @@ const Bot = (() => {
     if (!lost && c.charge > 0) String(card.oracle || '').split('\n').forEach(l => { const st = /^(\d+)\+\s*\|\s*(.+)$/.exec(l.trim()); if (st && c.charge >= Number(st[1])) keywords(st[2]).forEach(k => kw.add(k)); });
     (inst.granted || []).forEach(k => kw.add(k)); // from lords, see refreshGrants
     (inst.extraKw || []).forEach(k => kw.add(k)); // Wall of Stolen Identity's copy "has defender"
+    ((inst.retype && inst.retype.kw) || []).forEach(k => kw.add(k)); // Frodo's lifelink, Kellan's double strike
     (inst.untilNextKw || []).forEach(k => kw.add(k)); // Elspeth, Storm Slayer (game.js's nextTurn clears it)
     ((inst.becomes && inst.becomes.kw) || []).forEach(k => kw.add(k)); // Restless Anchorage's flying
     ((inst.pump && inst.pump.kw) || []).forEach(k => kw.add(k)); // "gain trample until end of turn"
@@ -326,7 +327,7 @@ const Bot = (() => {
     (inst.lostKw || []).forEach(k => kw.delete(k)); // Archetype of Imagination: "… lose flying and can't have or gain flying" (refreshGrants)
     // Stormtide Leviathan: "Creatures without flying or islandwalk can't attack." (refreshGrants)
     if (inst.attackNeeds && !inst.attackNeeds.some(k => kw.has(k))) kw.add("can't attack");
-    return { pow, tou, kw, n, cmc: card.cmc || 0, colors: colorsOf(card), artifact: /\bartifact\b/i.test(front(inst.typeLine)), types: typeWords(inst), ringBearer: !!inst.isRingBearer, token: !!inst.token };
+    return { pow, tou, kw, n, cmc: card.cmc || 0, colors: inst.guildpact ? WUBRG : colorsOf(card), artifact: /\bartifact\b/i.test(front(inst.typeLine)), types: typeWords(inst), ringBearer: !!inst.isRingBearer, token: !!inst.token };
   }
 
   // A numbered keyword's number ("Toxic 2" → 2), 1 if it has the keyword some other way (a lord), or 0.
@@ -369,7 +370,7 @@ const Bot = (() => {
   // Landwalk: unblockable while the defending player controls a land of that type (forestwalk and a Forest).
   const WALKS = { plainswalk: 'plains', islandwalk: 'island', swampwalk: 'swamp', mountainwalk: 'mountain', forestwalk: 'forest' };
   const walksPast = (attacker, defender) => !!defender && Object.entries(WALKS).some(([k, type]) => attacker.kw.has(k)
-    && defender.zones.battlefield.some(iid => G.isLand(defender.cards[iid]) && ((defender.allIslands && type === 'island') || (defender.allForests && type === 'forest') || new RegExp(`\\b${type}\\b`, 'i').test(defender.cards[iid].typeLine || '')))); // Stormtide Leviathan (refreshGrants)
+    && defender.zones.battlefield.some(iid => G.isLand(defender.cards[iid]) && (defender.allBasics || (defender.allIslands && type === 'island') || (defender.allForests && type === 'forest') || new RegExp(`\\b${type}\\b`, 'i').test(defender.cards[iid].typeLine || '')))); // Stormtide Leviathan (refreshGrants)
   // defender: the blocking player's table (for landwalk); optional.
   // Fear: only black or artifact creatures block it. Intimidate: only artifact creatures or ones that
   // share a color with it. Skulk: not creatures with greater power. Shadow only blocks and is only
@@ -397,6 +398,8 @@ const Bot = (() => {
     // Ant-Man ("evade greater power": not by creatures with greater power than it); Speed ("evade lacking haste": only by creatures with haste).
     if (k === 'evade greater power') return blocker.pow > attacker.pow;
     if (k === 'evade token') return !!blocker.token; // Duskwatch Hunter: "can't be blocked by tokens"
+    const col = /^evade color ([WUBRG])$/.exec(k); // Skrelv, Defector Mite: "can't be blocked by creatures of that color"
+    if (col) return (blocker.colors || []).includes(col[1]);
     const lack = /^evade lacking (.+)$/.exec(k);
     if (lack) return !lack[1].split('|').some(k => blocker.kw.has(k)); // Sidar Kondo: "evade lacking flying|reach"
     const m = /^evade (?:power (\d+)|(\w+))$/.exec(k);
@@ -404,6 +407,7 @@ const Bot = (() => {
   });
   const canBlock = (blocker, attacker, defender) => !blocker.kw.has("can't block") && !blocker.kw.has('decayed') && !attacker.kw.has('unblockable') && !evades(attacker, blocker)
     && !(blocker.kw.has('blocks only flyers') && !attacker.kw.has('flying')) // Brazen Borrower (staticExtra)
+    && ![...blocker.kw].some(k => { const u = /^blocks power under (\d+)$/.exec(k); return u && attacker.pow >= Number(u[1]); }) // Zurgo Bellstriker (staticExtra)
     && !(attacker.kw.has('horsemanship') && !blocker.kw.has('horsemanship')) // Herald of Hoofbeats
     && !(attacker.kw.has('evades smaller') && blocker.pow < attacker.pow) // Elusive Otter (staticExtra)
     && !walksPast(attacker, defender) && !shielded(attacker, blocker)
@@ -566,7 +570,8 @@ const Bot = (() => {
     return (result || fight(a, b)).player;
   }
 
-  const isPlaneswalker = inst => !inst.faceDown && /\bplaneswalker\b/i.test(front(inst.typeLine));
+  const faceTypeOf = inst => { const t = String(inst.typeLine || '').split('//'); return (inst.flipped && t[1]) || t[0]; }; // the face that's up (Tamiyo transformed)
+  const isPlaneswalker = inst => !inst.faceDown && /\bplaneswalker\b/i.test(faceTypeOf(inst));
   // A planeswalker's loyalty: its loyalty counters, or the printed number if it has none yet.
   const loyaltyOf = (inst, card) => (inst.counters && inst.counters.loyalty != null ? inst.counters.loyalty : num(card && card.loyalty));
 
@@ -622,6 +627,7 @@ const Bot = (() => {
     const lands = () => s.zones.hand.filter(iid => G.isLand(s.cards[iid])).length;
     const n = lands();
     if (n >= 2 && n <= 5) return;
+    G.takeBackLeylines(s);
     for (const iid of s.zones.hand.splice(0)) {
       s.cards[iid].zone = 'library';
       s.zones.library.push(iid);
@@ -635,6 +641,7 @@ const Bot = (() => {
       .sort((x, y) => (s.cards[y].bot.cmc || 0) - (s.cards[x].bot.cmc || 0))[0] || s.zones.hand[0];
     G.move(s, worst, 'library', { bottom: true });
     G.log(s, `Opp mulliganed (${n} land${n === 1 ? '' : 's'} in the first hand) and put a card on the bottom.`);
+    G.beginLeylines(s);
   }
 
   const botStats = inst => stats(inst, inst.bot);
@@ -823,7 +830,7 @@ const Bot = (() => {
         if (zone === 'exile' && !inst.playable) continue; // Expressive Iteration, Klaw, Moonstone: cards it may play from exile
         if (zone === 'library' && (!f || !topCastable(s, inst, defOf))) continue; // Thundermane Dragon
         if (castTooEarly(s, inst, defOf)) continue; // Serra Avenger
-        if (!oppMayCast(game, defOf, zone)) continue; // Silence, Grand Abolisher, Drannith Magistrate
+        if (!oppMayCast(game, defOf, zone, inst)) continue; // Silence, Grand Abolisher, Drannith Magistrate, Hope of Ghirapur
         if (s.noGraveCast && (zone === 'graveyard' || zone === 'exile') && !G.isCreature(inst)) continue; // Soulless Jailer
         if (!G.isCreature(inst) && (winnows(game, DOVESCAPE, defOf) || winnows(s, DOVESCAPE, defOf))) continue; // it would only be countered
         const type = front(inst.typeLine);
@@ -1075,7 +1082,7 @@ const Bot = (() => {
     if (nc && nc.turn === game.turn && spellFits(spell, nc.what, defOf)) { delete game.noCounter; return false; }
     if (game.noCounterTurn && game.noCounterTurn.turn === game.turn && spellFits(spell, game.noCounterTurn.what, defOf)) return false;
     if (cmc < 3 && !spell.commander) return false;
-    if (!oppMayCast(game, defOf, 'hand')) return false; // Silence, Grand Abolisher
+    if (!oppMayCast(game, defOf, 'hand') || game.lockNoncreature) return false; // Silence, Grand Abolisher, Hope of Ghirapur (counterspells are noncreature)
     if (/\bcan't be countered\b/i.test((defOf(spell.id) || {}).oracle || '')) return false; // "This spell can't be countered."
     const creature = G.isCreature(spell);
     // Surrak Dragonclaw: "Creature spells you control can't be countered."; Chimil, the Inner Sun: "Spells you control can't be countered."
@@ -1451,12 +1458,12 @@ const Bot = (() => {
   // A card's colors right now: "Transguild Courier is all colors" and a token made "that's all
   // colors" (Jared's Kavu) are all five; other tokens keep the colors they were made with.
   function colorsOfInst(c, defOf) {
-    if (c.allColors || oracleLines(c, defOf).some(l => /^.+? is all colors\b/i.test(l))) return WUBRG;
+    if (c.allColors || c.guildpact || oracleLines(c, defOf).some(l => /^.+? is all colors\b/i.test(l))) return WUBRG;
     if (c.tokenColors) return c.tokenColors;
     return colorsOf(factsOf(c, defOf));
   }
   // Do two cards share a creature type? (Heirloom Blade: "a creature card that shares a creature type with it")
-  const creatureTypes = c => (front(c.typeLine).split('—')[1] || '').toLowerCase().split(/\s+/).filter(Boolean).concat(c.extraTypes || []);
+  const creatureTypes = c => ((c.retype ? `— ${c.retype.types}` : front(c.typeLine)).split('—')[1] || '').toLowerCase().split(/\s+/).filter(Boolean).concat(c.extraTypes || []);
   const sharesType = (a, b) => !!b && (isChangeling(a) || isChangeling(b) || creatureTypes(a).some(t => creatureTypes(b).includes(t)));
 
   // Dice. Barbarian Class: "If you would roll one or more dice, instead roll that many dice plus one
@@ -1546,6 +1553,8 @@ const Bot = (() => {
     /^you have more life than an opponent$/i, // Glorious Enforcer
     /^an? (\w+) died under your control this turn$/i, // Brimaz, Blight of Oreskos
     /^(.+?) is in the command zone or on the battlefield$/i, // eminence (Sidar Jabari; attackWatch fires it from the command zone)
+    /^(?:he's|she's|it's|this creature is) equipped$/i, // Whiplash, Vengeful Engineer
+    /^your life total is less than or equal to half your starting life total$/i, // Cecil, Dark Knight
   ];
   function condition(g, cond, ctx) {
     const c = String(cond).trim().replace(/\.$/, '');
@@ -1557,6 +1566,8 @@ const Bot = (() => {
     if (/^you've cast a spell from a graveyard or activated an ability of a card in a graveyard this turn$/i.test(c)) {
       return (g.spellTurn === g.turn && (g.castThisTurn || []).some(x => x.from === 'graveyard')) || g.graveAbilityTurn === g.turn;
     }
+    if (/^your life total is less than or equal to half your starting life total$/i.test(c)) { const game = gameOf(g, ctx); const life = game ? lifeOf(game, isOpps(game, g) ? 'opp' : 'you') : g.life; return life <= (g.commander ? 20 : 10); }
+    if (/^(?:he's|she's|it's|this creature is) equipped$/i.test(c)) return !!ctx && !!ctx.self && G.attachmentsOf(g, ctx.self.iid).some(iid => /\bequipment\b/i.test(front(g.cards[iid].typeLine)));
     if (/^(.+?) is in the command zone or on the battlefield$/i.test(c)) return !ctx || !ctx.self || !ctx.self.zone || ['command', 'battlefield'].includes(ctx.self.zone);
     if ((m = /^you've cast (\w+) or more spells this turn$/i.exec(c))) return g.spellTurn === g.turn && (g.castThisTurn || []).length >= (toNumber(m[1]) || 0);
     if ((m = /^at least one (\w+) card is milled this way$/i.exec(c))) return (g.lastMilled || []).some(iid => g.cards[iid] && isA(g.cards[iid], m[1]));
@@ -2512,6 +2523,18 @@ const Bot = (() => {
       else if (ctx.exileGrave) ctx.exileGrave();
       if (/^all graveyards$/i.test(m[1])) [...g.zones.graveyard].forEach(iid => G.move(g, iid, 'exile'));
     }],
+    // Zack Fair: "Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature." (sacrificed
+    // as the cost, after this: app.js; the creature it targeted: g.lastTarget)
+    [/^put (.+?)'s counters on that creature and attach an equipment that was attached to (.+?) to that creature$/i, (g, m, ctx) => {
+      const t = g.lastTarget;
+      const c = t && t.s === g && g.cards[t.iid];
+      const me = ctx.self;
+      if (!c || c.zone !== 'battlefield' || !me || c === me) return;
+      for (const [k, n] of Object.entries(me.counters || {})) if (n > 0) G.counter(g, c.iid, k, n);
+      const eq = G.attachmentsOf(g, me.iid).find(iid => /\bequipment\b/i.test(front(g.cards[iid].typeLine)));
+      if (eq) G.attach(g, eq, c.iid);
+      G.log(g, `${me.name}: its counters${eq ? ` and ${g.cards[eq].name}` : ''} went to ${c.name}.`);
+    }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self) && isSelf(m[2], ctx.self)],
     // Phyrexian Scriptures: "That creature becomes an artifact in addition to its other types." (the creature it put a counter on: g.lastTarget)
     // Archangel Elspeth: "It becomes an Angel in addition to its other types and gains flying." (for good)
     [/^(?:that creature|it) becomes an? (\w+) in addition to its other types(?: and gains ([a-z ,]+))?$/i, (g, m) => {
@@ -2604,11 +2627,26 @@ const Bot = (() => {
     [/^(?:it|this creature) can't be blocked this turn$/i, (g, m, ctx) => { ctx.self.pump = { pow: 0, tou: 0, ...ctx.self.pump, kw: [...new Set([...((ctx.self.pump && ctx.self.pump.kw) || []), 'unblockable'])] }; }, (m, ctx) => !!ctx.self],
     // Nogi, Sarkhan: "until end of turn, Nogi becomes a Dragon with base power and toughness 5/5 and gains flying",
     // "Until end of turn, Sarkhan becomes a Dragon in addition to his other types and gains flying."
-    [/^until end of turn, (.+?) becomes an? (\w+)(?: in addition to (?:its|his|her) other types)?(?: with base power and toughness (\d+)\/(\d+))?(?: and gains (.+))?$/i, (g, m, ctx) => {
+    // Reptil, Dinomorpher: "Until end of turn, Reptil becomes a Dinosaur Hero with base power and toughness 3/5 and gains reach and vigilance."
+    [/^until end of turn, (.+?) becomes an? (\w+(?: \w+)?)(?: in addition to (?:its|his|her) other types)?(?: with base power and toughness (\d+)\/(\d+))?(?: and gains (.+))?$/i, (g, m, ctx) => {
       const c = ctx.self;
-      c.becomes = { pt: m[3] ? `${m[3]}/${m[4]}` : (c.becomes && c.becomes.pt) || null, types: [m[2].toLowerCase()], kw: kwWords(m[5]), turn: g.turn };
+      c.becomes = { pt: m[3] ? `${m[3]}/${m[4]}` : (c.becomes && c.becomes.pt) || null, types: m[2].toLowerCase().split(' '), kw: kwWords(m[5]), turn: g.turn };
       if (!c.becomes.pt) { const st = stats(Object.assign({}, c, { becomes: null }), factsOf(c, defOfCtx(ctx))); c.becomes.pt = null; c.becomes.keepPT = `${st.pow}/${st.tou}`; }
       G.log(g, `${c.name} is a ${m[2]} until end of turn.`);
+    }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self)],
+    // Frodo, Sauron's Bane; Kellan, Planar Trailblazer: "If Frodo is a Citizen, it becomes a Halfling Scout with base power and toughness 2/3
+    // and lifelink.", "If Kellan is a Detective, it becomes a 3/2 Human Faerie Rogue and gains double strike.", "… it becomes a Halfling Rogue
+    // with "Whenever …"" (for as long as it stays: inst.retype, its creature types from then on)
+    [/^if (.+?) is an? (\w+), it becomes an? (?:(\d+)\/(\d+) )?(.+?)(?: with base power and toughness (\d+)\/(\d+))?(?: and gains (.+)| and ([a-z ,]+)| with "(.+)")?$/i, (g, m, ctx) => {
+      const c = ctx.self;
+      if (!isA(c, m[2])) return;
+      const was = c.retype || {};
+      const pt = m[3] ? `${m[3]}/${m[4]}` : m[6] ? `${m[6]}/${m[7]}` : was.pt;
+      const quoted = /^"(.+?)\.?"$/.exec((m[8] || '').trim());
+      const lines = [...(was.lines || []), ...(quoted ? [quoted[1]] : []), ...(m[10] ? [m[10].replace(/\.$/, '')] : [])];
+      const kw = [...new Set([...(was.kw || []), ...(quoted ? [] : kwWords(m[8] || m[9]))])];
+      c.retype = { types: m[5], ...(pt ? { pt } : {}), kw, lines };
+      G.log(g, `${c.name} is a ${m[5]} now.`);
     }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self)],
     // Myr Battlesphere: "you may tap X untapped Myr you control. If you do, this creature gets +X/+0 until end of turn and deals X damage to the player or planeswalker it's attacking."
     [/^tap x untapped (\w+) you control for this creature's attack$/i, (g, m, ctx) => {
@@ -2739,7 +2777,7 @@ const Bot = (() => {
       g.lastExiledIds = ids;
     }],
     // Advanced Reconstruction: "You may play the exiled card this turn."; Fateful Tempest: "… you may play the exiled cards".
-    [/^(?:until the end of your next turn, you may play (?:those cards|them|the exiled cards)|you may play (?:it|that card|the exiled card) this turn|you may play those cards until your next end step)$/i, (g, m, ctx) => {
+    [/^(?:until the end of your next turn, you may play (?:those cards|them|the exiled cards|that card)|you may play (?:it|that card|the exiled card) this turn|you may play those cards until your next end step)$/i, (g, m, ctx) => {
       const ids = /those|them|cards/i.test(m[0]) ? g.lastExiledIds || [] : [g.lastExiledTop];
       const until = /next/i.test(m[0]) ? g.turn + 1 : g.turn;
       ids.map(iid => g.cards[iid]).filter(c => c && c.zone === 'exile').forEach(c => { c.playable = { until }; });
@@ -3217,13 +3255,19 @@ const Bot = (() => {
       G.log(g, `${nameOfSrc(ctx)}: incubated ${m[1]}.`);
     }],
     // Etali, Primal Conqueror: "{9}{G/P}: Transform Etali." Its back face's text (faceOracle) and power and toughness (the card's backPT).
-    [/^transform (.+)$/i, (g, m, ctx) => {
+    [/^transform (.+)$/i, (g, m, ctx) => { transformNow(g, ctx.self, defOfCtx(ctx)); }, (m, ctx) => !!ctx.self && / \/\/ /.test(ctx.self.name || '') && isSelf(m[1], ctx.self)],
+    // Tamiyo, Inquisitive Student; Grist, Voracious Larva: "exile Tamiyo, then return her to the battlefield transformed under her owner's control"
+    [/^exile (.+?) and return (?:it|him|her) transformed$/i, (g, m, ctx) => {
       const t = ctx.self;
-      const card = defOfCtx(ctx)(t.id) || {};
-      t.flipped = !t.flipped;
-      if (t.flipped && card.backPT) t.basePT = card.backPT;
-      else if (!t.flipped) delete t.basePT;
-      G.log(g, `${t.name} transformed into ${String(t.name).split(' // ')[t.flipped ? 1 : 0]}.`);
+      if (!t || t.zone !== 'battlefield') return;
+      G.move(g, t.iid, 'exile');
+      G.move(g, t.iid, 'battlefield', { put: true });
+      transformNow(g, t, defOfCtx(ctx));
+    }, (m, ctx) => !!ctx.self && / \/\/ /.test(ctx.self.name || '') && isSelf(m[1], ctx.self)],
+    // Cecil, Dark Knight: "… untap Cecil and transform it."
+    [/^untap (.+?) and transform (?:it|him|her)$/i, (g, m, ctx) => {
+      ctx.self.tapped = false;
+      runEffect(g, `transform ${m[1]}`, ctx);
     }, (m, ctx) => !!ctx.self && / \/\/ /.test(ctx.self.name || '') && isSelf(m[1], ctx.self)],
     // Etali, Primal Sickness: "Whenever Etali deals combat damage to a player, they get that many poison counters." (hitTrigger fills it in)
     [/^(?:they get|that player gets) (\w+) poison counters?$/i, (g, m, ctx) => {
@@ -3696,6 +3740,17 @@ const Bot = (() => {
     [/^(?:that token|those tokens) attacks? this combat if able$/i, (g, m, ctx) => {
       (ctx.made || []).map(iid => g.cards[iid]).filter(c => c && c.token).forEach(c => { c.mustAttackUntil = g.turn; });
     }],
+    // Tinybones, the Pickpocket (settleAlara): the costliest nonland permanent card in their graveyard, yours to cast this turn with any mana
+    // (exiled until then)
+    [/^take the best nonland permanent card from that player's graveyard to cast this turn, with any mana$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const iid = o && o.zones.graveyard.filter(i => !G.isLand(o.cards[i]) && !/\b(instant|sorcery)\b/i.test(front(o.cards[i].typeLine))).sort((a, b) => cmcOfInst(o.cards[b], defOf) - cmcOfInst(o.cards[a], defOf))[0];
+      if (!iid) return G.log(g, `${nameOfSrc(ctx)}: no nonland permanent card in their graveyard.`);
+      const mine = takeCard(o, iid, g, 'exile', { defOf });
+      mine.playable = { anyMana: true };
+      G.log(g, `${nameOfSrc(ctx)}: took ${mine.name} from the opponent's graveyard (castable this turn, any mana).`);
+    }, (m, ctx) => !!ctx.other],
     // Grenzo (see settleIfYouDo): their top card, yours to cast this turn with any mana.
     // Ragavan: the same without "any mana".
     [/^exile the top card of that player's library to cast this turn(, with any mana)?$/i, (g, m, ctx) => {
@@ -4340,6 +4395,16 @@ const Bot = (() => {
       if (permanents(g).some(c => isA(c, 'squirrel')) || (pick && isA(g.cards[pick], 'squirrel'))) artifactTokens(g, ctx.self, 1, 'food');
       G.log(g, `${nameOfSrc(ctx)}: ${pick ? `took ${g.cards[pick].name}` : 'took nothing'}.`);
     }],
+    // Rick Jones, Destined Sidekick (settleAlara): "Mill four cards. You may put a Hero or enchantment card from among those cards into your hand."
+    // (the costliest one)
+    [/^mill (\w+) for an? (\w+) or (\w+) card into your hand$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const top = g.zones.library.slice(0, toNumber(m[1]) || 0);
+      G.mill(g, top.length);
+      const pick = top.filter(iid => g.cards[iid].zone === 'graveyard' && (isA(g.cards[iid], m[2]) || isA(g.cards[iid], m[3]))).sort((a, b) => cmcOfInst(g.cards[b], defOf) - cmcOfInst(g.cards[a], defOf))[0];
+      if (pick) G.move(g, pick, 'hand');
+      G.log(g, `${nameOfSrc(ctx)}: ${pick ? `took ${g.cards[pick].name}` : 'took nothing'}.`);
+    }],
     [/^each player sacrifices a creature or planeswalker or else discards a card$/i, (g, m, ctx) => {
       const defOf = defOfCtx(ctx);
       for (const t of [g, otherOf(g, ctx)].filter(x => x && x.zones)) {
@@ -4946,6 +5011,13 @@ const Bot = (() => {
       t.lostTurn = (t.lostTurn || 0) + 1;
       G.log(g, `${nameOfSrc(ctx)}: the opponent's next turn is controlled (wasted), then they take an extra turn.`);
     }, (m, ctx) => !!ctx.other],
+    // Hope of Ghirapur: "Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature
+    // spells." (sacrificed as the cost, after this; g.lockNoncreature until game.js's nextTurn: castOptions, app.js's tryPlay)
+    [/^until your next turn, target player who was dealt combat damage by (.+?) this turn can't cast noncreature spells$/i, (g, m, ctx) => {
+      if (ctx.self.hitTurn !== g.turn) return G.log(g, `${nameOfSrc(ctx)}: it hasn't dealt combat damage to a player this turn.`);
+      g.lockNoncreature = nameOfSrc(ctx);
+      G.log(g, `${nameOfSrc(ctx)}: the opponent can't cast noncreature spells until your next turn.`);
+    }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self)],
     // Silence: "Your opponents can't cast spells this turn." (castOptions; app.js's tryPlay for Opp's)
     [/^your opponents can't cast spells this turn$/i, (g, m, ctx) => {
       const t = otherOf(g, ctx);
@@ -5951,6 +6023,12 @@ const Bot = (() => {
     [/^after this (?:main )?phase, there is an additional combat phase(?: followed by an additional main phase)?$/i, g => extraCombat(g)],
     // Great Train Heist: "If it's your combat phase, there is an additional combat phase after this phase." (the "if" is a condition)
     [/^there is an additional combat phase after this phase$/i, g => extraCombat(g)],
+    // The Incredible Hulk: "If he's attacking, untap him and there is an additional combat phase after this phase."
+    [/^if (?:he's|she's|it's) attacking, untap (?:him|her|it) and there is an additional combat phase after this phase$/i, (g, m, ctx) => {
+      if (!ctx.self.attacking) return;
+      ctx.self.tapped = false;
+      extraCombat(g);
+    }, (m, ctx) => !!ctx.self],
     // Arena of Glory: "If any of that mana is spent on a creature spell, it gains haste until end of turn." (the next creature spell this turn, game.js's move)
     [/^if any of that mana is spent on a creature spell, it gains haste until end of turn$/i, g => { g.hasteMana = g.turn; }],
     // Great Train Heist: "Whenever a creature you control deals combat damage to that player this turn, create a tapped Treasure token." (heistTreasure)
@@ -7404,6 +7482,86 @@ const Bot = (() => {
       (ctx.made || []).map(iid => g.cards[iid]).filter(c => c && c.token).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'haste'])] }; });
     }],
     // Zurgo (settleTdc; ctx.leftCard: the token that left)
+    // Grist, the Plague Swarm's +1: "Put a deathtouch counter on the token if a black card was milled this way." (the newest token; game.js's lastMilled)
+    [/^put an? ([\w+/-]+) counter on the token if an? (white|blue|black|red|green) card was milled this way$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const tok = permanents(g).filter(c => c.token).sort((a, b) => Number(String(b.iid).slice(1)) - Number(String(a.iid).slice(1)))[0];
+      const hit = (g.lastMilled || []).some(iid => g.cards[iid] && colorsOfInst(g.cards[iid], defOf).includes(PRO_COLORS[m[2].toLowerCase()]));
+      if (tok && hit) G.counter(g, tok.iid, m[1].toLowerCase(), 1, { effect: true });
+      G.log(g, `${nameOfSrc(ctx)}: ${tok && hit ? `a ${m[1]} counter on ${tok.name}` : `no ${m[2]} card was milled`}.`);
+    }],
+    // Grist, the Plague Swarm's −6: "For each creature card in your graveyard, create a token that's a copy of it, except it's a 1/1 black and
+    // green Insect."
+    [/^for each creature card in your graveyard, create a token that's a copy of it, except it's a (\d+)\/(\d+) black and green (\w+)$/i, (g, m, ctx) => {
+      const list = g.zones.graveyard.map(iid => g.cards[iid]).filter(c => c && /\bcreature\b/i.test(front(c.typeLine)));
+      for (const c of list) {
+        const tok = G.copyAsToken(g, c.iid);
+        if (!tok) continue;
+        if (c.bot) tok.bot = { ...c.bot, power: m[1], toughness: m[2], colors: ['B', 'G'] };
+        tok.retype = { types: m[3], pt: `${m[1]}/${m[2]}`, kw: [], lines: [] };
+        tok.tokenColors = ['B', 'G'];
+      }
+      G.log(g, `${nameOfSrc(ctx)}: ${list.length} 1/1 Insect cop${list.length === 1 ? 'y' : 'ies'} of the creature cards in the graveyard.`);
+    }],
+    // Tamiyo, Seasoned Scholar's −7: "Draw cards equal to half the number of cards in your library, rounded up."
+    [/^draw cards equal to half the number of cards in your library, rounded up$/i, (g, m, ctx) => {
+      G.drawCards(g, Math.ceil(g.zones.library.length / 2), isOpps(gameOf(g, ctx) || g, g));
+    }],
+    // Tamiyo, Seasoned Scholar's +2: "Until your next turn, whenever a creature attacks you or a planeswalker you control, it gets -1/-0 until end
+    // of turn." (g.shrinkAttackers: declareAttack on the other table; game.js's nextTurn clears it)
+    [/^until your next turn, whenever a creature attacks you or a planeswalker you control, it gets -(\d+)\/-0 until end of turn$/i, (g, m, ctx) => {
+      g.shrinkAttackers = (g.shrinkAttackers || 0) + Number(m[1]);
+      G.log(g, `${nameOfSrc(ctx)}: until your next turn, creatures attacking you get -${g.shrinkAttackers}/-0.`);
+    }],
+    // Errant, Street Artist: "Copy target spell you control that wasn't cast." Copies resolve as they're made here (there's no stack to hold
+    // one), so there's never one to target.
+    [/^copy target spell you control that wasn't cast$/i, (g, m, ctx) => { G.log(g, `${nameOfSrc(ctx)}: no copied spell is waiting to resolve, so nothing to copy.`); }],
+    // Skrelv, Defector Mite (settleAlara)
+    [/^another creature you control gains toxic (\d+), hexproof from and evasion against the opponent's main color this turn$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const other = otherOf(g, ctx);
+      const c = creatures(g, x => x !== ctx.self).sort((a, b) => value(stats(b, factsOf(b, defOf))) - value(stats(a, factsOf(a, defOf))))[0];
+      if (!c) return G.log(g, `${nameOfSrc(ctx)}: no other creature.`);
+      const tally = {};
+      (other ? creatures(other) : []).forEach(x => colorsOfInst(x, defOf).forEach(k => { tally[k] = (tally[k] || 0) + 1; }));
+      const color = Object.keys(tally).sort((a, b) => tally[b] - tally[a])[0] || 'B';
+      c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'toxic', `hexproof from ${color}`, `evade color ${color}`])] };
+      G.log(g, `${nameOfSrc(ctx)}: ${c.name} gains toxic ${m[1]} and hexproof from {${color}}, and can't be blocked by {${color}} creatures this turn.`);
+    }, (m, ctx) => !!ctx.self],
+    // Mabel, Bitter Recluse: "remove up to three counters from another target creature or planeswalker" (the opponent's with the most counters,
+    // or else your own with -1/-1 or stun counters)
+    [/^remove up to (\w+) counters from another target creature or planeswalker$/i, (g, m, ctx) => {
+      let n = toNumber(m[1]) || 0;
+      const other = otherOf(g, ctx);
+      const total = c => Object.values(c.counters || {}).reduce((k, v) => k + Math.max(0, v), 0);
+      const fits = c => c !== ctx.self && (G.isCreature(c) || isPlaneswalker(c));
+      const bad = ['-1/-1', 'stun'];
+      const theirs = other ? permanents(other).filter(c => fits(c) && total(c) > 0).sort((a, b) => total(b) - total(a))[0] : null;
+      const mine = permanents(g).filter(c => fits(c) && bad.some(k => (c.counters || {})[k] > 0))[0];
+      const pick = theirs ? { t: other, c: theirs } : mine ? { t: g, c: mine } : null;
+      if (!pick) return G.log(g, `${nameOfSrc(ctx)}: no counters to remove.`);
+      const kinds = Object.keys(pick.c.counters).filter(k => pick.t === g ? bad.includes(k) : true).sort((a, b) => (b === 'loyalty' || b === '+1/+1') - (a === 'loyalty' || a === '+1/+1'));
+      const gone = [];
+      for (const k of kinds) while (n > 0 && (pick.c.counters[k] || 0) > 0) { G.counter(pick.t, pick.c.iid, k, -1); n--; gone.push(k); }
+      G.log(g, `${nameOfSrc(ctx)}: removed ${gone.length} counter${gone.length === 1 ? '' : 's'} from ${pick.c.name}.`);
+    }],
+    // Stiltzkin, Moogle Merchant (settleAlara): your least useful other permanent goes to the opponent, and you draw.
+    [/^give your least useful other permanent to target opponent, drawing a card$/i, (g, m, ctx) => {
+      const other = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const pick = permanents(g).filter(c => c !== ctx.self && !c.commander).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0];
+      if (!other || !pick) return G.log(g, `${nameOfSrc(ctx)}: nothing to give.`);
+      gainControl(g, pick.iid, other, defOf);
+      G.log(g, `${nameOfSrc(ctx)}: the opponent gains control of ${pick.name}.`);
+      G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g));
+    }, (m, ctx) => !!ctx.other],
+    // Frodo, Sauron's Bane (its Rogue's): "that player loses the game if the Ring has tempted you four or more times this game. Otherwise, the
+    // Ring tempts you." (losing the game: all of their life)
+    [/^that player loses the game if the ring has tempted you (\w+) or more times this game, or else the ring tempts you$/i, (g, m, ctx) => {
+      if ((g.ringTempts || 0) < toNumber(m[1])) return runEffect(g, 'the Ring tempts you', ctx);
+      G.log(g, `${nameOfSrc(ctx)}: the Ring has tempted ${isOpps(gameOf(g, ctx) || g, g) ? 'Opp' : 'you'} ${g.ringTempts} times, so that player loses the game.`);
+      ctx.hitOpps(Math.max(1, g.oppLife || 0));
+    }, (m, ctx) => !!ctx.hitOpps],
     [/^draw a card if the token was attacking, or else each opponent loses (\w+) life$/i, (g, m, ctx) => {
       if (ctx.leftCard && ctx.leftCard.attacking) return void G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g));
       ctx.hitOpps(toNumber(m[1]));
@@ -7684,7 +7842,13 @@ const Bot = (() => {
         if (eff.fromPower) { const st = stats(ctx.self, card || {}); eff.n = Math.max(0, hitOf(st)); } // Warstorm Surge (doubled by Gratuitous Violence)
       }
       if (eff.fromPower && !eff.n) return;
-      for (let i = 0; i < (eff.count || 1); i++) ctx.target(eff, m[0], ctx.self);
+      // "each of up to two target creatures" (Master's Guidance): a different one each time (eff.skip: canTarget)
+      const picked = [];
+      for (let i = 0; i < (eff.count || 1); i++) {
+        const before = g.lastTarget;
+        ctx.target(picked.length ? { ...eff, skip: picked.slice() } : eff, m[0], ctx.self);
+        if (g.lastTarget && g.lastTarget !== before) picked.push(g.lastTarget.iid);
+      }
     }, (m, ctx) => !!ctx.target && !!targetEffect(m[0])],
   ];
 
@@ -8339,6 +8503,7 @@ const Bot = (() => {
     const f = targetFilter(eff.what);
     if (!f || !inst || inst.zone !== 'battlefield' || inst.faceDown || inst.phasedOut) return false;
     if (eff.exclude && mine && inst.iid === eff.exclude) return false;
+    if ((eff.skip || []).includes(inst.iid)) return false; // already picked for this effect
     const bare = !mine && !!(inst.pump && inst.pump.noHex); // Arcane Lighthouse: no hexproof or shroud this turn
     if (!bare && (st.kw.has('shroud') || (!mine && (st.kw.has('hexproof') || (opp && st.kw.has('ward')))))) return false;
     // Protection from a color: not by a spell or ability of that color (Black Knight and white cards).
@@ -9469,7 +9634,7 @@ const Bot = (() => {
     // Summons of Saruman: "You may cast an instant or sorcery spell with mana value X or less from among them without paying its mana cost."
     t = t.replace(/\byou may cast an instant or sorcery spell with mana value (\d+|x) or less from among them without paying its mana cost\b/i, 'cast an instant or sorcery card with mana value $1 or less from among the milled cards for free');
     // Decree of Pain: "Destroy all creatures. They can't be regenerated." (destroyAll's noRegenNow)
-    t = t.replace(/\bdestroy all creatures\. they can't be regenerated\b/i, "creatures can't be regenerated now. destroy all creatures");
+    t = t.replace(/\bdestroy all (creatures|nonland permanents)\. they can't be regenerated\b/i, "creatures can't be regenerated now. destroy all $1"); // Child of Alara: "nonland permanents"
     // Monstrosity of the Lake: "tap all creatures your opponents control, then put a stun counter on each of those creatures"
     t = t.replace(/\btap all creatures your opponents control, then put an? (\w+) counter on each of those creatures\b/i, 'tap all creatures your opponents control with a $1 counter on each');
     // In the Darkness Bind Them: "For each opponent, gain control of up to one target creature that player controls until end of turn. Untap those
@@ -9492,8 +9657,37 @@ const Bot = (() => {
     t = t.replace(/\bchoose an opponent\. you and that player each create (.+?)(?=\.\s|\.?$)/gi, 'create $1. each opponent creates $1');
     return t;
   }
+  // "One drop legendaries?" (Child of Alara).
+  function settleAlara(t) {
+    // Quicksilver, Brash Blur: "Put a +1/+1 counter and a double strike counter on Quicksilver." (two sentences)
+    t = t.replace(/^put an? ([\w+/-]+) counter and an? ([a-z ]+?) counter on ([^.]+?)\.?$/i, 'put a $1 counter on $3. put a $2 counter on $3.');
+    // Frodo's Rogue: "that player loses the game if the Ring has tempted you four or more times this game. Otherwise, the Ring tempts you." (one phrase)
+    t = t.replace(/^(that player loses the game if the ring has tempted you \w+ or more times this game)\. otherwise, (the ring tempts you)\.?$/i, '$1, or else $2');
+    // Stiltzkin, Moogle Merchant: "Target opponent gains control of another target permanent you control. If they do, you draw a card."
+    t = t.replace(/^target opponent gains control of another target permanent you control\. if they do, you draw a card\.?$/i, 'give your least useful other permanent to target opponent, drawing a card');
+    // Rick Jones, Destined Sidekick
+    t = t.replace(/^mill (\w+) cards\. you may put an? (\w+) or (\w+) card from among those cards into your hand\.?$/i, 'mill $1 for a $2 or $3 card into your hand');
+    // Tamiyo, Inquisitive Student: "exile Tamiyo, then return her to the battlefield transformed under her owner's control" (one phrase)
+    t = t.replace(/^exile (.+?), then return (it|him|her) to the battlefield transformed under (?:its|his|her) owner's control\.?$/i, 'exile $1 and return $2 transformed');
+    // Lady Octopus, Inspired Inventor: "You may cast an artifact spell from your hand with mana value less than or equal to the number of ingenuity
+    // counters on Lady Octopus without paying its mana cost." (X filled in: fillWhereX)
+    t = t.replace(/^(?:you may )?cast an? (\w+) spell from your hand with mana value less than or equal to (the number of [\w+/-]+ counters on [^.]+?) without paying its mana cost\.?$/i,
+      'you may cast an $1 spell with mana value X or less from your hand without paying its mana cost, where X is $2.');
+    // Skrelv, Defector Mite: "Choose a color. Another target creature you control gains toxic 1 and hexproof from that color until end of turn. It
+    // can't be blocked by creatures of that color this turn." (the color most of the opponent's creatures are; your best other creature)
+    t = t.replace(/^choose a colou?r\. another target creature you control gains toxic (\d+) and hexproof from that colou?r until end of turn\. it can't be blocked by creatures of that colou?r this turn\.?$/i,
+      "another creature you control gains toxic $1, hexproof from and evasion against the opponent's main color this turn");
+    // Tinybones, the Pickpocket: "you may cast target nonland permanent card from that player's graveyard, and mana of any type can be spent to
+    // cast that spell."
+    t = t.replace(/^(?:you may )?cast target nonland permanent card from that player's graveyard, and mana of any type can be spent to cast that spell\.?$/i,
+      "take the best nonland permanent card from that player's graveyard to cast this turn, with any mana");
+    // A double strike or first strike counter (Quicksilver): one word, as the counter readers take it (counterKw reads it back)
+    t = t.replace(/\b(double|first) strike counter\b/gi, '$1-strike counter');
+    return t;
+  }
   function settleIfYouDo(text, g) {
     let t = String(text).trim().replace(ONCE_EACH_TURN, ''); // done by runEffect
+    t = settleAlara(t);
     t = settleLotr(t);
     t = settleTdc(t);
     t = settleWolves(t);
@@ -10091,6 +10285,9 @@ const Bot = (() => {
     if (m) return g ? creatures(g).filter(c => isA(c, singular(m[1])) && stats(c, factsOf(c, defOfCtx(ctx))).pow >= Number(m[2])).length : 1;
     m = /^(other )?(.+?) you control$/.exec(p);
     if (m) return g ? permanents(g).filter(c => !(m[1] && self && c.iid === self.iid) && kinds(m[2]).some(k => cardFits(c, k))).length : 1;
+    if (/^cards? in your graveyard$/.test(p)) return g ? g.zones.graveyard.length : 1; // Yuriko, Hope from the Shadows
+    // Whiplash, Vengeful Engineer: "the number of Equipment attached to him"
+    if (/^equipment attached to (?:him|her|it|this creature)$/.test(p)) return g ? (me0 => (me0 ? G.attachmentsOf(g, me0.iid).filter(iid => /\bequipment\b/i.test(front(g.cards[iid].typeLine))).length : 0))(self || (ctx && ctx.self)) : 1;
     m = /^(.+?) cards? in your graveyard$/.exec(p);
     if (m) return g ? g.zones.graveyard.filter(iid => kinds(m[1]).some(k => cardFits(g.cards[iid], k))).length : 1;
     if (/^opponents? you have$/.test(p)) return g ? g.opponents || 1 : 1;
@@ -10287,6 +10484,7 @@ const Bot = (() => {
   // time." How many times table t's draw triggers go off.
   const KRANG = /^if a player drawing a card causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time\.?$/i;
   const krangs = (t, defOf) => 1 + permanents(t).filter(w => oracleLines(w, defOf).some(l => KRANG.test(l))).length;
+  const ORDINAL_DRAW = /^when(?:ever)? you draw your ((?:first|second|third|fourth|fifth)(?: or (?:first|second|third|fourth|fifth))?) card (?:in a|each) turn, (?:you may )?(.+)$/i;
   let drawWatching = 0; // a "whenever an opponent draws a card, draw …" running now (Consecrated Sphinx)
   function opponentActed(game, s, event, n, defOf, ctx, spell) {
     if (!game.bot) return;
@@ -10333,6 +10531,11 @@ const Bot = (() => {
           if (a) runFor(game, s, w, a[1], `drew ${n === 1 ? 'a card' : `${n} cards`}`, s === game ? ctx : null, defOf, n * krangs(s, defOf));
           const b = second && /^whenever you draw your second card each turn, (?:you may )?(.+)$/i.exec(line);
           if (b) runFor(game, s, w, b[1], 'drew your second card this turn', s === game ? ctx : null, defOf, krangs(s, defOf));
+          // Tamiyo, Inquisitive Student: "When you draw your third card in a turn, …"; Lady Octopus: "Whenever you draw your first or second card each
+          // turn, …" (once for each of those cards drawn now)
+          const o = ORDINAL_DRAW.exec(line);
+          const hit = o ? o[1].split(/ or /i).filter(w => { const k = ORDINALS[w.toLowerCase()]; return k > before && k <= s.drawCount; }).length : 0;
+          if (hit) runFor(game, s, w, o[2], 'drew a card', s === game ? ctx : null, defOf, hit * krangs(s, defOf));
         }
       }
       // Krang, the All-Powerful: "Whenever a player draws their second card each turn, put a +1/+1 counter on Krang." (either table's)
@@ -10596,6 +10799,26 @@ const Bot = (() => {
     gone.forEach(c => G.move(s, c.iid, 'exile'));
     game.flickerBack = [...(game.flickerBack || []), { who: s === game ? 'you' : 'opp', iids: gone.map(c => c.iid) }];
     G.log(s, `${src}: exiled ${gone.length ? andList(gone.map(c => c.name)) : 'nothing'} until the next end step.`);
+  }
+  // Norin the Wary (anyone's): "When a player casts a spell or a creature attacks, exile Norin. Return it to the battlefield under its owner's
+  // control at the beginning of the next end step." (not itself as it's cast: spell)
+  const NORIN = /^when a player casts a spell or a creature attacks, exile (.+?)\. return it to the battlefield under its owner's control at the beginning of the next end step\.?$/i;
+  function norinWary(game, defOf, spell = null) {
+    for (const t of [game, game.bot && game.bot.s].filter(Boolean)) {
+      const out = permanents(t).filter(c => c !== spell && oracleLines(c, defOf).some(l => { const m = NORIN.exec(l); return m && isSelf(m[1], c); }));
+      if (out.length) flickerOut(game, t, out.map(c => c.iid), out[0].name);
+    }
+  }
+  // A two-faced card turns over (Etali, Bruce Banner, Cecil): the other face's text, power and toughness (the card's backPT), and a
+  // planeswalker face's loyalty (backLoyalty: Tamiyo, Seasoned Scholar; Grist, the Plague Swarm).
+  function transformNow(g, t, defOf) {
+    const card = defOf(t.id) || {};
+    t.flipped = !t.flipped;
+    if (t.flipped && card.backPT) t.basePT = card.backPT;
+    else if (!t.flipped) delete t.basePT;
+    if (isPlaneswalker(t)) t.counters = { ...t.counters, loyalty: Number(t.flipped ? card.backLoyalty : card.loyalty) || 3 };
+    else if (t.counters) delete t.counters.loyalty;
+    G.log(g, `${t.name} transformed into ${String(t.name).split(' // ')[t.flipped ? 1 : 0]}.`);
   }
   function flickerReturn(game) {
     for (const f of game.flickerBack || []) {
@@ -11026,7 +11249,7 @@ const Bot = (() => {
   // it ('Commander creatures you own have "Whenever this creature attacks …"', inst.grantedLines).
   const lostAll = inst => Object.values(inst.boosts || {}).some(b => b && b.loseAll); // Kenrith's Transformation
   const oracleLines = (inst, defOf) => (lostAll(inst) ? [] : chosenLines(byLevel(oracleText(inst, defOf).split('\n').map(plainLine), inst), inst)).concat((inst.pump && inst.pump.lines) || [], inst.grantedLines || [], inst.keepLines || [],
-    Object.values(inst.boosts || {}).flatMap(b => (b && b.lines) || []), (inst.becomes && inst.becomes.lines) || []); // abilities its equipment gives (Thornbite Staff)
+    Object.values(inst.boosts || {}).flatMap(b => (b && b.lines) || []), (inst.becomes && inst.becomes.lines) || [], (inst.retype && inst.retype.lines) || []); // abilities its equipment gives (Thornbite Staff); Kellan's
   // A Class (Barbarian Class): the lines after "{1}{R}: Level 2" count once it's that level
   // (inst.level), and only the next level's line can be activated.
   // Max speed (Howlsquad Heavy): "Max speed — {T}: Add {R} for each Goblin you control." counts once its controller's speed is 4 (inst.maxSpeed, refreshGrants).
@@ -11231,6 +11454,7 @@ const Bot = (() => {
   const subjectOf = (effect, watcher, creature) => (/\b(it|that creature|that token)\b/i.test(effect) && !/\bthis (creature|enchantment|artifact|permanent)\b/i.test(effect)
     && !effect.toLowerCase().includes(watcher.name.split(',')[0].toLowerCase()) ? creature : watcher);
   const creatureEntered = (...a) => whileEntering(() => creatureEnteredNow(...a), a[1]); // Yarok, Panharmonicon
+  const GRIST = /^whenever (.+?) or another creature you control enters, if it entered from your graveyard or you cast it from your graveyard, you may pay ((?:\{[^}]+\})+)\. if you do, exile .+?, then return it to the battlefield transformed under its owner's control\.?$/i;
   const ABOLETH = /^whenever a creature entering under an opponent's control causes a triggered ability of that creature to trigger, you may copy that ability\. you may choose new targets for the copy\.?$/i;
   const COIN_MASTERY = /^each creature you control enters with an additional \+1\/\+1 counter on it for each mana from an artifact source spent to cast it\.?$/i;
   function creatureEnteredNow(game, creature, defOf, ctx, s = game) {
@@ -11345,6 +11569,15 @@ const Bot = (() => {
           if (fromGrave) { if (creature.enteredFrom !== 'graveyard') continue; om[3] = fromGrave[1]; }
           if (once) inst.onceEnter = s.turn;
           fireOn(game, s, inst, `${creature.name} entered (${inst.name})`, om[3], ctx, defOf);
+          continue;
+        }
+        // Grist, Voracious Larva: "Whenever Grist or another creature you control enters, if it entered from your graveyard or you cast it from your
+        // graveyard, you may pay {G}. If you do, exile Grist, then return it to the battlefield transformed …" (always, when it can pay)
+        const gr = GRIST.exec(line);
+        if (gr) {
+          if (!isSelf(gr[1], inst) || inst.zone !== 'battlefield' || inst.flipped || !(creature.enteredFrom === 'graveyard' || creature.castFrom === 'graveyard') || !affordable(s, gr[2], 0)) continue;
+          if (isOpps(game, s)) onOpp(game, () => G.autoPay(s, gr[2])); else G.autoPay(s, gr[2]);
+          fireOn(game, s, inst, `${creature.name} entered from the graveyard (paid ${gr[2]})`, `exile ${gr[1]} and return it transformed`, ctx, defOf);
           continue;
         }
         const bp = /^whenever another creature you control with base power (\d+) enters, it gains (.+?) until end of turn\.?$/i.exec(line);
@@ -11576,9 +11809,10 @@ const Bot = (() => {
           if (m[3]) fireOn(game, s, inst, `you attacked with ${list.length}`, m[3], ctx, defOf);
           continue;
         }
-        // Firemane Commando: "Whenever you attack with two or more creatures, draw a card."
-        m = /^whenever you attack with (\w+) or more creatures, (?:you may )?(.+)$/i.exec(line);
-        if (m) { if (list.length >= toNumber(m[1])) fireOn(game, s, inst, `you attacked with ${list.length}`, m[2], ctx, defOf, times); continue; }
+        // Firemane Commando: "Whenever you attack with two or more creatures, draw a card." Master's Guidance: "… two or more legendary
+        // creatures, …"; Spinneret and Spiderling: "… two or more Spiders, …"
+        m = /^whenever you attack with (two|three|four|five|\d+) or more ([a-z ]+?), (?:you may )?(.+)$/i.exec(line);
+        if (m) { if (list.filter(a => isA(a, singular(m[2]))).length >= toNumber(m[1])) fireOn(game, s, inst, `you attacked with ${list.length}`, m[3], ctx, defOf, times); continue; }
         // Archnemesis (on the opponent you attack): "Whenever you attack enchanted player, that player loses 2 life. You draw a card and gain 2 life."
         m = /^whenever you attack enchanted player, (.+)$/i.exec(line);
         if (m) { if (inst.enchantPlayer && list.length) fireOn(game, s, inst, 'you attacked the enchanted player', m[1], ctx, defOf); continue; }
@@ -11687,13 +11921,15 @@ const Bot = (() => {
   const NO_GRAVE_CAST = /^players can't cast noncreature spells from graveyards or exile\.?$/i;
   const KW_LOST = /^creatures your opponents control lose (\w+) and can't have or gain \1\.?$/i; // Archetype of Imagination (refreshGrants)
   const ALL_ISLANDS = /^all lands are islands in addition to their other types\.?$/i; // Stormtide Leviathan (refreshGrants)
+  const ALL_BASICS = /^lands you control are every basic land type in addition to their other types\.?$/i; // Prismatic Omen (refreshGrants)
   const ALL_FORESTS = /^each land is a forest in addition to its other land types\.?$/i; // Yavimaya, Cradle of Growth (refreshGrants)
   const GROUNDED = /^creatures without (\w+) or (\w+) can't attack\.?$/i;
   const SEARCH_TOP = /^if an opponent would search a library, that player searches the top four cards of that library instead\.?$/i; // Aven Mindcensor
   const SEARCH_WATCH = /^whenever an opponent searches their library, (?:you may )?(.+)$/i; // Archivist of Oghma
   const DRAW_CAP = /^each opponent can't draw more than one card each turn\.?$/i; // Narset (refreshGrants)
   const OPPS_ENTER_TAPPED = /^((?:artifacts|creatures|nonbasic lands)(?:(?:,\s*(?:and\s+)?|\s+and\s+)(?:artifacts|creatures|nonbasic lands))*) your opponents control enter tapped\.?$/i; // refreshGrants
-  const oppMayCast = (game, defOf, zone) => !game.bot.s.cantCast && !(!game.offTurn && winnows(game, ABOLISHER, defOf)) && !(zone !== 'hand' && winnows(game, HAND_ONLY, defOf));
+  // Hope of Ghirapur: game.lockNoncreature (no noncreature spells until your next turn)
+  const oppMayCast = (game, defOf, zone, inst = null) => !game.bot.s.cantCast && !(game.lockNoncreature && inst && !G.isCreature(inst) && !G.isLand(inst)) && !(!game.offTurn && winnows(game, ABOLISHER, defOf)) && !(zone !== 'hand' && winnows(game, HAND_ONLY, defOf));
   function died(s, inst, defOf, ctx, game, info = {}) {
     // Its equipment's "Whenever equipped creature dies, …" (Heirloom Blade) counts too; the equipment is already off it.
     const given = Object.values(info.boosts || {}).flatMap(b => (b && b.lines) || []).filter(l => !oracleLines(inst, defOf).includes(l));
@@ -11795,6 +12031,7 @@ const Bot = (() => {
   }
   function combatDamage(game, hits, defOf, ctx) {
     if (!hits.length) return;
+    hits.forEach(h => { h.inst.hitTurn = game.turn; }); // Steel Hellkite, Hope of Ghirapur: "dealt combat damage by this creature this turn"
     hitDraws(game, hits);
     if (game.bot && hits.some(h => /^gollum, obsessed stalker$/i.test(h.inst.name))) game.bot.s.hitByGollum = true; // Gollum's end step
     if (game.crownOnHit === game.turn) { becomeMonarch(game); G.log(game, 'Forth Eorlingas!: you become the monarch.'); }
@@ -11824,14 +12061,18 @@ const Bot = (() => {
 
   // "Whenever this creature deals combat damage, …" (Sword of Hours, any damage in a fight) and "When
   // this token deals damage, sacrifice it." (Vrondiss's Dragon Spirit). s: its table; n: the damage it dealt.
+  const SELF_DEALT = /^when(?:ever)? (.+?) deals (?:(\w+) or more )?(?:combat )?damage, (?:you may )?(.+)$/i;
   function combatDealt(game, s, inst, n, defOf, ctx) {
     if (!(n > 0) || !inst) return;
     for (const line of oracleLines(inst, defOf)) {
-      const m = /^when(?:ever)? (.+?) deals (?:combat )?damage, (?:you may )?(.+)$/i.exec(line);
-      if (!m || !isSelf(m[1], inst)) continue;
+      // Spinneret and Spiderling: "Whenever Spinneret and Spiderling deals 4 or more damage, …"; Cecil, Dark Knight: "Whenever Cecil deals damage, you
+      // lose that much life. …" (ctx.dealt)
+      const m = SELF_DEALT.exec(line);
+      if (!m || !isSelf(m[1], inst) || (m[2] && n < toNumber(m[2]))) continue;
       const mine = Object.assign({ other: isOpps(game, s) ? game : game.bot ? game.bot.s : null, defOf }, ctx, { dealt: n });
-      if (isOpps(game, s)) runFor(game, s, inst, m[2], `dealt ${n} damage`, { dealt: n }, defOf);
-      else fire(s, inst, `dealt ${n} damage`, m[2], mine);
+      const effect = m[3].replace(/\bthat much life\b/gi, `${n} life`);
+      if (isOpps(game, s)) runFor(game, s, inst, effect, `dealt ${n} damage`, { dealt: n }, defOf);
+      else fire(s, inst, `dealt ${n} damage`, effect, mine);
     }
   }
   // Desert: "{T}: This land deals 1 damage to target attacking creature. Activate only during the end of
@@ -11980,6 +12221,7 @@ const Bot = (() => {
     if (!hits.length) return;
     hitDraws(game, hits);
     const s = game.bot.s;
+    hits.forEach(h => { h.inst.hitTurn = s.turn; }); // Steel Hellkite, Hope of Ghirapur
     if (hits.some(h => /^gollum, obsessed stalker$/i.test(h.inst.name))) game.hitByGollum = true; // Gollum's end step
     if (s.crownOnHit === s.turn) { becomeMonarch(s); G.log(s, 'Forth Eorlingas!: Opp becomes the monarch.'); }
     heistTreasure(game, s, hits, defOf);
@@ -12131,6 +12373,9 @@ const Bot = (() => {
         else if (/^discard your hand$/i.test(part)) ab.discardHand = true; // Slate of Ancestry (app.js discards it all)
         else if ((c = /^discard an? (\w+) card$/i.exec(part))) { ab.discard = 1; ab.discardWhat = c[1].toLowerCase(); } // Floral Evoker
         else if (/^exile x cards from your graveyard$/i.test(part)) ab.exileGraveX = true; // Necropolis Fiend (app.js: X from {X})
+        else if ((c = /^exile an? (\w+) card from your graveyard$/i.exec(part))) ab.exileGraveCard = c[1].toLowerCase(); // Ashnod, Flesh Mechanist (app.js: the cheapest one)
+        // The Duke, Rebel Sentry: "Remove a counter from The Duke" (any kind: app.js takes one of the kind it has most of)
+        else if ((c = new RegExp(`^remove ${COUNT} counters? from (.+)$`, 'i').exec(part)) && isSelf(c[2], inst)) ab.remove = { n: toNumber(c[1]), kind: 'any' };
         // Shelob, Dread Weaver: "Put a creature card exiled with Shelob into its owner's graveyard" (app.js takes one: exiledToGrave)
         else if ((c = /^put an? (\w+) card exiled with (.+?) into its owner's graveyard$/i.exec(part)) && isSelf(c[2], inst)) ab.exiledToGrave = c[1].toLowerCase();
         else { ok = false; break; }
@@ -12160,7 +12405,9 @@ const Bot = (() => {
   const singular = w => /^plains$/i.test(w) ? 'plains' : w.toLowerCase().replace(/ves$/, 'f').replace(/(x|ch|sh)es$/, '$1').replace(/([^s])s$/, '$1'); // "Sphinxes" → "sphinx"
   // Does this permanent have every word of a phrase like "Rat creature" in its type line? Types other
   // cards give it count too (Roshan's "Other creatures you control are Assassins", see grantsOnce).
-  const typeWords = inst => front(inst.typeLine).toLowerCase().split(/[^a-z-]+/).filter(Boolean).concat(inst.extraTypes || [], inst.becomes ? ['creature', ...inst.becomes.types] : []);
+  // Frodo, Kellan: "it becomes a Halfling Scout" (inst.retype: its creature types now)
+  const typeLineNow = inst => (inst.retype ? `${faceTypeOf(inst).split('—')[0]}— ${inst.retype.types}` : faceTypeOf(inst));
+  const typeWords = inst => typeLineNow(inst).toLowerCase().split(/[^a-z-]+/).filter(Boolean).concat(inst.extraTypes || [], inst.becomes ? ['creature', ...inst.becomes.types] : []);
   // Changeling: every creature type (game.js marks the card), but not the card types.
   const CARD_TYPES = ['creature', 'artifact', 'enchantment', 'land', 'planeswalker', 'instant', 'sorcery', 'battle', 'legendary', 'basic', 'token', 'snow', 'tribal', 'kindred', 'card', 'permanent', 'spell', 'nonland', 'historic'];
   const isChangeling = inst => !!(inst && (inst.changeling || inst.maskwood) && !inst.faceDown); // Maskwood Nexus: inst.maskwood (refreshGrants)
@@ -12395,6 +12642,12 @@ const Bot = (() => {
       // Yavimaya, Cradle of Growth (anyone's): "Each land is a Forest in addition to its other land types." (walksPast; game.js's baseSource: {G} too)
       if (allLines.some(l => ALL_FORESTS.test(l))) t.allForests = true;
       else delete t.allForests;
+      // Prismatic Omen, Leyline of the Guildpact: "Lands you control are every basic land type in addition to their other types." (walksPast; game.js's baseSource: any color)
+      if (permanents(t).some(c => oracleLines(c, defOf).some(l => ALL_BASICS.test(l)))) t.allBasics = true;
+      else delete t.allBasics;
+      // Leyline of the Guildpact: "Each nonland permanent you control is all colors." (colorsOfInst)
+      const rainbow = permanents(t).some(c => oracleLines(c, defOf).some(l => /^each nonland permanent you control is all colors\.?$/i.test(l)));
+      permanents(t).forEach(c => { if (rainbow && !G.isLand(c)) c.guildpact = true; else delete c.guildpact; });
       const needs = allLines.map(l => GROUNDED.exec(l)).find(Boolean);
       permanents(t).forEach(c => { if (needs) c.attackNeeds = [needs[1].toLowerCase(), needs[2].toLowerCase()]; else delete c.attackNeeds; });
     });
@@ -12949,6 +13202,14 @@ const Bot = (() => {
     }
     // Brazen Borrower: "This creature can block only creatures with flying." (canBlock)
     if ((m = /^(.+?) can block only creatures with flying\.?$/i.exec(line)) && isSelf(m[1], src)) return c => (self(c) ? { kws: ['blocks only flyers'] } : null);
+    // Kid Loki: "Each creature you control that you've put one or more +1/+1 counters on this turn has hexproof." (game.js's counter: plusTurn)
+    if (/^each creature you control that you've put one or more \+1\/\+1 counters on this turn has hexproof\.?$/i.test(line)) return c => (permanents(s).includes(c) && c.plusTurn === s.turn ? { kws: ['hexproof'] } : null);
+    // Zurgo Bellstriker: "Zurgo can't block creatures with power 2 or greater." (canBlock)
+    if ((m = /^(.+?) can't block creatures with power (\d+) or greater\.?$/i.exec(line)) && isSelf(m[1], src)) return c => (self(c) ? { kws: [`blocks power under ${m[2]}`] } : null);
+    // Stature, Size Shifter: "Stature can't be blocked if her power is 1 or less."
+    if ((m = /^(.+?) can't be blocked if (?:her|his|its) power is (\d+) or less\.?$/i.exec(line)) && isSelf(m[1], src)) return c => (self(c) && stats(c, factsOf(c, defOf)).pow <= Number(m[2]) ? { kws: ['unblockable'] } : null);
+    // Freya Crescent: "Jump — During your turn, Freya Crescent has flying." (plainLine drops the ability word)
+    if ((m = /^during your turn, (.+?) has ([a-z ,]+?)\.?$/i.exec(line)) && isSelf(m[1], src) && kwWords(m[2]).length) { const kws = kwWords(m[2]); return c => (self(c) && !s.offTurn ? { kws } : null); }
     // Vanguard of the Restless: "Spirits you control get +1/+1 for each time you've cast your commander from the command zone this game."
     if ((m = /^(\w+?)s? you control get \+1\/\+1 for each time you've cast your commander from the command zone this game\.?$/i.exec(line))) {
       const n = Object.values(s.cards).filter(c => c.commander).reduce((k, c) => k + (c.castCount || 0), 0);
@@ -13736,12 +13997,14 @@ const Bot = (() => {
   function declareAttack(s, insts, defOf, opts = {}) {
     insts = insts.filter(i => i && i.zone === 'battlefield');
     if (opts.game && opts.game.bot && insts.length) truceBroken(opts.game, defOf); // Tenuous Truce
+    if (opts.game && opts.game.bot && insts.length) norinWary(opts.game, defOf);
     insts.forEach(i => { i.attacking = true; i.attackedNow = true; i.attackCount = (i.attackTurn === s.turn ? i.attackCount || 0 : 0) + 1; i.attackTurn = s.turn; }); // until endOfCombat ("each attacking creature"); attackedNow until the turn ends (Desert)
     const joined = [];
     const game = opts.game;
     // "the number of creatures attacking you" on the defending table (cleared at end of turn).
     const defending = game && (isOpps(game, s) ? game : game.bot && game.bot.s);
     if (defending) defending.attackersNow = insts.length;
+    if (defending && defending.shrinkAttackers) insts.forEach(i => pumpBy(i, -defending.shrinkAttackers, 0)); // Tamiyo, Seasoned Scholar's +2
     const ctxFor = inst => {
       if (!game) return null;
       if (isOpps(game, s)) return Object.assign(oppCtx(game, inst, defOf), { run: fn => onOpp(game, fn) });
@@ -13918,6 +14181,7 @@ const Bot = (() => {
 
   // Something died on table s (info: { counters it had, to: where it went }). Undying and persist
   // bring it back; afterlife leaves Spirits; Blood Artist and friends on any table trigger.
+  const ZABAZ = /^if a modular triggered ability would put one or more \+1\/\+1 counters on a creature you control, that many plus one \+1\/\+1 counters are put on it instead\.?$/i;
   function afterDeath(game, s, inst, info, defOf, ctx) {
     const kw = kwOf(inst, defOf);
     const had = info.counters || {};
@@ -13934,7 +14198,9 @@ const Bot = (() => {
     // Modular (Arcbound Mouser): "When it dies, you may put its +1/+1 counters on target artifact creature." (your best other one)
     if (had['+1/+1'] > 0 && oracleLines(inst, defOf).some(l => /^modular\b/i.test(l))) {
       const to = creatures(s, c => c !== inst && isA(c, 'artifact')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
-      if (to) { G.counter(s, to.iid, '+1/+1', had['+1/+1'], { effect: true }); G.log(s, `${inst.name} (modular): ${had['+1/+1']} +1/+1 counter${had['+1/+1'] === 1 ? '' : 's'} on ${to.name}.`); }
+      // Zabaz, the Glimmerwasp: "If a modular triggered ability would put one or more +1/+1 counters on a creature you control, that many plus one …"
+      const plus = permanents(s).filter(c => oracleLines(c, defOf).some(l => ZABAZ.test(l))).length;
+      if (to) { G.counter(s, to.iid, '+1/+1', had['+1/+1'] + plus, { effect: true }); G.log(s, `${inst.name} (modular): ${had['+1/+1'] + plus} +1/+1 counter${had['+1/+1'] + plus === 1 ? '' : 's'} on ${to.name}.`); }
     }
     if (!G.isCreature(inst) && !isPlaneswalker(inst)) return;
     const tables = [game, game.bot && game.bot.s].filter(Boolean);
@@ -14306,10 +14572,11 @@ const Bot = (() => {
   const UNBOUND_DOUBLE = /^whenever you cast a permanent spell with a mana cost that contains \{x\}, double the value of x\.?$/i;
   const UNBOUND_COPY = /^whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains \{x\}, copy that spell or ability\.(?: you may choose new targets for the copy\.?)?$/i;
   function spellCast(game, s, spell, defOf, ctx) {
+    if (game && game.bot) norinWary(game, defOf, spell);
     if (s.spellTurn !== s.turn) { s.spellTurn = s.turn; s.spellsThisTurn = 0; s.castThisTurn = []; }
     s.spellsThisTurn++;
     // What was cast this turn (Plan for All Outcomes: "your first noncreature spell each turn"), as type lines.
-    s.castThisTurn = [...(s.castThisTurn || []), { typeLine: spell.typeLine, id: spell.id, bot: spell.bot, colors: colorsOfInst(spell, defOf), mv: cmcOfInst(spell, defOf), from: spell.castFrom }]; // from: Laboratory Drudge
+    s.castThisTurn = [...(s.castThisTurn || []), { typeLine: spell.typeLine, id: spell.id, bot: spell.bot, colors: colorsOfInst(spell, defOf), mv: cmcOfInst(spell, defOf), from: spell.castFrom, flying: kwOf(spell, defOf).has('flying') }]; // from: Laboratory Drudge; flying: Momo
     if (oracleLines(spell, defOf).some(l => FORTH.test(l))) s.crownOnHit = s.turn; // Forth Eorlingas!
     // River Kelpie (any table's): "Whenever a player casts a spell from a graveyard, draw a card."
     if (spell.castFrom === 'graveyard') {
@@ -15880,6 +16147,7 @@ const Bot = (() => {
     }
     return k;
   }
+  const NORIN_SWIFT = /^whenever a creature you control becomes blocked, you may exile it\. you may play that card from exile this turn\.?$/i;
   function becameBlocked(s, inst, n, defOf, blockers = [], game = null) {
     let changed = false;
     if (!inst || !n) return false;
@@ -15887,6 +16155,15 @@ const Bot = (() => {
     if (aff) { addLife(game, s === game ? 'opp' : 'you', -aff); G.log(s, `${inst.name} (afflict ${aff}): the defending player loses ${aff} life.`); }
     // The Ring's third temptation: each creature blocking your Ring-bearer is sacrificed at end of combat (combatOver).
     if (s.ringBearer === inst.iid && (s.ringTempts || 0) >= 3) blockers.forEach(b => { if (b) b.sacAfterCombat = true; });
+    // Norin, Swift Survivalist: "Whenever a creature you control becomes blocked, you may exile it. You may play that card from exile this turn."
+    // (when its blockers would kill it; it's out of the combat then)
+    if (G.isCreature(inst) && !inst.token && permanents(s).some(w => oracleLines(w, defOf).some(l => NORIN_SWIFT.test(l)))
+      && combat(stats(inst, factsOf(inst, defOf)), blockers.filter(Boolean).map(b => stats(b, factsOf(b, defOf)))).a.dead) {
+      G.move(s, inst.iid, 'exile');
+      inst.playable = { turn: s.turn };
+      G.log(s, `Norin, Swift Survivalist: ${inst.name} was blocked, so it was exiled (it can be played from exile this turn).`);
+      return true;
+    }
     for (const w of permanents(s)) {
       for (const line of oracleLines(w, defOf)) {
         const bp = BLOCKED_PUMP.exec(line);
@@ -15910,6 +16187,7 @@ const Bot = (() => {
   function finishYourAttack(game, attackers, blocks, defOf, answered, combatCtx = {}) {
     const s = game.bot.s;
     for (const a of attackers) if (!a.pw && becameBlocked(game, a.inst, (blocks.get(a) || []).length, defOf, (blocks.get(a) || []).map(b => b.inst), game)) a.st = stats(a.inst, defOf(a.inst.id));
+    attackers = attackers.filter(a => a.inst.zone === 'battlefield'); // Norin, Swift Survivalist exiled one
     // For "whenever … deals combat damage to a player" (app.js adds the ones that ask you things).
     const hitCtx = {
       hitOpps: n => { game.oppLife -= n; }, other: s,
@@ -16004,7 +16282,7 @@ const Bot = (() => {
     declareAttack, endOfCombat, afterDeath, spellCast, spellResolve, spellTax, lifeChanged, proliferate, monarchOf, takeMonarch,
     extraCombat, playerHit, witherCounters, keywordNumbers, kwN, becameBlocked, tappedWatch, oppStation, broodOk, payBrood, manaSpent, giftGiven, artifactTokens,
     targetEffect, targetFilter, canTarget, applyTarget, damagePlayer, oppTarget, enterEffects,
-    setResponder, getResponder, isInstantSpeed, resumeTurn, resolveStack, counterStack, oppCounters, doveCounter, oppInstantAt, pickBlocks, castOptions, castOne, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
+    setResponder, getResponder, isInstantSpeed, resumeTurn, resolveStack, counterStack, oppCounters, doveCounter, oppInstantAt, pickBlocks, castOptions, castOne, blockTriggers, combatTappers, oppCombatTaps, tapChoices, beginCombat, spellModes, runModes, refreshGrants, spellPump, regenerates, combatTrigger, endStepTriggers, returnable, oppDiscards, colorsOf, create, beginTurn, resolveOppAttack, endTurn, resolveYourAttack, stats, keywords, attachBonus, equipCost, runEffect, dealtDamage, landEntered, creatureEntered, enterTrigger, died, noAttack, silenced, syncAuras, combatDamage, combatDealt, destroyable, activatedAbilities, crewOf, spellEffect, fight, combat, canBlock, legalBlock, toPlayer, lifelinkGain, blockText,
     yourCreatures, botStats, sick, isPlaneswalker, loyaltyOf, damagePlaneswalker, phaseTriggers, attackWatch, blockWatch, hitOf, TOUGH_DMG, DEFENDER_ATTACKS, selfDiscount, wipeVictims, bestNumber,
     searchSpec, searchable, applySearch, applyScry, crackFetches, ARTIFACT_TOKENS, faceOracle,
     yourAttackBlocks, finishYourAttack, ninjutsu, ninjutsuOf, flashbackOf, graveAltCost, graveAltSac, abilityActivated, bestColor, applyDig, autoMoveCards,
@@ -16017,7 +16295,7 @@ const Bot = (() => {
     discardWatch, exiledOnEntry, mustAttack, morphCost, mutateHosts, mutate, rollDice, revealSpec, condition, colorsOfInst,
     hasConvoke, convokeTap, hasImprovise, improviseTap, revealUntil, damageEach, forcedBlocks, countersPut, attackedBy, fightOn, castTooEarly, condition, topCastable, topHaste, sagaChapters, loreUp, becameBlocked, encoreOf, encore, unearthOf, unearth, preparedSpell, castPrepared, flashbackLife, payEscalate, graveDiscards, mayhemOf, mayhemOk, escapeOf, escapeOk, devourOf, devourWhat, activationDiscount, landsFromTop, monarchExtra, manaTapped, returnLent, drawInstead, graveInstead, kotisOk, payKotis, tooWeakToAttack, graveAbilities, graveCost, useGraveAbility, landsFromGrave, cmcOfInst, nabCost, nab,
     // For coverage.js, which reads card text the same way the rest of this file does.
-    parts: { ANY_TARGETED, HEX_FROM, STONE_IDOL, BLACK_ROSE, TARGET_TAX, GRAVE_KIND, GRAVE_ONCE, FIGHT_GROW, BOAST_DISCOUNT, CHAMPION_BLOCK, SPREAD_COPY, GIADA, LEGEND_TWICE, MARVEL_COPY, SELF_TARGETED, BLOCK_TAX, NO_ENCHANTED_ATTACK, EXPEND, TOKEN_SWAP, BELLO, OPP_SAC_POISON, settleBloom, SAC_WATCH, BRUSHRAZER, LANDS_FROM_TOP, AUGUR, BROOD, VINECRASHER, ENTER_EQUAL, STATION_ROW, CRIME, DEFENSE, CONVERGE_ENTER, settleSpace, tappedWatch, WINGS, MASKWOOD, RHET_TOMB, VIZIER, MENTOR, DISCARD_PAY, settleZombies, PLUS_THOPTER, MARVEL, NISSA, settleEnergy, BLOCKED_PUMP, PACKLEADER, SOULBOND, LONE_WOLF, SILVERFUR, PROWLER, CLONE_POWER, KELPIE_CAST, STEWARD, KOTIS, LAND_TO_GRAVE, LEAVE_GRAVE, KELPIE, REAVER, DAUTHI, AINOK, DIED_COUNTERS, LIER, BIBLIOPHILE, GRAVE_CDA, SIDAR, URN, HOARD, THREE_BLOCKERS, NOTION, NO_UNTAP, NABBER, FORTH, HARSH, MONARCH_DRAW, VERGE, PREVENT_GROW, CHAMPIONS, NO_SAC, ABILITY_DISCOUNT, gainFill, TOKEN_WATCH, ARWEN, DEARLY, REALM, SCRY_GROW, ERESTOR, UNITY, MIRKWOOD, WARMONGER, BATTALION, NOT_ATTACKING_YOU, CHAPTER, ABOLETH, WINNOW_CAST, WINNOW_BLOCK, ABOLISHER, HAND_ONLY, DOVESCAPE, KW_LOST, GRAVE_TYPES_DISCOUNT, PRO_FROM_OPPS, ALL_ISLANDS, ALL_FORESTS, GROUNDED, OPPS_ENTER_TAPPED, DRAW_CAP, GRAVE_LOCK, NO_GRAVE_CAST, SEARCH_TOP, SEARCH_WATCH, COIN_MASTERY, KRANG, SHUFFLE_BACK, PLUS_MUTAGEN, GRAVE_ALT, SELF_LOSS_WATCH, CLONE_OWN, CLONE_X, UNBOUND_DOUBLE, UNBOUND_COPY, NO_KIND_ATTACK, NO_COUNTERED_ATTACK, CAP_UNTAP, BLOCKED_GROW, SHARES_TYPE, moreLifeAttack, ROLL_ROW, SIEGE, DICE_PLUS, ROLL_WATCH, ATTACK_TWICE, DESERT, CAST_ONLY, CLONE_EOT, condition, OTHER_KEYWORDS, GRAVE_CAST3,
+    parts: { ZABAZ, ALL_BASICS, SELF_DEALT, NORIN, NORIN_SWIFT, ORDINAL_DRAW, GRIST, ANY_TARGETED,HEX_FROM, STONE_IDOL, BLACK_ROSE, TARGET_TAX, GRAVE_KIND, GRAVE_ONCE, FIGHT_GROW, BOAST_DISCOUNT, CHAMPION_BLOCK, SPREAD_COPY, GIADA, LEGEND_TWICE, MARVEL_COPY, SELF_TARGETED, BLOCK_TAX, NO_ENCHANTED_ATTACK, EXPEND, TOKEN_SWAP, BELLO, OPP_SAC_POISON, settleBloom, SAC_WATCH, BRUSHRAZER, LANDS_FROM_TOP, AUGUR, BROOD, VINECRASHER, ENTER_EQUAL, STATION_ROW, CRIME, DEFENSE, CONVERGE_ENTER, settleSpace, tappedWatch, WINGS, MASKWOOD, RHET_TOMB, VIZIER, MENTOR, DISCARD_PAY, settleZombies, PLUS_THOPTER, MARVEL, NISSA, settleEnergy, BLOCKED_PUMP, PACKLEADER, SOULBOND, LONE_WOLF, SILVERFUR, PROWLER, CLONE_POWER, KELPIE_CAST, STEWARD, KOTIS, LAND_TO_GRAVE, LEAVE_GRAVE, KELPIE, REAVER, DAUTHI, AINOK, DIED_COUNTERS, LIER, BIBLIOPHILE, GRAVE_CDA, SIDAR, URN, HOARD, THREE_BLOCKERS, NOTION, NO_UNTAP, NABBER, FORTH, HARSH, MONARCH_DRAW, VERGE, PREVENT_GROW, CHAMPIONS, NO_SAC, ABILITY_DISCOUNT, gainFill, TOKEN_WATCH, ARWEN, DEARLY, REALM, SCRY_GROW, ERESTOR, UNITY, MIRKWOOD, WARMONGER, BATTALION, NOT_ATTACKING_YOU, CHAPTER, ABOLETH, WINNOW_CAST, WINNOW_BLOCK, ABOLISHER, HAND_ONLY, DOVESCAPE, KW_LOST, GRAVE_TYPES_DISCOUNT, PRO_FROM_OPPS, ALL_ISLANDS, ALL_FORESTS, GROUNDED, OPPS_ENTER_TAPPED, DRAW_CAP, GRAVE_LOCK, NO_GRAVE_CAST, SEARCH_TOP, SEARCH_WATCH, COIN_MASTERY, KRANG, SHUFFLE_BACK, PLUS_MUTAGEN, GRAVE_ALT, SELF_LOSS_WATCH, CLONE_OWN, CLONE_X, UNBOUND_DOUBLE, UNBOUND_COPY, NO_KIND_ATTACK, NO_COUNTERED_ATTACK, CAP_UNTAP, BLOCKED_GROW, SHARES_TYPE, moreLifeAttack, ROLL_ROW, SIEGE, DICE_PLUS, ROLL_WATCH, ATTACK_TWICE, DESERT, CAST_ONLY, CLONE_EOT, condition, OTHER_KEYWORDS, GRAVE_CAST3,
       // Would grantsOnce's staticExtra read this line of inst? (tried on an empty table)
       staticKnown: (line, inst) => { const s = { zones: { battlefield: [], hand: [], graveyard: [], exile: [], library: [] }, cards: {}, life: 0 }; return !!staticExtra(s, null, inst, line, () => null, [s]); }, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,
       OLD_MENACE, UNBLOCKABLE, ATTACK_TAX, SPELL_TAX, NO_GAIN, ARBORIA, ATTACK_CAP, BLOCK_CAP, ATTACK_BLOCK_CAP, isSelf,

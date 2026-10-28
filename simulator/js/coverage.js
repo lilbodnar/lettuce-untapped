@@ -181,7 +181,7 @@ const Coverage = (() => {
       /^whenever you draw (?:a card|your second card each turn), (?:you may )?(.+)$/i, // Psychosis Crawler, Thopter Fabricator
       /^whenever an opponent draws (?:their|his or her) second card each turn, (?:you may )?(.+)$/i,
       /^whenever a creature attacks you(?: or a planeswalker you control)?, (?:you may )?(.+)$/i, // Search the Premises, Marchesa's Decree
-      /^whenever you attack with \w+ or more creatures, (?:you may )?(.+)$/i, // Firemane Commando
+      /^whenever you attack with (?:\w+ or more creatures|(?:two|three|four|five|\d+) or more [a-z ]+?), (?:you may )?(.+)$/i, // Firemane Commando, Master's Guidance, Spinneret and Spiderling
       /^whenever your commander (?:enters or )?attacks, (?:you may )?(.+)$/i, // Tome of Legends
       /^whenever you put one or more [\w+/-]+ counters on .+?, (?:you may )?(.+?)(?:\. this ability triggers only once each turn)?\.?$/i, // Exemplar of Light
       /^whenever one or more [\w+/-]+ counters are put on (?:a|another) .+? you control, (?:you may )?(.+)$/i,
@@ -257,6 +257,13 @@ const Coverage = (() => {
     if ((m = P.LOSS_WATCH.exec(line))) { effectGaps('both', m[2].replace(/\bthat much life\b/gi, '1 life')); return out; }
     // Rhystic Study, Smothering Tithe: "… unless that player pays {1}"
     if (P.TAX_WATCH.some(re => re.test(line))) return out;
+    // Spinneret and Spiderling, Cecil, Dark Knight (bot.js's combatDealt)
+    if (P.GRIST.test(line)) return out; // Grist, Voracious Larva (bot.js's creatureEntered)
+    // Agent Maria Hill: no card here has a teamwork cost to tap her for, so it never triggers.
+    if (/^whenever (?:this creature|.+?) becomes tapped to pay a teamwork cost, /i.test(line)) return out;
+    if ((m = P.ORDINAL_DRAW.exec(line))) { effectGaps('both', m[2]); return out; } // Tamiyo, Lady Octopus (bot.js's opponentActed)
+    if (P.NORIN.test(line) || P.NORIN_SWIFT.test(line)) return out; // Norin the Wary (bot.js's norinWary), Norin, Swift Survivalist (becameBlocked)
+    if ((m = P.SELF_DEALT.exec(line)) && self(m[1])) { effectGaps('both', m[3].replace(/\bthat much life\b/gi, '1 life')); return out; }
     // Flumph: "Whenever this creature is dealt damage, …"
     if ((m = /^whenever (.+?) is dealt damage(?: for the first time each turn)?, (?:you may )?(.+)$/i.exec(line)) && self(m[1])) { effectGaps('both', m[2].replace(/\bthat (?:much|many)\b/gi, '1')); return out; } // Metropolis Reformer: "you gain that much life"; Hercules
     // The Marvel precons.
@@ -630,6 +637,9 @@ const Coverage = (() => {
     P.LEGEND_TWICE, // Annie Joins Up (extraTriggers)
     P.BLOCK_TAX, // Archangel of Tithes attacking (blockRules' tax; app.js's blocksDone pays yours)
     /^as long as (?:this creature|.+?) is untapped, creatures can't attack you(?: or planeswalkers you control)? unless their controller pays \{\d+\} for each of those creatures\.?$/i, // Archangel of Tithes (tableRules' attackTax)
+    // "One drop legendaries?" (Child of Alara).
+    P.ZABAZ, // Zabaz, the Glimmerwasp (afterDeath's modular)
+    G.LEYLINE, // Leyline of the Guildpact, Quicksilver (game.js's beginLeylines: always)
   ];
 
   function staticLine(card, line, inst) {
@@ -732,12 +742,12 @@ const Coverage = (() => {
     if (/^other \w+ creatures have [a-z]+\.?$/i.test(line) || /^other \w+?s have "\{[^}]+\}: regenerate this permanent\."\.?$/i.test(line) || /^other \w+?s you control have afflict \d+\.?$/i.test(line)) return out;
     if (P.NISSA.test(line)) { gap(out, 'opp', 'static', "Nissa's energy cost (Opp pays mana)"); return out; } // Nissa, Worldsoul Speaker (costChoices)
     // Pearl-Ear: affinity for Auras given to enchantment spells (game.js's discount)
-    if (G.AFFINITY_GRANT.test(line) || G.TARGET_DISCOUNT.test(line)) return out; // Pearl-Ear, Killian (game.js's discount)
+    if (G.AFFINITY_GRANT.test(line) || G.TARGET_DISCOUNT.test(line) || G.GRAVE_DISCOUNT.test(line) || G.FIRST_FLIER.test(line)) return out; // Gran-Gran, Momo too // Pearl-Ear, Killian (game.js's discount)
     // Raffine's Guidance: cast from your graveyard (app.js's graveyard menu, Bot.graveAltCost)
     if (P.GRAVE_ALT.test(line)) { gap(out, 'opp', 'static', "Opp doesn't cast it from its graveyard"); return out; }
     // Void Winnower: Opp can't cast or block with even mana values (castOptions, Opp's blocks); Opp's doesn't stop you.
     // Grand Abolisher, Drannith Magistrate: Opp can't cast (castOptions, oppCounters); Opp's doesn't stop you.
-    if ([P.OPPS_ENTER_TAPPED, P.DRAW_CAP, P.GRAVE_LOCK, P.NO_GRAVE_CAST, P.SEARCH_TOP, P.KW_LOST, P.ALL_ISLANDS, P.ALL_FORESTS, P.GROUNDED, P.PRO_FROM_OPPS].some(re => re.test(line))) return out; // Blind Obedience, Thalia, Narset, Soulless Jailer (refreshGrants)
+    if ([P.OPPS_ENTER_TAPPED, P.DRAW_CAP, P.GRAVE_LOCK, P.NO_GRAVE_CAST, P.SEARCH_TOP, P.KW_LOST, P.ALL_ISLANDS, P.ALL_FORESTS, P.ALL_BASICS, P.GROUNDED, P.PRO_FROM_OPPS].some(re => re.test(line))) return out; // Blind Obedience, Thalia, Narset, Soulless Jailer (refreshGrants)
     if (P.ABOLISHER.test(line) || P.HAND_ONLY.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells"); return out; }
     if (P.WINNOW_CAST.test(line) || P.WINNOW_BLOCK.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells or blocks"); return out; }
     // Coin of Mastery (game.js's autoPay counts artifact mana; creatureEntered)

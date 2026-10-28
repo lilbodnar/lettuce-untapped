@@ -231,7 +231,7 @@
   // Makes sure every card in the deck has card info (images, types). Fetches any that are missing.
   async function ensureDefs(ids, full) {
     // (cards kept before backPT was: two-faced ones are fetched again for it)
-    const missing = [...new Set(ids)].filter(id => id && (!def(id) || (full && (!Array.isArray(def(id).producedMana) || (def(id).backPT === undefined && (def(id).names || []).length > 2)))));
+    const missing = [...new Set(ids)].filter(id => id && (!def(id) || (full && (!Array.isArray(def(id).producedMana) || ((def(id).backPT === undefined || def(id).backLoyalty === undefined) && (def(id).names || []).length > 2)))));
     if (!missing.length) return;
     status(`Getting card info from Scryfall (${missing.length} cards)…`);
     const { found } = await Scryfall.collection(missing.map(id => ({ id })));
@@ -2279,6 +2279,7 @@
     if (Bot.castTooEarly(game, inst, def)) return status(`You can't cast ${inst.name} during your first three turns.`, 'warn');
     // Opp's Silence: "Your opponents can't cast spells this turn."
     if (game.cantCast && !Game.isLand(inst)) return status(`You can't cast spells this turn (${game.cantCast}).`, 'warn');
+    if (hasBot() && game.bot.s.lockNoncreature && !Game.isLand(inst) && !Game.isCreature(inst)) return status(`You can't cast noncreature spells until Opp's next turn (${game.bot.s.lockNoncreature}).`, 'warn');
     // Soulless Jailer: "Players can't cast noncreature spells from graveyards or exile."
     if (game.noGraveCast && (inst.zone === 'graveyard' || inst.zone === 'exile') && !Game.isLand(inst) && !Game.isCreature(inst)) return status(`You can't cast noncreature spells from your ${inst.zone} (Soulless Jailer).`, 'warn');
     // Dragon Man: "You may cast this card from your graveyard by discarding a card in addition to paying its other costs." (pick it)
@@ -4099,6 +4100,10 @@
     if (ab.removeAmong && others().reduce((n, c) => n + counterTotal(c), 0) < ab.removeAmong) return status(`${inst.name} needs ${ab.removeAmong} counters on your other artifacts, creatures and planeswalkers.`, 'warn', 8000);
     // Energy: "Pay {E}{E}: …", "Pay eight {E}: …"
     if (ab.energy && (game.energy || 0) < ab.energy) return status(`${inst.name} needs ${ab.energy} energy (you have ${game.energy || 0}).`, 'warn', 8000);
+    // The Duke: "Remove a counter from The Duke" (whichever kind it has most of)
+    if (ab.remove && ab.remove.kind === 'any') ab = { ...ab, remove: { ...ab.remove, kind: Object.keys(inst.counters || {}).sort((a, b) => inst.counters[b] - inst.counters[a])[0] || 'any' } };
+    // Ashnod, Flesh Mechanist: "Exile a creature card from your graveyard"
+    if (ab.exileGraveCard && !game.zones.graveyard.some(id => Bot.cardFits(game.cards[id], ab.exileGraveCard))) return status(`${inst.name} needs a ${ab.exileGraveCard} card in your graveyard to exile.`, 'warn', 8000);
     if (ab.remove && (inst.counters[ab.remove.kind] || 0) < ab.remove.n) {
       return status(`${inst.name} needs ${ab.remove.n} ${ab.remove.kind} counters (it has ${inst.counters[ab.remove.kind] || 0}).`, 'warn', 8000);
     }
@@ -4215,6 +4220,10 @@
         const pick = [...game.zones.graveyard].sort((a, b) => (Game.isLand(game.cards[b]) - Game.isLand(game.cards[a])) || (Bot.cmcOfInst(game.cards[a], def) - Bot.cmcOfInst(game.cards[b], def))).slice(0, Number(ab.x) || 0);
         pick.forEach(id => Game.move(game, id, 'exile'));
         if (pick.length) Game.log(game, `Exiled ${pick.length} card${pick.length === 1 ? '' : 's'} from your graveyard for ${inst.name}.`);
+      }
+      if (ab.exileGraveCard) {
+        const id = game.zones.graveyard.filter(i => Bot.cardFits(game.cards[i], ab.exileGraveCard)).sort((a, b) => Bot.cmcOfInst(game.cards[a], def) - Bot.cmcOfInst(game.cards[b], def))[0];
+        if (id) { Game.log(game, `Exiled ${game.cards[id].name} from your graveyard for ${inst.name}.`); Game.move(game, id, 'exile'); }
       }
       if (ab.bounceSelf) Game.move(game, iid, inst.commander ? 'command' : 'hand'); // Rootha: "Return Rootha to its owner's hand" (a commander may go to the command zone)
       (ab.tapPicks || []).forEach(id => { const c = game.cards[id]; if (c) { c.tapped = true; c.tappedFor = null; } });

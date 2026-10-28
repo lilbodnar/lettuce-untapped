@@ -396,7 +396,7 @@ test('Jared Carthalion: +1 makes an all-colors Kavu; −3 counts its colors', ()
   const kavu = named(game, 'Kavu')[0];
   assert.equal(Bot.colorsOfInst(kavu, defOf).length, 5);
   Bot.runEffect(game, minus.effect, ctx(game, { self: jared }));
-  assert.equal(kavu.counters['+1/+1'], 10); // two picks, both on the Kavu (five colors each)
+  assert.equal(kavu.counters['+1/+1'], 5); // up to two different targets: the Kavu is the only creature (five colors)
 });
 
 test('Suspend and impending count down', () => {

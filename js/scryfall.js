@@ -70,6 +70,7 @@ const Scryfall = (() => {
       toughness: c.toughness || face.toughness || null,
       backPT: faces[1] && faces[1].power != null ? `${faces[1].power}/${faces[1].toughness}` : null, // a transformed creature's (Etali, Primal Sickness)
       loyalty: c.loyalty || face.loyalty || null,
+      backLoyalty: faces[1] && faces[1].loyalty != null ? faces[1].loyalty : null, // a creature that transforms into a planeswalker (Tamiyo, Seasoned Scholar)
       producedMana: c.produced_mana || [],
       tokens: (c.all_parts || [])
         .filter(p => p.component === 'token' || (p.component === 'combo_piece' && /token|emblem/i.test(p.type_line || '')))

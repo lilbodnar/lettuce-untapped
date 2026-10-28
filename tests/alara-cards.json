@@ -1,0 +1,1348 @@
+{
+ "Agent Maria Hill": {
+  "id": "Agent Maria Hill",
+  "name": "Agent Maria Hill",
+  "typeLine": "Legendary Creature — Human Spy Hero",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever Agent Maria Hill becomes tapped to pay a teamwork cost, put a +1/+1 counter on her and draw a card.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Anguished Unmaking": {
+  "id": "Anguished Unmaking",
+  "name": "Anguished Unmaking",
+  "typeLine": "Instant",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Exile target nonland permanent. You lose 3 life.",
+  "power": null,
+  "toughness": null
+ },
+ "Arcane Signet": {
+  "id": "Arcane Signet",
+  "name": "Arcane Signet",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{T}: Add one mana of any color in your commander's color identity.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Ashnod, Flesh Mechanist": {
+  "id": "Ashnod, Flesh Mechanist",
+  "name": "Ashnod, Flesh Mechanist",
+  "typeLine": "Legendary Creature — Human Artificer",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Deathtouch\nWhenever Ashnod attacks, you may sacrifice another creature. If you do, create a tapped Powerstone token.\n{5}, Exile a creature card from your graveyard: Create a tapped 3/3 colorless Zombie artifact creature token.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Assassin's Trophy": {
+  "id": "Assassin's Trophy",
+  "name": "Assassin's Trophy",
+  "typeLine": "Instant",
+  "manaCost": "{B}{G}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Destroy target permanent an opponent controls. Its controller may search their library for a basic land card, put it onto the battlefield, then shuffle.",
+  "power": null,
+  "toughness": null
+ },
+ "Aunt May": {
+  "id": "Aunt May",
+  "name": "Aunt May",
+  "typeLine": "Legendary Creature — Human Citizen",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever another creature you control enters, you gain 1 life. If it's a Spider, put a +1/+1 counter on it.",
+  "power": "0",
+  "toughness": "2"
+ },
+ "Basri, Tomorrow's Champion": {
+  "id": "Basri, Tomorrow's Champion",
+  "name": "Basri, Tomorrow's Champion",
+  "typeLine": "Legendary Creature — Human Knight",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}, {T}, Exert Basri: Create a 1/1 white Cat creature token with lifelink. (An exerted creature won't untap during your next untap step.)\nCycling {2}{W} ({2}{W}, Discard this card: Draw a card.)\nWhen you cycle this card, Cats you control gain hexproof and indestructible until end of turn.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Blasphemous Act": {
+  "id": "Blasphemous Act",
+  "name": "Blasphemous Act",
+  "typeLine": "Sorcery",
+  "manaCost": "{8}{R}",
+  "cmc": 9,
+  "colors": [
+   "R"
+  ],
+  "oracle": "This spell costs {1} less to cast for each creature on the battlefield.\nBlasphemous Act deals 13 damage to each creature.",
+  "power": null,
+  "toughness": null
+ },
+ "Blood Crypt": {
+  "id": "Blood Crypt",
+  "name": "Blood Crypt",
+  "typeLine": "Land — Swamp Mountain",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {B} or {R}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "R"
+  ]
+ },
+ "Breeding Pool": {
+  "id": "Breeding Pool",
+  "name": "Breeding Pool",
+  "typeLine": "Land — Forest Island",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {G} or {U}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "G",
+   "U"
+  ]
+ },
+ "Bruce Banner // The Incredible Hulk": {
+  "id": "Bruce Banner // The Incredible Hulk",
+  "name": "Bruce Banner // The Incredible Hulk",
+  "typeLine": "Legendary Creature — Human Scientist Hero // Legendary Creature — Gamma Berserker Hero",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Bruce Banner: {X}{X}, {T}: Draw X cards. Activate only as a sorcery.\n{2}{R}{R}{G}{G}: Transform Bruce Banner. Activate only as a sorcery.\n\nThe Incredible Hulk: Reach, trample\nEnrage — Whenever The Incredible Hulk is dealt damage, put a +1/+1 counter on him. If he's attacking, untap him and there is an additional combat phase after this phase.",
+  "power": "1",
+  "toughness": "1",
+  "backPT": "8/8"
+ },
+ "Cecil, Dark Knight // Cecil, Redeemed Paladin": {
+  "id": "Cecil, Dark Knight // Cecil, Redeemed Paladin",
+  "name": "Cecil, Dark Knight // Cecil, Redeemed Paladin",
+  "typeLine": "Legendary Creature — Human Knight // Legendary Creature — Human Knight",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cecil, Dark Knight: Deathtouch\nDarkness — Whenever Cecil deals damage, you lose that much life. Then if your life total is less than or equal to half your starting life total, untap Cecil and transform it.\n\nCecil, Redeemed Paladin: Lifelink\nProtect — Whenever Cecil attacks, other attacking creatures gain indestructible until end of turn.",
+  "power": "2",
+  "toughness": "3",
+  "backPT": "4/4"
+ },
+ "Child of Alara": {
+  "id": "Child of Alara",
+  "name": "Child of Alara",
+  "typeLine": "Legendary Creature — Avatar",
+  "manaCost": "{W}{U}{B}{R}{G}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ],
+  "oracle": "Trample\nWhen Child of Alara dies, destroy all nonland permanents. They can't be regenerated.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Chromatic Lantern": {
+  "id": "Chromatic Lantern",
+  "name": "Chromatic Lantern",
+  "typeLine": "Artifact",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Lands you control have \"{T}: Add one mana of any color.\"\n{T}: Add one mana of any color.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Command Tower": {
+  "id": "Command Tower",
+  "name": "Command Tower",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add one mana of any color in your commander's color identity.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Counterspell": {
+  "id": "Counterspell",
+  "name": "Counterspell",
+  "typeLine": "Instant",
+  "manaCost": "{U}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target spell.",
+  "power": null,
+  "toughness": null
+ },
+ "Daily Bugle Building": {
+  "id": "Daily Bugle Building",
+  "name": "Daily Bugle Building",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add {C}.\n{1}, {T}: Add one mana of any color.\nSmear Campaign — {1}, {T}: Target legendary creature gains menace until end of turn. Activate only as a sorcery.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Day of Destiny": {
+  "id": "Day of Destiny",
+  "name": "Day of Destiny",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Legendary creatures you control get +2/+2.",
+  "power": null,
+  "toughness": null
+ },
+ "Demonic Tutor": {
+  "id": "Demonic Tutor",
+  "name": "Demonic Tutor",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for a card, put that card into your hand, then shuffle.",
+  "power": null,
+  "toughness": null
+ },
+ "Diabolic Tutor": {
+  "id": "Diabolic Tutor",
+  "name": "Diabolic Tutor",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for a card, put that card into your hand, then shuffle.",
+  "power": null,
+  "toughness": null
+ },
+ "Dovin's Veto": {
+  "id": "Dovin's Veto",
+  "name": "Dovin's Veto",
+  "typeLine": "Instant",
+  "manaCost": "{W}{U}",
+  "cmc": 2,
+  "colors": [
+   "U",
+   "W"
+  ],
+  "oracle": "This spell can't be countered.\nCounter target noncreature spell.",
+  "power": null,
+  "toughness": null
+ },
+ "Errant, Street Artist": {
+  "id": "Errant, Street Artist",
+  "name": "Errant, Street Artist",
+  "typeLine": "Legendary Creature — Human Rogue",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flash\nDefender, haste\n{1}{U}, {T}: Copy target spell you control that wasn't cast. You may choose new targets for the copy.",
+  "power": "0",
+  "toughness": "3"
+ },
+ "Flowering of the White Tree": {
+  "id": "Flowering of the White Tree",
+  "name": "Flowering of the White Tree",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Legendary creatures you control get +2/+1 and have ward {1}.\nNonlegendary creatures you control get +1/+1.",
+  "power": null,
+  "toughness": null
+ },
+ "Freya Crescent": {
+  "id": "Freya Crescent",
+  "name": "Freya Crescent",
+  "typeLine": "Legendary Creature — Rat Knight",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Jump — During your turn, Freya Crescent has flying.\n{T}: Add {R}. Spend this mana only to cast an Equipment spell or activate an equip ability.",
+  "power": "1",
+  "toughness": "1",
+  "producedMana": [
+   "R"
+  ]
+ },
+ "Frodo, Sauron's Bane": {
+  "id": "Frodo, Sauron's Bane",
+  "name": "Frodo, Sauron's Bane",
+  "typeLine": "Legendary Creature — Halfling Citizen",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W/B}{W/B}: If Frodo is a Citizen, it becomes a Halfling Scout with base power and toughness 2/3 and lifelink.\n{B}{B}{B}: If Frodo is a Scout, it becomes a Halfling Rogue with \"Whenever this creature deals combat damage to a player, that player loses the game if the Ring has tempted you four or more times this game. Otherwise, the Ring tempts you.\"",
+  "power": "1",
+  "toughness": "2"
+ },
+ "General Thunderbolt Ross": {
+  "id": "General Thunderbolt Ross",
+  "name": "General Thunderbolt Ross",
+  "typeLine": "Legendary Creature — Human Soldier",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "First strike\nBattalion — Whenever General Thunderbolt Ross and at least two other creatures attack, attacking creatures get +1/+0 until end of turn.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Godless Shrine": {
+  "id": "Godless Shrine",
+  "name": "Godless Shrine",
+  "typeLine": "Land — Plains Swamp",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {W} or {B}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "W"
+  ]
+ },
+ "Gran-Gran": {
+  "id": "Gran-Gran",
+  "name": "Gran-Gran",
+  "typeLine": "Legendary Creature — Human Peasant Ally",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever Gran-Gran becomes tapped, draw a card, then discard a card.\nNoncreature spells you cast cost {1} less to cast as long as there are three or more Lesson cards in your graveyard.",
+  "power": "1",
+  "toughness": "2"
+ },
+ "Grist, Voracious Larva // Grist, the Plague Swarm": {
+  "id": "Grist, Voracious Larva // Grist, the Plague Swarm",
+  "name": "Grist, Voracious Larva // Grist, the Plague Swarm",
+  "typeLine": "Legendary Creature — Insect // Legendary Planeswalker — Grist",
+  "manaCost": "{G}",
+  "cmc": 1,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Grist, Voracious Larva: Deathtouch\nWhenever Grist or another creature you control enters, if it entered from your graveyard or you cast it from your graveyard, you may pay {G}. If you do, exile Grist, then return it to the battlefield transformed under its owner's control.\n\nGrist, the Plague Swarm: +1: Create a 1/1 black and green Insect creature token, then mill two cards. Put a deathtouch counter on the token if a black card was milled this way.\n−2: Destroy target artifact or enchantment.\n−6: For each creature card in your graveyard, create a token that's a copy of it, except it's a 1/1 black and green Insect.",
+  "power": "1",
+  "toughness": "2",
+  "backLoyalty": "3"
+ },
+ "Hallowed Fountain": {
+  "id": "Hallowed Fountain",
+  "name": "Hallowed Fountain",
+  "typeLine": "Land — Plains Island",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {W} or {U}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "U",
+   "W"
+  ]
+ },
+ "Happy Hogan, Dauntless Driver": {
+  "id": "Happy Hogan, Dauntless Driver",
+  "name": "Happy Hogan, Dauntless Driver",
+  "typeLine": "Legendary Creature — Human Pilot",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Heroic Intervention": {
+  "id": "Heroic Intervention",
+  "name": "Heroic Intervention",
+  "typeLine": "Instant",
+  "manaCost": "{1}{G}",
+  "cmc": 2,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Permanents you control gain hexproof and indestructible until end of turn.",
+  "power": null,
+  "toughness": null
+ },
+ "Hope of Ghirapur": {
+  "id": "Hope of Ghirapur",
+  "name": "Hope of Ghirapur",
+  "typeLine": "Legendary Artifact Creature — Thopter",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Flying\nSacrifice Hope of Ghirapur: Until your next turn, target player who was dealt combat damage by Hope of Ghirapur this turn can't cast noncreature spells.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Indatha Triome": {
+  "id": "Indatha Triome",
+  "name": "Indatha Triome",
+  "typeLine": "Land — Plains Swamp Forest",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {W}, {B}, or {G}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G",
+   "W"
+  ]
+ },
+ "Isamaru, Hound of Konda": {
+  "id": "Isamaru, Hound of Konda",
+  "name": "Isamaru, Hound of Konda",
+  "typeLine": "Legendary Creature — Dog",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Jetmir's Garden": {
+  "id": "Jetmir's Garden",
+  "name": "Jetmir's Garden",
+  "typeLine": "Land — Mountain Forest Plains",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {R}, {G}, or {W}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "G",
+   "R",
+   "W"
+  ]
+ },
+ "K-9, Mark I": {
+  "id": "K-9, Mark I",
+  "name": "K-9, Mark I",
+  "typeLine": "Legendary Artifact Creature — Robot Dog",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Negative — As long as K-9 is untapped, other legendary creatures you control have ward {1}.\nAffirmative — {1}{U}, {T}: Target legendary creature can't be blocked this turn.\nDoctor's companion (You can have two commanders if the other is the Doctor.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Kellan, Planar Trailblazer": {
+  "id": "Kellan, Planar Trailblazer",
+  "name": "Kellan, Planar Trailblazer",
+  "typeLine": "Legendary Creature — Human Faerie Scout",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "{1}{R}: If Kellan is a Scout, it becomes a Human Faerie Detective and gains \"Whenever Kellan deals combat damage to a player, exile the top card of your library. You may play that card this turn.\"\n{2}{R}: If Kellan is a Detective, it becomes a 3/2 Human Faerie Rogue and gains double strike.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Ketria Triome": {
+  "id": "Ketria Triome",
+  "name": "Ketria Triome",
+  "typeLine": "Land — Forest Island Mountain",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {G}, {U}, or {R}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "G",
+   "R",
+   "U"
+  ]
+ },
+ "Kid Loki": {
+  "id": "Kid Loki",
+  "name": "Kid Loki",
+  "typeLine": "Legendary Creature — God Hero Villain",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Each creature you control that you've put one or more +1/+1 counters on this turn has hexproof.\nWhenever you draw your second card each turn, put a +1/+1 counter on Kid Loki.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Lady Octopus, Inspired Inventor": {
+  "id": "Lady Octopus, Inspired Inventor",
+  "name": "Lady Octopus, Inspired Inventor",
+  "typeLine": "Legendary Creature — Human Scientist Villain",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever you draw your first or second card each turn, put an ingenuity counter on Lady Octopus.\n{T}: You may cast an artifact spell from your hand with mana value less than or equal to the number of ingenuity counters on Lady Octopus without paying its mana cost.",
+  "power": "0",
+  "toughness": "2"
+ },
+ "Leyline of the Guildpact": {
+  "id": "Leyline of the Guildpact",
+  "name": "Leyline of the Guildpact",
+  "typeLine": "Enchantment",
+  "manaCost": "{G/W}{G/U}{B/G}{R/G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ],
+  "oracle": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nEach nonland permanent you control is all colors.\nLands you control are every basic land type in addition to their other types.",
+  "power": null,
+  "toughness": null
+ },
+ "Liliana the Faultless": {
+  "id": "Liliana the Faultless",
+  "name": "Liliana the Faultless",
+  "typeLine": "Legendary Creature — Human Cleric",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever another creature or planeswalker you control enters, you gain 1 life.\n{1}, {T}, Discard a card: Another target creature or planeswalker you control gains hexproof until end of turn.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Mabel, Bitter Recluse": {
+  "id": "Mabel, Bitter Recluse",
+  "name": "Mabel, Bitter Recluse",
+  "typeLine": "Legendary Creature — Mouse Warlock",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Deathtouch\nWhen Mabel enters, remove up to three counters from another target creature or planeswalker.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Mana Drain": {
+  "id": "Mana Drain",
+  "name": "Mana Drain",
+  "typeLine": "Instant",
+  "manaCost": "{U}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Marwyn, the Clearcutter": {
+  "id": "Marwyn, the Clearcutter",
+  "name": "Marwyn, the Clearcutter",
+  "typeLine": "Legendary Creature — Elf Warrior",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "{2}, {T}, Sacrifice an artifact or land: Draw a card.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Master's Guidance": {
+  "id": "Master's Guidance",
+  "name": "Master's Guidance",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{G}",
+  "cmc": 3,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Whenever you attack with two or more legendary creatures, put a +1/+1 counter on each of up to two target attacking creatures.\nAt the beginning of your end step, if you control a creature with power 4 or greater, draw a card.",
+  "power": null,
+  "toughness": null
+ },
+ "Minas Tirith": {
+  "id": "Minas Tirith",
+  "name": "Minas Tirith",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Minas Tirith enters tapped unless you control a legendary creature.\n{T}: Add {W}.\n{1}{W}, {T}: Draw a card. Activate only if you attacked with two or more creatures this turn.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Momo, Friendly Flier": {
+  "id": "Momo, Friendly Flier",
+  "name": "Momo, Friendly Flier",
+  "typeLine": "Legendary Creature — Lemur Bat Ally",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nThe first non-Lemur creature spell with flying you cast during each of your turns costs {1} less to cast.\nWhenever another creature you control with flying enters, Momo gets +1/+1 until end of turn.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Momo, Playful Pet": {
+  "id": "Momo, Playful Pet",
+  "name": "Momo, Playful Pet",
+  "typeLine": "Legendary Creature — Lemur Bat Ally",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying, vigilance\nWhen Momo leaves the battlefield, choose one —\n• Create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n• Put a +1/+1 counter on target creature you control.\n• Scry 2.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Mox Amber": {
+  "id": "Mox Amber",
+  "name": "Mox Amber",
+  "typeLine": "Legendary Artifact",
+  "manaCost": "{0}",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add one mana of any color among legendary creatures and planeswalkers you control.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Negate": {
+  "id": "Negate",
+  "name": "Negate",
+  "typeLine": "Instant",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target noncreature spell.",
+  "power": null,
+  "toughness": null
+ },
+ "Norin the Wary": {
+  "id": "Norin the Wary",
+  "name": "Norin the Wary",
+  "typeLine": "Legendary Creature — Human Warrior",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "When a player casts a spell or a creature attacks, exile Norin. Return it to the battlefield under its owner's control at the beginning of the next end step.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Norin, Swift Survivalist": {
+  "id": "Norin, Swift Survivalist",
+  "name": "Norin, Swift Survivalist",
+  "typeLine": "Legendary Creature — Human Coward",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Norin can't block.\nWhenever a creature you control becomes blocked, you may exile it. You may play that card from exile this turn.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Overgrown Tomb": {
+  "id": "Overgrown Tomb",
+  "name": "Overgrown Tomb",
+  "typeLine": "Land — Swamp Forest",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {B} or {G}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G"
+  ]
+ },
+ "Oviya Pashiri, Sage Lifecrafter": {
+  "id": "Oviya Pashiri, Sage Lifecrafter",
+  "name": "Oviya Pashiri, Sage Lifecrafter",
+  "typeLine": "Legendary Creature — Human Artificer",
+  "manaCost": "{G}",
+  "cmc": 1,
+  "colors": [
+   "G"
+  ],
+  "oracle": "{2}{G}, {T}: Create a 1/1 colorless Servo artifact creature token.\n{4}{G}, {T}: Create an X/X colorless Construct artifact creature token, where X is the number of creatures you control.",
+  "power": "1",
+  "toughness": "2"
+ },
+ "Path of Ancestry": {
+  "id": "Path of Ancestry",
+  "name": "Path of Ancestry",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Path to Exile": {
+  "id": "Path to Exile",
+  "name": "Path to Exile",
+  "typeLine": "Instant",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature. Its controller may search their library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
+  "power": null,
+  "toughness": null
+ },
+ "Plaza of Heroes": {
+  "id": "Plaza of Heroes",
+  "name": "Plaza of Heroes",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a legendary spell.\n{T}: Add one mana of any color among legendary permanents you control.\n{3}, {T}, Exile this land: Target legendary creature gains hexproof and indestructible until end of turn.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Prismatic Omen": {
+  "id": "Prismatic Omen",
+  "name": "Prismatic Omen",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{G}",
+  "cmc": 2,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Lands you control are every basic land type in addition to their other types.",
+  "power": null,
+  "toughness": null
+ },
+ "Propaganda": {
+  "id": "Propaganda",
+  "name": "Propaganda",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you.",
+  "power": null,
+  "toughness": null
+ },
+ "Quicksilver, Brash Blur": {
+  "id": "Quicksilver, Brash Blur",
+  "name": "Quicksilver, Brash Blur",
+  "typeLine": "Legendary Creature — Mutant Hero",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "If Quicksilver, Brash Blur is in your opening hand, you may begin the game with him on the battlefield.\nHaste\nPower-up — {4}{R}: Put a +1/+1 counter and a double strike counter on Quicksilver. (Activate each power-up ability only once. Reduce the cost by his mana cost if he entered this turn.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Ragavan, Nimble Pilferer": {
+  "id": "Ragavan, Nimble Pilferer",
+  "name": "Ragavan, Nimble Pilferer",
+  "typeLine": "Legendary Creature — Monkey Pirate",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Whenever Ragavan deals combat damage to a player, create a Treasure token and exile the top card of that player's library. Until end of turn, you may cast that card.\nDash {1}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Raugrin Triome": {
+  "id": "Raugrin Triome",
+  "name": "Raugrin Triome",
+  "typeLine": "Land — Island Mountain Plains",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {U}, {R}, or {W}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Reliquary Tower": {
+  "id": "Reliquary Tower",
+  "name": "Reliquary Tower",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "You have no maximum hand size.\n{T}: Add {C}.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Reptil, Dinomorpher": {
+  "id": "Reptil, Dinomorpher",
+  "name": "Reptil, Dinomorpher",
+  "typeLine": "Legendary Creature — Human Hero",
+  "manaCost": "{G}",
+  "cmc": 1,
+  "colors": [
+   "G"
+  ],
+  "oracle": "Brontosaurus — {3}: Until end of turn, Reptil becomes a Dinosaur Hero with base power and toughness 3/5 and gains reach and vigilance.\nTyrannosaurus Rex — {6}: Until end of turn, Reptil becomes a Dinosaur Hero with base power and toughness 6/6 and gains trample.",
+  "power": "1",
+  "toughness": "2"
+ },
+ "Rhys the Redeemed": {
+  "id": "Rhys the Redeemed",
+  "name": "Rhys the Redeemed",
+  "typeLine": "Legendary Creature — Elf Warrior",
+  "manaCost": "{G/W}",
+  "cmc": 1,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "{2}{G/W}, {T}: Create a 1/1 green and white Elf Warrior creature token.\n{4}{G/W}{G/W}, {T}: For each creature token you control, create a token that's a copy of that creature.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Rick Jones, Destined Sidekick": {
+  "id": "Rick Jones, Destined Sidekick",
+  "name": "Rick Jones, Destined Sidekick",
+  "typeLine": "Legendary Creature — Human Advisor",
+  "manaCost": "{G}",
+  "cmc": 1,
+  "colors": [
+   "G"
+  ],
+  "oracle": "{3}, {T}: Mill four cards. You may put a Hero or enchantment card from among those cards into your hand. (To mill four cards, put the top four cards of your library into your graveyard.)",
+  "power": "0",
+  "toughness": "3"
+ },
+ "Rising of the Day": {
+  "id": "Rising of the Day",
+  "name": "Rising of the Day",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{R}",
+  "cmc": 3,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Creatures you control have haste.\nLegendary creatures you control get +1/+0.",
+  "power": null,
+  "toughness": null
+ },
+ "Rosnakht, Heir of Rohgahh": {
+  "id": "Rosnakht, Heir of Rohgahh",
+  "name": "Rosnakht, Heir of Rohgahh",
+  "typeLine": "Legendary Creature — Kobold Warrior",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Battle cry (Whenever this creature attacks, each other attacking creature gets +1/+0 until end of turn.)\nHeroic — Whenever you cast a spell that targets Rosnakht, create a 0/1 red Kobold creature token named Kobolds of Kher Keep.",
+  "power": "0",
+  "toughness": "1"
+ },
+ "Sacred Foundry": {
+  "id": "Sacred Foundry",
+  "name": "Sacred Foundry",
+  "typeLine": "Land — Mountain Plains",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {R} or {W}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "R",
+   "W"
+  ]
+ },
+ "Skrelv, Defector Mite": {
+  "id": "Skrelv, Defector Mite",
+  "name": "Skrelv, Defector Mite",
+  "typeLine": "Legendary Artifact Creature — Phyrexian Mite",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Toxic 1 (Players dealt combat damage by this creature also get a poison counter.)\nSkrelv can't block.\n{W/P}, {T}: Choose a color. Another target creature you control gains toxic 1 and hexproof from that color until end of turn. It can't be blocked by creatures of that color this turn. ({W/P} can be paid with either {W} or 2 life.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Sol Ring": {
+  "id": "Sol Ring",
+  "name": "Sol Ring",
+  "typeLine": "Artifact",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "{T}: Add {C}{C}.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Spara's Headquarters": {
+  "id": "Spara's Headquarters",
+  "name": "Spara's Headquarters",
+  "typeLine": "Land — Forest Plains Island",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {G}, {W}, or {U}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "G",
+   "U",
+   "W"
+  ]
+ },
+ "Spinneret and Spiderling": {
+  "id": "Spinneret and Spiderling",
+  "name": "Spinneret and Spiderling",
+  "typeLine": "Legendary Creature — Spider Human Hero",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Whenever you attack with two or more Spiders, put a +1/+1 counter on Spinneret and Spiderling.\nWhenever Spinneret and Spiderling deals 4 or more damage, exile the top card of your library. Until the end of your next turn, you may play that card.",
+  "power": "1",
+  "toughness": "2"
+ },
+ "Stature, Size Shifter": {
+  "id": "Stature, Size Shifter",
+  "name": "Stature, Size Shifter",
+  "typeLine": "Legendary Creature — Human Hero",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Stature can't be blocked if her power is 1 or less.\nPower-up — {X}{U}{U}: Put X +1/+1 counters on Stature. (Activate each power-up ability only once. Reduce the cost by her mana cost if she entered this turn.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Steam Vents": {
+  "id": "Steam Vents",
+  "name": "Steam Vents",
+  "typeLine": "Land — Island Mountain",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {U} or {R}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "R",
+   "U"
+  ]
+ },
+ "Stiltzkin, Moogle Merchant": {
+  "id": "Stiltzkin, Moogle Merchant",
+  "name": "Stiltzkin, Moogle Merchant",
+  "typeLine": "Legendary Creature — Moogle",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Lifelink\n{2}, {T}: Target opponent gains control of another target permanent you control. If they do, you draw a card.",
+  "power": "1",
+  "toughness": "2"
+ },
+ "Stomping Ground": {
+  "id": "Stomping Ground",
+  "name": "Stomping Ground",
+  "typeLine": "Land — Mountain Forest",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {R} or {G}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "G",
+   "R"
+  ]
+ },
+ "Swan Song": {
+  "id": "Swan Song",
+  "name": "Swan Song",
+  "typeLine": "Instant",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue Bird creature token with flying.",
+  "power": null,
+  "toughness": null
+ },
+ "Swords to Plowshares": {
+  "id": "Swords to Plowshares",
+  "name": "Swords to Plowshares",
+  "typeLine": "Instant",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature. Its controller gains life equal to its power.",
+  "power": null,
+  "toughness": null
+ },
+ "Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar": {
+  "id": "Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar",
+  "name": "Tamiyo, Inquisitive Student // Tamiyo, Seasoned Scholar",
+  "typeLine": "Legendary Creature — Moonfolk Wizard // Legendary Planeswalker — Tamiyo",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Tamiyo, Inquisitive Student: Flying\nWhenever Tamiyo attacks, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhen you draw your third card in a turn, exile Tamiyo, then return her to the battlefield transformed under her owner's control.\n\nTamiyo, Seasoned Scholar: +2: Until your next turn, whenever a creature attacks you or a planeswalker you control, it gets -1/-0 until end of turn.\n−3: Return target instant or sorcery card from your graveyard to your hand. If it's a green card, add one mana of any color.\n−7: Draw cards equal to half the number of cards in your library, rounded up. You get an emblem with \"You have no maximum hand size.\"",
+  "power": "0",
+  "toughness": "3",
+  "backLoyalty": "2",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Temple Garden": {
+  "id": "Temple Garden",
+  "name": "Temple Garden",
+  "typeLine": "Land — Forest Plains",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {G} or {W}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "G",
+   "W"
+  ]
+ },
+ "The Duke, Rebel Sentry": {
+  "id": "The Duke, Rebel Sentry",
+  "name": "The Duke, Rebel Sentry",
+  "typeLine": "Legendary Creature — Human Rebel Ally",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "The Duke enters with a +1/+1 counter on him.\n{T}, Remove a counter from The Duke: Put a +1/+1 counter on another target creature you control. It gains hexproof until end of turn. (It can't be the target of spells or abilities your opponents control.)",
+  "power": "0",
+  "toughness": "1"
+ },
+ "The World Tree": {
+  "id": "The World Tree",
+  "name": "The World Tree",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add {G}.\nAs long as you control six or more lands, lands you control have \"{T}: Add one mana of any color.\"\n{W}{W}{U}{U}{B}{B}{R}{R}{G}{G}, {T}, Sacrifice this land: Search your library for any number of God cards, put them onto the battlefield, then shuffle.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Tinybones, the Pickpocket": {
+  "id": "Tinybones, the Pickpocket",
+  "name": "Tinybones, the Pickpocket",
+  "typeLine": "Legendary Creature — Skeleton Rogue",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Deathtouch\nWhenever Tinybones deals combat damage to a player, you may cast target nonland permanent card from that player's graveyard, and mana of any type can be spent to cast that spell.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Urban Retreat": {
+  "id": "Urban Retreat",
+  "name": "Urban Retreat",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add {G}, {W}, or {U}.\n{2}, Return a tapped creature you control to its owner's hand: Put this card from your hand onto the battlefield. Activate only as a sorcery.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "G",
+   "U",
+   "W"
+  ]
+ },
+ "Watery Grave": {
+  "id": "Watery Grave",
+  "name": "Watery Grave",
+  "typeLine": "Land — Island Swamp",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {U} or {B}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "U"
+  ]
+ },
+ "Whiplash, Vengeful Engineer": {
+  "id": "Whiplash, Vengeful Engineer",
+  "name": "Whiplash, Vengeful Engineer",
+  "typeLine": "Legendary Creature — Human Artificer Villain",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whiplash enters tapped.\nWhenever Whiplash attacks, if he's equipped, each opponent loses X life and you gain X life, where X is the number of Equipment attached to him.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Yoshimaru, Ever Faithful": {
+  "id": "Yoshimaru, Ever Faithful",
+  "name": "Yoshimaru, Ever Faithful",
+  "typeLine": "Legendary Creature — Dog",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever another legendary permanent you control enters, put a +1/+1 counter on Yoshimaru.\nPartner (You can have two commanders if both have partner.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Yuriko, Hope from the Shadows": {
+  "id": "Yuriko, Hope from the Shadows",
+  "name": "Yuriko, Hope from the Shadows",
+  "typeLine": "Legendary Creature — Human Ninja",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flash\nWhen Yuriko enters, choose one —\n• Target creature gets -X/-0 until end of turn, where X is the number of cards in your graveyard.\n• Surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Zabaz, the Glimmerwasp": {
+  "id": "Zabaz, the Glimmerwasp",
+  "name": "Zabaz, the Glimmerwasp",
+  "typeLine": "Legendary Artifact Creature — Insect",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Modular 1\nIf a modular triggered ability would put one or more +1/+1 counters on a creature you control, that many plus one +1/+1 counters are put on it instead.\n{R}: Destroy target artifact you control.\n{W}: Zabaz gains flying until end of turn.",
+  "power": "0",
+  "toughness": "0"
+ },
+ "Zack Fair": {
+  "id": "Zack Fair",
+  "name": "Zack Fair",
+  "typeLine": "Legendary Creature — Human Soldier",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Zack Fair enters with a +1/+1 counter on it.\n{1}, Sacrifice Zack Fair: Target creature you control gains indestructible until end of turn. Put Zack Fair's counters on that creature and attach an Equipment that was attached to Zack Fair to that creature.",
+  "power": "0",
+  "toughness": "1"
+ },
+ "Zagoth Triome": {
+  "id": "Zagoth Triome",
+  "name": "Zagoth Triome",
+  "typeLine": "Land — Swamp Forest Island",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {B}, {G}, or {U}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+  "power": null,
+  "toughness": null,
+  "producedMana": [
+   "B",
+   "G",
+   "U"
+  ]
+ },
+ "Zurgo Bellstriker": {
+  "id": "Zurgo Bellstriker",
+  "name": "Zurgo Bellstriker",
+  "typeLine": "Legendary Creature — Orc Warrior",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Zurgo can't block creatures with power 2 or greater.\nDash {1}{R} (You may cast this spell for its dash cost. If you do, it gains haste, and it's returned from the battlefield to its owner's hand at the beginning of the next end step.)",
+  "power": "2",
+  "toughness": "2"
+ }
+}
