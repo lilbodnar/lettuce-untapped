@@ -249,7 +249,8 @@ textarea { width: 100%; font-family: Consolas, monospace; font-size: .85rem; }
 .command .card { position: relative; }
 
 .battlefield {
-  position: relative; overflow: auto; min-height: 0;
+  /* isolate: the cards' z-indexes stay inside, under pop-ups like the game-over message */
+  position: relative; overflow: auto; min-height: 0; isolation: isolate;
   background:
     linear-gradient(var(--felt-line) 1px, transparent 1px) 0 0 / 100% calc(var(--cw) * 1.5),
     var(--felt);
@@ -355,6 +356,15 @@ body.peek .side { position: relative; z-index: 51; }
   border-radius: 99px; padding: 1px 7px; cursor: pointer; white-space: nowrap;
 }
 .counter b { color: var(--warn); }
+/* A card in a pile with another on top of it: its counters move up into the strip that shows. */
+.card.peek .counters { top: calc(var(--cw) * .15); flex-direction: row; flex-wrap: wrap; justify-content: center; }
+.card.peek .counter { font-size: 10px; padding: 0 5px; }
+/* How many alike tokens a condensed one stands for. */
+.pile-count {
+  position: absolute; top: -6px; left: -6px; z-index: 2; min-width: 22px; text-align: center;
+  font: 700 12px/18px inherit; padding: 0 5px; border-radius: 99px;
+  background: var(--accent); color: var(--accent-ink); box-shadow: 0 1px 4px rgba(0,0,0,.6);
+}
 .drag-ghost { position: fixed; z-index: 90; pointer-events: none; aspect-ratio: 5 / 7; border-radius: 5%; box-shadow: 0 12px 30px rgba(0,0,0,.6); transform: rotate(-3deg); }
 .drag-ghost img { width: 100%; height: 100%; border-radius: inherit; display: block; }
 .drag-ghost .back, .drag-ghost .text-face { --cw: 92px; }
@@ -427,7 +437,7 @@ body.peek .side { position: relative; z-index: 51; }
 .opp-cmd .pill { cursor: default; color: var(--text); }
 .opp-field {
   --ch: calc(var(--cw) * 1.396);
-  flex: 1; position: relative; overflow: hidden; min-height: 0;
+  flex: 1; position: relative; overflow: hidden; min-height: 0; isolation: isolate;
   background: linear-gradient(var(--felt-line) 1px, transparent 1px) 0 0 / 100% calc(var(--cw) * 1.5), var(--felt);
 }
 .opp-field .card, .card.readonly { cursor: default; }

@@ -116,7 +116,7 @@
   function saveNow() {
     clearTimeout(saveTimer);
     saveGame();
-    Store.set('ui', { oddsDeck: ui.oddsDeck, oddsOnDraw: ui.oddsOnDraw, cardW: ui.cardW, autoTap: ui.autoTap, upkeepOff: ui.upkeepOff, recentCounters: ui.recentCounters, playerName: ui.playerName, botYou: ui.botYou, botOpp: ui.botOpp, botFirst: ui.botFirst, onlineDeck: ui.onlineDeck, hostCode: ui.hostCode, joinCode: ui.joinCode, gameId });
+    Store.set('ui', { oddsDeck: ui.oddsDeck, oddsOnDraw: ui.oddsOnDraw, cardW: ui.cardW, autoTap: ui.autoTap, upkeepOff: ui.upkeepOff, condenseTokens: ui.condenseTokens, recentCounters: ui.recentCounters, playerName: ui.playerName, botYou: ui.botYou, botOpp: ui.botOpp, botFirst: ui.botFirst, onlineDeck: ui.onlineDeck, hostCode: ui.hostCode, joinCode: ui.joinCode, gameId });
   }
 
   const gameMeta = () => games.find(g => g.id === gameId) || null;
@@ -1426,7 +1426,8 @@
     if (pid !== BOT) return peers[pid];
     if (!hasBot()) return null;
     const s = game.bot.s;
-    const board = Object.assign(Online.snapshot(s), { life: game.oppLife, cmdDamage: {} });
+    const piles = Game.arrangePiles(s, { width: Game.layout.cols * Game.CELL_W + 0.25, height: Game.layout.rows * Game.CELL_H, condense: !!ui.condenseTokens });
+    const board = Object.assign(Online.snapshot(s), { life: game.oppLife, cmdDamage: {}, piles });
     const cards = {};
     [...board.battlefield, ...board.graveyard, ...board.exile, ...board.command].forEach(c => { cards[c.iid] = c; });
     return { board, cards };
@@ -2918,6 +2919,7 @@
             <span class="opp-stat" id="monarchNo" title="You're the monarch: you draw a card at the end of your turn. A player whose creature deals you combat damage takes it." hidden>👑 Monarch</span>
             <label class="toggle" title="When you play a spell, tap the lands it needs (uses floating mana first)"><input type="checkbox" data-act="autotap" ${ui.autoTap ? 'checked' : ''}> Auto-tap lands</label>
             <label class="toggle" title="At the start of your turn, highlight cards with upkeep triggers until you click Done"><input type="checkbox" data-act="upkeephelp" ${ui.upkeepOff ? '' : 'checked'}> Upkeep reminders</label>
+            <label class="toggle" title="Tokens that are exactly alike (same counters, tapped or not) show as one card with how many there are. Clicking it acts on one of them"><input type="checkbox" data-act="condense" ${ui.condenseTokens ? 'checked' : ''}> Condense tokens</label>
             ${bot ? `<label class="toggle" title="Opp's spells wait while you could answer them with an instant, and Opp counters and removes things on your turn"><input type="checkbox" data-act="respondhelp" ${ui.respond === false ? '' : 'checked'}> Responses</label>` : ''}
             <label class="size" title="Card size"><span class="muted small">Size</span><input type="range" min="60" max="150" step="2" value="${ui.cardW}" data-act="size"></label>
             ${appMode ? '' : '<span class="counter-dock" id="counterDock" hidden></span>'}
@@ -3019,6 +3021,18 @@
       freshTimers.set(key, setTimeout(() => { freshTimers.delete(key); el.classList.remove('fresh'); }, left));
     }
     return el;
+  }
+
+  // "×5" on a condensed token that stands for several alike.
+  function pileCount(el, n) {
+    let badge = el.querySelector(':scope > .pile-count');
+    if (!n) { if (badge) badge.remove(); return; }
+    if (!badge) {
+      badge = document.createElement('span');
+      badge.className = 'pile-count';
+      el.appendChild(badge);
+    }
+    badge.textContent = '×' + n;
   }
 
   // Commander damage. Online: damage you've taken from each other player's commander (key
@@ -3171,7 +3185,11 @@
       ${b.command.length ? `<span class="opp-cmd">${b.command.map(c => `<span class="pill" data-oiid="${esc(c.iid)}" data-opid="${esc(p.pid)}">${esc(c.name)}${c.castCount ? ` +${c.castCount * 2}` : ''}</span>`).join(' ')}</span>` : ''}`;
 
     const CH = 1.396;
-    const cards = b.battlefield;
+    // Opp's piles (tokens, planeswalkers): drawn upside down from yours, so each card goes under the
+    // one before it and the names still show. Condensed copies aren't drawn.
+    const pl = b.piles;
+    const cards = pl ? [...b.battlefield.filter(c => !pl.order.includes(c.iid) && !pl.hidden.has(c.iid)),
+      ...pl.order.map(iid => b.battlefield.find(c => c.iid === iid)).filter(Boolean).reverse()] : b.battlefield;
     const maxX = Math.max(1, ...cards.map(c => c.x + (c.tapped ? CH : 1)));
     const maxY = Math.max(CH, ...cards.map(c => c.y + CH));
     const fw = field.clientWidth - 8;
@@ -3187,6 +3205,7 @@
       el.style.left = c.x * cw + 4 + 'px';
       el.style.top = (H - c.y - CH) * cw + 4 + 'px';
       el.style.zIndex = i + 1;
+      pileCount(el, pl && pl.counts[c.iid]);
       return el;
     }));
     // Forget elements for this player's cards that are gone.
@@ -3234,19 +3253,27 @@
     if ($('#monarchNo')) $('#monarchNo').hidden = !amMonarch();
 
     const bf = $('#battlefield');
+    // Tokens and planeswalkers go in the piles on the right, drawn over the rest.
+    const piles = Game.arrangePiles(game, { width: (bf.clientWidth - 8) / ui.cardW, height: (bf.clientHeight - 8) / ui.cardW, condense: !!ui.condenseTokens });
+    Game.layout.pilesLeft = piles.order.length ? piles.left : null;
+    const inPiles = new Set(piles.order);
     // Equipment and auras are drawn just under the creature they're on.
     const order = [];
     for (const iid of game.zones.battlefield) {
+      if (inPiles.has(iid) || piles.hidden.has(iid)) continue;
       if (game.cards[iid].attachedTo && game.cards[game.cards[iid].attachedTo]) continue;
       order.push(...Game.attachmentsOf(game, iid), iid);
     }
-    for (const iid of game.zones.battlefield) if (!order.includes(iid)) order.push(iid);
+    for (const iid of game.zones.battlefield) if (!order.includes(iid) && !inPiles.has(iid) && !piles.hidden.has(iid)) order.push(iid);
+    order.push(...piles.order);
     const bfEls = order.map((iid, i) => {
       const inst = game.cards[iid];
       const el = cardEl(inst);
       el.style.left = inst.x * ui.cardW + 'px';
       el.style.top = inst.y * ui.cardW + 'px';
       el.style.zIndex = i + 1;
+      el.classList.toggle('peek', piles.covered.has(iid));
+      pileCount(el, piles.counts[iid]);
       return el;
     });
     bf.replaceChildren(...bfEls);
@@ -5514,6 +5541,7 @@
           <li><b>Copies:</b> right-click a card → <b>Make a copy</b>, or <b>Make copies…</b> for several (optionally with its counters). Works on tokens, and on cards in your hand, graveyard or exile (they stay put; a token copy goes on the battlefield).</li>
           <li><b>✕ End game</b> clears the table and takes you back to your decks.</li>
           <li><b>Mana:</b> tapping a land adds its mana to the pool (a land that makes several colors asks which). Untapping it takes the mana back out. <b>Free mana</b> shows what your untapped lands can still make. Mana rocks like Sol Ring and Arcane Signet work the same way. Creatures like Llanowar Elves just tap when clicked (for attacking); right-click → <b>Tap for … mana</b>. For anything else, click a symbol to add, right-click to remove. The pool empties on Next turn.</li>
+          <li><b>Tokens and planeswalkers</b> sit in piles along the right edge of the battlefield, each card showing its name and counters above the next. Drag one out to put it somewhere else; drag it back to the right edge to put it back in its pile. <b>Condense tokens</b> (top bar) shows tokens that are exactly alike as one card with a count (×5); clicking or dragging it acts on one of them.</li>
           <li><b>Auto-tap lands</b> (top bar): playing a spell taps what it needs: floating mana first, then lands (saving dual lands when it can), mana rocks, mana creatures (not ones that arrived this turn) and last Treasures, which get sacrificed. Commander tax is included. So are discounts from your permanents, like "Goblin spells you cast cost {1} less" or "creature spells of the chosen type cost {2} less" (only the generic part gets cheaper). If you can't pay, nothing is tapped.</li>
           <li><b>Choose a creature type</b>: when a card like Urza's Incubator or Herald's Horn enters, pick the type from your deck's list or type one in. It shows on the card; right-click to change it.</li>
           <li><b>Upkeep:</b> at the start of your turn, cards with "At the beginning of your upkeep" glow and are listed by your stats until you click <b>Done</b>. Turn this off with <b>Upkeep reminders</b> in the top bar.</li>
@@ -5844,6 +5872,7 @@
 
   document.addEventListener('input', e => {
     if (e.target.dataset.act === 'size') { ui.cardW = Number(e.target.value); renderBoard(); }
+    if (e.target.dataset.act === 'condense') { ui.condenseTokens = e.target.checked; saveSoon(); renderBoard(); }
     if (e.target.dataset.act === 'autotap') { ui.autoTap = e.target.checked; saveSoon(); status(ui.autoTap ? 'Auto-tap is on: playing a spell taps the lands it needs.' : 'Auto-tap is off.'); }
     if (e.target.dataset.act === 'respondhelp') {
       ui.respond = e.target.checked;

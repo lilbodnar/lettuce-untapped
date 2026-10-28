@@ -1012,7 +1012,8 @@ const Game = (() => {
       if (iid === ignore) return false;
       const c = s.cards[iid];
       // Cards on a stack, and ones attached to another card, sit on a spot the bottom card already holds.
-      if (c.stacked || c.attachedTo) return false;
+      // Tokens and planeswalkers are in the piles on the right, not on the grid.
+      if (c.stacked || c.attachedTo || piled(c)) return false;
       return Math.abs(c.x - x) < 0.7 && Math.abs(c.y - y) < 0.9;
     });
   }
@@ -1023,9 +1024,9 @@ const Game = (() => {
   // Copies of the same land, or the same token, stack on each other. Returns the spot on top of
   // a stack that has room, or null.
   function stackSpot(s, inst) {
-    if (!isLand(inst) && !inst.token) return null;
+    if (!isLand(inst) || piled(inst)) return null;
     const same = s.zones.battlefield.map(id => s.cards[id])
-      .filter(c => c.iid !== inst.iid && c.name === inst.name && !!c.token === !!inst.token && !c.attachedTo);
+      .filter(c => c.iid !== inst.iid && c.name === inst.name && !!c.token === !!inst.token && !c.attachedTo && !piled(c));
     for (const c of same) {
       const col = Math.round((c.x - 0.25) / CELL_W);
       const row = Math.round((c.y - 0.1) / CELL_H);
@@ -1040,12 +1041,15 @@ const Game = (() => {
 
   // Finds a spot, keeping the battlefield tidy: lands in the bottom half (copies stacked), creatures
   // from the top row down, and other permanents (artifacts, equipment, enchantments, planeswalkers)
-  // in the row just above the lands. Tokens of the same kind stack too.
+  // in the row just above the lands. Tokens and planeswalkers go in the piles on the right
+  // (arrangePiles), and the grid stays left of them.
   function autoPlace(s, inst) {
     const rows = Math.max(2, layout.rows);
-    const cols = Math.max(3, layout.cols);
-    const stacked = stackSpot(s, inst);
+    const gridCols = layout.pilesLeft == null ? layout.cols : Math.floor((layout.pilesLeft - 1.25) / CELL_W) + 1;
+    const cols = Math.max(3, Math.min(layout.cols, gridCols));
     delete inst.stacked;
+    if (piled(inst)) { inst.x = (layout.pilesLeft == null ? cols * CELL_W : layout.pilesLeft) + 0.1; inst.y = 0.1; return; }
+    const stacked = stackSpot(s, inst);
     if (stacked) { inst.x = stacked.x; inst.y = stacked.y; inst.stacked = true; return; }
     const landRows = Math.max(1, Math.floor(rows / 2));
     const top = rows - landRows; // rows for everything that isn't a land
@@ -1064,10 +1068,25 @@ const Game = (() => {
         }
       }
     }
-    // Battlefield is full: overlap slightly so nothing is hidden.
-    const n = s.zones.battlefield.length;
-    inst.x = 0.1 + (n % cols) * CELL_W + 0.25;
-    inst.y = 0.1 + (isLand(inst) ? (rows - 1) * CELL_H - 0.3 : 0.3);
+    // Battlefield is full: go on the spot in its own area with the fewest cards, a step down and
+    // right of the ones there, so the name of each one below still shows.
+    const own = order.slice(0, isLand(inst) ? landRows : top);
+    let best = null;
+    for (const row of own.length ? own : order) {
+      for (let col = 0; col < cols; col++) {
+        const x = col * CELL_W + 0.25;
+        const y = row * CELL_H + 0.1;
+        const n = s.zones.battlefield.filter(id => {
+          const c = s.cards[id];
+          return id !== inst.iid && !c.attachedTo && !piled(c) && c.x - x > -0.3 && c.x - x < 1 && c.y - y > -0.3 && c.y - y < 1.2;
+        }).length;
+        if (!best || n < best.n) best = { x, y, n };
+      }
+    }
+    const k = Math.min(best.n, 4);
+    inst.x = best.x + k * 0.12;
+    inst.y = best.y + k * 0.2;
+    inst.stacked = true;
   }
 
   // A card left its spot (died, bounced, dragged away): the cards stacked on it slide down one
@@ -1079,6 +1098,85 @@ const Game = (() => {
       .sort((a, b) => a.x - b.x);
     rest.forEach(c => { c.x -= STACK_STEP; c.y -= STACK_STEP; });
     if (rest.length && !gone.stacked) delete rest[0].stacked;
+  }
+
+  // ---------- piles: tokens and planeswalkers ----------
+
+  // Tokens and planeswalkers aren't put on the grid: they sit in piles along the right edge of the
+  // battlefield (tokens in the rightmost columns, planeswalkers in the column left of them). Each pile
+  // is a cascade that shows the top of every card (name, counters), squeezed to fit the height.
+  // One you drag elsewhere stays where you drop it ("free") until you drag it back to the piles.
+  const isWalker = inst => !inst.faceDown && /\bplaneswalker\b/i.test(faceType(inst));
+  const pileKind = inst => !inst.attachedTo && (inst.token || isWalker(inst));
+  const piled = inst => pileKind(inst) && !inst.free;
+  const PILE_STEP = { walker: 0.38, token: 0.32 }; // how much of each card shows above the next, in card widths
+  const PILE_MIN_STEP = 0.1;
+  const CARD_H = 1.396;
+
+  // Copies of a token that look alike go in one pile; condensed, ones that are exactly alike (counters,
+  // tapped, pumps) are drawn as one card with a count. A token with equipment or auras is its own.
+  function pileKey(s, inst, condense) {
+    if (attachmentsOf(s, inst.iid).length) return 'own|' + inst.iid;
+    const base = inst.name + '|' + (inst.id || '') + '|' + (inst.custom ? inst.custom.pt : '');
+    if (!condense) return base;
+    const counters = Object.entries(inst.counters || {}).filter(([, n]) => n).sort().join();
+    return [base, !!inst.tapped, !!inst.phasedOut, !!inst.faceDown, !!inst.flipped, counters, JSON.stringify(inst.pump || null), inst.chosenType || '', inst.regen || ''].join('|');
+  }
+
+  // Sets x/y on every piled card. width/height: the battlefield's size in card widths.
+  // Returns { left, order, counts, covered, hidden }: left is where the piles start (the grid stays left of it),
+  // order the piled cards to draw, bottom of each cascade first (equipment and auras before their
+  // token), counts how many cards each drawn one stands for when condensed, covered the cards that
+  // have another one on top of them in a cascade, hidden the condensed copies that aren't drawn.
+  function arrangePiles(s, { width, height, condense }) {
+    const out = { left: width, order: [], counts: {}, covered: new Set(), hidden: new Set() };
+    const cards = s.zones.battlefield.map(id => s.cards[id]).filter(piled);
+    if (!cards.length) return out;
+    const groups = new Map();
+    for (const c of cards) {
+      const key = (isWalker(c) && !c.token ? 'pw|' + c.iid : pileKey(s, c, condense));
+      if (!groups.has(key)) groups.set(key, []);
+      groups.get(key).push(c);
+    }
+    // Each item is one drawn card (condensed: standing for the whole group).
+    const toItems = list => (condense ? [{ rep: list[list.length - 1], all: list }]
+      : [...list].sort((a, b) => !!a.tapped - !!b.tapped).map(c => ({ rep: c, all: [c] })));
+    const walkerGroups = [...groups].filter(([k]) => k.startsWith('pw|')).map(([, g]) => g);
+    const tokenGroups = [...groups].filter(([k]) => !k.startsWith('pw|')).map(([, g]) => toItems(g));
+    const cols = [];
+    const maxTokenCols = Math.max(1, Math.floor(width / CELL_W / 4));
+    const nTok = Math.min(tokenGroups.length, maxTokenCols);
+    for (let j = 0; j < nTok; j++) cols.push([]);
+    // Each pile goes in the token column with the fewest cards so far (the rightmost on a tie).
+    for (const g of tokenGroups) {
+      let best = 0;
+      cols.forEach((col, j) => { if (col.length < cols[best].length) best = j; });
+      cols[best].push(...g);
+    }
+    if (walkerGroups.length) cols.push(walkerGroups.map(g => ({ rep: g[0], all: g })));
+    const right = width - 0.15;
+    cols.forEach((col, j) => {
+      const x = Math.max(0.1, right - 1 - j * CELL_W);
+      const extra = col.reduce((n, it) => n + attachmentsOf(s, it.rep.iid).length * ATTACH_PEEK, 0);
+      const base = col.every(it => isWalker(it.rep) && !it.rep.token) ? PILE_STEP.walker : PILE_STEP.token;
+      const step = col.length > 1 ? Math.min(base, Math.max(PILE_MIN_STEP, (height - 0.2 - CARD_H - extra) / (col.length - 1))) : 0;
+      let y = 0.1;
+      col.forEach((it, k) => {
+        for (const id of attachmentsOf(s, it.rep.iid)) {
+          const a = s.cards[id];
+          a.x = x; a.y = y;
+          out.order.push(id);
+          y += ATTACH_PEEK;
+        }
+        for (const c of it.all) { c.x = x; c.y = y; if (c !== it.rep) out.hidden.add(c.iid); }
+        out.order.push(it.rep.iid);
+        if (it.all.length > 1) out.counts[it.rep.iid] = it.all.length;
+        if (k < col.length - 1) out.covered.add(it.rep.iid);
+        y += step;
+      });
+      out.left = Math.min(out.left, x - 0.1);
+    });
+    return out;
   }
 
   // ---------- equipment and auras ----------
@@ -1395,10 +1493,11 @@ const Game = (() => {
     if (to === 'battlefield') {
       // Cards arriving from another zone always go to their tidy spot, even when dropped somewhere;
       // dragging a card around the battlefield puts it exactly where you drop it.
-      if (from !== 'battlefield') autoPlace(s, inst);
-      else if (opts.x != null) {
+      if (from !== 'battlefield') { delete inst.free; autoPlace(s, inst); } else if (opts.x != null) {
         inst.x = Math.max(0, opts.x);
         inst.y = Math.max(0, opts.y);
+        // A token or planeswalker dragged out of the piles stays put; dragged back, it rejoins them.
+        if (pileKind(inst)) inst.free = inst.x + 0.5 < (layout.pilesLeft == null ? layout.cols * CELL_W - 1 : layout.pilesLeft);
         placeAttached(s, inst); // its equipment and auras come along
       }
       s.zones.battlefield.push(iid); // last = drawn on top
@@ -1705,7 +1804,7 @@ const Game = (() => {
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
     beginLeylines, takeBackLeylines, LEYLINE, attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,
-    place: autoPlace,
+    place: autoPlace, arrangePiles, isWalker,
   };
 })();
 
