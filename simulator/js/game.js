@@ -59,7 +59,9 @@ const Game = (() => {
   // until end of turn (inst.becomes). A card cast for impending (time counters left) or bestowed on a
   // creature (it's an aura then) isn't one, and a card mutated onto another is part of that creature.
   const stationed = inst => inst.stationAt > 0 && ((inst.counters || {}).charge || 0) >= inst.stationAt; // Spacecraft (station)
-  const isCreature = inst => (!!inst.crewed || !!inst.becomes || stationed(inst) || /\bcreature\b/i.test(faceType(inst))) && !inst.impending && !inst.bestowed && !inst.mutatedOnto;
+  // An Equipment creature attached to a creature (reconfigure: Razorfield Ripper) isn't a creature then.
+  const isCreature = inst => (!!inst.crewed || !!inst.becomes || stationed(inst) || /\bcreature\b/i.test(faceType(inst))) && !inst.impending && !inst.bestowed && !inst.mutatedOnto
+    && !(inst.attachedTo && /\bequipment\b/i.test(faceType(inst))) && !inst.notCreature; // notCreature: a God short of devotion (bot.js's refreshGrants)
   const isVehicle = inst => /\bvehicle\b/i.test(faceType(inst));
   // The turn is over: Vehicles stop being creatures.
   const endCrew = s => s.zones.battlefield.forEach(iid => { delete s.cards[iid].crewed; delete s.cards[iid].crewedBy; });
@@ -241,8 +243,10 @@ const Game = (() => {
   }
   // The extra mana the auras on a land add as it's tapped, each as the colors it can be: Fertile Ground (any color),
   // Wild Growth ({G}), Utopia Sprawl (the chosen color).
+  // Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional {B}." (s.swampExtra, bot.js's refreshGrants)
   const auraMana = (s, land) => attachmentsOf(s, land.iid).map(id => s.cards[id]).filter(a => a.extraManaAura)
-    .map(a => (a.extraManaAura === 'chosen' ? [a.chosenColor || 'G'] : MANA.includes(a.extraManaAura) ? [a.extraManaAura] : MANA.slice(0, 5)));
+    .map(a => (a.extraManaAura === 'chosen' ? [a.chosenColor || 'G'] : MANA.includes(a.extraManaAura) ? [a.extraManaAura] : MANA.slice(0, 5)))
+    .concat(s.swampExtra && /\bswamp\b/i.test(land.typeLine || '') ? Array(s.swampExtra).fill(['B']) : []);
   // The creature Springleaf Drum would tap (an untapped one, tokens first), or null.
   const drumFodder = (s, inst) => {
     const list = s.zones.battlefield.map(id => s.cards[id]).filter(c => c !== inst && !c.tapped && !c.phasedOut && !c.attacking && isCreature(c));
@@ -423,7 +427,7 @@ const Game = (() => {
     for (const raw of String(oracle || '').split('\n')) {
       const line = raw.replace(/\([^)]*\)/g, '').trim();
       let m;
-      if ((m = /^modular (\d+)\b/i.exec(line))) out['+1/+1'] = (out['+1/+1'] || 0) + Number(m[1]);
+      if ((m = /^(?:modular|graft) (\d+)\b/i.exec(line))) out['+1/+1'] = (out['+1/+1'] || 0) + Number(m[1]); // graft (Plaxcaster Frogling): moving a counter off isn't done
       if ((m = /^vanishing (\d+)$/i.exec(line))) out.time = (out.time || 0) + Number(m[1]); // Lost Auramancers (bot.js's upkeepSuspend takes them off)
       for (const sentence of line.split(/(?<=\.)\s+/)) {
         m = /^.+? enters(?: the battlefield)? with (\w+) ([+-]\d+\/[+-]\d+|[a-z]+) counters? on (?:it|him|her)\.?$/i.exec(sentence); // The Duke: "… on him"
@@ -720,7 +724,7 @@ const Game = (() => {
     if (many) return { maxOther: COUNT_WORDS[many[1].toLowerCase()] - 1 };
     let out = false;
     oracle.split(/\n+|(?<=\.)\s+(?=[A-Z])/).forEach(line => {
-      const m = line.match(/^(.+?) enters(?: the battlefield)? tapped(?: unless (.+?))?\.$/i);
+      const m = line.match(/^(.+?) enters(?: the battlefield)? tapped(?: unless (.+?)| and doesn't untap during your untap step)?\.$/i); // Traxos (bot.js's noUntap)
       if (!m) return;
       const subject = m[1].toLowerCase();
       // "Ebondeath enters tapped." for Ebondeath, Dracolich
@@ -747,6 +751,7 @@ const Game = (() => {
     // untapped, other permanents enter untapped." (s.enterState, kept by bot.js's refreshGrants)
     if (s.enterState && s.enterState.src !== inst.iid && !inst.faceDown) return s.enterState.tapped;
     if (s.landsUntapped && isLand(inst)) return false;
+    if (s.gatesUntapped && /\bgate\b/i.test(inst.typeLine || '')) return false; // Gond Gate (bot.js's refreshGrants)
     // Thalia, Heretic Cathar (the opponent's): "Creatures and nonbasic lands your opponents control enter tapped." (s.tapKinds, bot.js's refreshGrants)
     const type = (inst.typeLine || '').split('//')[0];
     if ((s.tapKinds || []).some(k => (k === 'nonbasic land' ? isLand(inst) && !/\bbasic\b/i.test(type) : new RegExp(`\\b${k}\\b`, 'i').test(type)))) return true;
@@ -850,9 +855,12 @@ const Game = (() => {
     if (/^you may play an additional land on each of your turns\.?$/im.test(String(def.oracle || ''))) inst.extraLandDrop = true; // Exploration (move)
     if (/^compleated\b/im.test(String(def.oracle || ''))) inst.compleated = true; // Vraska, Betrayal's Sting (startLoyalty)
     if (/^whenever enchanted land is tapped for mana, its controller adds an additional one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.extraManaAura = true; // Fertile Ground (sourceOf)
+    // Weirding Wood, Gift of Paradise: 'Enchanted land has "{T}: Add two mana of any one color."' (read as one more mana of any color)
+    if (/^enchanted land has "\{t\}: add two mana of any one colou?r\.?"\.?$/im.test(String(def.oracle || ''))) inst.extraManaAura = true;
     const auraAdds = /^whenever enchanted (?:land|forest) is tapped for mana, its controller adds an additional (?:\{([WUBRGC])\}|one mana of the (chosen) colou?r)\.?$/im.exec(String(def.oracle || ''));
     if (auraAdds) inst.extraManaAura = auraAdds[1] ? auraAdds[1].toUpperCase() : 'chosen'; // Wild Growth, Utopia Sprawl (auraMana)
     if (/^if one or more creature tokens would be created under your control, that many 4\/4 white angel creature tokens with flying and vigilance are created instead\.?$/im.test(String(def.oracle || ''))) inst.angelTokens = true; // Divine Visitation (createToken)
+    if (/^if you would create one or more tokens, you may instead create that many 2\/2 green cat creature tokens with haste or that many 3\/1 green dog creature tokens with vigilance\.?$/im.test(String(def.oracle || ''))) inst.catDogTokens = true; // Jinnie Fay (createToken)
     // Ifnir Deadlands: "{T}, Pay 1 life: Add {B}." That color isn't auto-tapped (producesOf); you activate it (bot.js's activatedAbilities).
     const lines = String(def.oracle || '').split('\n');
     // Boseiju, Who Shelters All: "… Add {C}. If that mana is spent on an instant or sorcery spell, that spell can't be countered."
@@ -1484,6 +1492,7 @@ const Game = (() => {
 
     if (from === 'battlefield' && to !== 'battlefield') resetForZoneChange(inst);
     inst.zone = to;
+    if (to === 'graveyard') inst.graveTurn = s.turn; // Garna: "creature cards in your graveyard that were put there from anywhere this turn"
     if (opts.faceDown) inst.faceDown = true;
     delete inst.reboundArmed;
     if (rebound) { inst.rebounding = true; log(s, `${inst.name} (rebound) is exiled; cast it again at your next upkeep.`); }
@@ -1698,6 +1707,7 @@ const Game = (() => {
       const iid = s.zones.library.shift();
       if (hooks.graveInstead && hooks.graveInstead(s, s.cards[iid])) { s.cards[iid].zone = 'exile'; s.zones.exile.push(iid); s.cards[iid].voidCounter = true; count++; continue; } // Dauthi Voidwalker
       s.cards[iid].zone = 'graveyard';
+      s.cards[iid].graveTurn = s.turn;
       s.zones.graveyard.push(iid);
       s.lastMilled.push(iid);
       noteHandLibGrave(s);
@@ -1749,6 +1759,11 @@ const Game = (() => {
     // Angel creature tokens with flying and vigilance are created instead."
     const angel = /\bcreature\b/i.test(def.typeLine || '') && s.zones.battlefield.some(iid => s.cards[iid].angelTokens && !s.cards[iid].phasedOut && !s.cards[iid].faceDown);
     if (angel) def = { custom: true, name: 'Angel', typeLine: 'Token Creature — Angel', pt: '4/4', text: 'Flying, vigilance' };
+    // Jinnie Fay: "If you would create one or more tokens, you may instead create that many 2/2 green Cat creature tokens with haste or that many 3/1
+    // green Dog creature tokens with vigilance." Taken for small plain creature tokens (power + toughness under 4): a Cat on your turn, a Dog otherwise.
+    const small = def.custom && /\bcreature\b/i.test(def.typeLine || '') && !String(def.text || '').trim() && String(def.pt || '').split('/').reduce((n, x) => n + (Number(x) || 0), 0) < 4;
+    const catDog = !angel && small && s.zones.battlefield.some(iid => s.cards[iid].catDogTokens && !s.cards[iid].phasedOut && !s.cards[iid].faceDown);
+    if (catDog) def = s.offTurn ? { custom: true, name: 'Dog', typeLine: 'Token Creature — Dog', pt: '3/1', text: 'Vigilance' } : { custom: true, name: 'Cat', typeLine: 'Token Creature — Cat', pt: '2/2', text: 'Haste' };
     const inst = makeInstance(s, def, {
       token: true,
       custom: def.custom ? { pt: def.pt || '', text: def.text || '' } : null,
@@ -1762,6 +1777,7 @@ const Game = (() => {
       enteredTurn: s.turn,
     });
     if (angel) { inst.extraKw = ['flying', 'vigilance']; inst.tokenColors = ['W']; }
+    if (catDog) { inst.extraKw = [s.offTurn ? 'vigilance' : 'haste']; inst.tokenColors = ['G']; }
     s.tokenTurn = s.turn; // Idol of Oblivion: "if you created a token this turn"
     if (s.tokensMadeTurn !== s.turn) { s.tokensMadeTurn = s.turn; s.tokensMade = 0; }
     s.tokensMade++; // Thalisse: "the number of tokens you created this turn"

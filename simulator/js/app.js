@@ -975,6 +975,17 @@
         Game.log(game, `Foretold ${inst.name} (castable from your next turn for ${ab.castCost}).`);
       });
     }
+    // Plot (Lock and Load): pay it on your turn, exiled face up; castable for free from a later turn.
+    if (ab.kind === 'plot') {
+      if (game.offTurn) return status('Plot only on your turn.', 'warn');
+      if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana to plot ${inst.name} (${ab.cost}).`, 'warn', 8000);
+      return act(() => {
+        Game.autoPay(game, ab.cost);
+        Game.move(game, iid, 'exile');
+        inst.playable = { forever: true, free: true, from: game.turn + 1 };
+        Game.log(game, `Plotted ${inst.name} (castable for free from your next turn).`);
+      });
+    }
     // Magma Opus: "{U/R}{U/R}, Discard this card: Create a Treasure token." (pay, discard it, then the effect)
     if (ab.kind === 'discardEffect') {
       // Shigeki's channel: "{X}{X}{G}{G}, Discard this card: Return X target nonlegendary cards …" — you say X.
@@ -2306,7 +2317,13 @@
             closeAsk();
             if (b.dataset.cc === 'cancel') return;
             const c = choices[Number(b.dataset.cc)];
-            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend, tapOthers: c.tapOthers, kicks: c.kicks, energy: c.energy, gift: c.gift });
+            // Emerge (Elder Deep-Fiend): the creature is sacrificed as it's cast (when the rest can be paid)
+            if (c.sacIid) {
+              if (!Game.autoPay(JSON.parse(JSON.stringify(game)), c.cost)) return status(`Not enough untapped mana for ${inst.name} (${c.cost}).`, 'warn', 8000);
+              const sac = game.cards[c.sacIid];
+              if (sac) act(() => { Game.log(game, `Sacrificed ${sac.name} to emerge ${inst.name}.`); Game.move(game, sac.iid, sac.commander ? 'command' : 'graveyard'); if (hasBot()) Bot.sacrificed(game, game, sac, def, effectCtx()); });
+            }
+            tryPlay(iid, { ...opts, choice: c.key, cost: c.key === 'normal' ? undefined : c.cost, impending: c.impending, suspend: c.suspend, tapOthers: c.tapOthers, kicks: c.kicks, energy: c.energy, gift: c.gift, life: c.life, awaken: c.awaken, extraCounters: c.extraCounters });
           };
         });
         return;
@@ -2334,7 +2351,9 @@
     }
     const c = castCost(inst, opts);
     // Nissa, Worldsoul Speaker: eight energy instead of the mana cost.
-    if (opts.energy) return act(() => { game.energy = Math.max(0, (game.energy || 0) - opts.energy); Game.log(game, `Paid ${opts.energy} energy for ${inst.name}.`); playCard(iid, opts); });
+    if (opts.energy) return act(() => { Bot.payEnergy(game, opts.energy); Game.log(game, `Paid ${opts.energy} energy for ${inst.name}.`); playCard(iid, opts); });
+    // Demon of Fate's Design: life equal to its mana value instead (once each of your turns).
+    if (opts.life) return act(() => { game.life -= opts.life; if (game.lifeNextTurn === game.turn) delete game.lifeNextTurn; else game.lifeCastTurn = game.turn; Game.log(game, `Paid ${opts.life} life for ${inst.name}.`); playCard(iid, opts); }); // (Marshland Bloodcaster's next spell first)
     if (!c || Game.autoPay(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less, inst)) return act(() => playCard(iid, opts));
     // Convoke (Fallaji Wayfarer): your untapped creatures can make up the difference.
     if (Bot.hasConvoke(game, inst, def) && Bot.convokeTap(JSON.parse(JSON.stringify(game)), c.cost, c.tax - c.less, def)) return act(() => playCard(iid, { ...opts, convoke: true }));
@@ -2362,6 +2381,8 @@
     if (opts.choice === 'impending') { inst.impending = true; inst.counters = { ...inst.counters, time: opts.impending || 1 }; }
     if (opts.choice === 'bestow') inst.bestowed = true; // Chromanticore: an aura on a creature (you pick it)
     if (opts.choice === 'kicked') inst.kicked = true; // Josu Vess: "if he was kicked"
+    if (opts.choice === 'awaken') inst.awakenN = opts.awaken; // Ruinous Path (Bot.spellCast)
+    if (opts.extraCounters) inst.enterCounters = opts.extraCounters; // Chorus of the Conclave (Bot.enterTrigger)
     if (opts.choice === 'buyback') inst.boughtBack = true; // Capsize: back to your hand as it resolves (Game.move)
     if (opts.choice === 'squad') inst.squadCount = opts.kicks || 1; // squad: that many token copies as it enters
     if (/^replicate/.test(opts.choice || '')) inst.replicateCount = opts.kicks || 1; // Super Combo, Changing Loyalty: that many copies (Bot.spellCast, enterTrigger)
@@ -4063,6 +4084,8 @@
     // Tamiyo's Logbook: "This ability costs {1} less to activate for each other artifact you control."
     const less = (ab.lessFor ? ab.lessFor.n * game.zones.battlefield.filter(id => id !== iid && Bot.cardFits(game.cards[id], ab.lessFor.what)).length : 0)
       + (ab.lessCounter ? ab.lessCounter.n * ((inst.counters || {})[ab.lessCounter.kind] || 0) : 0) // Exploding Barrel
+      + (ab.lessGrave ? ab.lessGrave.n * game.zones.graveyard.filter(id => ab.lessGrave.kinds.some(k => Bot.cardFits(game.cards[id], k))).length : 0) // Pteramander
+      - (ab.moreHand ? ab.moreHand * game.zones.hand.length : 0) // Loreseeker's Stone
       + Bot.activationDiscount(game, inst, def); // Sam, Loyal Attendant: Foods' abilities cost {1} less
     if (ab.tap && inst.tapped) return status(`${inst.name} is already tapped.`, 'warn');
     // "{X}: …" (Crypt Rats): ask for X, then it's a cost like any other ("Spend only black mana on X": {B} each).
@@ -4125,12 +4148,26 @@
     // Tekuthal: "Remove three counters from among other artifacts, creatures, and planeswalkers you control"
     const others = () => game.zones.battlefield.map(id => game.cards[id]).filter(c => c.iid !== iid && (Game.isCreature(c) || /\b(artifact|planeswalker)\b/i.test(c.typeLine || '')));
     if (ab.removeAmong && others().reduce((n, c) => n + counterTotal(c), 0) < ab.removeAmong) return status(`${inst.name} needs ${ab.removeAmong} counters on your other artifacts, creatures and planeswalkers.`, 'warn', 8000);
+    // Sphinx of the Revelation: "Pay X {E}" — you say X (up to the energy you have).
+    if (ab.energyX && !ab.x) {
+      if (!game.energy) return status(`${inst.name} needs energy to pay (you have none).`, 'warn', 8000);
+      return ask(`X for ${inst.name} (energy to pay, up to ${game.energy})`, game.energy).then(x => {
+        if (x == null || Number.isNaN(Number(x)) || x < 1) return;
+        const n = Math.min(game.energy, Math.floor(Number(x)));
+        activate(iid, { ...ab, x: String(n), energy: n, effect: ab.effect.replace(/\bx\b/gi, String(n)) }, discards, sacs);
+      });
+    }
     // Energy: "Pay {E}{E}: …", "Pay eight {E}: …"
-    if (ab.energy && (game.energy || 0) < ab.energy) return status(`${inst.name} needs ${ab.energy} energy (you have ${game.energy || 0}).`, 'warn', 8000);
+    if (ab.energy &&(game.energy || 0) < ab.energy) return status(`${inst.name} needs ${ab.energy} energy (you have ${game.energy || 0}).`, 'warn', 8000);
     // The Duke: "Remove a counter from The Duke" (whichever kind it has most of)
     if (ab.remove && ab.remove.kind === 'any') ab = { ...ab, remove: { ...ab.remove, kind: Object.keys(inst.counters || {}).sort((a, b) => inst.counters[b] - inst.counters[a])[0] || 'any' } };
     // Ashnod, Flesh Mechanist: "Exile a creature card from your graveyard"
     if (ab.exileGraveCard && !game.zones.graveyard.some(id => Bot.cardFits(game.cards[id], ab.exileGraveCard))) return status(`${inst.name} needs a ${ab.exileGraveCard} card in your graveyard to exile.`, 'warn', 8000);
+    // Fain, Ghave, Hexavus, Scholar of New Horizons: a counter from one of yours (the one with the most of that kind)
+    const counterHost = () => game.zones.battlefield.map(id => game.cards[id]).filter(c => !(ab.removeFrom.another && c.iid === iid) && (ab.removeFrom.what === 'permanent' || Game.isCreature(c)))
+      .map(c => ({ c, k: ab.removeFrom.kind || Object.keys(c.counters || {}).filter(x => x !== 'loyalty' && c.counters[x] > 0).sort((a, b) => c.counters[b] - c.counters[a])[0] }))
+      .filter(x => x.k && ((x.c.counters || {})[x.k] || 0) > 0).sort((a, b) => b.c.counters[b.k] - a.c.counters[a.k])[0];
+    if (ab.removeFrom && !counterHost()) return status(`${inst.name} needs a ${ab.removeFrom.kind ? `${ab.removeFrom.kind} ` : ''}counter on ${ab.removeFrom.another ? 'another' : 'a'} ${ab.removeFrom.what} you control.`, 'warn', 8000);
     if (ab.remove && (inst.counters[ab.remove.kind] || 0) < ab.remove.n) {
       return status(`${inst.name} needs ${ab.remove.n} ${ab.remove.kind} counters (it has ${inst.counters[ab.remove.kind] || 0}).`, 'warn', 8000);
     }
@@ -4205,6 +4242,7 @@
         game.lastSacPower = Math.max(0, Bot.stats(c, def(c.id)).pow); // Greater Good: "the sacrificed creature's power"
         game.lastSacMv = Bot.cmcOfInst(c, def); // Broadside Bombardiers: "the sacrificed permanent's mana value"
         game.lastSacTough = Math.max(0, Bot.stats(c, def(c.id)).tou); // Felothar: "the sacrificed creature's toughness"
+        game.lastSacCard = { id: c.id, name: c.name, typeLine: c.typeLine, custom: c.custom || null }; // Cleaver Skaab: "copies of the sacrificed creature"
         Game.log(game, `Sacrificed ${c.name} for ${inst.name}.`);
         Game.move(game, id, c.commander ? 'command' : 'graveyard');
         if (hasBot()) Bot.sacrificed(game, game, c, def, effectCtx()); // Rapacious Guest: "Whenever you sacrifice a Food, …"
@@ -4228,8 +4266,10 @@
         spent.push(...(paid.pool ? [`${paid.pool} floating mana`] : []), ...paid.sources, ...(paid.life ? [`${paid.life} life`] : []));
       }
       if (ab.remove) Game.counter(game, iid, ab.remove.kind, -ab.remove.n);
+      if (ab.removeFrom) { const h = counterHost(); if (h) { Game.counter(game, h.c.iid, h.k, -1); spent.push(`a ${h.k} counter from ${h.c.name}`); } }
+      if (ab.removeAllSelf) { game.removedCount = (inst.counters || {})[ab.removeAllSelf] || 0; if (game.removedCount) Game.counter(game, iid, ab.removeAllSelf, -game.removedCount); } // Vish Kal
       if (ab.life) game.life -= ab.life;
-      if (ab.energy) { game.energy -= ab.energy; spent.push(`${ab.energy} energy`); }
+      if (ab.energy) { Bot.payEnergy(game, ab.energy); spent.push(`${ab.energy} energy`); }
       // Counters as a cost: Moxite Refinery's X from the one with the most; Tekuthal's from the others (charge counters first, then the least useful).
       const takeCounters = (list, n) => {
         for (const c of list) {
@@ -4250,7 +4290,7 @@
       }
       if (ab.exileGraveCard) {
         const id = game.zones.graveyard.filter(i => Bot.cardFits(game.cards[i], ab.exileGraveCard)).sort((a, b) => Bot.cmcOfInst(game.cards[a], def) - Bot.cmcOfInst(game.cards[b], def))[0];
-        if (id) { Game.log(game, `Exiled ${game.cards[id].name} from your graveyard for ${inst.name}.`); Game.move(game, id, 'exile'); }
+        if (id) { Game.log(game, `Exiled ${game.cards[id].name} from your graveyard for ${inst.name}.`); Game.move(game, id, 'exile'); game.lastExiledCard = game.cards[id]; } // Tawnos, Solemn Survivor copies it
       }
       if (ab.bounceSelf) Game.move(game, iid, inst.commander ? 'command' : 'hand'); // Rootha: "Return Rootha to its owner's hand" (a commander may go to the command zone)
       (ab.tapPicks || []).forEach(id => { const c = game.cards[id]; if (c) { c.tapped = true; c.tappedFor = null; } });
@@ -4260,6 +4300,8 @@
       (ab.tapPicks || []).forEach(id => { if (game.cards[id]) Bot.tappedWatch(game, game, game.cards[id], def, effectCtx()); });
       if (ab.bouncePick && game.cards[ab.bouncePick]) Game.move(game, ab.bouncePick, 'hand');
       if (ab.addCounter) Game.counter(game, iid, ab.addCounter, 1); // Mazemind Tome's page counter
+      if (/\bartifact\b/i.test(inst.typeLine || '')) game.lastArtifactAbility = { iid, effect: ab.effect, turn: game.turn }; // Tawnos, Urza's Apprentice copies it
+      game.lastAbility = { iid, effect: ab.effect, turn: game.turn, sacrificed: !!(ab.sacrifice || (sacs && sacs.length)) }; // Ashnod the Uncaring copies it
       const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
       Game.log(game, `Activated ${inst.name}: ${ab.effect}${spent.length ? ` (paid with ${spent.join(', ')})` : ''}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
       if (ab.sacrifice) {
@@ -5627,6 +5669,16 @@
       return showMenu(e.clientX, e.clientY, [{ label: `Take ${goat.name}`, hint: `${nab.cost}: draw a card, a ${nab.kind} counter on it`, action: () => {
         if (!Game.autoPay(JSON.parse(JSON.stringify(game)), nab.cost)) return status(`Not enough untapped mana to take ${goat.name} (${nab.cost}).`, 'warn', 8000);
         act(() => { Game.autoPay(game, nab.cost); Bot.nab(game, game, goat, def); });
+      } }]);
+    }
+    // Xantcha on Opp's side: "{3}: Xantcha's controller loses 2 life and you draw a card. Any player may activate this ability."
+    const xo = game && hasBot() && e.target.closest('[data-oiid]');
+    const xan = xo && xo.dataset.opid === BOT && game.bot.s.cards[xo.dataset.oiid];
+    const any = xan && xan.zone === 'battlefield' && Bot.anyPlayerAbility(xan, def);
+    if (any) {
+      return showMenu(e.clientX, e.clientY, [{ label: `Use ${xan.name}`, hint: `${any.cost}: Opp loses ${any.life} life, you draw a card`, action: () => {
+        if (!Game.autoPay(JSON.parse(JSON.stringify(game)), any.cost)) return status(`Not enough untapped mana (${any.cost}).`, 'warn', 8000);
+        act(() => { Game.autoPay(game, any.cost); game.oppLife -= any.life; Game.drawCards(game, 1); Game.log(game, `${xan.name}: Opp lost ${any.life} life and you drew a card.`); });
       } }]);
     }
 

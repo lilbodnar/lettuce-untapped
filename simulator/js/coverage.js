@@ -34,20 +34,24 @@ const Coverage = (() => {
 
   // Words that don't change the game once you're playing (or that you just follow, like flash).
   const NOTHING_TO_DO = ['partner', 'partner with', 'friends forever', 'choose a background', 'doctor\'s companion', 'flash', 'enchant',
-    'changeling', 'devoid']; // changeling: every creature type (bot.js's isA reads it); devoid: colorless (the card's colors say so)
+    'changeling', 'devoid', // changeling: every creature type (bot.js's isA reads it); devoid: colorless (the card's colors say so)
+    'split second']; // split second: Opp doesn't counter it (bot.js's oppCounters)
   // Done for you when you cast it (app.js asks), but Opp never uses them.
   const YOURS_ONLY = ['offspring', 'freerunning', 'madness', 'cycling', 'transmute', 'aftermath', 'ninjutsu', 'flashback', 'harmonize', 'dredge',
     'impending', 'bestow', 'mutate', 'morph', 'megamorph', 'suspend', 'basic landcycling',
     'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash',
-    'replicate']; // replicate: costChoices, then spellCast's copies (an Aura's: enterTrigger's token copies)
+    'replicate', // replicate: costChoices, then spellCast's copies (an Aura's: enterTrigger's token copies)
+    'emerge']; // emerge: costChoices (app.js sacrifices the creature)
   // Done on every table (bot.js).
   const DONE_KEYWORDS = ['modular', 'extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
-    'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace', 'ravenous']; // modular: game.js entersWithCounters, afterDeath // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
+    'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace', 'ravenous', 'umbra armor', // umbra armor: bot.js's regenerates
+    'graft']; // graft: game.js's entersWithCounters (its counters aren't moved) // modular: game.js entersWithCounters, afterDeath // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
 
   function keywordLine(card, line) {
     if (P.BOAST_DISCOUNT.test(line)) return null; // a rule about boast, not the keyword (STATIC_DONE)
+    if (/^partner with [^.]+$/i.test(line)) return { you: true, opp: true, gaps: [] }; // Silvar: "Partner with Trynn, Champion of Freedom" (a name, not champion)
     const parts = line.toLowerCase().replace(/\.$/, '').split(/,\s*|;\s*/).map(p => p.trim()).filter(Boolean);
     const starts = (p, k) => p === k || p.startsWith(k + ' ') || p.startsWith(k + '—');
     const known = p => P.isKeyword(p, B.KEYWORDS) || P.isKeyword(p, P.OTHER_KEYWORDS) || YOURS_ONLY.some(k => starts(p, k)) || DONE_KEYWORDS.some(k => starts(p, k)) || NOTHING_TO_DO.some(k => starts(p, k));
@@ -65,6 +69,8 @@ const Coverage = (() => {
       if (B.KEYWORDS.some(k => p === k || p.startsWith(k + ' ') || p.startsWith(k + '—'))) continue;
       if (name === 'equip') { if (!B.equipCost(p)) gap(out, 'you', 'keyword', 'equip (cost that isn\'t mana)'); gap(out, 'opp', 'keyword', 'equip (Opp never equips)'); continue; }
       if (name === 'crew') { gap(out, 'opp', 'keyword', 'crew (Opp never crews)'); continue; }
+      // Reconfigure: attached like an Equipment for its mana cost (it's no creature then: game.js's isCreature)
+      if (name === 'reconfigure' || name === 'reconfigure—pay') { if (!B.equipCost(p)) gap(out, 'you', 'keyword', 'reconfigure (cost that isn\'t mana)'); gap(out, 'opp', 'keyword', 'reconfigure (Opp never attaches it)'); continue; }
       const kw = P.OTHER_KEYWORDS.find(k => p === k || p.startsWith(k + ' ') || p.startsWith(k + '—')) || name;
       gap(out, 'both', 'keyword', kw);
     }
@@ -151,6 +157,9 @@ const Coverage = (() => {
       /^when this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking\.?$/i, // Misleading Signpost (one opponent here)
     ];
     if (DONE.some(re => re.test(line)) || P.DOVESCAPE.test(line)) return out; // Dovescape (bot.js's doveCounter)
+    // The 16–20-cards-left precons (bot.js's B29): done whole, or the effect after them runs.
+    if (P.B29.TRIGGERS.some(re => re.test(line))) return out;
+    for (const re of P.B29.THEN) if ((m = re.exec(line))) { effectGaps('both', m[1]); return out; }
     if (P.MARVEL_COPY.test(line)) return out; // Captain Marvel, Apex Avenger (bot.js's countersPut)
     if ((m = P.SELF_TARGETED.exec(line)) && self(m[1])) { effectGaps('both', m[2]); return out; } // Black Bolt (bot.js's applyTarget)
     if ((m = P.ANY_TARGETED.exec(line)) && self(m[1])) { effectGaps('both', m[3]); return out; } // Angelic Cub (bot.js's applyTarget)
@@ -209,7 +218,7 @@ const Coverage = (() => {
     // Equipment: "Whenever equipped creature attacks / deals combat damage / dies, …" (Sword of Hours, Heirloom Blade)
     if ((m = /^whenever equipped creature (?:attacks|deals combat damage|dies), (?:you may )?(.+)$/i.exec(line))) { effectGaps('you', m[1]); gap(out, 'opp', 'keyword', 'equip (Opp never equips)'); return out; }
     // Songbirds' Blessing: an aura's "Whenever enchanted creature attacks, …" (attachBonus makes it the creature's own).
-    if ((m = /^whenever (?:enchanted|equipped) creature (?:attacks|deals combat damage(?: to a player)?|dies), (?:you may )?(.+)$/i.exec(line))) { effectGaps('you', m[1]); gap(out, 'opp', 'keyword', 'aura (Opp never casts auras)'); return out; }
+    if ((m = /^whenever (?:enchanted|equipped) creature (?:attacks|deals combat damage(?: to a player)?|dies), (?:you may )?(.+)$/i.exec(line))) { effectGaps('you', m[1].replace(/\bthat many\b/gi, '1')); gap(out, 'opp', 'keyword', 'aura (Opp never casts auras)'); return out; } // Pollenbright Wings: "that many" (hitTrigger)
     // Maddening Hex (on an opponent)
     if ((m = /^whenever enchanted player casts a noncreature spell, (.+)$/i.exec(line))) { effectGaps('you', m[1]); return out; }
     // Illuna, Nethroi: "Whenever this creature mutates, …" (Opp never mutates)
@@ -489,10 +498,11 @@ const Coverage = (() => {
     if (B.handAbilities(inst, () => ({ oracle: line })).some(a => a.kind === 'landMana')) { gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
     // Magma Opus: "{U/R}{U/R}, Discard this card: Create a Treasure token." (app.js's hand menu)
     const hd = B.handAbilities(inst, () => ({ oracle: line })).find(a => a.kind === 'discardEffect');
-    if (hd) { notRun(hd.effect, inst).forEach(p => gap(out, 'you', 'activated', p)); gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
+    // (Arashi's channel: you say X)
+    if (hd) { notRun(/\{X\}/i.test(hd.cost) ? hd.effect.replace(/\bx\b/gi, '1') : hd.effect, inst).forEach(p => gap(out, 'you', 'activated', p)); gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
     const ab = B.activatedAbilities(inst, () => ({ oracle: line }))[0];
     if (!ab) { gap(out, 'both', 'cost', m[1]); return out; }
-    const left = notRun(/\{X\}/i.test(ab.mana) || ab.removeAnyX || ab.sacX || ab.tapX ? ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats, Moxite Refinery: you pick X
+    const left = notRun(/\{X\}/i.test(ab.mana) || ab.removeAnyX || ab.sacX || ab.tapX || ab.energyX || ab.removeX ?ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats, Moxite Refinery: you pick X
     left.forEach(p => gap(out, 'you', 'activated', p));
     // Opp uses only "…: Regenerate this" (to save a creature) and its fetch lands (crackFetches).
     const regen = /^regenerate (.+?)\.?$/i.exec(ab.effect.trim());
@@ -640,6 +650,7 @@ const Coverage = (() => {
     // "One drop legendaries?" (Child of Alara).
     P.ZABAZ, // Zabaz, the Glimmerwasp (afterDeath's modular)
     G.LEYLINE, // Leyline of the Guildpact, Quicksilver (game.js's beginLeylines: always)
+    ...P.B29.STATIC, // the 16–20-cards-left precons (bot.js's B29)
   ];
 
   function staticLine(card, line, inst) {
@@ -763,7 +774,7 @@ const Coverage = (() => {
       const has = /\bhas (.+?)(?:\.|$)/i.exec(m[1].replace(/"[^"]*"/g, '').replace(/,? and is an? \w+ in addition to its other types/i, '')
         .replace(/ and mobilize x, where x is its power$/i, '')); // Infantry Shield (attachBonus' line)
       // Also "annihilator 2", "ward {2}", "protection from creatures" and "is goaded" (attachBonus, syncAuras).
-      const unknown = has ? kwOnly(has[1]).filter(k => !B.KEYWORDS.includes(k.replace(/ \d+$/, '')) && !/^ward \{\d+\}$|^is goaded$/.test(k) && !P.protectionKw(k)) : [];
+      const unknown = has ? kwOnly(has[1]).filter(k => !B.KEYWORDS.includes(k.replace(/ \d+$/, '')) && !/^ward \{\d+\}$|^is goaded$/.test(k) && !P.protectionKw(k) && !P.B29.ATTACH_OK.some(re => re.test(k))) : [];
       // Thornbite Staff: abilities it gives in quotes are read like the creature's own.
       const given = { id: 'given', name: 'this creature', typeLine: 'Creature' };
       (b.lines || []).forEach(l => {
