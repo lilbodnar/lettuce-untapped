@@ -157,6 +157,9 @@ const Coverage = (() => {
       /^when this artifact enters during the declare attackers step, you may reselect which player or permanent target attacking creature is attacking\.?$/i, // Misleading Signpost (one opponent here)
     ];
     if (DONE.some(re => re.test(line)) || P.DOVESCAPE.test(line)) return out; // Dovescape (bot.js's doveCounter)
+    // "vampires" (bot.js's VAMP): Anje Falkenrath (discardWatch), Battle Strain (blockWatch), Angelic Renewal (graveWatch); Along the Crooked Way's effect runs
+    if (P.VAMP.MADNESS_UNTAP.test(line) || P.VAMP.BATTLE_STRAIN.test(line) || P.VAMP.RENEWAL.test(line)) return out;
+    if ((m = P.VAMP.CROOKED.exec(line))) { effectGaps('both', m[1]); return out; }
     // The 16–20-cards-left precons (bot.js's B29): done whole, or the effect after them runs.
     if (P.B29.TRIGGERS.some(re => re.test(line))) return out;
     for (const re of P.B29.THEN) if ((m = re.exec(line))) { effectGaps('both', m[1]); return out; }
@@ -392,7 +395,7 @@ const Coverage = (() => {
       else gap(out, 'both', 'trigger', t.head);
       return out;
     }
-    if ((m = /^whenever one or more (.+?) you control attack, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[2].replace(/\bthat many\b/gi, '1')); return out; }
+    if ((m = /^whenever one or more (.+?) you control attack, (?:you may )?(.+)$/i.exec(line))) { effectGaps('both', m[2].replace(/\bthat (?:many|much)\b/gi, '1')); return out; } // Amazing Alliance: "that much life"
     // Ashcoat: "At the beginning of your end step, you may mill four cards. If you do, return up to two …"
     if (new RegExp(`^at the beginning of your end step, (?:you may )?mill ${P.COUNT} cards?\\. if you do, return up to ${P.COUNT} (.+?) cards? from your graveyard to your hand\\.?$`, 'i').test(line)) return out;
     // "At the beginning of your upkeep / end step / combat on your turn, …" (Rat King, Verminister: "if a permanent left the battlefield …")
@@ -650,6 +653,9 @@ const Coverage = (() => {
     // "One drop legendaries?" (Child of Alara).
     P.ZABAZ, // Zabaz, the Glimmerwasp (afterDeath's modular)
     G.LEYLINE, // Leyline of the Guildpact, Quicksilver (game.js's beginLeylines: always)
+    // "vampires" (Edgar Markov).
+    P.VAMP.BLOODLETTER, // Bloodletter of Aclazotz (lifeChanged)
+    P.VAMP.PLOT, // Brimstone Roundup (handAbilities' plot)
     ...P.B29.STATIC, // the 16–20-cards-left precons (bot.js's B29)
   ];
 

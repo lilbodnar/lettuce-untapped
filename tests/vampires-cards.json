@@ -1,0 +1,1012 @@
+{
+ "Edgar Markov": {
+  "id": "Edgar Markov",
+  "name": "Edgar Markov",
+  "typeLine": "Legendary Creature — Vampire Knight",
+  "manaCost": "{3}{R}{W}{B}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "R",
+   "W"
+  ],
+  "oracle": "Eminence — Whenever you cast another Vampire spell, if Edgar is in the command zone or on the battlefield, create a 1/1 black Vampire creature token.\nFirst strike, haste\nWhenever Edgar attacks, put a +1/+1 counter on each Vampire you control.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Mathas, Fiend Seeker": {
+  "id": "Mathas, Fiend Seeker",
+  "name": "Mathas, Fiend Seeker",
+  "typeLine": "Legendary Creature — Vampire",
+  "manaCost": "{R}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R",
+   "W"
+  ],
+  "oracle": "Menace\nAt the beginning of your end step, put a bounty counter on target creature an opponent controls. For as long as that creature has a bounty counter on it, it has \"When this creature dies, each opponent draws a card and gains 2 life.\"",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Olivia, Opulent Outlaw": {
+  "id": "Olivia, Opulent Outlaw",
+  "name": "Olivia, Opulent Outlaw",
+  "typeLine": "Legendary Creature — Vampire Assassin",
+  "manaCost": "{1}{R}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R",
+   "W"
+  ],
+  "oracle": "Flying, lifelink\nWhenever one or more outlaws you control deal combat damage to a player, create a Treasure token. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)\n{3}, Sacrifice two Treasures: Put two +1/+1 counters on each creature you control. Activate only as a sorcery.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Chosen of Markov // Markov's Servant": {
+  "id": "Chosen of Markov // Markov's Servant",
+  "name": "Chosen of Markov // Markov's Servant",
+  "typeLine": "Creature — Human // Creature — Vampire",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Chosen of Markov: {T}, Tap an untapped Vampire you control: Transform this creature.\n\nMarkov's Servant: ",
+  "power": "2",
+  "toughness": "2",
+  "backPT": "4/4"
+ },
+ "Theoretical Necromancer": {
+  "id": "Theoretical Necromancer",
+  "name": "Theoretical Necromancer",
+  "typeLine": "Creature — Vampire Warlock",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{3}{B}, Exile this card from your graveyard: Return another target creature card from your graveyard to your hand.",
+  "power": "4",
+  "toughness": "1"
+ },
+ "Bloodmad Vampire": {
+  "id": "Bloodmad Vampire",
+  "name": "Bloodmad Vampire",
+  "typeLine": "Creature — Vampire Berserker",
+  "manaCost": "{2}{R}",
+  "cmc": 3,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Whenever this creature deals combat damage to a player, put a +1/+1 counter on it.\nMadness {1}{R} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+  "power": "4",
+  "toughness": "1"
+ },
+ "Charismatic Conqueror": {
+  "id": "Charismatic Conqueror",
+  "name": "Charismatic Conqueror",
+  "typeLine": "Creature — Vampire Soldier",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Vigilance\nWhenever an artifact or creature an opponent controls enters untapped, they may tap that permanent. If they don't, you create a 1/1 white Vampire creature token with lifelink.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Bloodline Keeper // Lord of Lineage": {
+  "id": "Bloodline Keeper // Lord of Lineage",
+  "name": "Bloodline Keeper // Lord of Lineage",
+  "typeLine": "Creature — Vampire // Creature — Vampire",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Bloodline Keeper: Flying\n{T}: Create a 2/2 black Vampire creature token with flying.\n{B}: Transform this creature. Activate only if you control five or more Vampires.\n\nLord of Lineage: Flying\nOther Vampire creatures you control get +2/+2.\n{T}: Create a 2/2 black Vampire creature token with flying.",
+  "power": "3",
+  "toughness": "3",
+  "backPT": "5/5"
+ },
+ "Baron Bertram Graywater": {
+  "id": "Baron Bertram Graywater",
+  "name": "Baron Bertram Graywater",
+  "typeLine": "Legendary Creature — Vampire Noble",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Whenever one or more tokens you control enter, create a 1/1 black Vampire Rogue creature token with lifelink. This ability triggers only once each turn.\n{1}{B}, Sacrifice another creature or artifact: Draw a card.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Edgar, Charmed Groom // Edgar Markov's Coffin": {
+  "id": "Edgar, Charmed Groom // Edgar Markov's Coffin",
+  "name": "Edgar, Charmed Groom // Edgar Markov's Coffin",
+  "typeLine": "Legendary Creature — Vampire Noble // Legendary Artifact",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Edgar, Charmed Groom: Other Vampires you control get +1/+1.\nWhen Edgar dies, return it to the battlefield transformed under its owner's control.\n\nEdgar Markov's Coffin: At the beginning of your upkeep, create a 1/1 white and black Vampire creature token with lifelink and put a bloodline counter on Edgar Markov's Coffin. Then if there are three or more bloodline counters on it, remove those counters and transform it.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Dusk Legion Sergeant": {
+  "id": "Dusk Legion Sergeant",
+  "name": "Dusk Legion Sergeant",
+  "typeLine": "Creature — Vampire Soldier",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Menace\n{1}{B}, Sacrifice this creature: Each nontoken Vampire creature you control gains persist until end of turn. (When it dies, if it had no -1/-1 counters on it, return it to the battlefield under its owner's control with a -1/-1 counter on it.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Elenda, the Dusk Rose": {
+  "id": "Elenda, the Dusk Rose",
+  "name": "Elenda, the Dusk Rose",
+  "typeLine": "Legendary Creature — Vampire Knight",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Lifelink\nWhenever another creature dies, put a +1/+1 counter on Elenda.\nWhen Elenda dies, create X 1/1 white Vampire creature tokens with lifelink, where X is Elenda's power.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Martyr of Dusk": {
+  "id": "Martyr of Dusk",
+  "name": "Martyr of Dusk",
+  "typeLine": "Creature — Vampire Soldier",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature dies, create a 1/1 white Vampire creature token with lifelink.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Paladin of the Bloodstained": {
+  "id": "Paladin of the Bloodstained",
+  "name": "Paladin of the Bloodstained",
+  "typeLine": "Creature — Vampire Knight",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, create a 1/1 white Vampire creature token with lifelink.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Mavren Fein, Dusk Apostle": {
+  "id": "Mavren Fein, Dusk Apostle",
+  "name": "Mavren Fein, Dusk Apostle",
+  "typeLine": "Legendary Creature — Vampire Cleric",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever one or more nontoken Vampires you control attack, create a 1/1 white Vampire creature token with lifelink.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Scion of Opulence": {
+  "id": "Scion of Opulence",
+  "name": "Scion of Opulence",
+  "typeLine": "Creature — Vampire Noble",
+  "manaCost": "{2}{R}",
+  "cmc": 3,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Whenever this creature or another nontoken Vampire you control dies, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\n{R}, Sacrifice two artifacts: Exile the top card of your library. You may play that card this turn.",
+  "power": "3",
+  "toughness": "1",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Timothar, Baron of Bats": {
+  "id": "Timothar, Baron of Bats",
+  "name": "Timothar, Baron of Bats",
+  "typeLine": "Legendary Creature — Vampire Noble",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Ward—Discard a card.\nWhenever another nontoken Vampire you control dies, you may pay {1} and exile it. If you do, create a 1/1 black Bat creature token with flying. It gains \"When this token deals combat damage to a player, sacrifice it and return the exiled card to the battlefield tapped.\"",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Vito, Fanatic of Aclazotz": {
+  "id": "Vito, Fanatic of Aclazotz",
+  "name": "Vito, Fanatic of Aclazotz",
+  "typeLine": "Legendary Creature — Vampire Demon",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Flying\nWhenever you sacrifice another permanent, you gain 2 life if this is the first time this ability has resolved this turn. If it's the second time, each opponent loses 2 life. If it's the third time, create a 4/3 white and black Vampire Demon creature token with flying.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Anje Falkenrath": {
+  "id": "Anje Falkenrath",
+  "name": "Anje Falkenrath",
+  "typeLine": "Legendary Creature — Vampire",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Haste\n{T}, Discard a card: Draw a card.\nWhenever you discard a card, if it has madness, untap Anje Falkenrath.",
+  "power": "1",
+  "toughness": "3"
+ },
+ "Callous Bloodmage": {
+  "id": "Callous Bloodmage",
+  "name": "Callous Bloodmage",
+  "typeLine": "Creature — Vampire Warlock",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this creature enters, choose one —\n• Create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"\n• You draw a card and you lose 1 life.\n• Exile target player's graveyard.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Bloodtracker": {
+  "id": "Bloodtracker",
+  "name": "Bloodtracker",
+  "typeLine": "Creature — Vampire Wizard",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flying\n{B}, Pay 2 life: Put a +1/+1 counter on this creature.\nWhen this creature leaves the battlefield, draw a card for each +1/+1 counter on it.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Dusk Legion Duelist": {
+  "id": "Dusk Legion Duelist",
+  "name": "Dusk Legion Duelist",
+  "typeLine": "Creature — Vampire Soldier",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Vigilance\nWhenever one or more +1/+1 counters are put on this creature, draw a card. This ability triggers only once each turn.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Crossway Troublemakers": {
+  "id": "Crossway Troublemakers",
+  "name": "Crossway Troublemakers",
+  "typeLine": "Creature — Vampire",
+  "manaCost": "{5}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Attacking Vampires you control have deathtouch and lifelink. (Any amount of damage they deal to a creature is enough to destroy it. Damage dealt by those creatures also causes their controller to gain that much life.)\nWhenever a Vampire you control dies, you may pay 2 life. If you do, draw a card.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Henrika Domnathi // Henrika, Infernal Seer": {
+  "id": "Henrika Domnathi // Henrika, Infernal Seer",
+  "name": "Henrika Domnathi // Henrika, Infernal Seer",
+  "typeLine": "Legendary Creature — Vampire // Legendary Creature — Vampire",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Henrika Domnathi: Flying\nAt the beginning of combat on your turn, choose one that hasn't been chosen —\n• Each player sacrifices a creature of their choice.\n• You draw a card and you lose 1 life.\n• Transform Henrika.\n\nHenrika, Infernal Seer: Flying, deathtouch, lifelink\n{1}{B}{B}: Each creature you control with flying, deathtouch, and/or lifelink gets +1/+0 until end of turn.",
+  "power": "1",
+  "toughness": "3",
+  "backPT": "3/4"
+ },
+ "Salt Vampire": {
+  "id": "Salt Vampire",
+  "name": "Salt Vampire",
+  "typeLine": "Creature — Vampire Shapeshifter",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Lifelink\nWhen this creature enters, look at target opponent's hand. You may choose a nonland card from it. If you do, that player exiles that card, then draws a card.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Aegis of Honor": {
+  "id": "Aegis of Honor",
+  "name": "Aegis of Honor",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next time an instant or sorcery spell would deal damage to you this turn, that spell deals that damage to its controller instead."
+ },
+ "Aether Sting": {
+  "id": "Aether Sting",
+  "name": "Aether Sting",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{R}",
+  "cmc": 4,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Whenever an opponent casts a creature spell, this enchantment deals 1 damage to that player."
+ },
+ "Ajani's Welcome": {
+  "id": "Ajani's Welcome",
+  "name": "Ajani's Welcome",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature you control enters, you gain 1 life."
+ },
+ "Ajani's Mantra": {
+  "id": "Ajani's Mantra",
+  "name": "Ajani's Mantra",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, you may gain 1 life."
+ },
+ "Along the Crooked Way": {
+  "id": "Along the Crooked Way",
+  "name": "Along the Crooked Way",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, return target creature card from your graveyard to your hand.\nWhenever a creature card leaves your graveyard, amass Goblins 1.\n{1}{B}: Goblins and Orcs you control gain menace until end of turn."
+ },
+ "All-Out Assault": {
+  "id": "All-Out Assault",
+  "name": "All-Out Assault",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{R}{W}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R",
+   "W"
+  ],
+  "oracle": "Creatures you control get +1/+1 and have deathtouch.\nWhen this enchantment enters, if it's your main phase, there is an additional combat phase after this phase followed by an additional main phase. When you next attack this turn, untap each creature you control."
+ },
+ "Amazing Alliance": {
+  "id": "Amazing Alliance",
+  "name": "Amazing Alliance",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control get +1/+1.\nWhenever you attack with one or more legendary creatures, you gain that much life."
+ },
+ "Angelic Gift": {
+  "id": "Angelic Gift",
+  "name": "Angelic Gift",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nWhen this Aura enters, draw a card.\nEnchanted creature has flying."
+ },
+ "Angelic Chorus": {
+  "id": "Angelic Chorus",
+  "name": "Angelic Chorus",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature you control enters, you gain life equal to its toughness."
+ },
+ "Angelic Renewal": {
+  "id": "Angelic Renewal",
+  "name": "Angelic Renewal",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature is put into your graveyard from the battlefield, you may sacrifice this enchantment. If you do, return that card to the battlefield."
+ },
+ "Archetype of Aggression": {
+  "id": "Archetype of Aggression",
+  "name": "Archetype of Aggression",
+  "typeLine": "Enchantment Creature — Human Warrior",
+  "manaCost": "{1}{R}{R}",
+  "cmc": 3,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Creatures you control have trample.\nCreatures your opponents control lose trample and can't have or gain trample.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Barrage of Expendables": {
+  "id": "Barrage of Expendables",
+  "name": "Barrage of Expendables",
+  "typeLine": "Enchantment",
+  "manaCost": "{R}",
+  "cmc": 1,
+  "colors": [
+   "R"
+  ],
+  "oracle": "{R}, Sacrifice a creature: This enchantment deals 1 damage to any target."
+ },
+ "Battle Strain": {
+  "id": "Battle Strain",
+  "name": "Battle Strain",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{R}",
+  "cmc": 2,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Whenever a creature blocks, this enchantment deals 1 damage to that creature's controller."
+ },
+ "Barbed Field": {
+  "id": "Barbed Field",
+  "name": "Barbed Field",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{R}{R}",
+  "cmc": 4,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Enchant land\nEnchanted land has \"{T}: This land deals 1 damage to any target.\""
+ },
+ "Berserkers' Onslaught": {
+  "id": "Berserkers' Onslaught",
+  "name": "Berserkers' Onslaught",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{R}{R}",
+  "cmc": 5,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Attacking creatures you control have double strike."
+ },
+ "Bitter Reunion": {
+  "id": "Bitter Reunion",
+  "name": "Bitter Reunion",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{R}",
+  "cmc": 2,
+  "colors": [
+   "R"
+  ],
+  "oracle": "When this enchantment enters, you may discard a card. If you do, draw two cards.\n{1}, Sacrifice this enchantment: Creatures you control gain haste until end of turn."
+ },
+ "Blood Mist": {
+  "id": "Blood Mist",
+  "name": "Blood Mist",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{R}",
+  "cmc": 4,
+  "colors": [
+   "R"
+  ],
+  "oracle": "At the beginning of combat on your turn, target creature you control gains double strike until end of turn."
+ },
+ "Bravado": {
+  "id": "Bravado",
+  "name": "Bravado",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{R}",
+  "cmc": 2,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+1 for each other creature you control."
+ },
+ "Brimstone Roundup": {
+  "id": "Brimstone Roundup",
+  "name": "Brimstone Roundup",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{R}",
+  "cmc": 2,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Whenever you cast your second spell each turn, create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\"\nPlot {2}{R} (You may pay {2}{R} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)"
+ },
+ "Burning Anger": {
+  "id": "Burning Anger",
+  "name": "Burning Anger",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{4}{R}",
+  "cmc": 5,
+  "colors": [
+   "R"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has \"{T}: This creature deals damage equal to its power to any target.\""
+ },
+ "Cordial Vampire": {
+  "id": "Cordial Vampire",
+  "name": "Cordial Vampire",
+  "typeLine": "Creature — Vampire",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever this creature or another creature dies, put a +1/+1 counter on each Vampire you control.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Captivating Vampire": {
+  "id": "Captivating Vampire",
+  "name": "Captivating Vampire",
+  "typeLine": "Creature — Vampire",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Other Vampire creatures you control get +1/+1.\nTap five untapped Vampires you control: Gain control of target creature. It becomes a Vampire in addition to its other types.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Indulgent Aristocrat": {
+  "id": "Indulgent Aristocrat",
+  "name": "Indulgent Aristocrat",
+  "typeLine": "Creature — Vampire Noble",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Lifelink\n{2}, Sacrifice a creature: Put a +1/+1 counter on each Vampire you control.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Legion Lieutenant": {
+  "id": "Legion Lieutenant",
+  "name": "Legion Lieutenant",
+  "typeLine": "Creature — Vampire Knight",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Other Vampires you control get +1/+1.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Sanctum Seeker": {
+  "id": "Sanctum Seeker",
+  "name": "Sanctum Seeker",
+  "typeLine": "Creature — Vampire Knight",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a Vampire you control attacks, each opponent loses 1 life and you gain 1 life.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Stromkirk Captain": {
+  "id": "Stromkirk Captain",
+  "name": "Stromkirk Captain",
+  "typeLine": "Creature — Vampire Soldier",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "First strike\nOther Vampire creatures you control get +1/+1 and have first strike.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Cruel Celebrant": {
+  "id": "Cruel Celebrant",
+  "name": "Cruel Celebrant",
+  "typeLine": "Creature — Vampire",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Whenever this creature or another creature or planeswalker you control dies, each opponent loses 1 life and you gain 1 life.",
+  "power": "1",
+  "toughness": "2"
+ },
+ "Bloodthirsty Conqueror": {
+  "id": "Bloodthirsty Conqueror",
+  "name": "Bloodthirsty Conqueror",
+  "typeLine": "Creature — Vampire Knight",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flying, deathtouch\nWhenever an opponent loses life, you gain that much life. (Damage causes loss of life.)",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Command Tower": {
+  "id": "Command Tower",
+  "name": "Command Tower",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add one mana of any color in your commander's color identity.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Arcane Signet": {
+  "id": "Arcane Signet",
+  "name": "Arcane Signet",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{T}: Add one mana of any color in your commander's color identity.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Sol Ring": {
+  "id": "Sol Ring",
+  "name": "Sol Ring",
+  "typeLine": "Artifact",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "{T}: Add {C}{C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Dragonskull Summit": {
+  "id": "Dragonskull Summit",
+  "name": "Dragonskull Summit",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a Swamp or a Mountain.\n{T}: Add {B} or {R}.",
+  "producedMana": [
+   "B",
+   "R"
+  ]
+ },
+ "Isolated Chapel": {
+  "id": "Isolated Chapel",
+  "name": "Isolated Chapel",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a Plains or a Swamp.\n{T}: Add {W} or {B}.",
+  "producedMana": [
+   "B",
+   "W"
+  ]
+ },
+ "Swords to Plowshares": {
+  "id": "Swords to Plowshares",
+  "name": "Swords to Plowshares",
+  "typeLine": "Instant",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature. Its controller gains life equal to its power."
+ },
+ "Secluded Courtyard": {
+  "id": "Secluded Courtyard",
+  "name": "Secluded Courtyard",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type or activate an ability of a creature source of the chosen type.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Unclaimed Territory": {
+  "id": "Unclaimed Territory",
+  "name": "Unclaimed Territory",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Path of Ancestry": {
+  "id": "Path of Ancestry",
+  "name": "Path of Ancestry",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add one mana of any color in your commander's color identity. When that mana is spent to cast a creature spell that shares a creature type with your commander, scry 1. (Look at the top card of your library. You may put that card on the bottom.)",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Bloodletter of Aclazotz": {
+  "id": "Bloodletter of Aclazotz",
+  "name": "Bloodletter of Aclazotz",
+  "typeLine": "Creature — Vampire Demon",
+  "manaCost": "{1}{B}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flying\nIf an opponent would lose life during your turn, they lose twice that much life instead. (Damage causes loss of life.)",
+  "power": "2",
+  "toughness": "4"
+ },
+ "Nomad Outpost": {
+  "id": "Nomad Outpost",
+  "name": "Nomad Outpost",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add {R}, {W}, or {B}.",
+  "producedMana": [
+   "B",
+   "R",
+   "W"
+  ]
+ },
+ "Blood Crypt": {
+  "id": "Blood Crypt",
+  "name": "Blood Crypt",
+  "typeLine": "Land — Swamp Mountain",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {B} or {R}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "producedMana": [
+   "B",
+   "R"
+  ]
+ },
+ "Cavern of Souls": {
+  "id": "Cavern of Souls",
+  "name": "Cavern of Souls",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Anguished Unmaking": {
+  "id": "Anguished Unmaking",
+  "name": "Anguished Unmaking",
+  "typeLine": "Instant",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Exile target nonland permanent. You lose 3 life."
+ },
+ "Sacred Foundry": {
+  "id": "Sacred Foundry",
+  "name": "Sacred Foundry",
+  "typeLine": "Land — Mountain Plains",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {R} or {W}.)\nAs this land enters, you may pay 2 life. If you don't, it enters tapped.",
+  "producedMana": [
+   "R",
+   "W"
+  ]
+ },
+ "Three Tree City": {
+  "id": "Three Tree City",
+  "name": "Three Tree City",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "As Three Tree City enters, choose a creature type.\n{T}: Add {C}.\n{2}, {T}: Choose a color. Add an amount of mana of that color equal to the number of creatures you control of the chosen type.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Sorin, Lord of Innistrad": {
+  "id": "Sorin, Lord of Innistrad",
+  "name": "Sorin, Lord of Innistrad",
+  "typeLine": "Legendary Planeswalker — Sorin",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "+1: Create a 1/1 black Vampire creature token with lifelink.\n−2: You get an emblem with \"Creatures you control get +1/+0.\"\n−6: Destroy up to three target creatures and/or other planeswalkers. Return each card put into a graveyard this way to the battlefield under your control.",
+  "loyalty": "3"
+ },
+ "Damn": {
+  "id": "Damn",
+  "name": "Damn",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature. A creature destroyed this way can't be regenerated.\nOverload {2}{W}{W} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")"
+ },
+ "Caves of Koilos": {
+  "id": "Caves of Koilos",
+  "name": "Caves of Koilos",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add {C}.\n{T}: Add {W} or {B}. This land deals 1 damage to you.",
+  "producedMana": [
+   "B",
+   "C",
+   "W"
+  ]
+ },
+ "Savai Triome": {
+  "id": "Savai Triome",
+  "name": "Savai Triome",
+  "typeLine": "Land — Mountain Plains Swamp",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {R}, {W}, or {B}.)\nThis land enters tapped.\nCycling {3} ({3}, Discard this card: Draw a card.)",
+  "producedMana": [
+   "B",
+   "R",
+   "W"
+  ]
+ },
+ "Luxury Suite": {
+  "id": "Luxury Suite",
+  "name": "Luxury Suite",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you have two or more opponents.\n{T}: Add {B} or {R}.",
+  "producedMana": [
+   "B",
+   "R"
+  ]
+ },
+ "Orzhov Signet": {
+  "id": "Orzhov Signet",
+  "name": "Orzhov Signet",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{1}, {T}: Add {W}{B}.",
+  "producedMana": [
+   "B",
+   "W"
+  ]
+ },
+ "Shattered Sanctum": {
+  "id": "Shattered Sanctum",
+  "name": "Shattered Sanctum",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control two or more other lands.\n{T}: Add {W} or {B}.",
+  "producedMana": [
+   "B",
+   "W"
+  ]
+ },
+ "Reliquary Tower": {
+  "id": "Reliquary Tower",
+  "name": "Reliquary Tower",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "You have no maximum hand size.\n{T}: Add {C}.",
+  "producedMana": [
+   "C"
+  ]
+ }
+}

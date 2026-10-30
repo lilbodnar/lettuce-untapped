@@ -1710,9 +1710,13 @@
     const limits = attackLimits();
     const targets = all.filter(t => t.pw || limits.byPid[t.pid].cap > 0);
     const notes = Object.entries(limits.byPid).filter(([, l]) => l.why).map(([pid, l]) => `${nameOf(pid)}: ${l.why}.`);
-    // "At the beginning of combat on your turn, …", once a turn.
+    // "At the beginning of combat on your turn, …", once a turn. A target among your own creatures (Howling Moon: "target Wolf or
+    // Werewolf you control gets +2/+2 until end of turn") is picked for you: your best one. Other targets you pick.
     if (game.combatTriggerTurn !== game.turn && Bot.phaseTriggers(game, game, 'combat', def, null, true)) {
-      act(() => { game.combatTriggerTurn = game.turn; Bot.phaseTriggers(game, game, 'combat', def, effectCtx()); });
+      const ctx = effectCtx();
+      const pick = ctx.target;
+      ctx.target = (eff, part, src) => (Bot.ownTarget(eff) && Bot.autoTarget(game, game, src, eff, def, true) ? Bot.autoTarget(game, game, src, eff, def) : pick(eff, part, src));
+      act(() => { game.combatTriggerTurn = game.turn; Bot.phaseTriggers(game, game, 'combat', def, ctx); });
     }
     // Opp's Sentinel of the Eternal Watch taps one of your creatures at the beginning of your combat.
     if (hasBot() && game.combatTapTurn !== game.turn && Bot.combatTappers(game.bot.s, def).length) {

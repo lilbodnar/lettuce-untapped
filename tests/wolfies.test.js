@@ -154,3 +154,25 @@ test('Somberwald Alpha pumps a blocked creature; Moonlight Hunt has the Wolves d
   Bot.runEffect(game, cards['Moonlight Hunt'].oracle, ctx(game));
   assert.notEqual(giant.zone, 'battlefield');
 });
+
+test('Howling Moon picks your best Wolf for +2/+2 at the beginning of combat (no target screen)', () => {
+  const ids = ['Howling Moon', 'Somberwald Alpha', 'Wolfir Silverheart', 'Bear', 'Forest'];
+  const game = Game.create(deck('You', ids), defs);
+  game.bot = Bot.create(deck('Opp', ['Bear', 'Forest']), defs, { onDraw: true });
+  const moon = put(game, 'Howling Moon');
+  const small = put(game, 'Somberwald Alpha');
+  const big = put(game, 'Wolfir Silverheart');
+  const bear = put(game, 'Bear');
+  const asked = [];
+  // app.js's openAttack: picks among your own creatures are made for you; the rest still ask
+  const c = ctx(game, { target: (eff, part, src) => (Bot.ownTarget(eff) && Bot.autoTarget(game, game, src, eff, defOf, true) ? Bot.autoTarget(game, game, src, eff, defOf) : asked.push(eff)) });
+  const before = [pt(small), pt(big), pt(bear)];
+  Bot.phaseTriggers(game, game, 'combat', defOf, c);
+  assert.equal(asked.length, 0);
+  const st = Bot.stats(big, defOf(big.id));
+  assert.equal(`${st.pow - 2}/${st.tou - 2}`, before[1]);
+  assert.deepEqual([pt(small), pt(bear)], [before[0], before[2]]);
+  assert.ok(moon);
+  assert.equal(Bot.ownTarget(Bot.targetEffect("destroy target creature you don't control")), false);
+  assert.equal(Bot.ownTarget(Bot.targetEffect('target creature an opponent controls gets -2/-2 until end of turn')), false);
+});
