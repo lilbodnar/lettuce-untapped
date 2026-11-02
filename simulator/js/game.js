@@ -31,7 +31,7 @@ const Game = (() => {
   // hooks.counters(s, inst, kind, n) runs after counters are put on a permanent (Exemplar of Light).
   // hooks.manaTapped(s, inst) after a permanent is tapped for mana (Treasure Nabber); hooks.drawInstead(s, first) can take a draw away (Notion Thief).
   // hooks.graveInstead(s, inst) true sends a card on its way to a graveyard to exile instead (Dauthi Voidwalker).
-  const hooks = { entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null, graveInstead: null, spent: null };
+  const hooks = { milled: null, entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null, graveInstead: null, spent: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -246,7 +246,8 @@ const Game = (() => {
   // Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional {B}." (s.swampExtra, bot.js's refreshGrants)
   const auraMana = (s, land) => attachmentsOf(s, land.iid).map(id => s.cards[id]).filter(a => a.extraManaAura)
     .map(a => (a.extraManaAura === 'chosen' ? [a.chosenColor || 'G'] : MANA.includes(a.extraManaAura) ? [a.extraManaAura] : MANA.slice(0, 5)))
-    .concat(s.swampExtra && /\bswamp\b/i.test(land.typeLine || '') ? Array(s.swampExtra).fill(['B']) : []);
+    .concat(s.swampExtra && /\bswamp\b/i.test(land.typeLine || '') ? Array(s.swampExtra).fill(['B']) : [])
+    .concat(Object.entries(s.colorExtra || {}).filter(([k]) => (producesOf(land) || []).includes(k)).flatMap(([k, n]) => Array(n).fill([k]))); // Caged Sun (bot.js's grantsOnce)
   // The creature Springleaf Drum would tap (an untapped one, tokens first), or null.
   const drumFodder = (s, inst) => {
     const list = s.zones.battlefield.map(id => s.cards[id]).filter(c => c !== inst && !c.tapped && !c.phasedOut && !c.attacking && isCreature(c));
@@ -1715,6 +1716,7 @@ const Game = (() => {
       if (hooks.moved) hooks.moved(s, s.cards[iid], 'library', 'graveyard');
     }
     log(s, `Milled ${count}.`);
+    if (hooks.milled && s.lastMilled.length) hooks.milled(s, s.lastMilled.slice()); // The Wise Mothman, Glowing One (bot.js's milled)
   }
 
   // opts.effect: a card's effect is putting these counters on (not you fixing the number by hand),

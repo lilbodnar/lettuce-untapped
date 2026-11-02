@@ -36,9 +36,8 @@ const ctx = (game, extra = {}) => ({
 const ids = s => s.zones.battlefield.map(i => s.cards[i]);
 test.afterEach(() => { Object.keys(Game.hooks).forEach(k => { Game.hooks[k] = null; }); });
 
-// Not modeled: sectors (Space Beleren), target changes (Psychic Battle), swapped text boxes (Exchange of Words) and
-// draws from another library (Shared Fate).
-const NOT_DONE = ['Space Beleren', 'Psychic Battle', 'Exchange of Words', 'Shared Fate'];
+// Space Beleren, Psychic Battle, Exchange of Words and Shared Fate are done now too (tests/near.test.js).
+const NOT_DONE = [];
 
 test('every card in the 2026 precons is done for you', () => {
   for (const [name, list] of Object.entries(decks)) {

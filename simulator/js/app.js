@@ -998,9 +998,9 @@
       if (!Game.autoPay(JSON.parse(JSON.stringify(game)), ab.cost)) return status(`Not enough untapped mana for ${ab.label}.`, 'warn', 8000);
       return act(() => {
         Game.autoPay(game, ab.cost);
-        Game.move(game, iid, 'graveyard');
+        if (!ab.keep) Game.move(game, iid, 'graveyard'); // Skyscribing's forecast: revealed, kept
         const left = Bot.runEffect(game, ab.effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
-        Game.log(game, `Discarded ${inst.name}: ${ab.effect}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
+        Game.log(game, `${ab.keep ? 'Revealed' : 'Discarded'} ${inst.name}: ${ab.effect}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
       });
     }
     // Elvish Spirit Guide, Simian Spirit Guide: exiled from your hand, its mana into your pool.
@@ -1820,6 +1820,7 @@
       v.crewed = true;
       v.crewedBy = picks.map(x => x.dataset.crew); // untapped again if you uncrew it
       Game.log(game, `Crewed ${v.name} with ${picks.map(x => game.cards[x.dataset.crew].name).join(', ')}. It's a creature until the turn ends.`);
+      Bot.crewedNow(game, game, v, def); // Mobilizer Mech
     });
     if (back === 'attack') openAttack();
   }
@@ -2450,7 +2451,7 @@
     }
     if (c) {
       const { cost, less } = c;
-      if (opts.convoke) { const tapped = Bot.convokeTap(game, cost, c.tax - less, def); if (tapped && tapped.length) Game.log(game, `Convoked ${inst.name}: tapped ${tapped.join(', ')}.`); }
+      if (opts.convoke) { const tapped = Bot.convokeTap(game, cost, c.tax - less, def); if (tapped && tapped.length) { inst.convokedBy = game.lastConvoked || []; Game.log(game, `Convoked ${inst.name}: tapped ${tapped.join(', ')}.`); } }
       if (opts.improvise) { const tapped = Bot.improviseTap(game, cost, c.tax - less, inst); if (tapped && tapped.length) Game.log(game, `Improvised ${inst.name}: tapped ${tapped.join(', ')}.`); }
       const paid = !opts.manual && Game.autoPay(game, cost, c.tax - less, inst);
       if (paid) inst.spentColors = paid.colors || 0; // converge (Radiant Flames)
@@ -3898,6 +3899,7 @@
   // Smothering Tithe: a player drew, and the other side's "whenever an opponent draws a card" sees it.
   Game.hooks.drew = (s, n) => { if (game && hasBot() && (s === game || s === game.bot.s)) Bot.opponentActed(game, s, 'draw', n, def, s === game ? effectCtx() : null); };
   // Exemplar of Light: "Whenever you put one or more +1/+1 counters on this creature, …"
+  Game.hooks.milled = (s, ids) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.milled(game, s, ids, def); }; // The Wise Mothman, Glowing One
   Game.hooks.graveInstead = (s, inst) => !!(game && hasBot() && (s === game || s === game.bot.s) && Bot.graveInstead(game, s, inst, def)); // Dauthi Voidwalker
   Game.hooks.drawInstead = (s, first) => !!(game && (s === game || (hasBot() && s === game.bot.s)) && Bot.drawInstead(game, s, first, def)); // Notion Thief, dredge
   Game.hooks.manaTapped = (s, inst) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.manaTapped(s, inst); }; // Treasure Nabber
@@ -4320,7 +4322,7 @@
 
   let attaching = null; // iid of the equipment or aura waiting for you to pick a creature
 
-  const equipCostOf = inst => (Game.isAura(inst) ? null : Bot.equipCost((def(inst.id) || {}).oracle));
+  const equipCostOf = inst => (Game.isAura(inst) ? null : Bot.equipCost(`${(def(inst.id) || {}).oracle || ''}${inst.grantedText ? `\n${inst.grantedText}` : ''}`));
 
   // Other players' creatures an aura can go on: [{ pid, card }].
   const theirCreatures = () => others().flatMap(p => {
@@ -4447,7 +4449,7 @@
         Game.log(game, `${inst.name}'s equip cost isn't mana, so pay it yourself.`);
       }
       delete inst.enchanting; // moved off another player's creature
-      Game.attach(game, iid, hostIid, Bot.attachBonus((def(inst.id) || {}).oracle));
+      Game.attach(game, iid, hostIid, Bot.attachBonus(`${(def(inst.id) || {}).oracle || ''}${inst.grantedText ? `\n${inst.grantedText}` : ''}`));
       if (casting) { inst.auraPlaced = true; Bot.spellTargeted(game, game, inst, { inst: host, s: game }, def, effectCtx()); }
     });
   }

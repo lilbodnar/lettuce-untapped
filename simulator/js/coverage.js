@@ -41,11 +41,15 @@ const Coverage = (() => {
     'impending', 'bestow', 'mutate', 'morph', 'megamorph', 'suspend', 'basic landcycling',
     'plainscycling', 'islandcycling', 'swampcycling', 'mountaincycling', 'forestcycling', 'kicker', 'gift', 'improvise', 'evoke', 'convoke', 'overload', 'foretell', 'squad', 'fuse', 'blitz', 'dash',
     'replicate', // replicate: costChoices, then spellCast's copies (an Aura's: enterTrigger's token copies)
-    'emerge']; // emerge: costChoices (app.js sacrifices the creature)
+    'emerge', // emerge: costChoices (app.js sacrifices the creature)
+    'outlast', // outlast: bot.js's activatedAbilities
+    'disguise']; // disguise: costChoices (face down with ward {2}; turned up for its cost)
   // Done on every table (bot.js).
   const DONE_KEYWORDS = ['modular', 'extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
     'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace', 'ravenous', 'umbra armor', // umbra armor: bot.js's regenerates
-    'graft']; // graft: game.js's entersWithCounters (its counters aren't moved) // modular: game.js entersWithCounters, afterDeath // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
+    'graft', 'for mirrodin!', // for mirrodin!: bot.js's nearEnters
+    'renown', 'bloodthirst', 'cipher', 'unleash', 'daybound', 'nightbound', 'disturb', 'training', 'vanishing', // training: bot.js's nearAttack // daybound/nightbound: day and night aren't tracked (front faces stay); disturb: castable from the graveyard (bot.js's graveCast) // unleash: bot.js's nearEnters // cipher: Arcane Heist's (not encoded here) // renown: bot.js's renownHits; bloodthirst: nearEnters
+    'space sculptor']; // space sculptor: each player's creatures are a sector of their own (bot.js's sector lines) // graft: game.js's entersWithCounters (its counters aren't moved) // modular: game.js entersWithCounters, afterDeath // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
 
@@ -111,10 +115,11 @@ const Coverage = (() => {
   // A pump or counters a "whenever this attacks / blocks" does (combatTrigger), for every side, or
   // anything else runEffect can do there.
   function combatEffect(effect, inst) {
-    const e = effect.trim().replace(/^if no opponent has more life than that player, /i, '');
+    const e = effect.trim().replace(/^if no opponent has more life than that player, /i, '').replace(/^you may (?=draw )/i, ''); // Fallowsage (combatTrigger)
     const [first, ...rest] = e.split(/(?<=\.)\s+/);
     if (COUNTER_EACH.test(first)) return rest.every(s => THOSE_GAIN.test(s) && allKw(THOSE_GAIN.exec(s)[1]));
     if (P.TOKEN_TEXT.test(e)) return true;
+    if (/^you may pay (?:\{[^}]+\})+\. if you do, /i.test(e) && runs(e, inst)) return true;
     const p = COMBAT_PUMP.exec(e);
     if (!p || (/x/i.test(p[2] + p[3]) && !p[4])) return runs(e, inst);
     return P.isSelf(p[1], inst) || /^(other )?(.+?) you control$/i.test(p[1]) || /^(other )?attacking (modified )?creatures$/i.test(p[1]); // Namor, Firebird
@@ -765,7 +770,8 @@ const Coverage = (() => {
     // Void Winnower: Opp can't cast or block with even mana values (castOptions, Opp's blocks); Opp's doesn't stop you.
     // Grand Abolisher, Drannith Magistrate: Opp can't cast (castOptions, oppCounters); Opp's doesn't stop you.
     if ([P.OPPS_ENTER_TAPPED, P.DRAW_CAP, P.GRAVE_LOCK, P.NO_GRAVE_CAST, P.SEARCH_TOP, P.KW_LOST, P.ALL_ISLANDS, P.ALL_FORESTS, P.ALL_BASICS, P.GROUNDED, P.PRO_FROM_OPPS].some(re => re.test(line))) return out; // Blind Obedience, Thalia, Narset, Soulless Jailer (refreshGrants)
-    if (P.ABOLISHER.test(line) || P.HAND_ONLY.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells"); return out; }
+    // Brisela too (bot.js's oppMayCast)
+    if (P.ABOLISHER.test(line) || P.HAND_ONLY.test(line) || P.NEAR.BRISELA.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells"); return out; }
     if (P.WINNOW_CAST.test(line) || P.WINNOW_BLOCK.test(line)) { gap(out, 'opp', 'static', "Opp's doesn't stop your spells or blocks"); return out; }
     // Coin of Mastery (game.js's autoPay counts artifact mana; creatureEntered)
     if (P.COIN_MASTERY.test(line)) return out;
