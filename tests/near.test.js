@@ -847,3 +847,40 @@ test('Song of Inspiration returns your two costliest permanent cards from your g
   assert.equal(giant.zone, 'hand');
   assert.equal(bear.zone, 'graveyard');
 });
+
+// Cabaretti Cacophony, Mirror Mastery, Call for Backup, Obscura Operation
+test('Krenko, Tin Street Kingpin grows, then makes Goblins equal to its power', () => {
+  const game = vsOpp();
+  const krenko = put(game, 'Krenko, Tin Street Kingpin');
+  Bot.runEffect(game, effectOf('Krenko, Tin Street Kingpin'), ctx(game, { self: krenko }));
+  assert.equal(krenko.counters['+1/+1'], 1);
+  assert.equal(game.zones.battlefield.map(i => game.cards[i]).filter(c => c.name === 'Goblin').length, 2);
+});
+
+test('Rumor Gatherer scries the first time, then draws the second time each turn', () => {
+  const game = vsOpp();
+  const rumor = put(game, 'Rumor Gatherer');
+  const hand = game.zones.hand.length;
+  Bot.runEffect(game, effectOf('Rumor Gatherer'), ctx(game, { self: rumor }));
+  assert.equal(game.zones.hand.length, hand);
+  Bot.runEffect(game, effectOf('Rumor Gatherer'), ctx(game, { self: rumor }));
+  assert.equal(game.zones.hand.length, hand + 1);
+});
+
+test('Animar and Hamza make creature spells cheaper', () => {
+  const game = vsOpp();
+  const animar = put(game, 'Animar, Soul of Elements');
+  Game.counter(game, animar.iid, '+1/+1', 2);
+  put(game, 'Hamza, Guardian of Arashin');
+  const giant = game.cards[find(game, 'Giant')];
+  assert.equal(Bot.selfDiscount(game, giant, defOf), 3);
+});
+
+test('Custodi Lich makes the opponent sacrifice a creature when you become the monarch', () => {
+  const game = vsOpp();
+  put(game, 'Custodi Lich');
+  const bear = put(game.bot.s, 'Bear');
+  Bot.refreshGrants(game, defOf);
+  Bot.runEffect(game, 'You become the monarch.', ctx(game, { self: { name: 'Custodi Lich' } }));
+  assert.equal(bear.zone, 'graveyard');
+});

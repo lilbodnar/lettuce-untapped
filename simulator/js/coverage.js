@@ -120,6 +120,7 @@ const Coverage = (() => {
     if (COUNTER_EACH.test(first)) return rest.every(s => THOSE_GAIN.test(s) && allKw(THOSE_GAIN.exec(s)[1]));
     if (P.TOKEN_TEXT.test(e)) return true;
     if (/^you may pay (?:\{[^}]+\})+\. if you do, /i.test(e) && runs(e, inst)) return true;
+    if (/, then create /i.test(e) && runs(e, inst)) return true; // Krenko, Tin Street Kingpin (a whole effect bot.js runs)
     const p = COMBAT_PUMP.exec(e);
     if (!p || (/x/i.test(p[2] + p[3]) && !p[4])) return runs(e, inst);
     return P.isSelf(p[1], inst) || /^(other )?(.+?) you control$/i.test(p[1]) || /^(other )?attacking (modified )?creatures$/i.test(p[1]); // Namor, Firebird

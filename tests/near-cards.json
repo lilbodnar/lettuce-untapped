@@ -9379,5 +9379,717 @@
       "R"
     ],
     "oracle": "Creatures named Lightning Rager can't attack you or planeswalkers you control.\nAt the beginning of each player's upkeep, that player creates a 5/1 red Elemental creature token named Lightning Rager. It has trample, haste, and \"At the beginning of the end step, sacrifice this token.\""
+  },
+  "Agitator Ant": {
+    "id": "Agitator Ant",
+    "name": "Agitator Ant",
+    "typeLine": "Creature — Insect",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your end step, each player may put two +1/+1 counters on a creature they control. Goad each creature that had counters put on it this way. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Bess, Soul Nourisher": {
+    "id": "Bess, Soul Nourisher",
+    "name": "Bess, Soul Nourisher",
+    "typeLine": "Legendary Creature — Human Citizen",
+    "manaCost": "{1}{G}{W}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "W"
+    ],
+    "oracle": "Whenever one or more other creatures you control with base power and toughness 1/1 enter, put a +1/+1 counter on Bess.\nWhenever Bess attacks, each other creature you control with base power and toughness 1/1 gets +X/+X until end of turn, where X is the number of +1/+1 counters on Bess.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Rumor Gatherer": {
+    "id": "Rumor Gatherer",
+    "name": "Rumor Gatherer",
+    "typeLine": "Creature — Elf Wizard",
+    "manaCost": "{1}{W}{W}",
+    "cmc": 3,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Alliance — Whenever another creature you control enters, scry 1. If this is the second time this ability has resolved this turn, draw a card instead.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Scute Swarm": {
+    "id": "Scute Swarm",
+    "name": "Scute Swarm",
+    "typeLine": "Creature — Insect",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, create a 1/1 green Insect creature token. If you control six or more lands, create a token that's a copy of this creature instead.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Zurzoth, Chaos Rider": {
+    "id": "Zurzoth, Chaos Rider",
+    "name": "Zurzoth, Chaos Rider",
+    "typeLine": "Legendary Creature — Devil",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever an opponent draws their first card each turn, if it's not their turn, you create a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"\nWhenever one or more Devils you control attack one or more players, you and those players each draw a card, then discard a card at random.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Life of the Party": {
+    "id": "Life of the Party",
+    "name": "Life of the Party",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "First strike, trample, haste\nWhenever this creature attacks, it gets +X/+0 until end of turn, where X is the number of creatures you control.\nWhen this creature enters, if it's not a token, each opponent creates a token that's a copy of it. The tokens are goaded for the rest of the game. (They attack each combat if able and attack a player other than you if able.)",
+    "power": "0",
+    "toughness": "1"
+  },
+  "Master of Ceremonies": {
+    "id": "Master of Ceremonies",
+    "name": "Master of Ceremonies",
+    "typeLine": "Creature — Rhino Druid",
+    "manaCost": "{3}{W}",
+    "cmc": 4,
+    "colors": [
+      "W"
+    ],
+    "oracle": "At the beginning of your upkeep, each opponent chooses money, friends, or secrets. For each player who chose money, you and that player each create a Treasure token. For each player who chose friends, you and that player each create a 1/1 green and white Citizen creature token. For each player who chose secrets, you and that player each draw a card.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Sizzling Soloist": {
+    "id": "Sizzling Soloist",
+    "name": "Sizzling Soloist",
+    "typeLine": "Creature — Human Citizen",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Alliance — Whenever another creature you control enters, target creature an opponent controls can't block this turn. If this is the second time this ability has resolved this turn, that creature attacks during its controller's next combat phase if able.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Cabaretti Confluence": {
+    "id": "Cabaretti Confluence",
+    "name": "Cabaretti Confluence",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{G}{W}",
+    "cmc": 6,
+    "colors": [
+      "G",
+      "R",
+      "W"
+    ],
+    "oracle": "Choose three. You may choose the same mode more than once.\n• Create a token that's a copy of target creature you control. It gains haste. Sacrifice it at the beginning of the next end step.\n• Exile target artifact or enchantment.\n• Creatures target player controls get +1/+1 and gain first strike until end of turn."
+  },
+  "Indulge // Excess": {
+    "id": "Indulge // Excess",
+    "name": "Indulge // Excess",
+    "typeLine": "Sorcery // Sorcery",
+    "manaCost": "{2}{R} // {1}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Indulge: Whenever a creature you control attacks this turn, create a 1/1 green and white Citizen creature token that's tapped and attacking.\n\nExcess: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nCreate a Treasure token for each creature you controlled that dealt combat damage to a player this turn."
+  },
+  "Vivien's Stampede": {
+    "id": "Vivien's Stampede",
+    "name": "Vivien's Stampede",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each creature you control gains vigilance, trample, and melee until end of turn. (Whenever a creature with melee attacks, it gets +1/+1 until end of turn for each opponent you attacked this combat.)\nAt the beginning of the next main phase this turn, draw a card for each player who was dealt combat damage this turn."
+  },
+  "Cabaretti Charm": {
+    "id": "Cabaretti Charm",
+    "name": "Cabaretti Charm",
+    "typeLine": "Instant",
+    "manaCost": "{R}{G}{W}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R",
+      "W"
+    ],
+    "oracle": "Choose one —\n• Cabaretti Charm deals damage equal to the number of creatures you control to target creature or planeswalker.\n• Creatures you control get +1/+1 and gain trample until end of turn.\n• Create two 1/1 green and white Citizen creature tokens."
+  },
+  "False Floor": {
+    "id": "False Floor",
+    "name": "False Floor",
+    "typeLine": "Artifact",
+    "manaCost": "{4}",
+    "cmc": 4,
+    "colors": [],
+    "oracle": "This artifact enters tapped.\nCreatures enter tapped.\n{2}, {T}, Exile this artifact: Exile all untapped creatures. Activate only as a sorcery."
+  },
+  "Magus of the Vineyard": {
+    "id": "Magus of the Vineyard",
+    "name": "Magus of the Vineyard",
+    "typeLine": "Creature — Human Wizard",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of each player's first main phase, that player adds {G}{G}.",
+    "power": "1",
+    "toughness": "1",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Fierce Empath": {
+    "id": "Fierce Empath",
+    "name": "Fierce Empath",
+    "typeLine": "Creature — Elf",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, you may search your library for a creature card with mana value 6 or greater, reveal it, put it into your hand, then shuffle.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Animar, Soul of Elements": {
+    "id": "Animar, Soul of Elements",
+    "name": "Animar, Soul of Elements",
+    "typeLine": "Legendary Creature — Elemental",
+    "manaCost": "{G}{U}{R}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R",
+      "U"
+    ],
+    "oracle": "Protection from white and from black\nWhenever you cast a creature spell, put a +1/+1 counter on Animar.\nCreature spells you cast cost {1} less to cast for each +1/+1 counter on Animar.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Conundrum Sphinx": {
+    "id": "Conundrum Sphinx",
+    "name": "Conundrum Sphinx",
+    "typeLine": "Creature — Sphinx",
+    "manaCost": "{2}{U}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flying\nWhenever this creature attacks, each player chooses a card name. Then each player reveals the top card of their library. If the card a player revealed has the name they chose, that player puts it into their hand. If it doesn't, that player puts it on the bottom of their library.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Intet, the Dreamer": {
+    "id": "Intet, the Dreamer",
+    "name": "Intet, the Dreamer",
+    "typeLine": "Legendary Creature — Dragon",
+    "manaCost": "{3}{G}{U}{R}",
+    "cmc": 6,
+    "colors": [
+      "G",
+      "R",
+      "U"
+    ],
+    "oracle": "Flying\nWhenever Intet deals combat damage to a player, you may pay {2}{U}. If you do, exile the top card of your library face down. You may look at that card for as long as it remains exiled. You may play that card without paying its mana cost for as long as Intet remains on the battlefield.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Trench Gorger": {
+    "id": "Trench Gorger",
+    "name": "Trench Gorger",
+    "typeLine": "Creature — Leviathan",
+    "manaCost": "{6}{U}{U}",
+    "cmc": 8,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Trample\nWhen this creature enters, you may search your library for any number of land cards, exile them, then shuffle. If you do, this creature has base power and base toughness each equal to the number of cards exiled this way.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Avatar of Fury": {
+    "id": "Avatar of Fury",
+    "name": "Avatar of Fury",
+    "typeLine": "Creature — Avatar",
+    "manaCost": "{6}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If an opponent controls seven or more lands, this spell costs {6} less to cast.\nFlying\n{R}: This creature gets +1/+0 until end of turn.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Firespout": {
+    "id": "Firespout",
+    "name": "Firespout",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R/G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Firespout deals 3 damage to each creature without flying if {R} was spent to cast this spell and 3 damage to each creature with flying if {G} was spent to cast this spell. (Do both if {R}{G} was spent.)"
+  },
+  "Ruination": {
+    "id": "Ruination",
+    "name": "Ruination",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy all nonbasic lands."
+  },
+  "Vengeful Rebirth": {
+    "id": "Vengeful Rebirth",
+    "name": "Vengeful Rebirth",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{G}",
+    "cmc": 6,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Return target card from your graveyard to your hand. If you return a nonland card to your hand this way, Vengeful Rebirth deals damage equal to that card's mana value to any target.\nExile Vengeful Rebirth."
+  },
+  "Invigorate": {
+    "id": "Invigorate",
+    "name": "Invigorate",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If you control a Forest, rather than pay this spell's mana cost, you may have an opponent gain 3 life.\nTarget creature gets +4/+4 until end of turn."
+  },
+  "Ray of Command": {
+    "id": "Ray of Command",
+    "name": "Ray of Command",
+    "typeLine": "Instant",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Untap target creature an opponent controls and gain control of it until end of turn. That creature gains haste until end of turn. When you lose control of the creature, tap it."
+  },
+  "Prophetic Bolt": {
+    "id": "Prophetic Bolt",
+    "name": "Prophetic Bolt",
+    "typeLine": "Instant",
+    "manaCost": "{3}{U}{R}",
+    "cmc": 5,
+    "colors": [
+      "R",
+      "U"
+    ],
+    "oracle": "Prophetic Bolt deals 4 damage to any target. Look at the top four cards of your library. Put one of those cards into your hand and the rest on the bottom of your library in any order."
+  },
+  "Bright-Palm, Soul Awakener": {
+    "id": "Bright-Palm, Soul Awakener",
+    "name": "Bright-Palm, Soul Awakener",
+    "typeLine": "Legendary Creature — Fox Shaman",
+    "manaCost": "{1}{R}{G}{W}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "R",
+      "W"
+    ],
+    "oracle": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\nWhenever this creature attacks, double the number of +1/+1 counters on target creature. That creature can't be blocked by creatures with power 2 or less this turn.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Uncivil Unrest": {
+    "id": "Uncivil Unrest",
+    "name": "Uncivil Unrest",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Nontoken creatures you control have riot. (They enter with your choice of a +1/+1 counter or haste.)\nIf a creature you control with a +1/+1 counter on it would deal damage to a permanent or player, it deals double that damage instead."
+  },
+  "Mirror-Style Master": {
+    "id": "Mirror-Style Master",
+    "name": "Mirror-Style Master",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\nWhenever this creature attacks, for each attacking modified creature you control, create a tapped and attacking token that's a copy of that creature. Exile those tokens at end of combat. (Equipment, Auras you control, and counters are modifications.)",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Emergent Woodwurm": {
+    "id": "Emergent Woodwurm",
+    "name": "Emergent Woodwurm",
+    "typeLine": "Creature — Wurm",
+    "manaCost": "{6}{G}",
+    "cmc": 7,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Backup 3 (When this creature enters, put three +1/+1 counters on target creature. If that's another creature, it gains the following ability until end of turn.)\nWhenever this creature attacks, look at the top X cards of your library, where X is its power. You may put a permanent card with mana value X or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Path of the Pyromancer": {
+    "id": "Path of the Pyromancer",
+    "name": "Path of the Pyromancer",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Discard all the cards in your hand. Add {R} for each card discarded this way, then draw that many cards plus one.\nWill of the Planeswalkers — Starting with you, each player votes for planeswalk or chaos. If planeswalk gets more votes, planeswalk. If chaos gets more votes or the vote is tied, chaos ensues.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Dromoka's Command": {
+    "id": "Dromoka's Command",
+    "name": "Dromoka's Command",
+    "typeLine": "Instant",
+    "manaCost": "{G}{W}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "W"
+    ],
+    "oracle": "Choose two —\n• Prevent all damage target instant or sorcery spell would deal this turn.\n• Target player sacrifices an enchantment of their choice.\n• Put a +1/+1 counter on target creature.\n• Target creature you control fights target creature you don't control."
+  },
+  "High Sentinels of Arashin": {
+    "id": "High Sentinels of Arashin",
+    "name": "High Sentinels of Arashin",
+    "typeLine": "Creature — Bird Soldier",
+    "manaCost": "{3}{W}",
+    "cmc": 4,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Flying\nThis creature gets +1/+1 for each other creature you control with a +1/+1 counter on it.\n{3}{W}: Put a +1/+1 counter on target creature.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Ion Storm": {
+    "id": "Ion Storm",
+    "name": "Ion Storm",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{R}, Remove a +1/+1 counter or a charge counter from a permanent you control: This enchantment deals 2 damage to any target."
+  },
+  "Krenko, Tin Street Kingpin": {
+    "id": "Krenko, Tin Street Kingpin",
+    "name": "Krenko, Tin Street Kingpin",
+    "typeLine": "Legendary Creature — Goblin",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever Krenko attacks, put a +1/+1 counter on it, then create a number of 1/1 red Goblin creature tokens equal to Krenko's power.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Semester's End": {
+    "id": "Semester's End",
+    "name": "Semester's End",
+    "typeLine": "Instant",
+    "manaCost": "{3}{W}",
+    "cmc": 4,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Exile any number of target creatures and/or planeswalkers you control. At the beginning of the next end step, return each of them to the battlefield under its owner's control. Each of them enters with an additional +1/+1 counter on it if it's a creature and an additional loyalty counter on it if it's a planeswalker."
+  },
+  "Conclave Mentor": {
+    "id": "Conclave Mentor",
+    "name": "Conclave Mentor",
+    "typeLine": "Creature — Centaur Cleric",
+    "manaCost": "{G}{W}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "W"
+    ],
+    "oracle": "If one or more +1/+1 counters would be put on a creature you control, that many plus one +1/+1 counters are put on that creature instead.\nWhen this creature dies, you gain life equal to its power.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Falkenrath Exterminator": {
+    "id": "Falkenrath Exterminator",
+    "name": "Falkenrath Exterminator",
+    "typeLine": "Creature — Vampire Archer",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature deals combat damage to a player, put a +1/+1 counter on it.\n{2}{R}: This creature deals damage to target creature equal to the number of +1/+1 counters on this creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Hamza, Guardian of Arashin": {
+    "id": "Hamza, Guardian of Arashin",
+    "name": "Hamza, Guardian of Arashin",
+    "typeLine": "Legendary Creature — Elephant Warrior",
+    "manaCost": "{4}{G}{W}",
+    "cmc": 6,
+    "colors": [
+      "G",
+      "W"
+    ],
+    "oracle": "This spell costs {1} less to cast for each creature you control with a +1/+1 counter on it.\nCreature spells you cast cost {1} less to cast for each creature you control with a +1/+1 counter on it.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Hindervines": {
+    "id": "Hindervines",
+    "name": "Hindervines",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt this turn by creatures with no +1/+1 counters on them."
+  },
+  "Slurrk, All-Ingesting": {
+    "id": "Slurrk, All-Ingesting",
+    "name": "Slurrk, All-Ingesting",
+    "typeLine": "Legendary Creature — Ooze",
+    "manaCost": "{5}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Slurrk enters with five +1/+1 counters on it.\nWhenever Slurrk or another creature you control dies, if it had a +1/+1 counter on it, put a +1/+1 counter on each creature you control that has a +1/+1 counter on it.\nPartner (You can have two commanders if both have partner.)",
+    "power": "0",
+    "toughness": "0"
+  },
+  "Kamiz, Obscura Oculus": {
+    "id": "Kamiz, Obscura Oculus",
+    "name": "Kamiz, Obscura Oculus",
+    "typeLine": "Legendary Creature — Octopus Rogue",
+    "manaCost": "{1}{W}{U}{B}",
+    "cmc": 4,
+    "colors": [
+      "B",
+      "U",
+      "W"
+    ],
+    "oracle": "Whenever you attack, target attacking creature can't be blocked this turn. It connives. Then choose another attacking creature with lesser power. That creature gains double strike until end of turn. (To have a creature connive, draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)",
+    "power": "2",
+    "toughness": "4"
+  },
+  "Cephalid Facetaker": {
+    "id": "Cephalid Facetaker",
+    "name": "Cephalid Facetaker",
+    "typeLine": "Creature — Octopus Rogue",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "This creature can't be blocked.\nAt the beginning of combat on your turn, you may have this creature become a copy of another target creature until end of turn, except it's 1/4 and has \"This creature can't be blocked.\"",
+    "power": "1",
+    "toughness": "4"
+  },
+  "Skyway Robber": {
+    "id": "Skyway Robber",
+    "name": "Skyway Robber",
+    "typeLine": "Creature — Bird Rogue",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flying\nEscape—{3}{U}, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)\nThis creature escapes with \"Whenever this creature deals combat damage to a player, you may cast an artifact, instant, or sorcery spell from among cards exiled with this creature without paying its mana cost.\"",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Oskar, Rubbish Reclaimer": {
+    "id": "Oskar, Rubbish Reclaimer",
+    "name": "Oskar, Rubbish Reclaimer",
+    "typeLine": "Legendary Creature — Human Wizard",
+    "manaCost": "{3}{U}{B}",
+    "cmc": 5,
+    "colors": [
+      "B",
+      "U"
+    ],
+    "oracle": "This spell costs {1} less to cast for each different mana value among cards in your graveyard.\nWhenever you discard a nonland card, you may cast it from your graveyard.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Archon of Coronation": {
+    "id": "Archon of Coronation",
+    "name": "Archon of Coronation",
+    "typeLine": "Creature — Archon",
+    "manaCost": "{4}{W}{W}",
+    "cmc": 6,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Flying\nWhen this creature enters, you become the monarch.\nAs long as you're the monarch, damage doesn't cause you to lose life. (When a creature deals combat damage to you, its controller still becomes the monarch.)",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Identity Thief": {
+    "id": "Identity Thief",
+    "name": "Identity Thief",
+    "typeLine": "Creature — Shapeshifter",
+    "manaCost": "{2}{U}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever this creature attacks, you may exile another target nontoken creature. If you do, this creature becomes a copy of that creature until end of turn. Return the exiled card to the battlefield under its owner's control at the beginning of the next end step.",
+    "power": "0",
+    "toughness": "3"
+  },
+  "Custodi Lich": {
+    "id": "Custodi Lich",
+    "name": "Custodi Lich",
+    "typeLine": "Creature — Zombie Cleric",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, you become the monarch.\nWhenever you become the monarch, target player sacrifices a creature of their choice.",
+    "power": "4",
+    "toughness": "2"
+  },
+  "Graveblade Marauder": {
+    "id": "Graveblade Marauder",
+    "name": "Graveblade Marauder",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{2}{B}",
+    "cmc": 3,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhenever this creature deals combat damage to a player, that player loses life equal to the number of creature cards in your graveyard.",
+    "power": "1",
+    "toughness": "4"
+  },
+  "Daxos of Meletis": {
+    "id": "Daxos of Meletis",
+    "name": "Daxos of Meletis",
+    "typeLine": "Legendary Creature — Human Soldier",
+    "manaCost": "{1}{W}{U}",
+    "cmc": 3,
+    "colors": [
+      "U",
+      "W"
+    ],
+    "oracle": "Daxos can't be blocked by creatures with power 3 or greater.\nWhenever Daxos deals combat damage to a player, exile the top card of that player's library. You gain life equal to that card's mana value. Until end of turn, you may cast that card and you may spend mana as though it were mana of any color to cast that spell.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Inkfathom Witch": {
+    "id": "Inkfathom Witch",
+    "name": "Inkfathom Witch",
+    "typeLine": "Creature — Merfolk Wizard",
+    "manaCost": "{1}{U/B}",
+    "cmc": 2,
+    "colors": [
+      "B",
+      "U"
+    ],
+    "oracle": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)\n{2}{U}{B}: Each unblocked creature has base power and toughness 4/1 until end of turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Jailbreak": {
+    "id": "Jailbreak",
+    "name": "Jailbreak",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{W}",
+    "cmc": 2,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Return target permanent card in an opponent's graveyard to the battlefield under their control. When that permanent enters, return up to one target permanent card with equal or lesser mana value from your graveyard to the battlefield."
+  },
+  "Change of Plans": {
+    "id": "Change of Plans",
+    "name": "Change of Plans",
+    "typeLine": "Instant",
+    "manaCost": "{X}{1}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Each of X target creatures you control connive. You may have any number of them phase out. (To have a creature connive, draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature. Treat phased-out permanents and anything attached to them as though they don't exist until their controller's next turn.)"
+  },
+  "Obscura Confluence": {
+    "id": "Obscura Confluence",
+    "name": "Obscura Confluence",
+    "typeLine": "Instant",
+    "manaCost": "{1}{W}{U}{B}",
+    "cmc": 4,
+    "colors": [
+      "B",
+      "U",
+      "W"
+    ],
+    "oracle": "Choose three. You may choose the same mode more than once.\n• Until end of turn, target creature loses all abilities and has base power and toughness 1/1.\n• Target creature connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)\n• Target player returns a creature card from their graveyard to their hand."
+  },
+  "In Too Deep": {
+    "id": "In Too Deep",
+    "name": "In Too Deep",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{U}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nEnchant creature, planeswalker, or Clue\nEnchanted permanent is a colorless Clue artifact with \"{2}, Sacrifice this artifact: Draw a card\" and loses all other abilities. (It's no longer a creature or planeswalker.)"
+  },
+  "Mask of the Schemer": {
+    "id": "Mask of the Schemer",
+    "name": "Mask of the Schemer",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever equipped creature deals combat damage to a player, it connives X, where X is the amount of damage it dealt to that player. (Draw X cards, then discard X cards. Put a +1/+1 counter on that creature for each nonland card discarded this way.)\nEquip {2}"
   }
 }
