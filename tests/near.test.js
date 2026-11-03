@@ -884,3 +884,527 @@ test('Custodi Lich makes the opponent sacrifice a creature when you become the m
   Bot.runEffect(game, 'You become the monarch.', ctx(game, { self: { name: 'Custodi Lich' } }));
   assert.equal(bear.zone, 'graveyard');
 });
+
+// Desert Bloom, Upgrades Unleashed
+test('Unholy Heat deals 6 with four card types in your graveyard (delirium), else 2', () => {
+  const game = vsOpp();
+  const giant = put(game.bot.s, 'Giant');
+  Bot.runEffect(game, text('Unholy Heat'), ctx(game, { self: { name: 'Unholy Heat' } }));
+  assert.equal(giant.zone, 'battlefield');
+  ['Forest', 'Bear', 'Relic', 'Bolt'].forEach(id => toGrave(game, id));
+  giant.damageTaken = 0;
+  Bot.runEffect(game, text('Unholy Heat'), ctx(game, { self: { name: 'Unholy Heat' } }));
+  assert.equal(giant.zone, 'graveyard');
+});
+
+test('Ordeal of Nylea is sacrificed at three counters and fetches two basic lands', () => {
+  const game = vsOpp();
+  const bear = put(game, 'Bear');
+  const ordeal = put(game, 'Ordeal of Nylea');
+  Game.attach(game, ordeal.iid, bear.iid, Bot.attachBonus(defs['Ordeal of Nylea'].oracle));
+  Game.counter(game, bear.iid, '+1/+1', 2);
+  const lands = game.zones.battlefield.filter(i => Game.isLand(game.cards[i])).length;
+  Bot.runEffect(game, 'the ordeal grows this creature', ctx(game, { self: bear }));
+  assert.equal(ordeal.zone, 'graveyard');
+  assert.equal(game.zones.battlefield.filter(i => Game.isLand(game.cards[i])).length, lands + 2);
+});
+
+// Blame Game, Chaos Incarnate, Devour for Power, Eternal Bargain, First Flight, Legends' Legacy
+test('Mob Verdict hits the opponent and its creatures for 2 and draws you a card', () => {
+  const game = vsOpp();
+  const bear = put(game.bot.s, 'Bear');
+  const hand = game.zones.hand.length;
+  Bot.runEffect(game, text('Mob Verdict'), ctx(game, { self: { name: 'Mob Verdict' } }));
+  assert.equal(game.oppLife, 38);
+  assert.equal(bear.zone, 'graveyard');
+  assert.equal(game.zones.hand.length, hand + 1);
+});
+
+test('Fiendish Duo doubles damage to the opponent', () => {
+  const game = vsOpp();
+  put(game, 'Fiendish Duo');
+  Bot.damagePlayer(game, 'opp', 3, 'Bolt', defOf);
+  assert.equal(game.oppLife, 34);
+});
+
+test('Kangee\'s Lieutenant pumps only attacking fliers', () => {
+  const game = vsOpp();
+  const flier = put(game, 'Flier');
+  const bear = put(game, 'Bear');
+  flier.attacking = true;
+  bear.attacking = true;
+  Bot.runEffect(game, effectOf('Kangee\'s Lieutenant', 1), ctx(game, { self: { name: 'Kangee\'s Lieutenant' } }));
+  assert.equal(flier.pump.pow, 1);
+  assert.ok(!bear.pump || !bear.pump.pow);
+});
+
+test('Gerrard\'s Hourglass Pendant stops an extra turn', () => {
+  const game = vsOpp();
+  put(game, 'Gerrard\'s Hourglass Pendant');
+  Bot.refreshGrants(game, defOf);
+  Bot.runEffect(game, 'Take an extra turn after this one.', ctx(game, { self: { name: 'Time Walk' } }));
+  assert.ok(!game.bot.s.skipTurn);
+});
+
+// Mind Seize, Draconic Dissent, Phantom Premonition
+test('Cruel Ultimatum: the opponent sacrifices, discards three, loses 5; you get a creature back, draw three, gain 5', () => {
+  const game = vsOpp();
+  const bear = put(game.bot.s, 'Bear');
+  const giant = toGrave(game, 'Giant');
+  const hand = game.zones.hand.length;
+  Bot.runEffect(game, text('Cruel Ultimatum'), ctx(game, { self: { name: 'Cruel Ultimatum' } }));
+  assert.equal(bear.zone, 'graveyard');
+  assert.equal(game.oppLife, 35);
+  assert.equal(game.life, 45);
+  assert.equal(giant.zone, 'hand');
+  assert.equal(game.zones.hand.length, hand + 4);
+});
+
+test('Arcane Melee makes instants and sorceries cost {2} less for everyone', () => {
+  const game = vsOpp();
+  put(game.bot.s, 'Arcane Melee');
+  assert.equal(Bot.selfDiscount(game, game.cards[find(game, 'Bolt')], defOf), 2);
+});
+
+test('Eye of Doom marks each side\'s best nonland permanent and destroys them', () => {
+  const game = vsOpp();
+  const eye = put(game, 'Eye of Doom');
+  const giant = put(game.bot.s, 'Giant');
+  const glory = put(game, 'Glory');
+  Bot.runEffect(game, effectOf('Eye of Doom', 0), ctx(game, { self: eye }));
+  Bot.runEffect(game, 'Destroy each permanent with a doom counter on it.', ctx(game, { self: eye }));
+  assert.equal(giant.zone, 'graveyard');
+  assert.equal(glory.zone, 'graveyard');
+});
+
+// Evasive Maneuvers, Peer Through Time
+test('Kirtar\'s Wrath destroys all creatures, and makes two Spirits with threshold', () => {
+  const game = vsOpp();
+  const bear = put(game, 'Bear');
+  const giant = put(game.bot.s, 'Giant');
+  ['Forest', 'Forest', 'Forest', 'Forest', 'Forest', 'Forest', 'Forest'].forEach(id => toGrave(game, id));
+  Bot.runEffect(game, text('Kirtar\'s Wrath'), ctx(game, { self: { name: 'Kirtar\'s Wrath' } }));
+  assert.equal(bear.zone, 'graveyard');
+  assert.equal(giant.zone, 'graveyard');
+  assert.equal(game.zones.battlefield.map(i => game.cards[i]).filter(c => /spirit/i.test(c.name)).length, 2);
+});
+
+test('Borrowing 100,000 Arrows draws a card for each of the opponent\'s tapped creatures', () => {
+  const game = vsOpp();
+  put(game.bot.s, 'Bear').tapped = true;
+  put(game.bot.s, 'Giant').tapped = true;
+  const hand = game.zones.hand.length;
+  Bot.runEffect(game, text('Borrowing 100,000 Arrows'), ctx(game, { self: { name: 'Borrowing 100,000 Arrows' } }));
+  assert.equal(game.zones.hand.length, hand + 2);
+});
+
+test('Brine Elemental keeps the opponent\'s tapped permanents tapped through its next untap step', () => {
+  const game = vsOpp();
+  const giant = put(game.bot.s, 'Giant');
+  giant.tapped = true;
+  Bot.runEffect(game, 'Each opponent skips their next untap step.', ctx(game, { self: { name: 'Brine Elemental' } }));
+  assert.ok(giant.skipUntap);
+});
+
+// Graveyard Overdrive, Spirit Squadron
+test('The goyfs count the card types in all graveyards', () => {
+  const game = vsOpp();
+  const goyf = put(game, 'Polygoyf');
+  toGrave(game, 'Forest');
+  toGrave(game, 'Bear');
+  toGrave(game.bot.s, 'Bolt');
+  Bot.refreshGrants(game, defOf);
+  assert.equal(st(goyf).pow, 3);
+  assert.equal(st(goyf).tou, 4);
+});
+
+test('Field of Souls makes a flying Spirit when a nontoken creature of yours dies', () => {
+  const game = vsOpp();
+  put(game, 'Field of Souls');
+  const bear = put(game, 'Bear');
+  Bot.refreshGrants(game, defOf);
+  Game.move(game, bear.iid, 'graveyard');
+  Bot.died(game, bear, defOf, ctx(game), game, { to: 'graveyard' });
+  assert.equal(game.zones.battlefield.map(i => game.cards[i]).filter(c => /spirit/i.test(c.name)).length, 1);
+});
+
+test('Grist makes Insects while it keeps milling Insects', () => {
+  const game = vsOpp();
+  const grist = put(game, 'Grist, the Hunger Tide');
+  toTop(game, 'Bear');
+  Bot.runEffect(game, 'insects while insects are milled', ctx(game, { self: grist }));
+  assert.equal(game.zones.battlefield.map(i => game.cards[i]).filter(c => /insect/i.test(c.name)).length, 1);
+});
+
+// Symbiotic Swarm
+test('Majestic Myriarch is twice as big as your creature count', () => {
+  const game = vsOpp();
+  const m = put(game, 'Majestic Myriarch');
+  put(game, 'Bear');
+  Bot.refreshGrants(game, defOf);
+  assert.equal(st(m).pow, 4);
+});
+
+test('Kathril puts keyword counters from your graveyard on your best creature, and +1/+1 counters on itself', () => {
+  const game = vsOpp();
+  const kathril = put(game, 'Kathril, Aspect Warper');
+  const giant = put(game, 'Giant');
+  toGrave(game, 'Flier');
+  Bot.runEffect(game, 'keyword counters for your graveyard', ctx(game, { self: kathril }));
+  assert.equal(kathril.counters['+1/+1'], 1);
+  assert.ok([kathril, giant].some(c => (c.counters || {}).flying === 1));
+});
+
+// Adaptive Enchantment, Draconic Domination, Endless Punishment, Faceless Menace, Merciless Rage, Planar Portal, Power Hungry, Seize Control, Sneak Attack
+test('In Garruk\'s Wake destroys only the opponent\'s creatures', () => {
+  const game = vsOpp();
+  const bear = put(game, 'Bear');
+  const giant = put(game.bot.s, 'Giant');
+  Bot.runEffect(game, text('In Garruk\'s Wake'), ctx(game, { self: { name: 'In Garruk\'s Wake' } }));
+  assert.equal(bear.zone, 'battlefield');
+  assert.equal(giant.zone, 'graveyard');
+});
+
+test('Sleep taps the opponent\'s creatures and keeps them tapped through its next untap', () => {
+  const game = vsOpp();
+  const giant = put(game.bot.s, 'Giant');
+  Bot.runEffect(game, text('Sleep'), ctx(game, { self: { name: 'Sleep' } }));
+  assert.ok(giant.tapped && giant.skipUntap);
+});
+
+test('Fortunate Few keeps one nonland permanent on each side and destroys the rest', () => {
+  const game = vsOpp();
+  put(game, 'Bear');
+  put(game, 'Glory');
+  put(game.bot.s, 'Giant');
+  put(game.bot.s, 'Relic');
+  Bot.runEffect(game, text('Fortunate Few'), ctx(game, { self: { name: 'Fortunate Few' } }));
+  const nonland = t => t.zones.battlefield.filter(i => !Game.isLand(t.cards[i])).length;
+  assert.equal(nonland(game), 1);
+  assert.equal(nonland(game.bot.s), 1);
+});
+
+test('Winds of Rath still destroys only creatures that aren\'t enchanted', () => {
+  assert.ok(Bot.parts.canRunAll("Destroy all creatures that aren't enchanted. They can't be regenerated.", { self: { name: 'Winds of Rath' }, other: true, defOf, hitOpps: () => {}, target: () => {} }));
+});
+
+// The twenty 16-20 decks
+test('Venturing into the dungeon walks its four rooms, then completes it', () => {
+  const game = vsOpp();
+  const bear = put(game, 'Bear');
+  const ctx1 = ctx(game, { self: { name: 'Dungeon Map' } });
+  ['Venture into the dungeon.', 'Venture into the dungeon.', 'Venture into the dungeon.'].forEach(t => Bot.runEffect(game, t, ctx1));
+  assert.equal(game.zones.battlefield.map(i => game.cards[i]).filter(c => /treasure/i.test(c.name)).length, 1);
+  assert.equal(bear.counters['+1/+1'], 1);
+  const hand = game.zones.hand.length;
+  Bot.runEffect(game, 'Venture into the dungeon.', ctx1);
+  assert.equal(game.zones.hand.length, hand + 1);
+  assert.equal(game.dungeonsDone, 1);
+});
+
+test('Manifest dread puts one of the top two face down and the other in the graveyard', () => {
+  const game = vsOpp();
+  toTop(game, 'Bolt');
+  const giant = toTop(game, 'Giant');
+  Bot.runEffect(game, 'Manifest dread.', ctx(game, { self: { name: 'Growing Dread' } }));
+  assert.ok(giant.faceDown && giant.zone === 'battlefield');
+  assert.equal(game.zones.graveyard.map(i => game.cards[i]).filter(c => c.id === 'Bolt').length, 1);
+});
+
+test('Ichor Rats gives each player a poison counter; Mycosynth Fiend grows with the opponent\'s poison', () => {
+  const game = vsOpp();
+  const fiend = put(game, 'Mycosynth Fiend');
+  Bot.runEffect(game, 'Each player gets a poison counter.', ctx(game, { self: { name: 'Ichor Rats' } }));
+  assert.equal(game.poison, 1);
+  assert.equal(game.bot.s.poison, 1);
+  Bot.refreshGrants(game, defOf);
+  assert.equal(st(fiend).pow, 3);
+});
+
+test('Terminus puts every creature on the bottom of its owner\'s library', () => {
+  const game = vsOpp();
+  const bear = put(game, 'Bear');
+  const giant = put(game.bot.s, 'Giant');
+  Bot.runEffect(game, text('Terminus'), ctx(game, { self: { name: 'Terminus' } }));
+  assert.equal(bear.zone, 'library');
+  assert.equal(giant.zone, 'library');
+  assert.equal(game.zones.library[game.zones.library.length - 1], bear.iid);
+});
+
+// ---- Miracle Worker, Maestros Massacre, Timeless Wisdom ----
+
+test('Casualty offers a copy for sacrificing a big enough creature; Anhelo gives the first instant each turn casualty 2', () => {
+  const game = vsOpp();
+  const giant = put(game, 'Giant');
+  put(game, 'Bear');
+  const forgery = game.cards[find(game, 'Flawless Forgery')];
+  const picks = Bot.costChoices(game, forgery, defOf).filter(c => c.key === 'replicate1');
+  assert.deepEqual(picks.map(c => c.sacIid), [giant.iid]); // power 3 or more only
+  put(game, 'Anhelo, the Painter');
+  const bolt = game.cards[find(game, 'Bolt')];
+  assert.ok(Bot.costChoices(game, bolt, defOf).some(c => c.key === 'replicate1'));
+  game.anheloTurn = game.turn;
+  assert.ok(!Bot.costChoices(game, bolt, defOf).some(c => c.key === 'replicate1'));
+});
+
+test('Cycling: Valiant Rescuer makes a Soldier only the first time; Gavi makes the first cycle free; Tectonic Reformation gives lands cycling', () => {
+  const game = vsOpp();
+  put(game, 'Valiant Rescuer');
+  put(game, 'Gavi, Nest Warden');
+  put(game, 'Tectonic Reformation');
+  Bot.refreshGrants(game, defOf); // (the tables handAbilities reads)
+  const pyre = game.cards[find(game, 'Nimble Obstructionist')];
+  Game.move(game, pyre.iid, 'hand');
+  assert.equal(Bot.handAbilities(pyre, defOf).find(a => a.kind === 'cycling').cost, '');
+  const before = game.zones.battlefield.length;
+  Bot.cycled(game, pyre, defOf, ctx(game));
+  Bot.cycled(game, pyre, defOf, ctx(game));
+  assert.equal(game.zones.battlefield.length, before + 1);
+  assert.equal(game.cycleCount, 2);
+  assert.equal(Bot.handAbilities(pyre, defOf).find(a => a.kind === 'cycling').cost, '{2}{U}');
+  const forest = game.cards[find(game, 'Forest')];
+  Game.move(game, forest.iid, 'hand');
+  assert.equal(Bot.handAbilities(forest, defOf).find(a => a.kind === 'cycling').cost, '{R}');
+});
+
+test('The Master of Keys gives enchantment cards in your graveyard escape (mana cost and three other cards)', () => {
+  const game = vsOpp();
+  const glory = toGrave(game, 'Glory');
+  assert.equal(Bot.escapeOf(glory, defOf), null);
+  put(game, 'The Master of Keys');
+  Bot.refreshGrants(game, defOf);
+  assert.deepEqual(Bot.escapeOf(glory, defOf), { cost: '{4}', exile: 3 });
+});
+
+test('Make an Example: the opponent splits its creatures and loses one pile', () => {
+  const game = vsOpp();
+  ['Giant', 'Bear', 'Golem'].forEach(id => put(game.bot.s, id));
+  Bot.runEffect(game, text('Make an Example'), ctx(game, { self: { name: 'Make an Example' } }));
+  const left = game.bot.s.zones.battlefield.map(i => game.bot.s.cards[i]).filter(c => Game.isCreature(c)).length;
+  assert.ok(left >= 1 && left <= 2);
+});
+
+test('River\'s Rebuke returns the opponent\'s nonland permanents; Zndrsplt\'s Judgment copies yours and bounces theirs', () => {
+  const game = vsOpp();
+  const o = game.bot.s;
+  const giant = put(o, 'Giant');
+  const relic = put(o, 'Relic');
+  const forest = put(o, 'Forest');
+  Bot.runEffect(game, text('River\'s Rebuke'), ctx(game, { self: { name: 'River\'s Rebuke' } }));
+  assert.equal(giant.zone, 'hand');
+  assert.equal(relic.zone, 'hand');
+  assert.equal(forest.zone, 'battlefield');
+  const bear = put(o, 'Bear');
+  put(game, 'Giant');
+  Bot.runEffect(game, text('Zndrsplt\'s Judgment'), ctx(game, { self: { name: 'Zndrsplt\'s Judgment' } }));
+  assert.equal(game.zones.battlefield.map(i => game.cards[i]).filter(c => c.id === 'Giant').length, 2);
+  assert.equal(bear.zone, 'hand');
+});
+
+test('Athreos returns a creature with a coin counter to your battlefield when it dies', () => {
+  const game = vsOpp();
+  put(game, 'Athreos, Shroud-Veiled');
+  Bot.refreshGrants(game, defOf);
+  const giant = put(game.bot.s, 'Giant');
+  Game.move(game.bot.s, giant.iid, 'graveyard');
+  Bot.died(game.bot.s, giant, defOf, null, game, { to: 'graveyard', counters: { coin: 1 } });
+  assert.ok(game.zones.battlefield.some(i => game.cards[i].id === 'Giant'));
+});
+
+test('Ancient Cellarspawn and Spellbinding Soprano make spells cheaper', () => {
+  const game = vsOpp();
+  const eater = game.cards[find(game, 'Dream Eater')];
+  const bolt = game.cards[find(game, 'Bolt')];
+  assert.equal(Bot.selfDiscount(game, eater, defOf), 0);
+  put(game, 'Ancient Cellarspawn');
+  assert.equal(Bot.selfDiscount(game, eater, defOf), 1); // a Nightmare
+  Bot.runEffect(game, 'Instant and sorcery spells you cast this turn cost {1} less to cast.', ctx(game, { self: { name: 'Spellbinding Soprano' } }));
+  assert.equal(Bot.selfDiscount(game, bolt, defOf), 1);
+});
+
+test('Waste Management exiles two cards from the opponent\'s graveyard and makes a Rogue per creature', () => {
+  const game = vsOpp();
+  ['Bear', 'Giant', 'Bolt'].forEach(id => toGrave(game.bot.s, id));
+  const before = game.zones.battlefield.length;
+  Bot.runEffect(game, text('Waste Management').replace(/^kicker \{[^}]+\}\{[^}]+\}\s*/i, ''), ctx(game, { self: { name: 'Waste Management' } }));
+  assert.equal(game.bot.s.zones.graveyard.length, 1);
+  assert.equal(game.zones.battlefield.length, before + 2);
+});
+
+test('Mirrormade enters as a copy of the best artifact or enchantment', () => {
+  const game = vsOpp();
+  put(game.bot.s, 'Idol');
+  put(game, 'Relic');
+  Bot.refreshGrants(game, defOf);
+  const m = put(game, 'Mirrormade');
+  Bot.enterTrigger(game, m, defOf);
+  assert.equal(m.name, 'Idol');
+});
+
+// ---- The 20-23 decks (Revenant Recon, Eldrazi Incursion, Planeswalker Party, Tricky Terrain, Heads I Win, Limit Break, Eldrazi Unbound) ----
+
+const withFlips = (wins, fn) => { const r = Game.randomInt; Game.randomInt = () => (wins ? 0 : 1); try { return fn(); } finally { Game.randomInt = r; } };
+
+test('Surveil: Mirko and Dimir Spybug grow, Whispering Snitch pings only the first time each turn', () => {
+  const game = vsOpp();
+  const mirko = put(game, 'Mirko, Obsessive Theorist');
+  const spy = put(game, 'Dimir Spybug');
+  put(game, 'Whispering Snitch');
+  Bot.refreshGrants(game, defOf);
+  Bot.applyScry(game, 'surveil', game.zones.library.slice(0, 2), game.zones.library.slice(0, 1), 'Test');
+  Bot.applyScry(game, 'surveil', game.zones.library.slice(0, 1), [], 'Test');
+  assert.equal(mirko.counters['+1/+1'], 2);
+  assert.equal(spy.counters['+1/+1'], 2);
+  assert.equal(game.oppLife, 39);
+});
+
+test('Case of the Shifting Visage: its Solved ability waits until fifteen cards are in your graveyard at your end step', () => {
+  const game = vsOpp();
+  const kase = put(game, 'Case of the Shifting Visage');
+  const solved = () => Bot.activatedAbilities && Bot.stats && Bot.parts && !!Bot.parts.NEAR && kase.solved === true;
+  Bot.phaseTriggers(game, game, 'end step', defOf, ctx(game));
+  assert.ok(!solved());
+  for (let i = 0; i < 15; i++) Game.move(game, game.zones.library[0], 'graveyard');
+  Bot.phaseTriggers(game, game, 'end step', defOf, ctx(game));
+  assert.ok(solved());
+});
+
+test('Coin flips: Chance Encounter counts wins, Krark\'s Thumb gives a second chance, Zndrsplt draws on a win', () => {
+  const game = vsOpp();
+  const chance = put(game, 'Chance Encounter');
+  put(game, 'Zndrsplt, Eye of Wisdom');
+  const hand = game.zones.hand.length;
+  withFlips(true, () => Bot.runEffect(game, 'Flip a coin.', ctx(game, { self: { name: 'Test' } })));
+  assert.equal(chance.counters.luck, 1);
+  assert.equal(game.zones.hand.length, hand + 1);
+  withFlips(false, () => Bot.runEffect(game, 'Flip a coin.', ctx(game, { self: { name: 'Test' } })));
+  assert.equal(chance.counters.luck, 1);
+});
+
+test('Stitch in Time takes an extra turn only on a win; Fiery Gambit does nothing on a loss', () => {
+  const game = vsOpp();
+  withFlips(false, () => Bot.runEffect(game, text('Stitch in Time'), ctx(game, { self: { name: 'Stitch in Time' } })));
+  assert.ok(!game.extraTurns);
+  const bear = put(game.bot.s, 'Bear');
+  withFlips(false, () => Bot.runEffect(game, text('Fiery Gambit'), ctx(game, { self: { name: 'Fiery Gambit' } })));
+  assert.equal(bear.zone, 'battlefield');
+  assert.equal(game.oppLife, 40);
+  withFlips(true, () => Bot.runEffect(game, text('Fiery Gambit'), ctx(game, { self: { name: 'Fiery Gambit' } })));
+  assert.equal(bear.zone, 'graveyard');
+  assert.equal(game.oppLife, 34);
+});
+
+test('Selective Obliteration keeps colorless permanents and each player\'s main color', () => {
+  const game = vsOpp();
+  const golem = put(game, 'Golem');
+  const bear = put(game, 'Bear');
+  const giant = put(game.bot.s, 'Giant');
+  const flier = put(game.bot.s, 'Flier');
+  put(game.bot.s, 'Bolt');
+  Bot.runEffect(game, text('Selective Obliteration'), ctx(game, { self: { name: 'Selective Obliteration' } }));
+  assert.equal(golem.zone, 'battlefield');
+  assert.equal(bear.zone, 'battlefield');
+  assert.equal([giant, flier].filter(c => c.zone === 'exile').length, 1);
+});
+
+test('Dark Depths thaws one ice counter at a time and makes Marit Lage at the last', () => {
+  const game = vsOpp();
+  const depths = put(game, 'Dark Depths');
+  depths.counters = { ice: 2 };
+  Bot.runEffect(game, 'Remove an ice counter from Dark Depths.', ctx(game, { self: depths }));
+  assert.equal(depths.counters.ice, 1);
+  Bot.runEffect(game, 'Remove an ice counter from Dark Depths.', ctx(game, { self: depths }));
+  assert.equal(depths.zone, 'graveyard');
+  assert.ok(game.zones.battlefield.some(i => game.cards[i].name === 'Marit Lage'));
+});
+
+test('It That Betrays takes a nontoken permanent the opponent sacrifices', () => {
+  const game = vsOpp();
+  put(game, 'It That Betrays');
+  const giant = put(game.bot.s, 'Giant');
+  Game.move(game.bot.s, giant.iid, 'graveyard');
+  Bot.sacrificed(game, game.bot.s, giant, defOf);
+  assert.ok(game.zones.battlefield.some(i => game.cards[i].id === 'Giant'));
+});
+
+test('Calamity of the Titans exiles creatures cheaper than the colorless creature revealed', () => {
+  const game = vsOpp();
+  Game.move(game, find(game, 'It That Betrays'), 'hand');
+  const bear = put(game.bot.s, 'Bear');
+  const golem = put(game, 'Golem');
+  Bot.runEffect(game, text('Calamity of the Titans'), ctx(game, { self: { name: 'Calamity of the Titans' } }));
+  assert.equal(bear.zone, 'exile');
+  assert.equal(golem.zone, 'exile');
+});
+
+test('Gatewatch Beacon enters with three loyalty counters; Matter Reshaper puts a cheap permanent onto the battlefield', () => {
+  const game = vsOpp();
+  const beacon = put(game, 'Gatewatch Beacon');
+  Bot.refreshGrants(game, defOf);
+  Bot.enterTrigger(game, beacon, defOf);
+  assert.equal(beacon.counters.loyalty, 3);
+  const bear = toTop(game, 'Bear');
+  Bot.runEffect(game, 'Reveal the top card of your library. You may put that card onto the battlefield if it\'s a permanent card with mana value 3 or less. Otherwise, put that card into your hand.', ctx(game, { self: { name: 'Matter Reshaper' } }));
+  assert.equal(bear.zone, 'battlefield');
+});
+
+// ---- The last twelve decks (Counter Blitz, Hail Caesar, Necron Dynasties, Science!, Scions & Spellcraft, The Ruinous Powers, Tyranid Swarm) ----
+
+test('V.A.T.S. destroys the opponent\'s creatures sharing the most valuable toughness', () => {
+  const game = vsOpp();
+  const g1 = put(game.bot.s, 'Giant');
+  const bear = put(game.bot.s, 'Bear');
+  Bot.runEffect(game, text('V.A.T.S.', 1), ctx(game, { self: { name: 'V.A.T.S.' } }));
+  assert.equal(g1.zone, 'graveyard');
+  assert.equal(bear.zone, 'battlefield');
+});
+
+test('Clamavus doubles +1/+1 counters; Winged Hive Tyrant gives countered creatures flying', () => {
+  const game = vsOpp();
+  put(game, 'Clamavus');
+  put(game, 'Winged Hive Tyrant');
+  const bear = put(game, 'Bear');
+  Game.counter(game, bear.iid, '+1/+1', 2);
+  Bot.refreshGrants(game, defOf);
+  assert.equal(st(bear).pow, 6);
+  assert.ok(st(bear).kw.has('flying'));
+});
+
+test('Plague Drone turns the opponent\'s life gain into life loss', () => {
+  const game = vsOpp();
+  put(game, 'Plague Drone');
+  const before = { you: game.life, opp: game.oppLife };
+  game.oppLife += 3;
+  Bot.lifeChanged(game, before, defOf, ctx(game));
+  assert.equal(game.oppLife, 37);
+});
+
+test('Mandate of Abaddon destroys every creature weaker than your strongest', () => {
+  const game = vsOpp();
+  const giant = put(game, 'Giant');
+  const bear = put(game, 'Bear');
+  const flier = put(game.bot.s, 'Flier');
+  Bot.runEffect(game, text('Mandate of Abaddon'), ctx(game, { self: { name: 'Mandate of Abaddon' } }));
+  assert.equal(giant.zone, 'battlefield');
+  assert.equal(bear.zone, 'graveyard');
+  assert.equal(flier.zone, 'graveyard');
+});
+
+test('The Swarmlord enters with two counters for each commander cast; Tyrant Guard shields countered creatures', () => {
+  const game = vsOpp();
+  const cmd = game.cards[find(game, 'Giant')];
+  cmd.commander = true;
+  cmd.castCount = 2;
+  const lord = put(game, 'The Swarmlord');
+  Bot.refreshGrants(game, defOf);
+  Bot.enterTrigger(game, lord, defOf);
+  assert.equal(lord.counters['+1/+1'], 4);
+  Bot.runEffect(game, 'Creatures you control with counters on them gain hexproof and indestructible until end of turn.', ctx(game, { self: { name: 'Tyrant Guard' } }));
+  assert.ok(lord.pump.kw.includes('indestructible'));
+});
+
+test('Electrosiphon gives energy equal to the countered spell\'s mana value', () => {
+  const game = vsOpp();
+  const parts = Bot.parts;
+  assert.ok(parts.COUNTER_EXTRAS.some(re => re.test('You get an amount of {E} equal to its mana value')));
+});

@@ -1,0 +1,1006 @@
+{
+  "Thought Vessel": {
+    "id": "Thought Vessel",
+    "name": "Thought Vessel",
+    "typeLine": "Artifact",
+    "manaCost": "{2}",
+    "cmc": 2,
+    "colors": [],
+    "oracle": "You have no maximum hand size.\n{T}: Add {C}.",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Rashmi, Eternities Crafter": {
+    "id": "Rashmi, Eternities Crafter",
+    "name": "Rashmi, Eternities Crafter",
+    "typeLine": "Legendary Creature — Elf Druid",
+    "manaCost": "{2}{G}{U}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Whenever you cast your first spell each turn, reveal the top card of your library. You may cast it without paying its mana cost if it's a spell with lesser mana value. If you don't cast it, put it into your hand.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Aesi, Tyrant of Gyre Strait": {
+    "id": "Aesi, Tyrant of Gyre Strait",
+    "name": "Aesi, Tyrant of Gyre Strait",
+    "typeLine": "Legendary Creature — Serpent",
+    "manaCost": "{4}{G}{U}",
+    "cmc": 6,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "You may play an additional land on each of your turns.\nLandfall — Whenever a land you control enters, you may draw a card.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Hinterland Harbor": {
+    "id": "Hinterland Harbor",
+    "name": "Hinterland Harbor",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "This land enters tapped unless you control a Forest or an Island.\n{T}: Add {G} or {U}.",
+    "producedMana": [
+      "G",
+      "U"
+    ]
+  },
+  "Command Tower": {
+    "id": "Command Tower",
+    "name": "Command Tower",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "{T}: Add one mana of any color in your commander's color identity.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Temple of Mystery": {
+    "id": "Temple of Mystery",
+    "name": "Temple of Mystery",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "This land enters tapped.\nWhen this land enters, scry 1. (Look at the top card of your library. You may put that card on the bottom.)\n{T}: Add {G} or {U}.",
+    "producedMana": [
+      "G",
+      "U"
+    ]
+  },
+  "Reliquary Tower": {
+    "id": "Reliquary Tower",
+    "name": "Reliquary Tower",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "You have no maximum hand size.\n{T}: Add {C}.",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Vineglimmer Snarl": {
+    "id": "Vineglimmer Snarl",
+    "name": "Vineglimmer Snarl",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "As this land enters, you may reveal a Forest or Island card from your hand. If you don't, this land enters tapped.\n{T}: Add {G} or {U}.",
+    "producedMana": [
+      "G",
+      "U"
+    ]
+  },
+  "Lightning Greaves": {
+    "id": "Lightning Greaves",
+    "name": "Lightning Greaves",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{2}",
+    "cmc": 2,
+    "colors": [],
+    "oracle": "Equipped creature has haste and shroud. (It can't be the target of spells or abilities.)\nEquip {0}"
+  },
+  "Thornwood Falls": {
+    "id": "Thornwood Falls",
+    "name": "Thornwood Falls",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "This land enters tapped.\nWhen this land enters, you gain 1 life.\n{T}: Add {G} or {U}.",
+    "producedMana": [
+      "G",
+      "U"
+    ]
+  },
+  "Sol Ring": {
+    "id": "Sol Ring",
+    "name": "Sol Ring",
+    "typeLine": "Artifact",
+    "manaCost": "{1}",
+    "cmc": 1,
+    "colors": [],
+    "oracle": "{T}: Add {C}{C}.",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Arcane Signet": {
+    "id": "Arcane Signet",
+    "name": "Arcane Signet",
+    "typeLine": "Artifact",
+    "manaCost": "{2}",
+    "cmc": 2,
+    "colors": [],
+    "oracle": "{T}: Add one mana of any color in your commander's color identity.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Simic Signet": {
+    "id": "Simic Signet",
+    "name": "Simic Signet",
+    "typeLine": "Artifact",
+    "manaCost": "{2}",
+    "cmc": 2,
+    "colors": [],
+    "oracle": "{1}, {T}: Add {G}{U}.",
+    "producedMana": [
+      "G",
+      "U"
+    ]
+  },
+  "Brainstorm": {
+    "id": "Brainstorm",
+    "name": "Brainstorm",
+    "typeLine": "Instant",
+    "manaCost": "{U}",
+    "cmc": 1,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Draw three cards, then put two cards from your hand on top of your library in any order."
+  },
+  "Counterspell": {
+    "id": "Counterspell",
+    "name": "Counterspell",
+    "typeLine": "Instant",
+    "manaCost": "{U}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Counter target spell."
+  },
+  "Growth Spiral": {
+    "id": "Growth Spiral",
+    "name": "Growth Spiral",
+    "typeLine": "Instant",
+    "manaCost": "{G}{U}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Draw a card. You may put a land card from your hand onto the battlefield."
+  },
+  "Pongify": {
+    "id": "Pongify",
+    "name": "Pongify",
+    "typeLine": "Instant",
+    "manaCost": "{U}",
+    "cmc": 1,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Destroy target creature. It can't be regenerated. Its controller creates a 3/3 green Ape creature token."
+  },
+  "Beast Within": {
+    "id": "Beast Within",
+    "name": "Beast Within",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target permanent. Its controller creates a 3/3 green Beast creature token."
+  },
+  "Negate": {
+    "id": "Negate",
+    "name": "Negate",
+    "typeLine": "Instant",
+    "manaCost": "{1}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Counter target noncreature spell."
+  },
+  "An Offer You Can't Refuse": {
+    "id": "An Offer You Can't Refuse",
+    "name": "An Offer You Can't Refuse",
+    "typeLine": "Instant",
+    "manaCost": "{U}",
+    "cmc": 1,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Counter target noncreature spell. Its controller creates two Treasure tokens. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Reality Shift": {
+    "id": "Reality Shift",
+    "name": "Reality Shift",
+    "typeLine": "Instant",
+    "manaCost": "{1}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Exile target creature. Its controller manifests the top card of their library. (That player puts the top card of their library onto the battlefield face down as a 2/2 creature. If it's a creature card, it can be turned face up any time for its mana cost.)"
+  },
+  "Snap": {
+    "id": "Snap",
+    "name": "Snap",
+    "typeLine": "Instant",
+    "manaCost": "{1}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Return target creature to its owner's hand. Untap up to two lands."
+  },
+  "Unwind": {
+    "id": "Unwind",
+    "name": "Unwind",
+    "typeLine": "Instant",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Counter target noncreature spell. Untap up to three lands."
+  },
+  "Opt": {
+    "id": "Opt",
+    "name": "Opt",
+    "typeLine": "Instant",
+    "manaCost": "{U}",
+    "cmc": 1,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Scry 1. (Look at the top card of your library. You may put that card on the bottom.)\nDraw a card."
+  },
+  "Swan Song": {
+    "id": "Swan Song",
+    "name": "Swan Song",
+    "typeLine": "Instant",
+    "manaCost": "{U}",
+    "cmc": 1,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue Bird creature token with flying."
+  },
+  "Arcane Denial": {
+    "id": "Arcane Denial",
+    "name": "Arcane Denial",
+    "typeLine": "Instant",
+    "manaCost": "{1}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Counter target spell. Its controller may draw up to two cards at the beginning of the next turn's upkeep.\nYou draw a card at the beginning of the next turn's upkeep."
+  },
+  "Aetherize": {
+    "id": "Aetherize",
+    "name": "Aetherize",
+    "typeLine": "Instant",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Return all attacking creatures to their owner's hand."
+  },
+  "Frantic Search": {
+    "id": "Frantic Search",
+    "name": "Frantic Search",
+    "typeLine": "Instant",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Draw two cards, then discard two cards. Untap up to three lands."
+  },
+  "Rewind": {
+    "id": "Rewind",
+    "name": "Rewind",
+    "typeLine": "Instant",
+    "manaCost": "{2}{U}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Counter target spell. Untap up to four lands."
+  },
+  "Rhystic Study": {
+    "id": "Rhystic Study",
+    "name": "Rhystic Study",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}."
+  },
+  "Fierce Guardianship": {
+    "id": "Fierce Guardianship",
+    "name": "Fierce Guardianship",
+    "typeLine": "Instant",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "If you control a commander, you may cast this spell without paying its mana cost.\nCounter target noncreature spell."
+  },
+  "Wavebreak Hippocamp": {
+    "id": "Wavebreak Hippocamp",
+    "name": "Wavebreak Hippocamp",
+    "typeLine": "Enchantment Creature — Horse Fish",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever you cast your first spell during each opponent's turn, draw a card.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Eumidian Terrabotanist": {
+    "id": "Eumidian Terrabotanist",
+    "name": "Eumidian Terrabotanist",
+    "typeLine": "Creature — Insect Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, you gain 1 life.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Wilderness Reclamation": {
+    "id": "Wilderness Reclamation",
+    "name": "Wilderness Reclamation",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your end step, untap all lands you control."
+  },
+  "Elven Raft-Steerer": {
+    "id": "Elven Raft-Steerer",
+    "name": "Elven Raft-Steerer",
+    "typeLine": "Creature — Elf Pilot",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, choose one —\n• Tap target creature an opponent controls.\n• Untap target creature you control.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Jaddi Offshoot": {
+    "id": "Jaddi Offshoot",
+    "name": "Jaddi Offshoot",
+    "typeLine": "Creature — Plant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Defender\nLandfall — Whenever a land you control enters, you gain 1 life.",
+    "power": "0",
+    "toughness": "3"
+  },
+  "Embodiment of Insight": {
+    "id": "Embodiment of Insight",
+    "name": "Embodiment of Insight",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Vigilance\nLand creatures you control have vigilance.\nLandfall — Whenever a land you control enters, you may have target land you control become a 3/3 Elemental creature with haste until end of turn. It's still a land.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Tatyova, Benthic Druid": {
+    "id": "Tatyova, Benthic Druid",
+    "name": "Tatyova, Benthic Druid",
+    "typeLine": "Legendary Creature — Merfolk Druid",
+    "manaCost": "{3}{G}{U}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, you gain 1 life and draw a card.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Tam, Observant Sequencer // Deep Sight": {
+    "id": "Tam, Observant Sequencer // Deep Sight",
+    "name": "Tam, Observant Sequencer // Deep Sight",
+    "typeLine": "Legendary Creature — Gorgon Wizard // Sorcery",
+    "manaCost": "{2}{G}{U} // {G}{U}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Tam, Observant Sequencer: Landfall — Whenever a land you control enters, Tam becomes prepared. (While it's prepared, you may cast a copy of its spell. Doing so unprepares it.)\n\nDeep Sight: You draw a card and gain 1 life.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Courser of Kruphix": {
+    "id": "Courser of Kruphix",
+    "name": "Courser of Kruphix",
+    "typeLine": "Enchantment Creature — Centaur",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Play with the top card of your library revealed.\nYou may play lands from the top of your library.\nLandfall — Whenever a land you control enters, you gain 1 life.",
+    "power": "2",
+    "toughness": "4"
+  },
+  "Grazing Gladehart": {
+    "id": "Grazing Gladehart",
+    "name": "Grazing Gladehart",
+    "typeLine": "Creature — Antelope",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, you may gain 2 life.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Kazandu Nectarpot": {
+    "id": "Kazandu Nectarpot",
+    "name": "Kazandu Nectarpot",
+    "typeLine": "Creature — Insect",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, you gain 1 life.",
+    "power": "1",
+    "toughness": "3"
+  },
+  "Dreamroot Cascade": {
+    "id": "Dreamroot Cascade",
+    "name": "Dreamroot Cascade",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "This land enters tapped unless you control two or more other lands.\n{T}: Add {G} or {U}.",
+    "producedMana": [
+      "G",
+      "U"
+    ]
+  },
+  "Koma, Cosmos Serpent": {
+    "id": "Koma, Cosmos Serpent",
+    "name": "Koma, Cosmos Serpent",
+    "typeLine": "Legendary Creature — Serpent",
+    "manaCost": "{3}{G}{G}{U}{U}",
+    "cmc": 7,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "This spell can't be countered.\nAt the beginning of each upkeep, create a 3/3 blue Serpent creature token named Koma's Coil.\nSacrifice another Serpent: Choose one —\n• Tap target permanent. Its activated abilities can't be activated this turn.\n• Koma gains indestructible until end of turn.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Elder Gargaroth": {
+    "id": "Elder Gargaroth",
+    "name": "Elder Gargaroth",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reach, vigilance, trample\nWhenever this creature attacks or blocks, choose one —\n• Create a 3/3 green Beast creature token.\n• You gain 3 life.\n• Draw a card.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Atlantean Cavalry": {
+    "id": "Atlantean Cavalry",
+    "name": "Atlantean Cavalry",
+    "typeLine": "Creature — Merfolk Soldier",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Vigilance\nWhenever you draw your second card each turn, put a +1/+1 counter on this creature.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Curiosity Crafter": {
+    "id": "Curiosity Crafter",
+    "name": "Curiosity Crafter",
+    "typeLine": "Creature — Bird Wizard",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flying\nYou have no maximum hand size.\nWhenever a creature token you control deals combat damage to a player, draw a card.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Consecrated Sphinx": {
+    "id": "Consecrated Sphinx",
+    "name": "Consecrated Sphinx",
+    "typeLine": "Creature — Sphinx",
+    "manaCost": "{4}{U}{U}",
+    "cmc": 6,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flying\nWhenever an opponent draws a card, you may draw two cards.",
+    "power": "4",
+    "toughness": "6"
+  },
+  "Data, Professor of Humanities": {
+    "id": "Data, Professor of Humanities",
+    "name": "Data, Professor of Humanities",
+    "typeLine": "Legendary Artifact Creature — Scientist Android",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Seek out — Whenever you draw your second card each turn, create two 1/1 blue Faerie creature tokens with flying.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Clockwork Fox": {
+    "id": "Clockwork Fox",
+    "name": "Clockwork Fox",
+    "typeLine": "Artifact Creature — Fox",
+    "manaCost": "{3}",
+    "cmc": 3,
+    "colors": [],
+    "oracle": "When this creature leaves the battlefield, you draw two cards and each opponent draws a card.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Garruk's Packleader": {
+    "id": "Garruk's Packleader",
+    "name": "Garruk's Packleader",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever another creature you control with power 3 or greater enters, you may draw a card.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Bonny Pall, Clearcutter": {
+    "id": "Bonny Pall, Clearcutter",
+    "name": "Bonny Pall, Clearcutter",
+    "typeLine": "Legendary Creature — Giant Scout",
+    "manaCost": "{3}{G}{U}{U}",
+    "cmc": 6,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Reach\nWhen Bonny Pall enters, create Beau, a legendary blue Ox creature token with \"Beau's power and toughness are each equal to the number of lands you control.\"\nWhenever you attack, draw a card, then you may put a land card from your hand or graveyard onto the battlefield.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Co-Option Adjutant": {
+    "id": "Co-Option Adjutant",
+    "name": "Co-Option Adjutant",
+    "typeLine": "Artifact Creature — Borg",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Artifact creatures you control have \"Whenever this creature deals combat damage to a player, draw a card.\"",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Enduring Curiosity": {
+    "id": "Enduring Curiosity",
+    "name": "Enduring Curiosity",
+    "typeLine": "Enchantment Creature — Cat Glimmer",
+    "manaCost": "{2}{U}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flash\nWhenever a creature you control deals combat damage to a player, draw a card.\nWhen Enduring Curiosity dies, if it was a creature, return it to the battlefield under its owner's control. It's an enchantment. (It's not a creature.)",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Eligeth, Crossroads Augur": {
+    "id": "Eligeth, Crossroads Augur",
+    "name": "Eligeth, Crossroads Augur",
+    "typeLine": "Legendary Creature — Sphinx",
+    "manaCost": "{4}{U}{U}",
+    "cmc": 6,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flying\nIf you would scry a number of cards, draw that many cards instead.\nPartner (You can have two commanders if both have partner.)",
+    "power": "5",
+    "toughness": "6"
+  },
+  "Inga Rune-Eyes": {
+    "id": "Inga Rune-Eyes",
+    "name": "Inga Rune-Eyes",
+    "typeLine": "Legendary Creature — Human Wizard",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "When Inga Rune-Eyes enters, scry 3.\nWhen Inga Rune-Eyes dies, draw three cards if three or more creatures died this turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Gnarled Sage": {
+    "id": "Gnarled Sage",
+    "name": "Gnarled Sage",
+    "typeLine": "Creature — Treefolk Druid",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reach (This creature can block creatures with flying.)\nAs long as you've drawn two or more cards this turn, this creature gets +0/+2 and has vigilance. (Attacking doesn't cause it to tap.)",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Inga and Esika": {
+    "id": "Inga and Esika",
+    "name": "Inga and Esika",
+    "typeLine": "Legendary Creature — Human God",
+    "manaCost": "{2}{G}{U}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Creatures you control have vigilance and \"{T}: Add one mana of any color. Spend this mana only to cast a creature spell.\"\nWhenever you cast a creature spell, if three or more mana from creatures was spent to cast it, draw a card.",
+    "power": "4",
+    "toughness": "4",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Gaea's Courser": {
+    "id": "Gaea's Courser",
+    "name": "Gaea's Courser",
+    "typeLine": "Creature — Centaur Soldier",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature attacks, if there are three or more creature cards in your graveyard, draw a card.",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Kefnet the Mindful": {
+    "id": "Kefnet the Mindful",
+    "name": "Kefnet the Mindful",
+    "typeLine": "Legendary Creature — God",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flying, indestructible\nKefnet can't attack or block unless you have seven or more cards in hand.\n{3}{U}: Draw a card, then you may return a land you control to its owner's hand.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Keruga, the Macrosage": {
+    "id": "Keruga, the Macrosage",
+    "name": "Keruga, the Macrosage",
+    "typeLine": "Legendary Creature — Dinosaur Hippo",
+    "manaCost": "{3}{G/U}{G/U}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Companion — Your starting deck contains only cards with mana value 3 or greater and land cards. (If this card is your chosen companion, you may put it into your hand from outside the game for {3} as a sorcery.)\nWhen Keruga enters, draw a card for each other permanent you control with mana value 3 or greater.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Reclamation Sage": {
+    "id": "Reclamation Sage",
+    "name": "Reclamation Sage",
+    "typeLine": "Creature — Elf Shaman",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, you may destroy target artifact or enchantment.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Eternal Witness": {
+    "id": "Eternal Witness",
+    "name": "Eternal Witness",
+    "typeLine": "Creature — Human Shaman",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, you may return target card from your graveyard to your hand.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Graviton, Fundamental Force": {
+    "id": "Graviton, Fundamental Force",
+    "name": "Graviton, Fundamental Force",
+    "typeLine": "Legendary Creature — Human Villain",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever you draw your second card each turn, choose one —\n• Target creature gains flying until end of turn. (It can't be blocked except by creatures with flying or reach.)\n• Tap target creature.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Icewind Elemental": {
+    "id": "Icewind Elemental",
+    "name": "Icewind Elemental",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{4}{U}",
+    "cmc": 5,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flying\nWhen this creature enters, draw a card, then discard a card.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Joraga Visionary": {
+    "id": "Joraga Visionary",
+    "name": "Joraga Visionary",
+    "typeLine": "Creature — Elf Wizard",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, draw a card.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Knights of Dol Amroth": {
+    "id": "Knights of Dol Amroth",
+    "name": "Knights of Dol Amroth",
+    "typeLine": "Creature — Human Knight",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever you draw your second card each turn, put a +1/+1 counter on this creature.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Sakura-Tribe Elder": {
+    "id": "Sakura-Tribe Elder",
+    "name": "Sakura-Tribe Elder",
+    "typeLine": "Creature — Snake Shaman",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Sacrifice this creature: Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Rapid Hybridization": {
+    "id": "Rapid Hybridization",
+    "name": "Rapid Hybridization",
+    "typeLine": "Instant",
+    "manaCost": "{U}",
+    "cmc": 1,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Destroy target creature. It can't be regenerated. That creature's controller creates a 3/3 green Frog Lizard creature token."
+  },
+  "Crackdown Construct": {
+    "id": "Crackdown Construct",
+    "name": "Crackdown Construct",
+    "typeLine": "Artifact Creature — Construct",
+    "manaCost": "{4}",
+    "cmc": 4,
+    "colors": [],
+    "oracle": "Whenever you activate an ability of an artifact or creature that isn't a mana ability, this creature gets +1/+1 until end of turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Seedborn Muse": {
+    "id": "Seedborn Muse",
+    "name": "Seedborn Muse",
+    "typeLine": "Creature — Spirit",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Untap all permanents you control during each other player's untap step.",
+    "power": "2",
+    "toughness": "4"
+  },
+  "Planar Genesis": {
+    "id": "Planar Genesis",
+    "name": "Planar Genesis",
+    "typeLine": "Instant",
+    "manaCost": "{G}{U}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Look at the top four cards of your library. You may put a land card from among them onto the battlefield tapped. If you don't, put a card from among them into your hand. Put the rest on the bottom of your library in a random order."
+  },
+  "Archmage Emeritus": {
+    "id": "Archmage Emeritus",
+    "name": "Archmage Emeritus",
+    "typeLine": "Creature — Human Wizard",
+    "manaCost": "{2}{U}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Magecraft — Whenever you cast or copy an instant or sorcery spell, draw a card.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Oracle of Mul Daya": {
+    "id": "Oracle of Mul Daya",
+    "name": "Oracle of Mul Daya",
+    "typeLine": "Creature — Elf Shaman",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may play an additional land on each of your turns.\nPlay with the top card of your library revealed.\nYou may play lands from the top of your library.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Teferi, Mage of Zhalfir": {
+    "id": "Teferi, Mage of Zhalfir",
+    "name": "Teferi, Mage of Zhalfir",
+    "typeLine": "Legendary Creature — Human Wizard",
+    "manaCost": "{2}{U}{U}{U}",
+    "cmc": 5,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flash\nCreature cards you own that aren't on the battlefield have flash.\nEach opponent can cast spells only any time they could cast a sorcery.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Avenger of Zendikar": {
+    "id": "Avenger of Zendikar",
+    "name": "Avenger of Zendikar",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{5}{G}{G}",
+    "cmc": 7,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, create a 0/1 green Plant creature token for each land you control.\nLandfall — Whenever a land you control enters, you may put a +1/+1 counter on each Plant creature you control.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Torrential Gearhulk": {
+    "id": "Torrential Gearhulk",
+    "name": "Torrential Gearhulk",
+    "typeLine": "Artifact Creature — Construct",
+    "manaCost": "{4}{U}{U}",
+    "cmc": 6,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flash\nWhen this creature enters, you may cast target instant card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.",
+    "power": "5",
+    "toughness": "6"
+  },
+  "Naiad of Hidden Coves": {
+    "id": "Naiad of Hidden Coves",
+    "name": "Naiad of Hidden Coves",
+    "typeLine": "Enchantment Creature — Nymph",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "During turns other than yours, spells you cast cost {1} less to cast.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Baral, Chief of Compliance": {
+    "id": "Baral, Chief of Compliance",
+    "name": "Baral, Chief of Compliance",
+    "typeLine": "Legendary Creature — Human Wizard",
+    "manaCost": "{1}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Instant and sorcery spells you cast cost {1} less to cast.\nWhenever a spell or ability you control counters a spell, you may draw a card. If you do, discard a card.",
+    "power": "1",
+    "toughness": "3"
+  }
+}

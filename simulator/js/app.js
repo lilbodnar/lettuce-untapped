@@ -1038,6 +1038,7 @@
       const mv = inst.cmc || 0;
       Game.move(game, iid, 'graveyard');
       if (ab.kind === 'cycling') Game.drawCards(game, 1);
+      if (/cycling/.test(ab.kind) && hasBot()) Bot.cycled(game, inst, def, effectCtx()); // Valiant Rescuer, Lightning Rift, Spellpyre Phoenix's count
       else if (ab.kind === 'basic landcycling') later('mustLibrary', { kind: 'search', spec: { n: 1, what: 'basic land', to: 'hand', tapped: false, rest: null }, src: `${inst.name} (basic landcycling)` });
       else if (/^\w+cycling$/.test(ab.kind)) later('mustLibrary', { kind: 'search', spec: { n: 1, what: ab.kind.replace(/cycling$/, '').replace(/^\w/, ch => ch.toUpperCase()), to: 'hand', tapped: false, rest: null }, src: `${inst.name} (${ab.kind})` }); // Plainscycling
       else later('mustLibrary', { kind: 'search', spec: { n: 1, what: '', to: 'hand', tapped: false, rest: null, mv }, src: `${inst.name} (transmute, mana value ${mv})` });
@@ -2386,6 +2387,8 @@
     if (opts.choice === 'impending') { inst.impending = true; inst.counters = { ...inst.counters, time: opts.impending || 1 }; }
     if (opts.choice === 'bestow') inst.bestowed = true; // Chromanticore: an aura on a creature (you pick it)
     if (opts.choice === 'kicked') inst.kicked = true; // Josu Vess: "if he was kicked"
+    if (opts.choice === 'multiverse') game.multiverseTurn = game.turn; // One with the Multiverse: once a turn
+    if (opts.choice === 'monolith') game.monolithTurn = game.turn; // Darksteel Monolith: once a turn
     if (opts.choice === 'awaken') inst.awakenN = opts.awaken; // Ruinous Path (Bot.spellCast)
     if (opts.extraCounters) inst.enterCounters = opts.extraCounters; // Chorus of the Conclave (Bot.enterTrigger)
     if (opts.choice === 'buyback') inst.boughtBack = true; // Capsize: back to your hand as it resolves (Game.move)
@@ -4063,7 +4066,8 @@
     const inst = game.cards[iid];
     if (!inst || inst.zone !== 'battlefield') return;
     if (Bot.loyaltyLocked(game, def)) return status("Players can't activate planeswalkers' loyalty abilities (The Immortal Sun).", 'warn', 8000);
-    if (inst.loyaltyTurn === game.turn) return status(`${inst.name} has already used a loyalty ability this turn.`, 'warn');
+    const twice = inst.loyaltyTurn === game.turn && inst.loyaltyTwice !== game.turn && Bot.loyaltyTwice(game, def); // Oath of Teferi
+    if (inst.loyaltyTurn === game.turn && !twice) return status(`${inst.name} has already used a loyalty ability this turn.`, 'warn');
     const have = Bot.loyaltyOf(inst, def(inst.id));
     let delta = ab.loyalty;
     let effect = ab.effect;
@@ -4076,8 +4080,12 @@
     if (delta < 0 && have < -delta) return status(`${inst.name} has only ${have} loyalty.`, 'warn');
     act(() => {
       inst.counters = { ...inst.counters, loyalty: have + delta };
+      if (twice) inst.loyaltyTwice = game.turn;
       inst.loyaltyTurn = game.turn;
+      game.loyaltyActTurn = game.turn; // The Chain Veil
       const left = Bot.runEffect(game, effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
+      // Repeated Reverberation: the next loyalty ability this turn is copied twice (unless a spell used it first)
+      if (game.reverbTurn === game.turn && game.copyNextTurn === game.turn) { delete game.reverbTurn; delete game.copyNextTurn; for (let i = 0; i < 2; i++) Bot.runEffect(game, effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx())); }
       Game.log(game, `${inst.name} ${delta >= 0 ? '+' : ''}${delta}: ${effect}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);
       if (inst.zone === 'battlefield' && inst.counters.loyalty <= 0) Game.move(game, iid, 'graveyard');
     });
@@ -5740,7 +5748,7 @@
       const dredge = inst.zone === 'graveyard' && /^dredge (\d+)/im.exec(oracleOf(inst));
       if (dredge) cast.push({ label: inst.dredgeNext ? `Dredge ${dredge[1]}: set for your next draw (click to cancel)` : `Dredge ${dredge[1]}: return it instead of your next draw`, action: () => { closeModal(); act(() => { inst.dredgeNext = !inst.dredgeNext; Game.log(game, inst.dredgeNext ? `${inst.name} will be dredged instead of your next draw.` : `${inst.name} won't be dredged.`); }); } });
       // Conduit of Worlds: "You may play lands from your graveyard." (your land for the turn)
-      if (inst.zone === 'graveyard' && Game.isLand(inst) && Bot.landsFromGrave(game, def)) {
+      if (inst.zone === 'graveyard' && Game.isLand(inst) && Bot.landsFromGrave(game, def, inst)) {
         cast.push({ label: game.landPlayed ? 'Play this land (you already played one)' : 'Play this land', action: () => { closeModal(); if (game.landPlayed) return status("You've already played a land this turn.", 'warn'); act(() => { Game.move(game, iid, 'battlefield'); game.landPlayed = true; Game.log(game, `Played ${inst.name} from your graveyard.`); }); } });
       }
       // T'Chaka: "{3}, Exile this card from your graveyard: You become the monarch. Activate only if you control your commander."

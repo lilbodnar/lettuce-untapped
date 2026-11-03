@@ -245,7 +245,7 @@ const Game = (() => {
   // Wild Growth ({G}), Utopia Sprawl (the chosen color).
   // Crypt Ghast: "Whenever you tap a Swamp for mana, add an additional {B}." (s.swampExtra, bot.js's refreshGrants)
   const auraMana = (s, land) => attachmentsOf(s, land.iid).map(id => s.cards[id]).filter(a => a.extraManaAura)
-    .map(a => (a.extraManaAura === 'chosen' ? [a.chosenColor || 'G'] : MANA.includes(a.extraManaAura) ? [a.extraManaAura] : MANA.slice(0, 5)))
+    .flatMap(a => (a.extraManaAura === 'chosen' ? [[a.chosenColor || 'G']] : a.extraManaAura === 'two' ? [MANA.slice(0, 5), MANA.slice(0, 5)] : /^[WUBRGC]{2,}$/.test(a.extraManaAura) ? a.extraManaAura.split('').map(k => [k]) : [MANA.includes(a.extraManaAura) ? [a.extraManaAura] : MANA.slice(0, 5)]))
     .concat(s.swampExtra && /\bswamp\b/i.test(land.typeLine || '') ? Array(s.swampExtra).fill(['B']) : [])
     .concat(Object.entries(s.colorExtra || {}).filter(([k]) => (producesOf(land) || []).includes(k)).flatMap(([k, n]) => Array(n).fill([k]))); // Caged Sun (bot.js's grantsOnce)
   // The creature Springleaf Drum would tap (an untapped one, tokens first), or null.
@@ -858,8 +858,8 @@ const Game = (() => {
     if (/^whenever enchanted land is tapped for mana, its controller adds an additional one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.extraManaAura = true; // Fertile Ground (sourceOf)
     // Weirding Wood, Gift of Paradise: 'Enchanted land has "{T}: Add two mana of any one color."' (read as one more mana of any color)
     if (/^enchanted land has "\{t\}: add two mana of any one colou?r\.?"\.?$/im.test(String(def.oracle || ''))) inst.extraManaAura = true;
-    const auraAdds = /^whenever enchanted (?:land|forest) is tapped for mana, its controller adds an additional (?:\{([WUBRGC])\}|one mana of the (chosen) colou?r)\.?$/im.exec(String(def.oracle || ''));
-    if (auraAdds) inst.extraManaAura = auraAdds[1] ? auraAdds[1].toUpperCase() : 'chosen'; // Wild Growth, Utopia Sprawl (auraMana)
+    const auraAdds = /^whenever enchanted (?:land|forest) is tapped for mana, its controller adds an additional (?:((?:\{[WUBRGC]\})+)|one mana of the (chosen) colou?r|(two) mana in any combination of colou?rs)\.?$/im.exec(String(def.oracle || ''));
+    if (auraAdds) inst.extraManaAura = auraAdds[1] ? auraAdds[1].replace(/[{}]/g, '').toUpperCase() : auraAdds[3] ? 'two' : 'chosen'; // Wild Growth, Utopia Sprawl, Overgrowth ({G}{G}), Dawn's Reflection (two of any) (auraMana)
     if (/^if one or more creature tokens would be created under your control, that many 4\/4 white angel creature tokens with flying and vigilance are created instead\.?$/im.test(String(def.oracle || ''))) inst.angelTokens = true; // Divine Visitation (createToken)
     if (/^if you would create one or more tokens, you may instead create that many 2\/2 green cat creature tokens with haste or that many 3\/1 green dog creature tokens with vigilance\.?$/im.test(String(def.oracle || ''))) inst.catDogTokens = true; // Jinnie Fay (createToken)
     // Ifnir Deadlands: "{T}, Pay 1 life: Add {B}." That color isn't auto-tapped (producesOf); you activate it (bot.js's activatedAbilities).
@@ -1315,7 +1315,7 @@ const Game = (() => {
     if (/(?:would create one or more (?:[a-z]+ )?tokens|one or more (?:[a-z]+ )?tokens would be created)[^.]*?, (?:it creates )?twice that many/i.test(text)) out.tokens = true;
     // Doubling Season's "would put one or more counters on a permanent you control", and Corpsejack
     // Menace's "If one or more +1/+1 counters would be put on a creature you control".
-    const m = /(?:would put one or more (\+1\/\+1 )?counters on|one or more (\+1\/\+1 )?counters would be put on) [^.]*?you control[^.]*?, (?:it puts )?twice that many/i.exec(text);
+    const m = /(?:would put one or more (\+1\/\+1 )?counters on|one or more (\+1\/\+1 )?counters would be put on) [^.]*?(?:you control|on a creature)[^.]*?, (?:it puts )?twice that many/i.exec(text); // Primal Vigor: its controller's creatures only
     if (m) out.counters = m[1] || m[2] ? '+1/+1' : 'all';
     return Object.keys(out).length ? out : null;
   }

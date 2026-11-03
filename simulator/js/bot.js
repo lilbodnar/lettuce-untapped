@@ -14,7 +14,7 @@ const Bot = (() => {
 
   const KEYWORDS = ['flying', 'reach', 'vigilance', 'haste', 'deathtouch', 'trample', 'lifelink', 'first strike',
     'double strike', 'menace', 'defender', 'indestructible', 'hexproof', 'shroud', 'ward',
-    'plainswalk', 'islandwalk', 'swampwalk', 'mountainwalk', 'forestwalk', 'fear', 'intimidate', 'skulk', 'shadow',
+    'plainswalk', 'islandwalk', 'swampwalk', 'mountainwalk', 'forestwalk', 'desertwalk', 'fear', 'intimidate', 'skulk', 'shadow',
     'protection from each color',
     // Done in combat, on death or when you cast a spell (see "more abilities" below):
     'prowess', 'exalted', 'battle cry', 'infect', 'wither', 'toxic', 'annihilator', 'flanking', 'bushido', 'rampage',
@@ -213,6 +213,7 @@ const Bot = (() => {
       const kind = /\bis an? (\w+) in addition to its other types\b/i.exec(line);
       if (kind && /^(?:equipped|enchanted) creature\b/i.test(line)) out.types = [kind[1].toLowerCase()];
       // Its first sentence; a quoted ability keeps its own sentences (Level Up: 'has "Whenever this creature attacks, … Then if …"').
+      if (/^enchanted permanent is a treasure artifact with "\{t\}, sacrifice this artifact: add one mana of any color," and it loses all other abilities\.?$/i.test(line)) { out.cantAttack = true; out.cantBlock = true; out.noAbilities = true; continue; } // Minimus Containment
       if (NEAR.IN_TOO_DEEP.test(line)) { out.cantAttack = true; out.cantBlock = true; out.noAbilities = true; continue; } // In Too Deep: a Clue (read as a creature that can't attack or block)
       const m = /^(?:equipped|enchanted) (?:creature|permanent) (.+?)\.?$/i.exec(/^[^"]*"[^"]*"\.?$/.test(line) ? line : line.split('. ')[0]);
       if (!m) continue;
@@ -386,7 +387,7 @@ const Bot = (() => {
   // Can this creature be one of the blockers? (Flying needs flying or reach. Menace is about how
   // many block, so it's checked with legalBlock.)
   // Landwalk: unblockable while the defending player controls a land of that type (forestwalk and a Forest).
-  const WALKS = { plainswalk: 'plains', islandwalk: 'island', swampwalk: 'swamp', mountainwalk: 'mountain', forestwalk: 'forest' };
+  const WALKS = { plainswalk: 'plains', islandwalk: 'island', swampwalk: 'swamp', mountainwalk: 'mountain', forestwalk: 'forest', desertwalk: 'desert' };
   const walksPast = (attacker, defender) => !!defender && (attacker.kw.has('nonbasic landwalk') && defender.zones.battlefield.some(iid => G.isLand(defender.cards[iid]) && !/\bbasic\b/i.test(defender.cards[iid].typeLine || '')) || Object.entries(WALKS).some(([k, type]) => attacker.kw.has(k)
     && defender.zones.battlefield.some(iid => G.isLand(defender.cards[iid]) && (defender.allBasics || (defender.allIslands && type === 'island') || (defender.allForests && type === 'forest') || new RegExp(`\\b${type}\\b`, 'i').test(defender.cards[iid].typeLine || ''))))); // Stormtide Leviathan (refreshGrants)
   // defender: the blocking player's table (for landwalk); optional.
@@ -430,6 +431,7 @@ const Bot = (() => {
     if (lack) return !lack[1].split('|').some(k => blocker.kw.has(k)); // Sidar Kondo: "evade lacking flying|reach"
     const tough = /^evade toughness (\d+)$/.exec(k); // Ghost of Ramirez DePietro: "can't be blocked by creatures with toughness 3 or greater"
     if (tough) return blocker.tou >= Number(tough[1]);
+    if (k === 'evade nonlegendary') return !((blocker.types || []).includes('legendary') || blocker.legendary); // Midnight Pathlighter
     const only = /^evade non-(\w+)$/.exec(k); // Deluxe Dragster: "can't be blocked except by Vehicles"
     if (only) return !(blocker.types || []).includes(only[1]);
     const m = /^evade (?:power (\d+)|(\w+))$/.exec(k);
@@ -736,17 +738,20 @@ const Bot = (() => {
     const used = s.muldrotha && s.muldrotha.turn === s.turn ? s.muldrotha.types : [];
     return PERM_TYPES.filter(t => isA(inst, t) && !used.includes(t));
   };
-  const landsFromGrave = (s, defOf) => s.willTurn === s.turn || paragonMax(s, defOf) >= 0 || muldrothaTypes(s, { typeLine: 'Land' }, defOf).length > 0
-    || permanents(s).some(c => oracleLines(c, defOf || (() => null)).some(l => LANDS_FROM_GRAVE.test(l)));
+  const landsFromGrave = (s, defOf, inst = null) => s.willTurn === s.turn || paragonMax(s, defOf) >= 0 || muldrothaTypes(s, { typeLine: 'Land' }, defOf).length > 0
+    || permanents(s).some(c => oracleLines(c, defOf || (() => null)).some(l => LANDS_FROM_GRAVE.test(l)))
+    || (!!inst && isDesert(inst, s, defOf) && permanents(s).some(c => oracleLines(c, defOf || (() => null)).some(l => NEAR.HAZEZON.test(l)))) // Hazezon: Deserts
+    || (!!inst && isA(inst, 'forest') && permanents(s).some(c => oracleLines(c, defOf || (() => null)).some(l => NEAR.TITANIA.test(l)))) // Titania: Forests
+    || (!!inst && inst.surveiledTurn === s.turn && permanents(s).some(c => oracleLines(c, defOf || (() => null)).some(l => NEAR.DUSKMANTLE.test(l)))); // Eye of Duskmantle
   // Verge Rangers: "As long as an opponent controls more lands than you, you may play lands from the top of your library."
   const VERGE = /^as long as an opponent controls more lands than you, you may play lands from the top of your library\.?$/i;
   const LANDS_FROM_TOP = /^you may play lands from the top of your library\.?$/i;
-  const landsFromTop = (s, defOf) => permanents(s).some(c => oracleLines(c, defOf || lastDefOf).some(l => LANDS_FROM_TOP.test(l) || (FORTUNE.test(l) && s.spellTurn === s.turn)))
+  const landsFromTop = (s, defOf) => permanents(s).some(c => oracleLines(c, defOf || lastDefOf).some(l => LANDS_FROM_TOP.test(l) || NEAR.MULTIVERSE_TOP.test(l) || (FORTUNE.test(l) && s.spellTurn === s.turn)))
     || (permanents(s).some(c => oracleLines(c, defOf || lastDefOf).some(l => VERGE.test(l)))
     && lastTables.some(t => t !== s && t.zones && permanents(t).filter(G.isLand).length > permanents(s).filter(G.isLand).length));
   function playLand(s) {
     if (s.landPlayed) return;
-    const fromGrave = landsFromGrave(s) ? s.zones.graveyard.filter(iid => G.isLand(s.cards[iid])) : [];
+    const fromGrave = s.zones.graveyard.filter(iid => G.isLand(s.cards[iid]) && landsFromGrave(s, undefined, s.cards[iid]));
     const top = s.zones.library[0];
     const fromTop = top && G.isLand(s.cards[top]) && landsFromTop(s) ? [top] : [];
     const lands = [...s.zones.hand.filter(iid => G.isLand(s.cards[iid])), ...fromGrave, ...fromTop];
@@ -1021,6 +1026,7 @@ const Bot = (() => {
     const st = s && s.stack;
     const inst = st && s.cards[st.iid];
     if (!inst) return null;
+    permanents(game).filter(w => oracleLines(w, lastDefOf || (() => null)).some(l => NEAR.BARAL.test(l))).forEach(() => { G.drawCards(game, 1); const w = worstInHand(game); if (w) G.move(game, w, 'graveyard'); }); // Baral
     delete s.stack;
     inst.zone = st.from;
     s.zones[st.from].push(inst.iid);
@@ -1105,6 +1111,7 @@ const Bot = (() => {
   // is paid for you when your untapped mana can. Returns true if your spell is countered.
   function oppCounters(game, spell, defOf) {
     if (!game.bot || !game.bot.respond || !spell || spell.faceDown) return false;
+    if (permanents(game).some(w => oracleLines(w, defOf).some(l => NEAR.TEFERI_SORCERY.test(l)))) return false; // Teferi, Mage of Zhalfir
     const s = game.bot.s;
     const cmc = (defOf(spell.id) || {}).cmc || 0;
     // Mistrise Village, Boseiju: your next spell (of that kind) this turn can't be countered.
@@ -1338,6 +1345,7 @@ const Bot = (() => {
     spoilers(s);
     away.forEach(iid => G.move(s, iid, kind === 'surveil' ? 'graveyard' : 'library', { bottom: true }));
     G.log(s, `${src}: ${kind} ${top.length}, ${away.length} ${kind === 'surveil' ? 'into the graveyard' : 'on the bottom'}.`);
+    if (kind === 'surveil') surveiled(s, away);
     // Celeborn the Wise: "Whenever you scry, Celeborn gets +1/+1 until end of turn for each card looked at while scrying this way."
     if (kind !== 'scry' || !top.length) return;
     for (const w of permanents(s)) {
@@ -2157,6 +2165,7 @@ const Bot = (() => {
       n *= 2 ** lines.filter(l => B29.ENERGY_TWICE.test(l)).length;
     }
     s.energy = (s.energy || 0) + n;
+    if (n > 0 && !s.offTurn) permanents(s).filter(w => oracleLines(w, defOf || (() => null)).some(l => NEAR.SCRIBE_ENERGY.test(l))).forEach(() => creatures(s).forEach(c => pumpBy(c, 1, 1))); // Brotherhood Scribe
     return n;
   }
   function payEnergy(s, n) {
@@ -2298,7 +2307,7 @@ const Bot = (() => {
     HYDRA_UP: /^as (?:this creature|.+?) is turned face up, put (\w+) \+1\/\+1 counters on it\.?$/i, // Hooded Hydra (turnedFaceUp)
     PROJEKTOR: /^if turning a face-down permanent face up causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time\.?$/i, // Panoptic Projektor (turnedFaceUp)
     FACE_DOWN_FLY: /^face-down creatures you control enter with a flying counter on them\.?$/i, // Veiled Ascension (staticExtra: flying while it stays)
-    DOWN_DISCOUNT: /^face-down creature spells you cast cost \{(\d+)\} less to cast\.?$/i, // Obscuring Aether (costChoices)
+    DOWN_DISCOUNT: /^(?:the first )?face-down creature spells? you cast (?:each turn )?costs? \{(\d+)\} less to cast\.?$/i, // Kadena: its once a turn isn't kept // Obscuring Aether (costChoices)
     BASE_22_ATTACK: /^whenever a creature you control with base power and toughness (\d+)\/(\d+) attacks, it gets \+(\d+)\/\+(\d+) until end of turn\.?$/i, // Duskana (nearAttack)
     BIG_ATTACK_UP: /^whenever you attack with creatures with total power (\d+) or greater, (?:you may )?turn a face-down creature you control face up\.?$/i, // Ugin's Mastery (nearAttack)
     UNLEASH_ALL: /^other (\w+?)s you control have unleash\.?$/i, // Tesak (nearEnters)
@@ -2355,6 +2364,443 @@ const Bot = (() => {
     DENNICK_EXILE: /^if (?:dennick|this creature|.+?) would be put into a graveyard from anywhere, exile it instead\.?$/i, // (graveInstead)
     OLAG: /^as this creature transforms into olag, ludevic's hubris, it becomes a copy of a creature card exiled with it, .+$/i, // (the copy left out: Olag with its counters)
     TIBALT_EMBLEM: /^as tibalt enters, you get an emblem with "you may play cards exiled with tibalt, cosmic impostor, and you may spend mana as though it were mana of any color to cast those spells\."\.?$/i, // (its cards are marked playable)
+    // "drawing cards" (Rashmi, Eternities Crafter, archidekt.com/decks/28067559)
+    ELIGETH: /^if you would scry a number of cards, draw that many cards instead\.?$/i, // (the scry effect)
+    GNARLED_SAGE: /^as long as you've drawn two or more cards this turn, this creature gets \+(\d+)\/\+(\d+) and has (\w+)\.?$/i, // (staticExtra)
+    INGA_ESIKA_GRANT: /^creatures you control have vigilance and "\{t\}: add one mana of any colou?r\. spend this mana only to cast a creature spell\."\.?$/i, // (vigilance only: staticExtra)
+    COMPANION: /^companion\s*[—-]\s*.+$|^your starting deck contains only .+$/i, // (deckbuilding)
+    TEFERI_FLASH: /^creature cards you own that aren't on the battlefield have flash\.?$/i, // (timing isn't kept for you)
+    TEFERI_SORCERY: /^each opponent can cast spells only any time they could cast a sorcery\.?$/i, // (oppCounters: Opp doesn't counter)
+    NAIAD: /^during turns other than yours, spells you cast cost \{(\d+)\} less to cast\.?$/i, // (selfDiscount)
+    BARAL: /^whenever a spell or ability you control counters a spell, (?:you may )?draw a card\. if you do, discard a card\.?$/i, // (counterStack)
+    // "zeno deck" (Zenos yae Galvus, archidekt.com/decks/28056764)
+    ZENOS_LEAVES: /^when the chosen creature leaves the battlefield, transform (?:zenos yae galvus|this creature)\.?$/i, // (cardMoved: zenosOf)
+    SHINRYU_CHOOSE: /^as this creature transforms into shinryu, choose an opponent\.?$/i, // (one opponent)
+    SHINRYU_WIN: /^when the chosen player loses the game, you win the game\.?$/i, // (two players: the game is over anyway)
+    PLATINUM: /^your life total can't change\.?$/i, // Platinum Emperion (lifeChanged)
+    TRAXOS: /^(?:traxos|this creature) doesn't untap during your untap step\.?$/i, // (refreshGrants: skipUntap)
+    CRAFT: /^craft with .+$/i, // (not offered)
+    CLAWING: /^as long as enchanted permanent is a creature, it gets (-\d+)\/(-\d+) and can't block\.?$/i, // Clawing Torment (staticExtra)
+    CLAWING_LINE: /^enchanted permanent has "(at the beginning of your upkeep, you lose 1 life\.)"\.?$/i, // (staticExtra: the line)
+    CONTAMINATED: /^whenever enchanted creature attacks or blocks, its controller loses (\d+) life\.?$/i, // Contaminated Bond (nearAttack, blockWatch)
+    COVER_DARKNESS: /^creatures of the chosen type have (\w+)\.?$/i, // Cover of Darkness (staticExtra)
+    // The last twelve decks, chunk 4 (The Ruinous Powers, Tyranid Swarm)
+    KHARN_ATTACK: /^(?:kh[aâ]rn the betrayer|this creature) attacks or blocks each combat if able\.?$/i, // (not applied)
+    KHARN_LOSE: /^when you lose control of (?:kh[aâ]rn the betrayer|this creature), draw two cards\.?$/i, // (not applied)
+    KHARN_BETRAY: /^if damage would be dealt to (?:kh[aâ]rn the betrayer|this creature), prevent that damage and an opponent of your choice gains control of it\.?$/i, // (not applied)
+    DRACH_NYEN: /^equipped creature has menace and gets \+x\/\+0, where x is the exiled card's power\.?$/i, // (staticExtra: the creature card it exiled as it entered)
+    HELBRUTE: /^you may cast this card from your graveyard by exiling another creature card from your graveyard in addition to paying its other costs\.?$/i, // (graveCast, spellCast)
+    MAGNUS: /^instant and sorcery spells you cast cost \{1\} less to cast for each creature token you control\.?$/i, // (selfDiscount)
+    SLAANESH: /^each opponent must attack with at least one creature each combat if able\.?$/i, // (not applied)
+    LOST_DAMNED: /^whenever a land you control enters from anywhere other than your hand or you cast a spell from anywhere other than your hand, (create .+?)\.?$/i, // (spellCast, landEnteredNow)
+    SWARMLORD: /^(?:the swarmlord|this creature) enters with two \+1\/\+1 counters on it for each time you've cast your commander from the command zone this game\.?$/i, // (nearEnters)
+    RED_TERROR: /^whenever a red source you control deals damage to one or more permanents and\/or players, put a \+1\/\+1 counter on (?:the red terror|this creature)\.?$/i, // (nearHits: combat damage to a player)
+    CLAMAVUS: /^each creature you control gets \+1\/\+1 for each \+1\/\+1 counter on it\.?$/i, // (staticExtra)
+    BIO_TITAN: /^as an additional cost to cast this spell, you may remove any number of \+1\/\+1 counters from among creatures you control\. this spell costs \{2\} less to cast for each counter removed this way\.?$/i, // (costChoices; nearEnters removes them)
+    TOXICRENE: /^all lands have "\{t\}: add one mana of any colou?r" and lose all other abilities\.?$/i, // (not applied)
+    DEATHLEAPER: /^creatures you control that entered this turn have double strike\.?$/i, // (staticExtra)
+    GHYRSON: /^whenever another source you control deals exactly 1 damage to a permanent or player, (?:ghyrson starn|this creature) deals 2 damage to that permanent or player\.?$/i, // (not applied)
+    SHADOW_WARP: /^the first creature spell you cast each turn costs \{(\d+)\} less to cast\.?$/i, // (selfDiscount)
+    HARRIDAN: /^whenever this creature or another (\w+) you control deals combat damage to a player, (create .+?)\.?$/i, // Tyranid Harridan (nearHits)
+    TYRANID_PRIME: /^other creatures you control have evolve\.?$/i, // (creatureEntered's evolve)
+    HIVE_TYRANT: /^other creatures you control with counters on them have (\w+) and (\w+)\.?$/i, // Winged Hive Tyrant (staticExtra)
+    LOCUS_BUFF: /^whenever a creature attacks one of your opponents, it gets \+0\/\+1 until end of turn\.?$/i, // Genestealer Locus (nearAttack)
+    // The last twelve decks, chunk 3 (Science!, Scions & Spellcraft, The Ruinous Powers)
+    CAMP_TAP: /^whenever fortified land is tapped for mana, put a \+1\/\+1 counter on target creature you control\. if that creature shares a colou?r with the mana that land produced, create a junk token\.?$/i, // C.A.M.P. (fortify isn't kept)
+    FORTIFY: /^fortify (?:\{[^}]+\})+$/i, // (not offered)
+    DUALCAST: /^the second spell you cast each turn costs \{(\d+)\} less to cast\.?$/i, // Alisaie (selfDiscount)
+    JOB_SELECT: /^job select$/i, // (nearEnters: a 1/1 Hero token wearing it)
+    PLANISPHERE: /^whenever you cast a noncreature spell and whenever you draw your third card each turn, put a \+1\/\+1 counter on this creature\.?$/i, // (spellCast: the cast half)
+    CHAKRAMS: /^equipped creature gets \+2\/\+2, has lifelink and "other commanders you control get \+2\/\+2 and have lifelink," and is a performer in addition to its other types\.?$/i, // Dancer's Chakrams (staticExtra)
+    GRAVE_DISCOUNT2: /^spells you cast from your graveyard cost \{(\d+)\} less to cast\.?$/i, // Emet-Selch (selfDiscount)
+    EMET_SELCH: /^whenever one or more opponents lose life, (?:you may )?cast target instant or sorcery card from your graveyard\. if that spell would be put into your graveyard, exile it instead\. do this only once each turn\.?$/i, // (lifeChanged)
+    HRAESVELGR: /^when (?:hraesvelgr|this creature) enters and whenever you cast a noncreature spell, target creature gets \+1\/\+0 until end of turn and can't be blocked this turn\.?$/i, // (nearEnters, spellCast)
+    INTO_STORY: /^this spell costs \{3\} less to cast if an opponent has seven or more cards in their graveyard\.?$/i, // Into the Story (selfDiscount)
+    LYSE_HEXT: /^as long as you've cast two or more noncreature spells this turn, (?:lyse hext|this creature) has double strike\.?$/i, // (staticExtra)
+    URIANGER_WATCH: /^whenever you play a land from exile or cast a spell from exile, you gain (\d+) life\.?$/i, // (spellCast: spells)
+    ABADDON: /^during your turn, spells you cast from your hand with mana value x or less have cascade, where x is the total amount of life your opponents have lost this turn\.?$/i, // (spellCast)
+    PLAGUE_DRONE: /^if an opponent would gain life, that player loses that much life instead\.?$/i, // (lifeChanged)
+    // The last twelve decks, chunk 2 (Hail Caesar, Necron Dynasties, Science!)
+    LANIUS: /^whenever an opponent sacrifices a creature, put a \+1\/\+1 counter on (?:legate lanius|this creature|.+?)\.?$/i, // (sacrificed)
+    BIOTRANSFERENCE: /^creatures you control are artifacts in addition to their other types\. the same is true for creature spells you control and creature cards you own that aren't on the battlefield\.?$/i, // (staticExtra: on the battlefield)
+    IMOTEKH: /^whenever one or more artifact cards leave your graveyard, (create .+?)\.?$/i, // (cardMoved)
+    TOMBS_DRAW: /^if you would draw a card while your library has no cards in it, instead return a creature card from your graveyard to the battlefield\. if you can't, you lose the game\.?$/i, // Out of the Tombs (not applied)
+    MATTER_ABSORPTION: /^whenever an artifact is put into a graveyard from the battlefield or is put into exile from the battlefield, put (\w+) \+1\/\+1 counters on (?:this creature|.+?)\.?$/i, // Shard of the Void Dragon (cardMoved)
+    TRAZYN: /^as long as (?:trazyn|this creature) is on the battlefield, it has all activated abilities of all artifact cards in your graveyard\.?$/i, // (not applied)
+    STALKER_MENACE: /^creatures attacking the last chosen player have menace\.?$/i, // Triarch Stalker (staticExtra: yours, two players)
+    GRAVE_ENTRY: /^when this creature enters from a graveyard, (.+?)\.?$/i, // Canoptek Tomb Sentinel, Triarch Praetorian (nearEnters: enteredFrom)
+    DOMINION_DISCOUNT: /^as long as you control your commander, activated abilities of cards in your graveyard cost \{2\} less to activate\. this effect can't reduce the mana in that ability's activation cost to less than one mana\.?$/i, // (not applied)
+    HEXMARK: /^this creature can't be blocked except by (six|seven|eight) or more creatures\.?$/i, // (staticExtra: unblockable)
+    PSYCHOMANCER: /^whenever this creature or another nontoken artifact you control is put into a graveyard from the battlefield or is put into exile from the battlefield, target opponent loses (\d+) life and you gain \1 life\.?$/i, // (cardMoved)
+    SAUTEKH: /^this creature enters with a \+1\/\+1 counter on it for each creature that died this turn\.?$/i, // (nearEnters)
+    SCRIBE_ENERGY: /^whenever you get one or more \{e\} during your turn, creatures you control get \+1\/\+1 until end of turn\.?$/i, // Brotherhood Scribe (gainEnergy)
+    SENTRY_DISCOUNT: /^this spell costs \{1\} less to cast for each creature attacking you\.?$/i, // Sentry Bot (selfDiscount)
+    NICK_VALENTINE: /^(?:nick valentine|this creature) can't be blocked except by artifact creatures\.?$/i, // (staticExtra: unblockable when the defender has none)
+    GANNON: /^once during each of your turns, you may cast an artifact or human spell from your graveyard with mana value less than or equal to the number of quest counters on (?:arcade gannon|this creature)\.?$/i, // (graveCast)
+    REX_ABILITIES: /^(?:rex|this creature) has all activated abilities of all cards in exile with brain counters on them\.?$/i, // (not applied)
+    // The last twelve decks, chunk 1 (Counter Blitz, Hail Caesar)
+    GENEROUS_PATRON: /^whenever you put one or more counters on a creature you don't control, draw a card\.?$/i, // Generous Patron (not applied: support goes on your own)
+    LULU: /^whenever an opponent attacks you, choose target creature attacking you\. put an? (\w+) counter on that creature\.?$/i, // (nearAttack: the defending side's)
+    RIKKU: /^whenever you put one or more counters on a creature, until end of turn, that creature can't be blocked by creatures your opponents control\.?$/i, // (countersPut)
+    SIN_ENTERS: /^as (?:sin|this creature) enters, remove all counters from any number of artifacts, creatures, and enchantments\. (?:sin|this creature|it) enters with x \+1\/\+1 counters on it, where x is twice the number of counters removed this way\.?$/i, // (nearEnters)
+    SPHERE_GRID: /^creatures you control with \+1\/\+1 counters on them have (\w+) and (\w+)\.?$/i, // (staticExtra)
+    MR_HOUSE: /^whenever you roll a 4 or higher, create a 3\/3 colorless robot artifact creature token\. if you rolled 6 or higher, instead create that token and a treasure token\.?$/i, // (the roll effect)
+    ARADESH: /^whenever a creature you control attacks, if it enlisted a creature this combat, the creature that attacked gains double strike until end of turn\. if that creature's power is 4 or greater, draw a card\.?$/i, // (nearAttack: enlist)
+    RAID_JUNK: /^at end of combat on your turn, if you attacked this turn, create a junk token for each opponent you attacked\.?$/i, // Rose (nearPhase: second main)
+    SQUAD_DISCARD: /^squad\s*[—-]\s*\{(\d+)\}, discard a card\.?$/i, // Thrill-Kill Disciple (costChoices; nearEnters discards)
+    AUTUMN_GRANT: /^other legendary creatures you control have exploit\.?$/i, // (not applied)
+    AUTUMN_WATCH: /^whenever a creature you control exploits a creature, put a \+1\/\+1 counter on each creature you control\.?$/i, // (not applied)
+    MAXSON: /^creature tokens you control have training\.?$/i, // (nearAttack's training)
+    MACCREADY: /^whenever a creature with power (\d+) or greater attacks you, its controller loses (\d+) life and you gain \2 life\.?$/i, // (nearAttack: the defending side's)
+    // The 20-23 decks, chunk 4 (Eldrazi Unbound)
+    MONOLITH: /^once each turn, you may pay \{0\} rather than pay the mana cost for a colorless spell you cast from your hand\.?$/i, // Darksteel Monolith (costChoices)
+    IT_BETRAYS: /^whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control\.?$/i, // (sacrificed)
+    JOURNAL: /^this artifact enters with a number of suspect counters on it equal to the greatest number of creatures a player controls\.?$/i, // Investigator's Journal (nearEnters)
+    KALDRA_EXILE: /^whenever this creature deals combat damage to a creature, exile that creature\.?$/i, // (not applied: the creature usually dies anyway)
+    MYRIAD_KICK: /^if this creature was kicked, it enters with a \+1\/\+1 counter on it for each nonbasic land your opponents control\.?$/i, // Myriad Construct (nearEnters)
+    MYRIAD_SPLIT: /^when this creature becomes the target of a spell, sacrifice it and create a number of 1\/1 colorless construct artifact creature tokens equal to its power\.?$/i, // (spellTargeted)
+    // The 20-23 decks, chunk 3 (Heads I Win, Tails You Lose; Limit Break)
+    COIN_WIN_HIT: /^whenever you win a coin flip, (?:this creature|.+?) deals (\d+) damage to any target\.?$/i, // Karplusan Minotaur (coinFlip)
+    COIN_LOSE_HIT: /^whenever you lose a coin flip, (?:this creature|.+?) deals (\d+) damage to any target of an opponent's choice\.?$/i, // (coinFlip: to you)
+    COIN_LUCK: /^whenever you win a coin flip, put an? (\w+) counter on (?:this enchantment|.+?)\.?$/i, // Chance Encounter (coinFlip)
+    FLIP_UPKEEP: /^cumulative upkeep\s*[—-]\s*flip a coin\.?$/i, // Karplusan Minotaur (nearPhase: an age counter, that many flips)
+    IMPULSIVE: /^whenever a creature attacks, flip a coin\. if you win the flip, the next time that creature would deal combat damage this turn, it deals double that damage instead\. if you lose the flip, the next time that creature would deal combat damage this turn, prevent that damage\.?$/i, // Impulsive Maneuvers (not applied)
+    RISKY_MOVE: /^when you gain control of this enchantment from another player, choose a creature you control and an opponent\. flip a coin\. if you lose the flip, that opponent gains control of that creature\.?$/i, // (it stays put: not applied)
+    SAKASHIMA: /^you may have (?:sakashima the impostor|this creature) enter as a copy of any creature on the battlefield, except .+$/i, // (nearEnters)
+    AVALANCHE_POWER: /^(?:avalanche of sector 7|this creature)'s power is equal to the number of artifacts your opponents control\.?$/i, // (staticExtra)
+    AVALANCHE_PING: /^whenever an opponent activates an ability of an artifact they control, (?:avalanche of sector 7|this creature) deals 1 damage to that player\.?$/i, // (not applied)
+    HEIRLOOM: /^as long as equipped creature is legendary, it has (\w+) and (\w+)\.?$/i, // Hero's Heirloom (staticExtra)
+    HOJO_DISCOUNT: /^the first activated ability you activate during your turn that targets a creature you control costs \{2\} less to activate\.?$/i, // (not applied)
+    HOJO_DRAW: /^whenever one or more creatures you control become the target of an activated ability, draw a card\. this ability triggers only once each turn\.?$/i, // (not applied)
+    SUMMONING_MATERIA: /^as long as this equipment is attached to a creature, you may cast creature spells from the top of your library\.?$/i, // (topCastable)
+    WRECKING_BALL: /^equipped creature has base power and toughness (\d+)\/(\d+) and can't be blocked by creatures with power 2 or less\.?$/i, // (staticExtra: the evasion isn't kept)
+    COIN_ANY_WIN: /^whenever a player wins a coin flip, (.+?)\.?$/i, // Zndrsplt, Okaun (coinFlip: either table's)
+    KRARKS_THUMB: /^if you would flip a coin, instead flip two coins and ignore one\.?$/i, // (coinFlip: either one winning)
+    ZHULODOK: /^colorless spells you cast from your hand with mana value (\d+) or greater have "cascade, cascade\."\.?$/i, // (spellCast)
+    // The 20-23 decks, chunk 2 (Planeswalker Party, Tricky Terrain)
+    BEACON_LOYALTY: /^this artifact enters with (\w+) loyalty counters on it\.?$/i, // Gatewatch Beacon (nearEnters)
+    ONAKKE: /^creatures can't attack planeswalkers you control unless their controller pays \{1\} for each creature they control that's attacking a planeswalker you control\.?$/i, // (not applied)
+    SARKHAN_GUARD: /^whenever a creature attacks you or a planeswalker you control, each dragon you control deals (\d+) damage to that creature\.?$/i, // (nearAttack: the defending side's)
+    OATH_TEFERI: /^you may activate the loyalty abilities of planeswalkers you control twice each turn rather than only once\.?$/i, // (app.js: loyaltyTwice)
+    WANDERER: /^prevent all noncombat damage that would be dealt to you and other permanents you control\.?$/i, // (not applied)
+    OMO_LANDS: /^each land with an everything counter on it is every land type in addition to its other types\.?$/i, // (not applied)
+    OMO_CREATURES: /^each nonland creature with an everything counter on it is every creature type\.?$/i, // (refreshGrants: changeling)
+    DESERT_WARFARE: /^whenever you sacrifice a desert and whenever a desert card is put into your graveyard from your hand or library, put that card onto the battlefield under your control at the beginning of your next end step\.?$/i, // (cardMoved, nearPhase)
+    FROGANTUA: /^this creature gets \+10\/\+10 for each player who has lost the game\.?$/i, // (two players: never)
+    PLANAR_NEXUS: /^this land is every nonbasic land type\.?$/i, // (isDesert, isA gate)
+    MANA_REFLECTION: /^if you tap a permanent for mana, it produces twice as much of that mana instead\.?$/i, // (manaTapped)
+    COPY_LAND: /^you may have this (?:enchantment|land) enter(?: tapped)? as a copy of any land on the battlefield(?:, except it's an enchantment in addition to its other types)?\.?$/i, // Copy Land, Vesuva (nearEnters)
+    DARK_DEPTHS: /^when (?:dark depths|this land) has no ice counters on it, sacrifice it\. if you do, create marit lage, a legendary 20\/20 black avatar creature token with flying and indestructible\.?$/i, // (the ice counter effect)
+    // The 20-23 decks, chunk 1 (Revenant Recon, Eldrazi Incursion)
+    SURVEIL_WATCH: /^whenever you surveil( for the first time each turn)?, (.+?)\.?$/i, // Mirko, Copy Catchers, Whispering Snitch (surveiled)
+    GRAVE_FIFTEEN: /^there are (\w+) or more cards in your graveyard\.?$/i, // Case of the Shifting Visage's "to solve" (nearPhase: solved)
+    END_STEP_FLASH: /^during each opponent's end step, you may cast spells as though they had flash\.?$/i, // (timing isn't kept)
+    WATCHER_HOURS: /^whenever you remove a time counter from this card while it's exiled, (surveil \w+)\.?$/i, // (timeRemoved)
+    DUSKMANTLE: /^you may play lands and cast spells from among cards in your graveyard you've surveilled this turn\. if you cast a spell this way, you pay life equal to its mana value rather than paying its mana cost\.?$/i, // (graveCast, landsFromGrave)
+    TAIL_WATCH: /^whenever one or more creature cards are put into your graveyard from your library, (investigate)\.?$/i, // Unshakable Tail (milled, surveiled)
+    ENHANCED_SURVEIL: /^you may look at an additional (\w+) cards each time you surveil\.?$/i, // (the surveil effect)
+    NECRO_FLASH: /^you may cast this spell as though it had flash\. if you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step\.?$/i, // (timing isn't kept)
+    TWINS_BLOODTHIRST: /^each other colorless creature you control has bloodthirst (\d+)\.?$/i, // (not applied)
+    KOZ_RETURN: /^whenever you cast an eldrazi creature spell with mana value (\d+) or greater, you may exile this card from your graveyard\. if you do, this card deals (\d+) damage to each creature\.?$/i, // (spellCast)
+    ENDBRINGER: /^untap this creature during each other player's untap step\.?$/i, // (upkeepSuspend)
+    MYSTIC_FORGE: /^you may cast artifact spells and colorless spells from the top of your library\.?$/i, // (topCastable)
+    TITANS_VANGUARD: /^when you cast this spell and whenever this creature attacks, (put a \+1\/\+1 counter on each colorless creature you control)\.?$/i, // (spellCast, nearAttack)
+    // Miracle Worker, Maestros Massacre, Timeless Wisdom
+    AMINATOU: /^each enchantment card in your hand has miracle\. its miracle cost is equal to its mana cost reduced by \{4\}\.?$/i, // (opponentActed's draw: miracle)
+    MASTER_ESCAPE: /^each enchantment card in your graveyard has escape\. the escape cost is equal to the card's mana cost plus exile three other cards from your graveyard\.?$/i, // The Master of Keys (escapeOf)
+    ARCADE: /^nonland permanents you control and permanent spells you control are enchantments in addition to their other types\.?$/i, // Secret Arcade (staticExtra: creatures only)
+    STUN_LOCK: /^stun counters can't be removed from permanents your opponents control\.?$/i, // (not applied)
+    CELLAR_DISCOUNT: /^each spell you cast that's an? (\w+), (\w+), or (\w+) costs \{(\d+)\} less to cast\.?$/i, // Ancient Cellarspawn (selfDiscount)
+    CELLARSPAWN: /^whenever you cast a spell, if the amount of mana spent to cast it was less than its mana value, target opponent loses life equal to the difference\.?$/i, // (spellCast)
+    ACCESS_MAZE: /^once during each of your turns, you may cast a spell from your hand by paying life equal to its mana value rather than paying its mana cost\.?$/i, // (costChoices)
+    MIRRORMADE: /^you may have this (?:enchantment|artifact) enter as a copy of any artifact or enchantment on the battlefield\.?$/i, // (nearEnters)
+    MULTIVERSE_TOP: /^you may play lands and cast spells from the top of your library\.?$/i, // One with the Multiverse (topCastable, landsFromTop)
+    MULTIVERSE_FREE: /^once during each of your turns, you may cast a spell from your hand or the top of your library without paying its mana cost\.?$/i, // (costChoices)
+    ARVINOX: /^(?:arvinox|this creature)(?:, the mind flail)? isn't a creature unless you control three or more permanents you don't own\.?$/i, // (staticExtra: can't attack or block)
+    ATHREOS_COIN: /^whenever a creature with a coin counter on it dies or is put into exile, return that card to the battlefield under your control\.?$/i, // (nearDied: dies only)
+    PARNESSE_TAX: /^whenever you or a permanent you control becomes the target of a spell or ability an opponent controls, counter that spell or ability unless that player pays (\d+) life\.?$/i, // (spellTargeted: they always pay)
+    PARNESSE_COPY: /^whenever you copy a spell, up to one target opponent may also copy that spell\. they may choose new targets for that copy\.?$/i, // (the opponent never copies)
+    ANHELO: /^the first instant or sorcery spell you cast each turn has casualty (\d+)\.?$/i, // (costChoices)
+    KICK_COUNTERS: /^if this creature was kicked, it enters with (\w+) \+1\/\+1 counters on it\.?$/i, // Skyclave Shade (nearEnters)
+    SKYCLAVE: /^whenever a land you control enters, if this card is in your graveyard and it's your turn, you may cast it from your graveyard this turn\.?$/i, // (landEnteredNow)
+    BRALLIN: /^whenever you discard a card, put a \+1\/\+1 counter on (?:brallin|this creature|.+?) and it deals (\d+) damage to each opponent\.?$/i, // (discardWatch)
+    SPIRIT_CAIRN: /^whenever a player discards a card, you may pay ((?:\{[^}]+\})+)\. if you do, (create .+?)\.?$/i, // (discardWatch: either table)
+    AKIM: /^whenever you create one or more tokens for the first time each turn, (create .+?)\.?$/i, // (enterTrigger)
+    CYCLE_FIRST: /^whenever you cycle another card for the first time each turn, (create .+?)\.?$/i, // Valiant Rescuer (cycled)
+    SAVAI: /^whenever you cycle a card, you may pay ((?:\{[^}]+\})+)\. when you do, (?:savai thundermane|this creature) deals (\d+) damage to target creature and you gain (\d+) life\.?$/i, // (cycled)
+    CRYSTAL_RESONANCE: /^whenever you cycle a card, you may have this enchantment become a copy of another target permanent until your next turn, except it has this ability\.?$/i, // (not applied)
+    ASTRAL_DRIFT: /^whenever you cycle this card or cycle another card while this enchantment is on the battlefield, you may exile target creature\. if you do, return that card to the battlefield under its owner's control at the beginning of the next end step\.?$/i, // (cycled)
+    LIGHTNING_RIFT: /^whenever a player cycles a card, you may pay ((?:\{[^}]+\})+)\. if you do, (?:this enchantment|lightning rift) deals (\d+) damage to any target\.?$/i, // (cycled: your cycling only)
+    SPELLPYRE: /^at the beginning of each end step, if you cycled two or more cards this turn, return this card from your graveyard to your hand\.?$/i, // (nearPhase)
+    FREE_CYCLE_FIRST: /^you may pay \{0\} rather than pay the cycling cost of the first card you cycle each turn\.?$/i, // Gavi (handAbilities)
+    FREE_CYCLE_SEVEN: /^as long as you have seven or more cards in hand, you may pay \{0\} rather than pay cycling costs\.?$/i, // New Perspectives (handAbilities)
+    LAND_CYCLING: /^each land card in your hand has cycling ((?:\{[^}]+\})+)\.?$/i, // Tectonic Reformation (handAbilities)
+    SARCOPHAGUS: /^you may cast spells that have a cycling ability from your graveyard\.?$/i, // Abandoned Sarcophagus (graveCast)
+    SARCOPHAGUS_EXILE: /^if a card that has a cycling ability would be put into your graveyard from anywhere and it wasn't cycled, exile it instead\.?$/i, // (not applied)
+    // The twenty 16-20 decks, chunk 4
+    DOOMGUIDE: /^each creature card in your graveyard that's a cleric, rogue, warrior, and\/or wizard has unearth \{1\}\{b\}\.?$/i, // (not offered)
+    BALDRIC: /^equipped creature has lifelink if you control a cleric, deathtouch if you control a rogue, haste if you control a warrior, and flying if you control a wizard\.?$|^as long as you have a full party, prevent all damage that would be dealt to equipped creature\.?$/i, // Multiclass Baldric (staticExtra)
+    BANON_PRAY: /^once during each of your turns, you may cast a creature spell from among cards in your graveyard that were put there from anywhere other than the battlefield this turn\.?$/i, // (not applied)
+    CYAN: /^whenever one or more creature cards leave your graveyard, put a \+1\/\+1 counter on (?:cyan|this creature|.+?)\.?$/i, // (cardMoved)
+    EDGAR: /^once during each of your turns, you may cast an artifact spell from your graveyard\. if you cast a spell this way, that artifact enters tapped\.?$/i, // (graveCast)
+    SABIN: /^blitz\s*[—-]\s*(?:\{[^}]+\})+, discard a card\.?$|^you may cast this card from your graveyard using its blitz ability\.?$/i, // (not offered)
+    COIN_WIN: /^whenever you win a coin flip, (create .+?)\.?$/i, // Setzer (the flip effect)
+    TRIAD: /^as long as there are fewer than eight cards in your graveyard, (?:the warring triad|this creature) isn't a creature\.?$/i, // (staticExtra: can't attack or block)
+    SLIVER_LEGEND: /^the "legend rule" doesn't apply to slivers you control\.?$/i,
+    SLIVER_ENCORE: /^each sliver creature card in your graveyard has encore \{x\}, where x is its mana value\.?$/i, // (encoreOf)
+    HATCHERY: /^each sliver spell you cast has replicate\. the replicate cost is equal to its mana cost\.?$/i, // (not applied)
+    SLIVER_HIT: /^whenever a sliver deals combat damage to a player, its controller may (draw a card|create .+?)\.?$/i, // Synapse, Brood Sliver (nearHits)
+    DIFFUSION: /^whenever a sliver creature you control becomes the target of a spell or ability an opponent controls, counter that spell or ability unless its controller pays \{\d+\}\.?$/i, // (staticExtra: ward)
+    QUICK_SLIVER: /^any player may cast sliver spells as though they had flash\.?$/i, // (not applied)
+    SOWER: /^as this creature enters, choose two players\.?$|^whenever damage is dealt to one of the chosen players, the other chosen player also loses that much life\.?$/i, // Sower of Discord (two players: not applied)
+    COMMANDER_NINJUTSU: /^commander ninjutsu (?:\{[^}]+\})+$/i, // (not offered)
+    WAYTA: /^if a creature you control being dealt damage causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time\.?$/i, // (not applied)
+    WRATHFUL_RAPTORS: /^whenever an? (\w+) you control is dealt damage, it deals that much damage to any target that isn't an? \1\.?$/i, // (creatureDamaged)
+    TEMPLE_ALTISAUR: /^if a source would deal damage to another dinosaur you control, prevent all but 1 of that damage\.?$/i, // (not applied)
+    REGAL_BEHEMOTH: /^whenever you tap a land for mana while you're the monarch, add an additional one mana of any color\.?$/i, // (manaTapped)
+    ARMASAUR: /^whenever an opponent activates an ability of a creature or land that isn't a mana ability, (?:you may )?draw a card\.?$/i, // (not applied)
+    // The twenty 16-20 decks, chunk 3
+    KAALIA: /^whenever (?:kaalia|this creature) attacks an opponent, (?:you may )?put an angel, demon, or dragon creature card from your hand onto the battlefield tapped and attacking that opponent\.?$/i, // (nearAttack)
+    ANGELIC_ARBITER: /^each opponent who (?:cast a spell this turn can't attack with creatures|attacked with a creature this turn can't cast spells)\.?$/i, // Angelic Arbiter (not applied)
+    STRIFE: /^as this creature enters, each player chooses war or peace\.?$|^creatures controlled by players who chose (?:war|peace) get \+\d\/\+\d\.?$/i, // Archangel of Strife (nearEnters, refreshGrants)
+    BASANDRA: /^players can't cast spells during combat\.?$/i, // (not applied)
+    RIGHTEOUS_CAUSE: /^whenever a creature attacks, you gain 1 life\.?$/i, // (attackWatch: anyone's attackers)
+    STRANGLEHOLD: /^your opponents can't search libraries\.?$/i, // (not applied)
+    KIANNE: /^as long as (?:kianne|this creature)'s power is (?:even|odd), you may cast (?:non)?creature spells as though they had flash\.?$/i, // (not applied)
+    CURATOR: /^colorless creatures you control enter with two additional \+1\/\+1 counters on them\.?$/i, // Curator Beastie (nearEnters)
+    EXP_LAB: /^when you unlock this door, manifest dread, then put two \+1\/\+1 counters and a trample counter on that creature\.?$/i, // Experimental Lab (nearEnters: as the Room enters)
+    SKITTERSPIKE: /^whenever this creature attacks, blocks, or becomes the target of a spell, it deals damage equal to its power to each opponent\.?$/i, // (nearAttack, spellTargeted)
+    SKAAB_COST: /^as an additional cost to cast this spell, exile three creature cards from your graveyard\.?$/i, // (not paid)
+    ASHAYA: /^nontoken creatures you control are forest lands in addition to their other types\.?$/i, // (not applied)
+    TURNED_UP: /^whenever you turn a permanent face up, put a \+1\/\+1 counter on it\.?$/i, // Growing Dread (turnUp)
+    GRAZILAXX: /^whenever a creature you control becomes blocked, (?:you may )?return it to its owner's hand\.?$/i, // (not applied)
+    EXPLOIT: /^exploit$|^when this creature exploits a creature, counter target spell, activated ability, or triggered ability\.?$/i, // Overcharged Amalgam (not used)
+    SLUDGE: /^non-horror creatures with slime counters on them lose all abilities and have base power and toughness 2\/2\.?$/i, // (refreshGrants)
+    NIHILITH: /^whenever a card is put into an opponent's graveyard from anywhere, if this card is suspended, (?:you may )?remove a time counter from this card\.?$/i, // (cardMoved)
+    REVOKER: /^as this creature enters, choose a nonland card name\.?$|^activated abilities of sources with the chosen name can't be activated\.?$/i, // (not applied)
+    MANGLER_COST: /^as an additional cost to cast this spell, sacrifice a creature, discard a card, or pay 4 life\.?$/i, // (not paid)
+    ZELLIX: /^(?:.+? — )?whenever a player mills one or more creature cards, you (create .+?)\.?$/i, // (milled)
+    SEVINNE_PREVENT: /^prevent all damage that would be dealt to (?:sevinne|this creature)\.?$/i, // (staticExtra: indestructible)
+    SEVINNE_COPY: /^whenever you cast your first instant or sorcery spell from your graveyard each turn, copy that spell\. you may choose new targets for the copy\.?$/i, // (spellCast)
+    ELSHA: /^you may cast noncreature spells from the top of your library\. if you cast a spell this way, you may cast it as though it had flash\.?$/i, // (topCastable)
+    PRAMIKON: /^each player may attack only the nearest opponent in the chosen direction and planeswalkers controlled by that opponent\.?$/i, // (two players)
+    GRAVE_CAST_WATCH: /^whenever you cast a spell from your graveyard, (.+?)\.?$/i, // Thalia's Geistcaller, Secrets of the Dead, Burning Vengeance (spellCast)
+    NALIA_TOP: /^you may cast cleric, rogue, warrior, and wizard spells from the top of your library\.?$/i, // (topCastable)
+    CALC_LICH: /^whenever a creature attacks one of your opponents, that player loses 1 life\.?$/i, // Calculating Lich (attackWatch)
+    VALIANT: /^this spell costs \{1\} less to cast for each creature type among creatures you control\. this effect can't reduce the amount of mana this spell costs by more than \{5\}\.?$/i, // (selfDiscount)
+    TERRAMANCER: /^(?:.+? — )?whenever one or more lands enter under an opponent's control without being played, (?:you may )?search your library for a plains card, put it onto the battlefield tapped, then shuffle\. do this only once each turn\.?$/i, // (landEnteredNow)
+    // The twenty 16-20 decks, chunk 2
+    TITANIA: /^you may play forests from your graveyard\.?$/i, // (landsFromGrave)
+    MUTILATOR_COST: /^as an additional cost to cast this spell, sacrifice a creature or enchantment\.?$/i, // Vile Mutilator (not paid)
+    GROVEDANCER: /^whenever a land card is put into your graveyard from anywhere, you gain 1 life\.?$/i, // Skola Grovedancer (cardMoved)
+    SEFRIS: /^whenever one or more creature cards are put into your graveyard from anywhere, venture into the dungeon\. this ability triggers only once each turn\.?$/i, // (cardMoved)
+    DUNGEON_DONE: /^(?:.+? — )?whenever you complete a dungeon, (.+?)\.?$/i, // Sefris, Loot Dispute (venture)
+    PHANTASMAL: /^you may have this creature enter as a copy of any creature on the battlefield, except it's an illusion in addition to its other types and it has "when this creature becomes the target of a spell or ability, sacrifice it\."\.?$/i, // (nearEnters)
+    NIHILOOR_ATTACK: /^whenever you attack with a creature an opponent owns, you gain 2 life and that player loses 2 life\.?$/i, // (nearAttack)
+    ROD_ABSORB: /^whenever a player casts an instant or sorcery spell, exile it instead of putting it into a graveyard as it resolves\.?$/i, // Rod of Absorption (spellCast)
+    WAND_ORCUS: /^whenever equipped creature attacks or blocks, it and (\w+?)s you control gain deathtouch until end of turn\.?$/i, // (nearAttack)
+    PATHLIGHTER: /^creatures you control can't be blocked except by legendary creatures\.?$/i, // (staticExtra)
+    HAMA: /^room abilities of dungeons you own trigger an additional time\.?$/i, // (venture)
+    ACADEMY_ELITE: /^this creature enters with x \+1\/\+1 counters on it, where x is the number of instant and sorcery cards in all graveyards\.?$/i, // (nearEnters)
+    GUILTFEEDER: /^whenever this creature attacks and isn't blocked, defending player loses 1 life for each card in their graveyard\.?$/i, // (nearAttack: as it attacks)
+    BURGEONING: /^whenever an opponent plays a land, (?:you may )?put a land card from your hand onto the battlefield\.?$/i, // (landEnteredNow)
+    WASTE_NOT: /^whenever an opponent discards an? (creature|land|noncreature, nonland) card, (.+?)\.?$/i, // (discardWatch: the other side's)
+    MOROPHON: /^spells of the chosen type you cast cost \{w\}\{u\}\{b\}\{r\}\{g\} less to cast\. this effect reduces only the amount of colored mana you pay\.?$/i, // (selfDiscount: read as generic)
+    ARCANE_ADAPTATION: /^creatures you control are the chosen type in addition to their other types\. the same is true for creature spells you control and creature cards you own that aren't on the battlefield\.?$/i, // (staticExtra)
+    MAGDA_TAP: /^whenever an? (\w+) you control becomes tapped, (create .+?)\.?$/i, // Magda (nearAttack: attackers that tap)
+    MORITTE: /^you may have (?:moritte|this creature) enter as a copy of a permanent you control, except it's legendary and snow in addition to its other types and, if it's a creature, it enters with two additional \+1\/\+1 counters on it and has changeling\.?$/i, // (nearEnters)
+    RUKARUMEL: /^slivers you control and nontoken creatures you control are the chosen type in addition to their other creature types\. the same is true for creature spells you control and creature cards you own that aren't on the battlefield\.?$/i, // (staticExtra)
+    TAZRI: /^this spell costs \{1\} less to cast for each creature in your party\.?$/i, // (selfDiscount)
+    MARINER: /^whenever you or a permanent you control becomes the target of a spell or ability an opponent controls, counter that spell or ability unless its controller pays \{\d+\}\.?$/i, // Unsettled Mariner (staticExtra: ward)
+    FALDORN: /^whenever you cast a spell from exile or a land you control enters from exile, (create .+?)\.?$/i, // (spellCast, cardMoved)
+    VIVIEN_FLASH: /^you may cast creature spells as though they had flash\.?$/i,
+    AURORA: /^whenever you cast a spell with cascade, return this card from your graveyard to your hand\.?$/i, // Aurora Phoenix (spellCast)
+    BONECRUSHER: /^whenever this creature becomes the target of a spell, this creature deals 2 damage to that spell's controller\.?$/i, // (spellTargeted)
+    LOVESTRUCK: /^this creature can't attack unless you control a 1\/1 creature\.?$/i, // (staticExtra)
+    NALFESHNEE: /^whenever you cast a spell from exile, copy it\. you may choose new targets for the copy\. if it's a permanent spell, the copy gains haste and "at the beginning of the end step, sacrifice this permanent\."\.?$/i, // (spellCast)
+    TLINCALLI: /^once each turn, you may pay \{0\} rather than pay the mana cost for a creature spell you cast from exile\.?$/i, // (costChoices; the once a turn isn't kept)
+    // The twenty 16-20 decks, chunk 1
+    KALAMAX_COPY: /^whenever you copy an instant spell, put a \+1\/\+1 counter on (?:kalamax|this creature|.+?)\.?$/i, // (spellCast)
+    HALDAN: /^you may play lands and cast noncreature spells from among cards you exiled that have fetch counters on them, and you may spend mana as though it were mana of any color to cast those spells\.?$/i, // (Pako's effect marks them playable)
+    DJINN_REPLICATE: /^each instant and sorcery spell you cast has replicate\. the replicate cost is equal to its mana cost\.?$/i, // (not applied)
+    WORT_CONSPIRE: /^each red or green instant or sorcery spell you cast has conspire\.?$/i, // (not applied)
+    TWINNING: /^if you would copy a spell one or more times, instead copy it that many times plus an additional time\. you may choose new targets for the additional copy\.?$/i, // (not applied)
+    KESS: /^once during each of your turns, you may cast an instant or sorcery spell from your graveyard\. if a spell cast this way would be put into your graveyard, exile it instead\.?$/i, // (graveCast)
+    MAIRSIL: /^(?:mairsil|this creature) has all activated abilities of all cards you own in exile with cage counters on them\. you may activate each of those abilities only once each turn\.?$/i, // (staticExtra lines; the once a turn isn't kept)
+    PORTAL_MAGE: /^when this creature enters during the declare attackers step, (?:you may )?reselect which player or permanent target attacking creature is attacking\.?$/i, // (two players: nothing)
+    BODY_DOUBLE: /^you may have this creature enter as a copy of any creature card in a graveyard\.?$/i, // (nearEnters)
+    FLASH_TAX: /^you may cast this spell as though it had flash if you pay \{\d+\} more to cast it\.?$/i, // Harbinger of the Tides (not offered)
+    KROS: /^whenever you put one or more counters on a creature you don't control, tap that creature and goad it\. it gains trample until your next turn\.?$/i, // (countersPut on your turn)
+    DENRY_ENTERS: /^(?:denry klin|this creature) enters with your choice of a \+1\/\+1, first strike, or vigilance counter on it\.?$/i, // (nearEnters: +1/+1)
+    MAVERICK: /^whenever this creature deals combat damage to a player or dies, proliferate\.?$/i, // Park Heights Maverick (nearHits, nearDied)
+    SKYBOON: /^whenever a creature with a counter on it attacks one of your opponents, that creature gains flying until end of turn\.?$/i, // (nearAttack)
+    MIMEOMANCER: /^at the beginning of your upkeep, (?:you may )?put a feather counter on target creature\. if you do, that creature has base power and toughness 3\/1 and has flying for as long as it has a feather counter on it\.?$/i, // (staticExtra: feathered creatures)
+    TOOLKIT_ENTERS: /^this artifact enters with a \+1\/\+1 counter, a flying counter, a deathtouch counter, and a shield counter on it\.?$/i, // Agent's Toolkit (nearEnters)
+    ICHORCLAW: /^whenever this creature becomes blocked, it gets \+(\d+)\/\+(\d+) until end of turn\.?$/i, // (blockWatch: any block)
+    NORN_DECREE_HIT: /^whenever one or more creatures an opponent controls deal combat damage to you, that opponent gets a poison counter\.?$/i, // (nearHits)
+    NORN_DECREE_ATTACK: /^whenever a player attacks, if one or more players being attacked are poisoned, the attacking player draws a card\.?$/i, // (attackWatch)
+    GRAFTED: /^whenever this equipment becomes unattached from a permanent, sacrifice that permanent\.?$/i, // (not applied)
+    NORN_ANNEX: /^creatures can't attack you or planeswalkers you control unless their controller pays \{w\/p\} for each of those creatures\.?$/i, // (barredFromYou: Opp doesn't pay)
+    RENDMAW: /^when (?:rendmaw|this creature) enters and whenever you play a card with two or more card types, each player creates a tapped 2\/2 black bird creature token with flying\. the tokens are goaded for the rest of the game\.?$/i, // (nearEnters, spellCast)
+    DEMON_COVENANT_ATTACK: /^whenever one or more (\w+?)s you control attack a player, you draw a card and lose 1 life\.?$/i, // (nearAttack)
+    INTO_THE_PIT: /^you may cast spells from the top of your library by sacrificing a nonland permanent in addition to paying their other costs\.?$/i, // (not offered)
+    CISTERN: /^whenever one or more cards are put into your graveyard from your library, each opponent loses 1 life for each card type among those cards\.?$/i, // Polluted Cistern (milled)
+    OUBLIETTE: /^when you unlock this door, mill three cards, then return a creature card from your graveyard to the battlefield\.?$/i, // (rooms: the other door isn't unlocked)
+    // The 16-17 cards left decks, second half
+    FLAYER: /^whenever this creature or another creature enters from your graveyard, that creature deals damage equal to its power to any target\.?$/i, // Flayer of the Hatebound (cardMoved)
+    GORGON_RECLUSE: /^whenever this creature blocks or becomes blocked by a nonblack creature, destroy that creature at end of combat\.?$/i, // (blockWatch: its block)
+    FOOLS_WISDOM: /^whenever enchanted player draws a card, they lose 2 life and you gain 2 life\.?$/i, // Curse of Fool's Wisdom (opponentActed)
+    TROVE_LANDS: /^you may play lands from among cards exiled with this enchantment\.?$/i, // Hedonist's Trove (nearEnters: playable)
+    TROVE_SPELLS: /^you may cast spells from among cards exiled with this enchantment\. you can't cast more than one spell this way each turn\.?$/i,
+    KARAZIKAR_OTHER: /^whenever an opponent attacks another one of your opponents, you and the attacking player each draw a card and lose 1 life\.?$/i, // (two players: never)
+    LORCAN: /^whenever a creature card is put into an opponent's graveyard from anywhere, you may pay life equal to its mana value\. if you do, put it onto the battlefield under your control\. it's a warlock in addition to its other types\.?$/i, // (cardMoved)
+    LORCAN_EXILE: /^if a warlock you control would die, exile it instead\.?$/i, // (nearDied: after it dies)
+    FIENDLASH: /^whenever equipped creature is dealt damage, it deals damage equal to its power to target player or planeswalker\.?$/i, // (creatureDamaged)
+    SHARE_SPOILS: /^when this enchantment enters and whenever an opponent loses the game, exile the top card of each player's library\.?$/i, // Share the Spoils (nearEnters)
+    SHARE_PLAY: /^during each player's turn, that player may play a land or cast a spell from among cards exiled with this enchantment, and they may spend mana as though it were mana of any color to cast that spell\. when they do, exile the top card of their library\.?$/i, // (your exiled card: playable)
+    WILD_MAGIC: /^the first spell you cast from exile each turn has cascade\.?$/i, // Wild-Magic Sorcerer (spellCast)
+    ENDREK_LIMIT: /^when you control (\w+) or more (\w+?)s, sacrifice (?:endrek sahr|this creature|.+?)\.?$/i, // (grantsOnce)
+    PLAGUE_BOILER: /^when this artifact has (\w+) or more (\w+) counters on it, sacrifice it\. if you do, destroy all nonland permanents\.?$/i, // (grantsOnce)
+    WIDESPREAD_PANIC: /^whenever a spell or ability causes its controller to shuffle their library, that player puts a card from their hand on top of their library\.?$/i, // (not applied)
+    MIZZIX_EXP: /^whenever you cast an instant or sorcery spell with mana value greater than the number of experience counters you have, you get an experience counter\.?$/i, // (spellCast)
+    MIZZIX_DISCOUNT: /^instant and sorcery spells you cast cost \{1\} less to cast for each experience counter you have\.?$/i, // (selfDiscount)
+    GIGANTOPLASM: /^you may have this creature enter as a copy of any creature on the battlefield, except it has "\{x\}: this creature has base power and toughness x\/x\."\.?$/i, // (nearEnters)
+    MELEK_TOP: /^you may cast instant and sorcery spells from the top of your library\.?$/i, // (topCastable)
+    MELEK_COPY: /^whenever you cast an instant or sorcery spell from your library, copy it\. you may choose new targets for the copy\.?$/i, // (spellCast)
+    SEAL_CHOOSE: /^as this artifact enters, choose two colors\.?$/i, // Seal of the Guildpact (nearEnters)
+    SEAL: /^each spell you cast costs \{1\} less to cast for each of the chosen colors it is\.?$/i, // (selfDiscount)
+    SKY_TYRANT: /^when a source an opponent controls deals damage to you, sacrifice this enchantment\. if you do, (create .+?)\.?$/i, // Awaken the Sky Tyrant (damagePlayer, dealtDamage)
+    THOUGHT_REFLECTION: /^if you would draw a card, draw two cards instead\.?$/i, // (drawInstead)
+    ANOWON: /^whenever one or more (\w+?)s you control deal combat damage to a player, that player mills a card for each 1 damage dealt to them\. if the player mills at least one creature card this way, you draw a card\.?$/i, // (nearHits)
+    LAZAV: /^whenever a creature card is put into an opponent's graveyard from anywhere, you may have (?:lazav|this creature|.+?) become a copy of that card, except its name is .+?, it's legendary in addition to its other types, and it has hexproof and this ability\.?$/i, // (cardMoved)
+    MARANG: /^you may cast this card from your graveyard as long as you control a (\w+) or (\w+) permanent\.?$/i, // Marang River Prowler (graveCast)
+    STINKDRINKER: /^whenever an? (\w+) you control attacks and isn't blocked, it gets \+(\d+)\/\+(\d+) until end of turn\.?$/i, // (nearAttack: as it attacks)
+    // The 16-17 cards left decks (Adaptive Enchantment … Sneak Attack), first half
+    ELDERWOOD: /^spells you cast that target this creature cost \{\d+\} less to cast\.?$/i, // (not applied)
+    FINEST_HOUR: /^whenever a creature you control attacks alone, if it's the first combat phase of the turn, untap that creature\. after this phase, there is an additional combat phase\.?$/i, // (nearAttack)
+    RIGHTEOUS_DRAW: /^at the beginning of the draw step of enchanted creature's controller, that player draws an additional card\.?$/i, // Righteous Authority (nearPhase)
+    BLADEMASTER: /^other creatures you control get \+1\/\+1 for each aura and equipment attached to this creature\.?$/i, // Heavenly Blademaster (staticExtra)
+    INVOCATION: /^you may have this enchantment enter as a copy of an enchantment you control, except it has "at the beginning of your upkeep, you may exile this enchantment\. if you do, return it to the battlefield under its owner's control\."\.?$/i, // Estrid's Invocation (nearEnters; no upkeep flicker)
+    MYTH_DISCOUNT: /^your commander costs \{1\} less to cast for each time it's been cast from the command zone this game\.?$/i, // (not applied)
+    MYTH_DRAW: /^whenever your commander is put into the command zone from anywhere, draw a card\.?$/i, // Myth Unbound (cardMoved)
+    RAVENOUS_SLIME: /^if a creature an opponent controls would die, instead exile it and put a number of \+1\/\+1 counters equal to that creature's power on this creature\.?$/i, // (nearDied: after it dies)
+    ARIX_LAND: /^as long as (?:arixmethes|this creature) has a slumber counter on it, it's a land\.?$/i, // (staticExtra: can't attack or block)
+    SCALELORD: /^whenever an? (\w+) you control becomes the target of a spell or ability an opponent controls, destroy target nonland permanent that player controls\.?$/i, // Scalelord Reckoner (applyTarget)
+    BONEYARD_SCOURGE: /^whenever an? (\w+) you control dies while this card is in your graveyard, (?:you may )?pay ((?:\{[^}]+\})+)\. if you do, return this card from your graveyard to the battlefield\.?$/i, // (nearDied)
+    TAIGAM_STATIC: /^instant, sorcery, and dragon spells you control can't be countered\.?$/i, // (not applied)
+    ORATOR_COST: /^as an additional cost to cast this spell, you may reveal an? \w+ card from your hand\.?$/i, // (not paid)
+    FIST_OF_SUNS: /^you may pay \{w\}\{u\}\{b\}\{r\}\{g\} rather than pay the mana cost for spells you cast\.?$/i, // (costChoices)
+    SIEGE_DRAGONS: /^spells your opponents cast that target you or a permanent you control cost \{\d+\} more to cast\.?$/i, // Monastery Siege (not applied)
+    VALGAVOTH: /^whenever an opponent loses life for the first time during each of their turns, put a \+1\/\+1 counter on (?:valgavoth|this creature|.+?) and draw a card\.?$/i, // (lifeChanged)
+    LORD_OF_PAIN: /^whenever a player casts their first spell each turn, choose another target player\. (?:the lord of pain|this creature|.+?) deals damage equal to that spell's mana value to the chosen player\.?$/i, // (spellCast)
+    BARBFLARE: /^whenever a player taps a land for mana, if this creature is tapped, that player adds one mana of any type that land produced\. then that land deals 1 damage to that player\.?$/i, // Barbflare Gremlin (manaTapped)
+    CORRIDOR: /^when you unlock this door, ((?:create|this room deals|return up to one) .+)$/i, // Spiked Corridor (nearEnters: as the Room enters)
+    TORTURE_PIT: /^if a source you control would deal noncombat damage to an opponent, it deals that much damage plus 2 instead\.?$/i, // (damagePlayer)
+    RAKDOS_CAST: /^you can't cast (?:rakdos|this spell) unless an opponent lost life this turn\.?$/i, // (not checked)
+    RAKDOS_DISCOUNT: /^creature spells you cast cost \{1\} less to cast for each 1 life your opponents have lost this turn\.?$/i, // (selfDiscount)
+    FEAR_BURNING: /^(?:.+? — )?whenever a source you control deals noncombat damage to an opponent, if there are four or more card types among cards in your graveyard, this creature deals that amount of damage to target creature that player controls\.?$/i, // Fear of Burning Alive (damagePlayer)
+    RAYAMI_EXILE: /^if a nontoken creature would die, exile that card with a blood counter on it instead\.?$/i, // (nearDied: after it dies)
+    RAYAMI_KW: /^as long as an exiled creature card with a blood counter on it has flying, (?:rayami|this creature|.+?) has flying\. the same is true for .+\.?$/i, // (staticExtra)
+    SPONGE_ENTERS: /^this creature enters with a number of \+1\/\+1 counters on it equal to the greatest number of cards an opponent has drawn this turn\.?$/i, // Thought Sponge (nearEnters)
+    VESUVAN: /^as this creature enters or is turned face up, you may choose another creature on the battlefield\. if you do, until this creature is turned face down, it becomes a copy of that creature, except it has "at the beginning of your upkeep, you may turn this creature face down\."\.?$/i, // (nearEnters)
+    GIFT_DOOM: /^as this aura is turned face up, you may attach it to a creature\.?$/i, // (not applied)
+    ARCHFIEND_SPITE: /^whenever a source an opponent controls deals damage to this creature, that source's controller loses that much life unless they sacrifice that many permanents of their choice\.?$/i, // (creatureDamaged: Opp loses the life)
+    BONE_MISER: /^whenever you discard an? (creature|land|noncreature, nonland) card, (.+?)\.?$/i, // (discardWatch)
+    KRRIK: /^for each \{b\} in a cost, you may pay 2 life rather than pay that mana\.?$/i, // (not applied)
+    SKYFIRE: /^when you cast your commander, return this card from your graveyard to the battlefield\.?$/i, // Skyfire Phoenix (spellCast)
+    // Symbiotic Swarm
+    CAIRN: /^as long as a creature card with flying is in a graveyard, this creature has flying\. the same is true for .+\.?$/i, // Cairn Wanderer (staticExtra)
+    SOULFLAYER: /^if a creature card with flying was exiled with this creature's delve ability, this creature has flying\. the same is true for .+\.?$/i, // (staticExtra: the creature cards in your exile)
+    ARCHON_CHOOSE: /^as this creature enters, choose artifact, enchantment, instant, sorcery, or planeswalker\.?$/i, // Archon of Valor's Reach (nearEnters)
+    ARCHON_BAN: /^players can't cast spells of the chosen type\.?$/i, // (oppMayCast: Opp's spells)
+    // Graveyard Overdrive, Spirit Squadron
+    DISA: /^whenever a (\w+) permanent card is put into your graveyard from anywhere other than the battlefield, put it onto the battlefield\.?$/i, // (cardMoved)
+    CORAM_PLAY: /^during each of your turns, you may play a land and cast a spell from among cards in graveyards that were put there from libraries this turn\.?$/i, // (cardMoved: your own milled cards, graveOkTurn)
+    SAWHORN: /^if a source would deal damage to the chosen player or a permanent they control, it deals double that damage instead\.?$/i, // Sawhorn Nemesis (damagePlayer: the opponent)
+    MAGMARCH: /^whenever you cast an instant or sorcery spell that targets only a single nonland permanent an opponent controls, if another opponent controls one or more nonland permanents that spell could target, choose one of those permanents\. copy that spell\. the copy targets the chosen permanent\.?$/i, // (two players: never)
+    GRIST_CREATURE: /^as long as (?:grist|.+?) isn't on the battlefield, it's a 1\/1 insect creature in addition to its other types\.?$/i, // (not applied)
+    ALTAR_GOYF: /^whenever a creature you control attacks alone, it gets \+x\/\+x until end of turn, where x is the number of card types among cards in all graveyards\.?$/i, // (nearAttack)
+    MILLICENT: /^whenever (?:millicent|this creature) or another nontoken (\w+) you control dies or deals combat damage to a player, (create .+?)\.?$/i, // (nearDied, nearHits)
+    DONAL: /^whenever you cast a nonlegendary creature spell with flying, you may copy it, except the copy is a 1\/1 (\w+) in addition to its other types\. do this only once each turn\.?$/i, // (spellCast)
+    TAPPED_FOE: /^whenever a creature an opponent controls becomes tapped, if it isn't being declared as an attacker, (?:you may )?(.+?)\.?$/i, // Rhoda, Verity Circle (tappedWatch)
+    DROGSKOL: /^prevent all noncombat damage that would be dealt to (\w+?)s you control\.?$/i, // (not applied)
+    BISHOP: /^whenever you cast a creature spell with mana value (\d+) or less, (.+?)\.?$/i, // Bygone Bishop (spellCast)
+    BUNREI: /^when a creature you control dies, sacrifice this enchantment\. if you do, (create .+?)\.?$/i, // Promise of Bunrei (nearDied)
+    FIELD_SOULS: /^whenever a nontoken creature is put into your graveyard from the battlefield, (create .+?)\.?$/i, // Field of Souls (nearDied)
+    // Evasive Maneuvers, Peer Through Time
+    DEREVI: /^when(?:ever)? (?:derevi|this creature) enters and whenever a creature you control deals combat damage to a player, (?:you may )?tap or untap target permanent\.?$/i, // (nearEnters, nearHits: untaps your best tapped land)
+    RUBINIA_UNTAP: /^you may choose not to untap (?:rubinia soulsinger|this creature) during your untap step\.?$/i, // (not applied)
+    THUNDERSTAFF: /^as long as this artifact is untapped, if a creature would deal combat damage to you, prevent 1 of that damage\.?$/i, // (not applied)
+    LEAFDRAKE: /^enchanted land has "(?:\{[^}]+\})+, \{t\}: create .+?"\.?$/i, // Leafdrake Roost (attachBonus' lines)
+    IXIDRON: /^as this creature enters, turn all other nontoken creatures face down\.?$/i, // (nearEnters)
+    FROST_TITAN: /^whenever this creature becomes the target of a spell or ability an opponent controls, counter that spell or ability unless its controller pays \{(\d+)\}\.?$/i, // (staticExtra: read as ward)
+    INGESTER: /^this creature gets \+x\/\+y, where x is the exiled creature card's power and y is its toughness\.?$/i, // Phyrexian Ingester (staticExtra; cardMoved marks what it exiled)
+    REFLECTION_ENTER: /^when this aura enters attached to a creature, each other nontoken creature you control becomes a copy of that creature\.?$/i, // Infinite Reflection (grantsOnce)
+    REFLECTION: /^nontoken creatures you control enter as a copy of enchanted creature\.?$/i, // (grantsOnce)
+    WELL_OTHERS: /^at the beginning of each other player's draw step, that player draws an additional card\.?$/i, // Well of Ideas (nearPhase)
+    KRAKEN: /^whenever an opponent casts a spell, if this card is suspended, remove a time counter from it\.?$/i, // Deep-Sea Kraken (spellCast)
+    // Mind Seize, Draconic Dissent, Phantom Premonition
+    TRUE_NAME: /^this creature has protection from the chosen player\.?$/i, // True-Name Nemesis (staticExtra: hexproof, unblockable, protection from each color)
+    ARCANE_MELEE: /^instant and sorcery spells cost \{(\d+)\} less to cast\.?$/i, // (selfDiscount: anyone's)
+    FIRKRAAG_GOAD: /^whenever one or more (\w+?)s you control attack an opponent, goad target creature that player controls\.?$/i, // (nearAttack)
+    FIRKRAAG_HIT: /^whenever a creature deals combat damage to one of your opponents, if that creature had to attack this combat, you put a \+1\/\+1 counter on (?:firkraag|this creature|.+?) and you draw a card\.?$/i, // (nearHits: goaded attackers)
+    SLAUGHTER: /^all creatures have double strike and attack each combat if able\.?$/i, // Avatar of Slaughter (refreshGrants)
+    ALL_ATTACK: /^creatures you control attack each combat if able\.?$/i, // Goblin Spymaster's token (refreshGrants)
+    DISSIPATION: /^whenever a permanent deals damage to you, return it to its owner's hand\.?$/i, // Dissipation Field (nearHits)
+    BAELOTH: /^creatures your opponents control with power less than (?:baeloth barrityl|this creature|.+?)'s power are goaded\.?$/i, // (grantsOnce)
+    ARTIFICER_FIRST: /^the first artifact spell you cast each turn costs \{(\d+)\} less to cast\.?$/i, // Artificer Class (selfDiscount)
+    MOCKING: /^you may have this creature enter as a copy of a creature an opponent controls, except it has "other creatures with the same name as this creature are goaded\."\.?$/i, // Mocking Doppelganger (nearEnters)
+    DEATH_KISS_ATTACK: /^whenever a creature an opponent controls attacks one of your opponents, double its power until end of turn\.?$/i, // (never with two players)
+    LOOT_ATTACK: /^whenever you attack the player who has the initiative, create a treasure token\.?$/i, // (the initiative isn't kept)
+    LOOT_DUNGEON: /^(?:.+? — )?whenever you complete a dungeon, create .+$/i, // (no dungeons)
+    RANAR_FORETELL: /^the first card you foretell each turn costs \{0\} to foretell\.?$/i, // (not applied)
+    EXILE_WATCH: /^whenever one or more cards are put into exile from your hand or a spell or ability you control exiles one or more permanents from the battlefield, (.+?)\.?$/i, // Ranar, Hero of Bretagard (cardMoved)
+    SOULHERDER: /^whenever a creature is exiled from the battlefield, put a \+1\/\+1 counter on (?:this creature|.+?)\.?$/i, // (cardMoved)
+    SURTLAND_COST: /^as an additional cost to cast this spell, reveal an? \w+ card from your hand or pay \{\d+\}\.?$/i, // (not paid)
+    WILL_EMBLEM: /^whenever you cast an instant or sorcery spell, copy it\. you may choose new targets for the copy\.?$/i, // Will Kenrith's emblem (spellCast)
+    // Blame Game, Chaos Incarnate, Devour for Power, Eternal Bargain, First Flight, Legends' Legacy
+    NELLY_HIT: /^whenever one or more creatures an opponent controls deal combat damage to one or more of your opponents, you and the controller of those creatures each draw a card\.?$/i, // (never with two players)
+    FEATHER: /^whenever you cast a noncreature spell that targets only (.+?), you may choose any number of other creatures that spell could target and pay \{2\} for each of those creatures\. if you do, for each of those creatures, copy that spell\. the copy targets that creature\.?$/i, // (applyTarget)
+    NO_EXTRA_OPP: /^if an opponent would begin an extra turn, that player skips that turn instead\.?$/i, // Trouble in Pairs (take an extra turn)
+    NO_EXTRA_ANY: /^if a player would begin an extra turn, that player skips that turn instead\.?$/i, // Gerrard's Hourglass Pendant
+    TROUBLE: /^whenever an opponent attacks you with two or more creatures, draws their second card each turn, or casts their second spell each turn, you draw a card\.?$/i, // (attackWatch, opponentActed, spellCast)
+    DARIEN: /^whenever you're dealt damage, (?:you may )?create that many (.+?)\.?$/i, // (dealtDamage: yours)
+    DOUBLE_TO_OPP: /^if a source would deal damage to an opponent, it deals double that damage to that player instead\.?$/i, // Fiendish Duo (damagePlayer)
+    DOUBLE_ALL: /^if a source would deal damage to a permanent or player, it deals double that damage to that permanent or player instead\.?$/i, // Dictate of the Twin Gods (damagePlayer, staticExtra)
+    TECTONIC: /^whenever this creature attacks or becomes the target of a spell an opponent controls, choose one —$/i, // Tectonic Giant (nearAttack, spellTargeted: 3 damage to each opponent)
+    SPITEFUL: /^whenever a player draws a card, (?:this enchantment|.+?) deals 1 damage to that player\.?$/i, // Spiteful Visions (opponentActed: both sides' draws)
+    THEATER: /^during your turn, if an opponent lost life this turn, you may play lands and cast spells from among cards exiled with this enchantment\.?$/i, // (cardMoved: playable)
+    SEWER_CHOOSE: /^as (?:this creature|.+?) enters, choose a player\.?$/i, // (the opponent)
+    SEWER_CAST: /^whenever the chosen player casts a spell, that player mills a card\.?$/i, // (spellCast)
+    PATRON: /^whenever a permanent is put into an opponent's graveyard, that player loses 1 life\.?$/i, // Patron of the Nezumi (cardMoved)
+    DAMIA_SKIP: /^skip your draw step\.?$/i, // (not applied)
+    SZADEK: /^if (?:szadek|this creature|.+?) would deal combat damage to a player, instead put that many \+1\/\+1 counters on (?:szadek|this creature|.+?) and that player mills that many cards\.?$/i, // (nearHits: life given back)
+    AVATAR_WOE: /^if there are (\w+) or more creature cards total in all graveyards, this spell costs \{(\d+)\} less to cast\.?$/i, // (selfDiscount)
+    SPRINGJACK: /^\{t\}, sacrifice x goats: add x mana of any one color\. you gain x life\.?$/i, // (not used)
+    HAWK: /^when this creature deals combat damage to a player who controls more lands than you, return it to its owner's hand\. if you do, you may search your library for a plains card, put it onto the battlefield tapped, then shuffle\.?$/i, // Cartographer's Hawk (nearHits)
+    THRESHOLD: /^whenever an opponent attacks, if they attacked you and\/or a planeswalker you control, draw a card\.?$/i, // Ever-Watching Threshold (attackWatch)
+    GRAV_SHIFT: /^creatures with(out)? flying get ([+-]\d+)\/([+-]\d+)\.?$/i, // Gravitational Shift (refreshGrants: every creature)
+    WINDREADER: /^whenever a creature with flying attacks, (?:you may )?draw a card\.?$/i, // (attackWatch)
+    EVOS: /^creature spells with flying you cast cost \{(\d+)\} less to cast\.?$/i, // Warden of Evos Isle (selfDiscount)
+    WINGED_WORDS: /^this spell costs \{(\d+)\} less to cast if you control a creature with flying\.?$/i, // (selfDiscount)
+    BELL_NOTE: /^note the mana value of each card as it's put into exile\.?$/i, // Bell Borca (cardMoved: bellNote)
+    COMBAT_HIT_PW: /^whenever (?:this creature|.+?) deals combat damage to a player or planeswalker, (.+)$/i, // Neheb, Bladewing, The Reaver Cleaver (nearHits)
+    LEGEND_TOKENS: /^the "legend rule" doesn't apply to tokens you control\.?$/i,
+    SHANID: /^whenever you play a legendary land or cast a legendary spell, you draw a card and you lose 1 life\.?$/i, // (spellCast: spells)
+    VERRAK: /^whenever you activate an ability that isn't a mana ability, if life was paid to activate it, you may pay that much life again\. if you do, copy that ability\. you may choose new targets for the copy\.?$/i, // (not applied)
+    CURSE_INERTIA: /^whenever a player attacks enchanted player with one or more creatures, that attacking player may tap or untap target permanent of their choice\.?$/i, // (attackWatch)
+    CURSE_GRAVES: /^whenever a player attacks enchanted player with one or more creatures, that attacking player may create a tapped 2\/2 black zombie creature token\.?$/i, // (attackWatch)
+    // Desert Bloom, Upgrades Unleashed
+    GRAVE_LANDS_DISCOUNT: /^this spell costs \{1\} less to cast for each land card in your graveyard\.?$/i, // Yuma, Rumbleweed (already done where spells' graveyard discounts are)
+    YUMA_DESERT: /^whenever a desert card is put into your graveyard from anywhere, (create .+?)\.?$/i, // (cardMoved)
+    POSTCOMBAT: /^at the beginning of each of your postcombat main phases, (?!you may pay x life)(.+)$/i, // Kirri (nearPhase)
+    GREENWARDEN: /^if a land entering causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time\.?$/i, // (landEnteredNow's landfall)
+    HAZEZON: /^you may play desert lands from your graveyard\.?$/i, // (landsFromGrave)
+    DUNE_CHANTER: /^lands you control and land cards you own that aren't on the battlefield are deserts in addition to their other types\.?$/i, // (isDesert)
+    KAMI_EXILE: /^whenever you cast a spell from exile, put a \+1\/\+1 counter on target creature you control\.?$/i, // Kami of Celebration (spellCast)
+    KOSEI: /^as long as (?:kosei|this creature|.+?) is enchanted, equipped, and has a counter on it, (?:kosei|it|.+?) has "whenever (?:kosei|this creature) deals combat damage to an opponent, you draw that many cards and (?:kosei|this creature) deals that much damage to each other opponent\."\.?$/i, // (nearHits)
+    OROCHI: /^as long as this creature is modified, it has "\{t\}: add \{g\}\{g\}\."\.?$/i, // Orochi Merge-Keeper (manaTapped: one more {G})
+    ORDEAL_SAC: /^when you sacrifice this aura, (.+)$/i, // Ordeal of Nylea (its attack effect)
     // Cabaretti Cacophony, Mirror Mastery, Call for Backup, Obscura Operation
     BESS_ENTER: /^whenever one or more other creatures you control with base power and toughness 1\/1 enter, put a \+1\/\+1 counter on (?:bess|this creature|.+?)\.?$/i, // (nearEnters)
     ZURZOTH_ATTACK: /^whenever one or more (\w+?)s you control attack one or more players, you and those players each draw a card, then discard a card at random\.?$/i, // (nearAttack)
@@ -2458,7 +2904,7 @@ const Bot = (() => {
     WAR_DOCTOR_CLOCK: /^whenever one or more other permanents phase out and whenever one or more other cards are put into exile from anywhere, put a time counter on (?:the war doctor|this creature|.+?)\.?$/i, // (cardMoved)
     REGEN_RESTORED: /^whenever one or more time counters are removed from this enchantment, scry 1 and you gain 1 life\. then if this enchantment has no time counters on it, exile it\. when you do, take an extra turn after this one\.?$/i, // (timeRemoved)
     IDRIS: /^(?:idris|this creature|.+?) has all activated and triggered abilities of the exiled card and gets \+x\/\+x, where x is the exiled card's mana value\.?$/i, // (staticExtra)
-    SPACESHIP: /^whenever a time counter is removed from this card while it's exiled, (create .+?)\.?$/i, // Dinosaurs on a Spaceship (timeRemoved)
+    SPACESHIP: /^whenever a time counter is removed from this card while it's exiled, (.+?)\.?$/i, // Aeon Chronicler too // Dinosaurs on a Spaceship (timeRemoved)
     KATE_TOKENS: /^whenever you put one or more time counters on a permanent you control, (create .+?)\.?$/i, // Kate Stewart (countersPut)
     FIREPLACE_ENTERS: /^(?:this artifact|.+?) enters tapped with a time counter on it\.?$/i, // Rotating Fireplace (nearEnters)
     WEDDING_DRAW: /^whenever an opponent who controls an artifact named (.+?) draws a card during their turn, you draw a card\.?$/i, // Wedding Ring (opponentActed)
@@ -2466,12 +2912,16 @@ const Bot = (() => {
     AS_FORETOLD: /^once each turn, you may pay \{0\} rather than pay the mana cost for a spell you cast with mana value x or less, where x is the number of time counters on (?:this enchantment|.+?)\.?$/i, // (costChoices)
     THRINAX: /^each other creature you control enters with an additional x \+1\/\+1 counters on it, where x is the number of \+1\/\+1 counters on this creature\.?$/i, // Bloodspore Thrinax
   };
-  NEAR.STATIC = [NEAR.ENTER_TAPPED_ALL, NEAR.ANIMAR, NEAR.AVATAR_FURY, NEAR.INVIGORATE, NEAR.MENTOR_PLUS, NEAR.HAMZA_SELF, NEAR.HAMZA, NEAR.ROBBER_ESCAPE, NEAR.OSKAR_SELF, NEAR.ARCHON_CROWN, NEAR.IN_TOO_DEEP, NEAR.GALEA, NEAR.BELT, NEAR.ARMED, NEAR.TEZZERET, NEAR.BARRACUDA, NEAR.REFRACTOR, NEAR.HISTORIAN, NEAR.TOPOGRAPHY, NEAR.WE_RIDE, NEAR.MARI, NEAR.FIXER, NEAR.SASKIA_CHOOSE, NEAR.FLAIL, NEAR.HUSHWING, NEAR.BRIBERY, NEAR.SPHERE, NEAR.HOSTILITY, NEAR.GISELA_HALF, NEAR.NIGHTLY_HUNT, NEAR.RAGER_BAR, NEAR.PRIMEVAL,
+  NEAR.STATIC = [NEAR.ELIGETH, NEAR.COMPANION, NEAR.TEFERI_FLASH, NEAR.TEFERI_SORCERY, NEAR.NAIAD, NEAR.SHINRYU_CHOOSE, NEAR.PLATINUM, NEAR.TRAXOS, NEAR.CRAFT, NEAR.KHARN_ATTACK, NEAR.KHARN_BETRAY, NEAR.HELBRUTE, NEAR.MAGNUS, NEAR.SLAANESH, NEAR.SWARMLORD, NEAR.BIO_TITAN, NEAR.TOXICRENE, NEAR.SHADOW_WARP, NEAR.TYRANID_PRIME, NEAR.FORTIFY, NEAR.DUALCAST, NEAR.JOB_SELECT, NEAR.GRAVE_DISCOUNT2, NEAR.INTO_STORY, NEAR.ABADDON, NEAR.PLAGUE_DRONE, NEAR.TOMBS_DRAW, NEAR.TRAZYN, NEAR.DOMINION_DISCOUNT, NEAR.SAUTEKH, NEAR.SENTRY_DISCOUNT, NEAR.GANNON, NEAR.REX_ABILITIES, NEAR.SIN_ENTERS, NEAR.SQUAD_DISCARD, NEAR.AUTUMN_GRANT, NEAR.MAXSON, NEAR.KRARKS_THUMB, NEAR.MONOLITH, NEAR.JOURNAL, NEAR.MYRIAD_KICK, NEAR.FLIP_UPKEEP, NEAR.SAKASHIMA, NEAR.HOJO_DISCOUNT, NEAR.SUMMONING_MATERIA, NEAR.ZHULODOK, NEAR.BEACON_LOYALTY, NEAR.ONAKKE, NEAR.OATH_TEFERI, NEAR.WANDERER, NEAR.OMO_LANDS, NEAR.OMO_CREATURES, NEAR.FROGANTUA, NEAR.PLANAR_NEXUS, NEAR.MANA_REFLECTION, NEAR.COPY_LAND, NEAR.GRAVE_FIFTEEN, NEAR.END_STEP_FLASH, NEAR.DUSKMANTLE, NEAR.ENHANCED_SURVEIL, NEAR.NECRO_FLASH, NEAR.TWINS_BLOODTHIRST, NEAR.ENDBRINGER, NEAR.MYSTIC_FORGE, NEAR.AMINATOU, NEAR.MASTER_ESCAPE, NEAR.STUN_LOCK, NEAR.CELLAR_DISCOUNT, NEAR.ACCESS_MAZE, NEAR.MIRRORMADE, NEAR.MULTIVERSE_TOP, NEAR.MULTIVERSE_FREE, NEAR.ANHELO, NEAR.KICK_COUNTERS, NEAR.FREE_CYCLE_FIRST, NEAR.FREE_CYCLE_SEVEN, NEAR.LAND_CYCLING, NEAR.SARCOPHAGUS, NEAR.SARCOPHAGUS_EXILE,
+    /^sliver creatures you control have afflict (\d+)\.?$/i, NEAR.DOOMGUIDE, NEAR.BALDRIC, NEAR.BANON_PRAY, NEAR.EDGAR, NEAR.SABIN, NEAR.TRIAD, NEAR.SLIVER_LEGEND, NEAR.SLIVER_ENCORE, NEAR.HATCHERY, NEAR.QUICK_SLIVER, NEAR.SOWER, NEAR.COMMANDER_NINJUTSU, NEAR.WAYTA, NEAR.TEMPLE_ALTISAUR,
+    /^you may have this creature enter as a copy of any nonland permanent on the battlefield\.?$/i, NEAR.ANGELIC_ARBITER, NEAR.STRIFE, NEAR.BASANDRA, NEAR.STRANGLEHOLD, NEAR.KIANNE, NEAR.CURATOR, NEAR.SKAAB_COST, NEAR.ASHAYA, NEAR.EXPLOIT, NEAR.SLUDGE, NEAR.REVOKER, NEAR.MANGLER_COST, NEAR.ELSHA, NEAR.PRAMIKON, NEAR.NALIA_TOP, NEAR.VALIANT,
+    /^(?:burakos|this creature) is also a cleric, rogue, warrior, and wizard\.?$/i, // Burakos (staticExtra)
+    /^enchanted permanent is a treasure artifact with "\{t\}, sacrifice this artifact: add one mana of any color," and it loses all other abilities\.?$/i, /^sacrifice an artifact, creature, or land: remove a time counter from this card\. activate only if this card is suspended\.?$/i, NEAR.TITANIA, NEAR.MUTILATOR_COST, NEAR.PHANTASMAL, NEAR.HAMA, NEAR.ACADEMY_ELITE, NEAR.MOROPHON, NEAR.MORITTE, NEAR.TAZRI, NEAR.VIVIEN_FLASH, NEAR.TLINCALLI, NEAR.HALDAN, NEAR.DJINN_REPLICATE, NEAR.WORT_CONSPIRE, NEAR.TWINNING, NEAR.KESS, NEAR.MAIRSIL, NEAR.BODY_DOUBLE, NEAR.FLASH_TAX, NEAR.DENRY_ENTERS, NEAR.TOOLKIT_ENTERS, NEAR.NORN_ANNEX, NEAR.INTO_THE_PIT, NEAR.TROVE_LANDS, NEAR.TROVE_SPELLS, NEAR.LORCAN_EXILE, NEAR.SHARE_PLAY, NEAR.WILD_MAGIC, NEAR.WIDESPREAD_PANIC, NEAR.MIZZIX_DISCOUNT, NEAR.GIGANTOPLASM, NEAR.MELEK_TOP, NEAR.SEAL_CHOOSE, NEAR.SEAL, NEAR.THOUGHT_REFLECTION, NEAR.MARANG, /^if one or more \+1\/\+1 counters would be put on a creature, twice that many \+1\/\+1 counters are put on that creature instead\.?$/i, NEAR.ELDERWOOD, NEAR.INVOCATION, NEAR.MYTH_DISCOUNT, NEAR.RAVENOUS_SLIME, NEAR.TAIGAM_STATIC, NEAR.ORATOR_COST, NEAR.FIST_OF_SUNS, NEAR.SIEGE_DRAGONS, NEAR.TORTURE_PIT, NEAR.RAKDOS_CAST, NEAR.RAKDOS_DISCOUNT, NEAR.RAYAMI_EXILE, NEAR.SPONGE_ENTERS, NEAR.VESUVAN, NEAR.GIFT_DOOM, NEAR.KRRIK, NEAR.ARCHON_CHOOSE, NEAR.ARCHON_BAN, NEAR.CORAM_PLAY, NEAR.SAWHORN, NEAR.GRIST_CREATURE, NEAR.DROGSKOL, NEAR.RUBINIA_UNTAP, NEAR.THUNDERSTAFF, NEAR.LEAFDRAKE, NEAR.IXIDRON, NEAR.REFLECTION, NEAR.TRUE_NAME, NEAR.ARCANE_MELEE, NEAR.SLAUGHTER, NEAR.BAELOTH, NEAR.ARTIFICER_FIRST, NEAR.MOCKING, NEAR.RANAR_FORETELL, NEAR.SURTLAND_COST, NEAR.NO_EXTRA_OPP, NEAR.NO_EXTRA_ANY, NEAR.DOUBLE_TO_OPP, NEAR.DOUBLE_ALL, NEAR.THEATER, NEAR.SEWER_CHOOSE, NEAR.DAMIA_SKIP, NEAR.SZADEK, NEAR.AVATAR_WOE, NEAR.SPRINGJACK, NEAR.EVOS, NEAR.BELL_NOTE, NEAR.LEGEND_TOKENS, NEAR.GRAV_SHIFT, NEAR.GRAVE_LANDS_DISCOUNT, NEAR.GREENWARDEN, NEAR.HAZEZON, NEAR.DUNE_CHANTER, NEAR.KOSEI, NEAR.OROCHI, NEAR.ENTER_TAPPED_ALL, NEAR.ANIMAR, NEAR.AVATAR_FURY, NEAR.INVIGORATE, NEAR.MENTOR_PLUS, NEAR.HAMZA_SELF, NEAR.HAMZA, NEAR.ROBBER_ESCAPE, NEAR.OSKAR_SELF, NEAR.ARCHON_CROWN, NEAR.IN_TOO_DEEP, NEAR.GALEA, NEAR.BELT, NEAR.ARMED, NEAR.TEZZERET, NEAR.BARRACUDA, NEAR.REFRACTOR, NEAR.HISTORIAN, NEAR.TOPOGRAPHY, NEAR.WE_RIDE, NEAR.MARI, NEAR.FIXER, NEAR.SASKIA_CHOOSE, NEAR.FLAIL, NEAR.HUSHWING, NEAR.BRIBERY, NEAR.SPHERE, NEAR.HOSTILITY, NEAR.GISELA_HALF, NEAR.NIGHTLY_HUNT, NEAR.RAGER_BAR, NEAR.PRIMEVAL,
     /^enchanted permanent can't attack or block, and its activated abilities can't be activated unless they're mana abilities\.?$/i, // Faith's Fetters (attachBonus)
     /^you may have this creature enter as a copy of any creature on the battlefield, except it has "at the beginning of your upkeep, if this creature isn't a token, create a token that's a copy of this creature\."\.?$/i, // Progenitor Mimic (nearEnters)
     /^you may have this creature enter as a copy of any creature on the battlefield, except (?:it isn't legendary, is an artifact in addition to its other types, and has myriad|it has vanishing 3 if that creature doesn't have vanishing)\.?$/i, NEAR.PILOT, NEAR.DAN_LEWIS, NEAR.RETURN_PAST, NEAR.RIVER_BOTTOM, NEAR.TWELFTH, NEAR.ME_COUNTERS, NEAR.ME_GRAVE, NEAR.ESCAPE_LAND, NEAR.CLARA_COLOR, NEAR.CLARA, NEAR.PSYCHIC_PAPER, NEAR.MASTER_LEGEND, NEAR.MASTER_TOKENS, NEAR.CONSPIRE_EXILE, NEAR.VALEYARD, NEAR.VALEYARD_VOTE, NEAR.ANGEL_SHUFFLE, NEAR.CASUALTY_FIRST, NEAR.TAKEOVER, NEAR.DRUMS_GOAD, NEAR.CYBER_AFFLICT, NEAR.EXERT_UNBLOCKABLE, NEAR.SNUFF_OUT, NEAR.PANDORICA_UNTAP, NEAR.FIREPLACE_ENTERS, NEAR.AS_FORETOLD,
     /^escape\s*[—-]\s*(?:\{[^}]+\})+, exile four other cards from your graveyard\.?$/i, NEAR.FOURTH_DOCTOR, NEAR.JO_GRANT, NEAR.READ_AHEAD_ALL, NEAR.SAGA_REPLICATE, NEAR.PERI, NEAR.PLANAR, NEAR.NO_MAX_HAND, NEAR.EIGHTH_DOCTOR, NEAR.DINOSAURS, NEAR.ALTAR, NEAR.VALENTIN, NEAR.DENNICK_TARGET, NEAR.DENNICK_EXILE, NEAR.OLAG, NEAR.TIBALT_EMBLEM, NEAR.RAD_LIFE, NEAR.MARIPOSA, NEAR.MEGASLOTH, NEAR.RAUL, NEAR.DEATHCLAWS, NEAR.CONSTRICTOR, NEAR.CONSTRICTOR_YOU, NEAR.BLOATFLY, NEAR.FACE_DOWN_FLY, NEAR.DOWN_DISCOUNT, NEAR.UNLEASH_ALL, NEAR.HYDRA_UP, NEAR.PROJEKTOR, NEAR.GRUNT, NEAR.INDOMITABLE, NEAR.DOUBLE_YOURS, NEAR.REPEAT_ATTACK, NEAR.MIMEOPLASM, NEAR.ODD_ZONE_DISCOUNT, NEAR.PLOT_DISCOUNT, NEAR.MORBID_DISCOUNT, NEAR.STRONG_BACK_AURA, NEAR.PURESTEEL, NEAR.UNOWNED_DISCOUNT, NEAR.FELIX, NEAR.TREASURE_EQUIP, NEAR.CHIMES, NEAR.ARBITER, NEAR.SHIKARI, NEAR.NISHOBA, NEAR.CONFORMITY, NEAR.SOULBINDERS, NEAR.CONTAINMENT, NEAR.MASTERWORK, NEAR.ARTIFACT_CONVOKE, NEAR.MADNESS_LIFE, NEAR.GORGER, NEAR.ALCHEMY, NEAR.LIFE_DISCOUNT, NEAR.MIND_EATER, NEAR.ELIXIR, NEAR.FEUD_CHOOSE, NEAR.FEUD, NEAR.IMPOSTER, NEAR.SHARED_FATE, NEAR.SHARED_PLAY, NEAR.UNCAST_COUNTERS, NEAR.SPELLS_MV, NEAR.THIEF, NEAR.LORE_EXILE, NEAR.THRINAX, NEAR.CREW_ALL];
-  NEAR.TRIGGERS = [NEAR.BESS_ENTER, NEAR.ZURZOTH_ATTACK, NEAR.INDULGE, NEAR.STAMPEDE_DRAW, NEAR.OSKAR, NEAR.CUSTODI, NEAR.VERBOSITY, NEAR.FEY, NEAR.PUZZLE, NEAR.ERDWAL, NEAR.CAVE_DIVER, NEAR.NICANZIL_LAND, NEAR.NICANZIL_NONLAND, NEAR.BANDIT, NEAR.SASKIA, NEAR.ZHUR, NEAR.TYMNA, NEAR.BREATH, NEAR.KAZUUL, NEAR.DANNY, NEAR.BILL, NEAR.RIVER_SPOILERS, NEAR.STRAX_GROW, NEAR.COPY_GROW, NEAR.DIARY_EXILE, NEAR.SKULK_HIT, NEAR.BEAST, NEAR.GOADED_HIT, NEAR.CYBERMAT, NEAR.DONNA, NEAR.NINTH, NEAR.SALLY, NEAR.RORY, NEAR.WAR_DOCTOR_CLOCK, NEAR.REGEN_RESTORED, NEAR.SPACESHIP, NEAR.KATE_TOKENS, NEAR.WEDDING_DRAW, NEAR.WEDDING_LIFE, /^when (?:this enchantment|.+?) enters and at the beginning of your first main phase, exile target creature an opponent controls until (?:this enchantment|.+?) leaves the battlefield\.?$/i, /^when you attack with three or more creatures, transform .+?\.?$/i, /^when (?:garruk|.+?) has two or fewer loyalty counters on (?:him|her|it), transform (?:him|her|it)\.?$/i, /^at the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase\.?$/i, NEAR.CYCLE_COUNTER, NEAR.AVACYN, NEAR.ELBRUS, NEAR.LOSES_GAME, NEAR.KINNAN, NEAR.KYTHEON, NEAR.MILA_ATTACK, NEAR.DENNICK_INVESTIGATE, NEAR.MILL_COUNTERS, NEAR.MILL_ZOMBIES, NEAR.MILL_ROACH, NEAR.MILL_LIFE, NEAR.ENCLAVE, NEAR.MARCUS, NEAR.RAPTOR, NEAR.BASE_22_ATTACK, NEAR.BIG_ATTACK_UP, NEAR.NEHEB, NEAR.CADETS, NEAR.PUNISHING, NEAR.HOWLING, NEAR.TARGETED_SAC, NEAR.PIRATE_TREASURE, NEAR.PIRATE_STEAL, NEAR.UNOWNED_ENTERS, NEAR.MANIFEST_UPKEEP, NEAR.UNOWNED_DIES, NEAR.CAZUR, NEAR.EDRIC, NEAR.ALONE_PUMP, NEAR.PLAGIARIST, NEAR.SUNSTEEL, NEAR.REYHAN, NEAR.TURNED_UP_SHRINK, NEAR.ARTISANS, NEAR.VENGEANCE_CAST, NEAR.VENGEANCE_LOSE, NEAR.HONOR_GUARD, NEAR.VITALITY, NEAR.DUELIST, NEAR.BRACERS, NEAR.CAGED_SUN, NEAR.PSYCHIC, NEAR.TEYSA, NEAR.GRAVE_PERIL, NEAR.VULTURE, NEAR.SERVITUDE_DIES, NEAR.ARDEN, NEAR.TOKENS_ATTACK, NEAR.ROAR];
+  NEAR.TRIGGERS = [NEAR.BARAL, NEAR.ZENOS_LEAVES, NEAR.SHINRYU_WIN, NEAR.CONTAMINATED, NEAR.KHARN_LOSE, NEAR.LOST_DAMNED, NEAR.RED_TERROR, NEAR.GHYRSON, NEAR.HARRIDAN, NEAR.LOCUS_BUFF, NEAR.CAMP_TAP, NEAR.PLANISPHERE, NEAR.EMET_SELCH, NEAR.HRAESVELGR, NEAR.URIANGER_WATCH, NEAR.LANIUS, NEAR.IMOTEKH, NEAR.MATTER_ABSORPTION, NEAR.GRAVE_ENTRY, NEAR.PSYCHOMANCER, NEAR.SCRIBE_ENERGY, NEAR.GENEROUS_PATRON, NEAR.LULU, NEAR.RIKKU, NEAR.MR_HOUSE, NEAR.ARADESH, NEAR.RAID_JUNK, NEAR.AUTUMN_WATCH, NEAR.MACCREADY, NEAR.COIN_ANY_WIN, NEAR.IT_BETRAYS, NEAR.KALDRA_EXILE, NEAR.MYRIAD_SPLIT, NEAR.COIN_WIN_HIT, NEAR.COIN_LOSE_HIT, NEAR.COIN_LUCK, NEAR.IMPULSIVE, NEAR.RISKY_MOVE, NEAR.AVALANCHE_PING, NEAR.HOJO_DRAW, /^when you next cast an instant spell, cast a sorcery spell, or activate a loyalty ability this turn, copy that spell or ability twice\. you may choose new targets for the copies\.?$/i, NEAR.SARKHAN_GUARD, NEAR.DESERT_WARFARE, NEAR.DARK_DEPTHS, NEAR.SURVEIL_WATCH, NEAR.WATCHER_HOURS, NEAR.TAIL_WATCH, NEAR.KOZ_RETURN, NEAR.TITANS_VANGUARD, NEAR.CELLARSPAWN, NEAR.ATHREOS_COIN, NEAR.PARNESSE_TAX, NEAR.PARNESSE_COPY, NEAR.SKYCLAVE, NEAR.BRALLIN, NEAR.SPIRIT_CAIRN, NEAR.AKIM, NEAR.CYCLE_FIRST, NEAR.SAVAI, NEAR.CRYSTAL_RESONANCE, NEAR.ASTRAL_DRIFT, NEAR.LIGHTNING_RIFT, NEAR.SPELLPYRE, NEAR.CYAN, NEAR.COIN_WIN, NEAR.SLIVER_HIT, NEAR.DIFFUSION, NEAR.SOWER, NEAR.WRATHFUL_RAPTORS, NEAR.REGAL_BEHEMOTH, NEAR.ARMASAUR, NEAR.KAALIA, NEAR.RIGHTEOUS_CAUSE, NEAR.EXP_LAB, NEAR.SKITTERSPIKE, NEAR.TURNED_UP, NEAR.GRAZILAXX, NEAR.EXPLOIT, NEAR.NIHILITH, NEAR.ZELLIX, NEAR.SEVINNE_COPY, NEAR.GRAVE_CAST_WATCH, NEAR.CALC_LICH, NEAR.TERRAMANCER, NEAR.GROVEDANCER, NEAR.SEFRIS, NEAR.DUNGEON_DONE, NEAR.NIHILOOR_ATTACK, NEAR.ROD_ABSORB, NEAR.WAND_ORCUS, NEAR.GUILTFEEDER, NEAR.BURGEONING, NEAR.WASTE_NOT, NEAR.MAGDA_TAP, NEAR.MARINER, NEAR.FALDORN, NEAR.AURORA, NEAR.BONECRUSHER, NEAR.NALFESHNEE, NEAR.KALAMAX_COPY, NEAR.PORTAL_MAGE, NEAR.KROS, NEAR.MAVERICK, NEAR.SKYBOON, NEAR.ICHORCLAW, NEAR.NORN_DECREE_HIT, NEAR.NORN_DECREE_ATTACK, NEAR.GRAFTED, NEAR.RENDMAW, NEAR.DEMON_COVENANT_ATTACK, NEAR.CISTERN, NEAR.OUBLIETTE, NEAR.WIDESPREAD_PANIC, NEAR.FLAYER, NEAR.GORGON_RECLUSE, NEAR.FOOLS_WISDOM, NEAR.KARAZIKAR_OTHER, NEAR.LORCAN, NEAR.FIENDLASH, NEAR.SHARE_SPOILS, NEAR.ENDREK_LIMIT, NEAR.PLAGUE_BOILER, NEAR.MIZZIX_EXP, NEAR.MELEK_COPY, NEAR.SKY_TYRANT, NEAR.ANOWON, NEAR.LAZAV, NEAR.STINKDRINKER, NEAR.FINEST_HOUR, NEAR.RIGHTEOUS_DRAW, NEAR.MYTH_DRAW, NEAR.SCALELORD, NEAR.BONEYARD_SCOURGE, NEAR.VALGAVOTH, NEAR.LORD_OF_PAIN, NEAR.BARBFLARE, NEAR.CORRIDOR, NEAR.FEAR_BURNING, NEAR.ARCHFIEND_SPITE, NEAR.BONE_MISER, NEAR.SKYFIRE, NEAR.DISA, NEAR.MAGMARCH, NEAR.ALTAR_GOYF, NEAR.MILLICENT, NEAR.DONAL, NEAR.TAPPED_FOE, NEAR.BISHOP, NEAR.BUNREI, NEAR.FIELD_SOULS, NEAR.DEREVI, NEAR.REFLECTION_ENTER, NEAR.WELL_OTHERS, NEAR.KRAKEN, NEAR.FIRKRAAG_GOAD, NEAR.FIRKRAAG_HIT, NEAR.DISSIPATION, NEAR.DEATH_KISS_ATTACK, NEAR.LOOT_ATTACK, NEAR.LOOT_DUNGEON, NEAR.EXILE_WATCH, NEAR.SOULHERDER, NEAR.NELLY_HIT, NEAR.FEATHER, NEAR.TROUBLE, NEAR.DARIEN, NEAR.TECTONIC, NEAR.SPITEFUL, NEAR.SEWER_CAST, NEAR.PATRON, NEAR.HAWK, NEAR.THRESHOLD, NEAR.WINDREADER, NEAR.COMBAT_HIT_PW, NEAR.SHANID, NEAR.VERRAK, NEAR.CURSE_INERTIA, NEAR.CURSE_GRAVES, NEAR.YUMA_DESERT, NEAR.POSTCOMBAT, NEAR.KAMI_EXILE, NEAR.ORDEAL_SAC, NEAR.BESS_ENTER, NEAR.ZURZOTH_ATTACK, NEAR.INDULGE, NEAR.STAMPEDE_DRAW, NEAR.OSKAR, NEAR.CUSTODI, NEAR.VERBOSITY, NEAR.FEY, NEAR.PUZZLE, NEAR.ERDWAL, NEAR.CAVE_DIVER, NEAR.NICANZIL_LAND, NEAR.NICANZIL_NONLAND, NEAR.BANDIT, NEAR.SASKIA, NEAR.ZHUR, NEAR.TYMNA, NEAR.BREATH, NEAR.KAZUUL, NEAR.DANNY, NEAR.BILL, NEAR.RIVER_SPOILERS, NEAR.STRAX_GROW, NEAR.COPY_GROW, NEAR.DIARY_EXILE, NEAR.SKULK_HIT, NEAR.BEAST, NEAR.GOADED_HIT, NEAR.CYBERMAT, NEAR.DONNA, NEAR.NINTH, NEAR.SALLY, NEAR.RORY, NEAR.WAR_DOCTOR_CLOCK, NEAR.REGEN_RESTORED, NEAR.SPACESHIP, NEAR.KATE_TOKENS, NEAR.WEDDING_DRAW, NEAR.WEDDING_LIFE, /^when (?:this enchantment|.+?) enters and at the beginning of your first main phase, exile target creature an opponent controls until (?:this enchantment|.+?) leaves the battlefield\.?$/i, /^when you attack with three or more creatures, transform .+?\.?$/i, /^when (?:garruk|.+?) has two or fewer loyalty counters on (?:him|her|it), transform (?:him|her|it)\.?$/i, /^at the beginning of each of your postcombat main phases, there is an additional beginning phase after this phase\.?$/i, NEAR.CYCLE_COUNTER, NEAR.AVACYN, NEAR.ELBRUS, NEAR.LOSES_GAME, NEAR.KINNAN, NEAR.KYTHEON, NEAR.MILA_ATTACK, NEAR.DENNICK_INVESTIGATE, NEAR.MILL_COUNTERS, NEAR.MILL_ZOMBIES, NEAR.MILL_ROACH, NEAR.MILL_LIFE, NEAR.ENCLAVE, NEAR.MARCUS, NEAR.RAPTOR, NEAR.BASE_22_ATTACK, NEAR.BIG_ATTACK_UP, NEAR.NEHEB, NEAR.CADETS, NEAR.PUNISHING, NEAR.HOWLING, NEAR.TARGETED_SAC, NEAR.PIRATE_TREASURE, NEAR.PIRATE_STEAL, NEAR.UNOWNED_ENTERS, NEAR.MANIFEST_UPKEEP, NEAR.UNOWNED_DIES, NEAR.CAZUR, NEAR.EDRIC, NEAR.ALONE_PUMP, NEAR.PLAGIARIST, NEAR.SUNSTEEL, NEAR.REYHAN, NEAR.TURNED_UP_SHRINK, NEAR.ARTISANS, NEAR.VENGEANCE_CAST, NEAR.VENGEANCE_LOSE, NEAR.HONOR_GUARD, NEAR.VITALITY, NEAR.DUELIST, NEAR.BRACERS, NEAR.CAGED_SUN, NEAR.PSYCHIC, NEAR.TEYSA, NEAR.GRAVE_PERIL, NEAR.VULTURE, NEAR.SERVITUDE_DIES, NEAR.ARDEN, NEAR.TOKENS_ATTACK, NEAR.ROAR];
   NEAR.THEN = [NEAR.CASCADE_CAST, /^when this creature transforms into .+?, (.+)$/i, NEAR.MILA_TARGET, NEAR.MILL_QUEEN, NEAR.RADSTAG, /^when this (?:creature|land|permanent|enchantment|artifact) is turned face up, (?:you may )?(.+)$/i, /^whenever (?:this \w+ or )?(?:another|a) (?:permanent|creature) you control is turned face up, (?:you may )?(.+?)(?:\.? this ability triggers only once each turn)?\.?$/i, NEAR.UNOWNED_CAST, NEAR.GRAVE_LEAVE_CREATURE, NEAR.UNTAPPED, NEAR.OPP_ODD_CAST, NEAR.VERONICA, NEAR.RENOWNED, NEAR.KARMIC, NEAR.ALONE, /^whenever a creature you control with an? [\w+/-]+ counter on it attacks, (.+)$/i, NEAR.CREWED, NEAR.KEY_UNTAP, NEAR.ENTER_UPKEEP, /^whenever you cast (?:another |an? )spell that has convoke, (?:you may )?(.+)$/i];
   NEAR.COUNTS = [
     // Armorcraft Judge, Inspiring Call: "for each creature you control with a +1/+1 counter on it"
@@ -2485,6 +2935,10 @@ const Bot = (() => {
       if (!self || !isSelf(m[2], self)) return 0;
       return G.attachmentsOf(g, self.iid).map(iid => g.cards[iid]).filter(c => c && (/aura/i.test(m[1]) && G.isAura(c) || /equipment/i.test(m[1]) && isA(c, 'equipment'))).length;
     }],
+    // Cactus Preserve
+    [/^the greatest mana value among your commanders$/i, (g, m, self, ctx) => (g ? Math.max(0, ...Object.values(g.cards).filter(c => c.commander).map(c => cmcOfInst(c, defOfCtx(ctx || {})))) : 1)],
+    // Notorious Throng (read as the life the opponent lost this turn)
+    [/^the damage dealt to your opponents this turn$/i, (g, m, self, ctx) => { const o = g && otherTable(g); return o ? o.lostLife || 0 : 1; }],
     // Surge of Brilliance, Impending Flux: spells cast this turn from anywhere other than your hand
     [/^spells? you've cast this turn from anywhere other than your hand$/i, g => (g.spellTurn === g.turn ? (g.castThisTurn || []).filter(c => c.from && c.from !== 'hand').length : 0)],
     // Traverse Eternity: "the greatest mana value among historic permanents you control"
@@ -2515,6 +2969,12 @@ const Bot = (() => {
     [/^the discarded nonland card's mana value$/i, (g, m, self, ctx) => { const c = g.cards[g.lastDiscardedIid]; return c && c.discardedTurn === g.turn && !G.isLand(c) ? cmcOfInst(c, defOfCtx(ctx)) : 0; }],
   ];
   NEAR.CONDITIONS = [
+    [/^there are (\w+) or more cards in your graveyard$/i, (g, m) => g.zones.graveyard.length >= (toNumber(m[1]) || 0)], // Case of the Shifting Visage
+    [/^an opponent lost (\w+) or more life this turn$/i, (g, m, ctx) => { const o = otherTable(g); return !!o && (o.lostLife || 0) >= toNumber(m[1]); }], // Sygg
+    [/^its prowl cost was paid$/i, (g, m, ctx) => !!(ctx && ctx.self && ctx.self.prowled)], // Latchkey Faerie
+    [/^two or more players have lost the game$/i, () => false], // Hot Pursuit (two players)
+    [/^(.+?) is in the command zone$/i, (g, m, ctx) => !!(ctx && ctx.self) && ctx.self.zone === 'command'], // Oloro
+    [/^it was kicked with its (?:\{[^}]+\})+ kicker$/i, (g, m, ctx) => !!(ctx && ctx.self && ctx.self.kicked)], // Stormscape Battlemage (either kicker)
     [/^you control another creature with a \+1\/\+1 counter on it$/i, (g, m, ctx) => creatures(g, c => c !== (ctx && ctx.self) && ((c.counters || {})['+1/+1'] || 0) > 0).length > 0], // Zegana
     [/^its power is (\d+) or greater$/i, (g, m, ctx, o, defOf) => !!(ctx && ctx.self) && stats(ctx.self, factsOf(ctx.self, defOf || lastDefOf || (() => null))).pow >= Number(m[1])], // Angelic Sell-Sword
     [/^an opponent is the monarch$/i, (g, m, ctx) => { const o = otherTable(g); return !!(o && o.monarch && (!g.monarch || o.monarch > g.monarch)); }], // Queen Marchesa
@@ -2561,6 +3021,53 @@ const Bot = (() => {
     }
     return got;
   }
+  // Manifest dread: of the top two cards, the better one manifested (a creature card first), the other into the graveyard.
+  function manifestDread(g) {
+    const ids = g.zones.library.slice(0, 2);
+    if (!ids.length) return null;
+    const pick = [...ids].sort((a, b) => (G.isCreature(g.cards[b]) - G.isCreature(g.cards[a])) || (cmcOfInst(g.cards[b], lastDefOf || (() => null)) - cmcOfInst(g.cards[a], lastDefOf || (() => null))))[0];
+    const k = g.zones.library.indexOf(pick);
+    if (k > 0) { g.zones.library.splice(k, 1); g.zones.library.unshift(pick); }
+    const c = manifestFrom(g, g);
+    ids.filter(iid => iid !== pick).forEach(iid => G.move(g, iid, 'graveyard'));
+    return c;
+  }
+  const mainColorOfTable = (t, defOf) => { const n = {}; [...permanents(t), ...t.zones.hand.map(iid => t.cards[iid])].forEach(c => colorsOfInst(c, defOf).forEach(k => { n[k] = (n[k] || 0) + 1; })); return Object.entries(n).sort((a, b) => b[1] - a[1]).map(x => x[0])[0] || 'W'; };
+  // Venture into the dungeon (one dungeon here, read as Lost Mine of Phandelver: scry 1, a Treasure, a +1/+1 counter, a card; then it's
+  // completed and "whenever you complete a dungeon" triggers). Hama Pashar: each room twice.
+  function venture(g, ctx) {
+    const defOf = defOfCtx(ctx || {});
+    const room = g.dungeonRoom = (g.dungeonRoom || 0) + 1;
+    const times = 1 + permanents(g).filter(w => oracleLines(w, defOf).some(l => NEAR.HAMA.test(l))).length;
+    for (let i = 0; i < times; i++) {
+      if (room === 1) runEffect(g, 'scry 1', ctx || { defOf });
+      else if (room === 2) artifactTokens(g, { name: 'Dungeon' }, 1, 'treasure');
+      else if (room === 3) { const c = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.counter(g, c.iid, '+1/+1', 1, { effect: true }); }
+      else G.drawCards(g, 1, !!(lastTables.find(t => t && t.bot) && g !== lastTables.find(t => t && t.bot)));
+    }
+    G.log(g, `Ventured into the dungeon (room ${room} of 4).`);
+    if (room < 4) return;
+    g.dungeonRoom = 0;
+    g.dungeonsDone = (g.dungeonsDone || 0) + 1;
+    permanents(g).forEach(w => { const dd = oracleLines(w, defOf).map(l => NEAR.DUNGEON_DONE.exec(l)).find(Boolean); if (dd) runEffect(g, dd[1].replace(/5\/5 red dragon/i, '5/5 red Dragon'), { ...(ctx || {}), self: w, defOf }); });
+  }
+  const deliriumOf = g => new Set(g.zones.graveyard.flatMap(iid => CARD_TYPE_CHOICES.filter(k => isA(g.cards[iid], k)))).size >= 4;
+  const PARTY = ['cleric', 'rogue', 'warrior', 'wizard'];
+  const partyOf = g => { const used = []; creatures(g).forEach(c => { const k = PARTY.find(x => isA(c, x) && !used.some(u => u.k === x)); if (k) used.push({ k, c }); }); return used; };
+  // Rendmaw: each player creates a tapped, goaded 2/2 flying Bird.
+  function rendmawBirds(s, w, defOf) {
+    [s, otherTable(s)].filter(t => t && t.zones).forEach(t => { const tok = G.createToken(t, { id: 'Bird', name: 'Bird', typeLine: 'Token Creature — Bird', custom: true, pt: '2/2', text: 'Flying' }, { quiet: true }); if (!tok) return; tok.tokenColors = ['B']; tok.tapped = true; goad(s, tok); if (tok.goad) tok.goad.forever = true; });
+  }
+  // Poison counters for table t.
+  const addPoison = (t, n) => { if (t && n > 0) t.poison = (t.poison || 0) + n; };
+  const kindsOfCounters = g => new Set(permanents(g).flatMap(c => Object.entries(c.counters || {}).filter(([, v]) => v > 0).map(([k]) => k))).size;
+  // The keyword counters / grants of Symbiotic Swarm (Kathril, Selective Adaptation, Cairn Wanderer, Soulflayer, Majestic Myriarch).
+  const SWARM_KW = ['flying', 'first strike', 'double strike', 'deathtouch', 'haste', 'hexproof', 'indestructible', 'lifelink', 'menace', 'reach', 'trample', 'vigilance', 'fear', 'shroud'];
+  const kwOfCard = (c, defOf) => { const k = keywords(oracleText(c, defOf || lastDefOf || (() => null))); return SWARM_KW.filter(x => k.includes(x)); };
+  // Suspect a creature: menace, can't block (for good here).
+  const suspect = c => { if (!c) return; c.suspected = true; c.extraKw = [...new Set([...(c.extraKw || []), 'menace', "can't block"])]; };
+  // A Desert, or any land of a table with Dune Chanter (t: the card's table).
+  const isDesert = (c, t, defOf) => isA(c, 'desert') || (G.isLand(c) && oracleLines(c, defOf || lastDefOf || (() => null)).some(l => NEAR.PLANAR_NEXUS.test(l))) || (G.isLand(c) && !!t && permanents(t).some(w => oracleLines(w, defOf || lastDefOf || (() => null)).some(l => NEAR.DUNE_CHANTER.test(l))));
   // Base power and toughness 1/1 (Bess).
   const base11 = (c, defOf) => { const f = factsOf(c, defOf || lastDefOf || (() => null)); return (c.custom && c.custom.pt === '1/1') || (String(f.power) === '1' && String(f.toughness) === '1'); };
   // Alliance: how many times this ability of c resolved this turn (counting this one).
@@ -2660,6 +3167,8 @@ const Bot = (() => {
   // A time counter came off card c of table s: Regenerations Restored, Dinosaurs on a Spaceship.
   function timeRemoved(game, s, c, defOf, ctx) {
     if (!c) return;
+    const wh = c.zone === 'exile' && oracleLines(Object.assign({}, c, { faceDown: false }), defOf).map(l => NEAR.WATCHER_HOURS.exec(l)).find(Boolean); // Watcher of Hours
+    if (wh) runEffect(s, wh[1], { self: c, defOf, other: game && (s === game ? game.bot && game.bot.s : game) });
     for (const l of oracleLines(Object.assign({}, c, { faceDown: false }), defOf)) {
       if (NEAR.REGEN_RESTORED.test(l) && c.zone === 'battlefield') {
         runEffect(s, 'scry 1. you gain 1 life', { self: c, defOf, other: game && (s === game ? game.bot && game.bot.s : game) });
@@ -2690,6 +3199,7 @@ const Bot = (() => {
   function turnUp(game, s, inst, defOf, ctx) {
     if (!inst || !inst.faceDown) return;
     inst.faceDown = false;
+    if (permanents(s).some(w => oracleLines(w, defOf || lastDefOf || (() => null)).some(l => NEAR.TURNED_UP.test(l)))) G.counter(s, inst.iid, '+1/+1', 1, { effect: true }); // Growing Dread
     G.log(s, `${inst.name} was turned face up.`);
     if (s === game) turnedFaceUp(game, inst, defOf, ctx || {});
   }
@@ -2746,6 +3256,94 @@ const Bot = (() => {
     }],
     // Deluxe Dragster: "This Vehicle can't be blocked except by Vehicles." (evades)
     [/^(.+?) can't be blocked except by (\w+?)s\.?$/i, (s, o, src, m) => (isSelf(m[1], src) ? c => (c === src ? { kws: [`evade non-${m[2].toLowerCase()}`] } : null) : null)],
+    // "drawing cards"
+    [NEAR.GNARLED_SAGE, (s, o, src, m) => (s.drawTurn === s.turn && (s.drawCount || 0) >= 2 ? c => (c === src ? { pow: Number(m[1]), tou: Number(m[2]), kws: [m[3].toLowerCase()] } : null) : null)], // Gnarled Sage
+    [NEAR.INGA_ESIKA_GRANT, s => c => (permanents(s).includes(c) ? { kws: ['vigilance'] } : null)], // Inga and Esika (the creature mana isn't granted)
+    // "zeno deck"
+    [NEAR.CLAWING, (s, o, src, m) => c => (src.attachedTo === c.iid ? { pow: Number(m[1]), tou: Number(m[2]), kws: ["can't block"] } : null)], // Clawing Torment
+    [NEAR.CLAWING_LINE, (s, o, src, m) => c => (src.attachedTo === c.iid ? { lines: [m[1]] } : null)],
+    [NEAR.COVER_DARKNESS, (s, o, src, m) => (src.chosenType ? c => (isA(c, src.chosenType) ? { kws: [m[1].toLowerCase()] } : null) : null)], // Cover of Darkness
+    // The last twelve, chunk 4
+    [NEAR.DRACH_NYEN, (s, o, src) => { if (src.drachPending && o && o.zones) { const c = o.cards[o.zones.exile[o.zones.exile.length - 1]]; if (c && G.isCreature(c)) src.drachPow = num(factsOf(c, lastDefOf || (() => null)).power); delete src.drachPending; } return c => (src.attachedTo === c.iid ? { pow: src.drachPow || 0, kws: ['menace'] } : null); }], // Drach'Nyen
+    [NEAR.CLAMAVUS, s => c => { const n = permanents(s).includes(c) ? (c.counters || {})['+1/+1'] || 0 : 0; return n ? { pow: n, tou: n } : null; }], // Clamavus
+    [NEAR.DEATHLEAPER, s => c => (permanents(s).includes(c) && c.enteredTurn === s.turn ? { kws: ['double strike'] } : null)], // Deathleaper
+    [NEAR.HIVE_TYRANT, (s, o, src, m) => c => (c !== src && permanents(s).includes(c) && Object.values(c.counters || {}).some(v => v > 0) ? { kws: [m[1].toLowerCase(), m[2].toLowerCase()] } : null)], // Winged Hive Tyrant
+    // The last twelve, chunk 3
+    [NEAR.CHAKRAMS, (s, o, src) => c => (src.attachedTo === c.iid || (c.commander && src.attachedTo && permanents(s).includes(c)) ? { pow: 2, tou: 2, kws: ['lifelink'] } : null)], // Dancer's Chakrams
+    [NEAR.LYSE_HEXT, (s, o, src) => (s.spellTurn === s.turn && (s.castThisTurn || []).filter(x => !/\bcreature\b/i.test(x.typeLine || '')).length >= 2 ? c => (c === src ? { kws: ['double strike'] } : null) : null)], // Lyse Hext
+    // The last twelve, chunk 2
+    [NEAR.BIOTRANSFERENCE, s => c => (permanents(s).includes(c) ? { types: ['artifact'] } : null)], // Biotransference
+    [NEAR.STALKER_MENACE, s => c => (permanents(s).includes(c) ? { kws: ['menace'] } : null)], // Triarch Stalker (the one opponent is always chosen)
+    [NEAR.HEXMARK, (s, o, src) => c => (c === src ? { kws: ['unblockable'] } : null)], // Hexmark Destroyer (read as unblockable)
+    [NEAR.NICK_VALENTINE, (s, o, src) => (o && o.zones && creatures(o, c => isA(c, 'artifact')).length ? null : c => (c === src ? { kws: ['unblockable'] } : null))], // Nick Valentine
+    // The last twelve, chunk 1
+    [NEAR.SPHERE_GRID, (s, o, src, m) => c => (permanents(s).includes(c) && ((c.counters || {})['+1/+1'] || 0) > 0 ? { kws: [m[1].toLowerCase(), m[2].toLowerCase()] } : null)], // Sphere Grid
+    // 20-23 decks, chunk 3
+    [NEAR.AVALANCHE_POWER, (s, o, src) => { const n = o && o.zones ? permanents(o).filter(c => isA(c, 'artifact')).length : 0; return n ? c => (c === src ? { pow: n } : null) : null; }], // Avalanche of Sector 7
+    [NEAR.HEIRLOOM, (s, o, src, m) => c => (src.attachedTo === c.iid && /\blegendary\b/i.test(c.typeLine || '') ? { kws: [m[1].toLowerCase(), m[2].toLowerCase()] } : null)], // Hero's Heirloom
+    [NEAR.WRECKING_BALL, (s, o, src, m) => c => (src.attachedTo === c.iid ? { basePT: `${m[1]}/${m[2]}` } : null)], // Wrecking Ball Arm
+    // Miracle Worker, Maestros Massacre, Timeless Wisdom
+    [NEAR.ARCADE, s => c => (permanents(s).includes(c) ? { types: ['enchantment'] } : null)], // Secret Arcade
+    [NEAR.ARVINOX, (s, o, src) => (permanents(s).filter(c => c.owner).length >= 3 ? null : c => (c === src ? { kws: ["can't attack", "can't block"] } : null))], // Arvinox (read as a creature that can't attack or block)
+    // 16-20 decks, chunk 4
+    [NEAR.BALDRIC, (s, o, src, m) => { const kws = []; if (/lifelink if/i.test(m[0])) { [['cleric', 'lifelink'], ['rogue', 'deathtouch'], ['warrior', 'haste'], ['wizard', 'flying']].forEach(([k, kw]) => { if (creatures(s).some(c => isA(c, k))) kws.push(kw); }); } else if (partyOf(s).length >= 4) kws.push('indestructible'); return kws.length ? c => (src.attachedTo === c.iid ? { kws } : null) : null; }], // Multiclass Baldric
+    [NEAR.TRIAD, (s, o, src) => (s.zones.graveyard.length >= 8 ? null : c => (c === src ? { kws: ["can't attack", "can't block"] } : null))], // The Warring Triad (read as a creature that can't attack or block)
+    [NEAR.DIFFUSION, () => c => (isA(c, 'sliver') ? { kws: ['ward'] } : null)], // Diffusion Sliver (read as ward)
+    [/^this creature can't attack or block unless you control (\w+) or more lands\.?$/i, (s, o, src, m) => (permanents(s).filter(G.isLand).length >= toNumber(m[1]) ? null : c => (c === src ? { kws: ["can't attack", "can't block"] } : null))], // Topiary Stomper
+    [/^this creature can't attack or block unless you have the city's blessing\.?$/i, (s, o, src) => (s.citysBlessing ? null : c => (c === src ? { kws: ["can't attack", "can't block"] } : null))], // Wayward Swordtooth
+    [/^this creature gets \+(\d+)\/\+(\d+) as long as you control an? (\w+)\.?$/i, (s, o, src, m) => (creatures(s).some(c => c !== src && isA(c, m[3])) ? c => (c === src ? { pow: Number(m[1]), tou: Number(m[2]) } : null) : null)], // Drover of the Mighty
+    // 16-20 decks, chunk 3
+    [/^this creature has protection from the chosen colou?r\.?$/i, (s, o, src, m, defOf) => { const k = src.chosenColor || (o ? mainColorOfTable(o, defOf) : 'W'); return c => (c === src ? { kws: [`protection from ${k}`] } : null); }], // Voice of All
+    [/^(?:kefnet the mindful|kefnet|this creature) can't attack or block unless you have seven or more cards in hand\.?$/i, (s, o, src) => (s.zones.hand.length >= 7 ? null : c => (c === src ? { kws: ["can't attack", "can't block"] } : null))], // Kefnet
+    [/^this creature can't be blocked by (white|blue|black|red|green) creatures\.?$/i, (s, o, src, m) => c => (c === src ? { kws: [`evade color ${{ white: 'W', blue: 'U', black: 'B', red: 'R', green: 'G' }[m[1].toLowerCase()]}`] } : null)], // Dauthi Horror
+    [NEAR.SEVINNE_PREVENT, (s, o, src) => c => (c === src ? { kws: ['indestructible'] } : null)], // Sevinne (read as indestructible)
+    [/^as long as this creature is untapped, it has protection from artifacts and from each color\.?$/i, (s, o, src) => (src.tapped ? null : c => (c === src ? { kws: ['protection from each color', 'protection from artifact'] } : null))], // Pristine Angel
+    [/^(?:archpriest of iona|this creature)'s power is equal to the number of creatures in your party\.?$/i, (s, o, src) => { const n = partyOf(s).length; return c => (c === src ? { basePT: `${n}/2` } : null); }], // Archpriest of Iona
+    [/^(?:burakos|this creature) is also a cleric, rogue, warrior, and wizard\.?$/i, (s, o, src) => c => (c === src ? { types: PARTY } : null)], // Burakos
+    // 16-20 decks, chunk 2
+    [/^this creature has deathtouch as long as there are four or more card types among cards in your graveyard\.?$/i, (s, o, src) => (deliriumOf(s) ? c => (c === src ? { kws: ['deathtouch'] } : null) : null)], // Deathcap Cultivator
+    [/^this creature gets \+(\d+)\/\+(\d+) as long as there are four or more card types among cards in your graveyard\.?$/i, (s, o, src, m) => (deliriumOf(s) ? c => (c === src ? { pow: Number(m[1]), tou: Number(m[2]) } : null) : null)], // Grim Flayer, Gnarlwood Dryad
+    [/^this creature gets \+x\/\+0, where x is the greatest power among creature cards in your graveyard\.?$/i, (s, o, src, m, defOf) => { const n = Math.max(0, ...s.zones.graveyard.map(iid => s.cards[iid]).filter(c => G.isCreature(c)).map(c => num(factsOf(c, defOf).power))); return n ? c => (c === src ? { pow: n } : null) : null; }], // Carrion Grub
+    [/^this token's power and toughness are each equal to the number of (\w+?)s you control\.?$/i, (s, o, src, m) => { const n = permanents(s).filter(c => isA(c, m[1])).length; return c => (c === src ? { basePT: `${n}/${n}` } : null); }], // Wrenn and Seven's Treefolk
+    [/^all slivers have "(.+)"\.?$/i, (s, o, src, m) => c => (isA(c, 'sliver') ? { lines: [m[1]] } : null)], // Necrotic Sliver, Gemhide Sliver (your Slivers)
+    [NEAR.PATHLIGHTER, () => () => ({ kws: ['evade nonlegendary'] })], // Midnight Pathlighter
+    [NEAR.ARCANE_ADAPTATION, (s, o, src) => (src.chosenType ? () => ({ types: [src.chosenType] }) : null)],
+    [NEAR.RUKARUMEL, (s, o, src) => (src.chosenType ? c => (isA(c, 'sliver') || !c.token ? { types: [src.chosenType] } : null) : null)],
+    [NEAR.MARINER, () => () => ({ kws: ['ward'] })], // Unsettled Mariner (read as ward)
+    [NEAR.LOVESTRUCK, (s, o, src, m, defOf) => (creatures(s).some(c => { const st = stats(c, factsOf(c, defOf)); return st.pow === 1 && st.tou === 1; }) ? null : c => (c === src ? { kws: ["can't attack"] } : null))], // Lovestruck Beast
+    // 16-20 decks, chunk 1
+    [NEAR.MAIRSIL, (s, o, src, m, defOf) => { const lines = s.zones.exile.map(iid => s.cards[iid]).filter(c => ((c.counters || {}).cage || 0) > 0).flatMap(c => oracleLines(c, defOf).filter(l => /^[^:"]+:\s*.+$/.test(l) && !/^add\b/i.test(l.split(':')[1].trim()))); return lines.length ? c => (c === src ? { lines } : null) : null; }], // Mairsil
+    [NEAR.MIMEOMANCER, () => c => (((c.counters || {}).feather || 0) > 0 ? { basePT: '3/1', kws: ['flying'] } : null)], // Aven Mimeomancer (your feathered creatures)
+    [/^(.+?) gets \+1\/\+1 for each poison counter your opponents have\.?$/i, (s, o, src, m) => { if (!isSelf(m[1], src)) return null; const n = (o && o.poison) || 0; return n ? c => (c === src ? { pow: n, tou: n } : null) : null; }], // Mycosynth Fiend, Vishgraz
+    // 16-17 decks, first half
+    [NEAR.BLADEMASTER, (s, o, src) => { const n = G.attachmentsOf(s, src.iid).filter(id => G.isAura(s.cards[id]) || isA(s.cards[id], 'equipment')).length; return n ? c => (c !== src ? { pow: n, tou: n } : null) : null; }], // Heavenly Blademaster
+    [NEAR.ARIX_LAND, (s, o, src) => (((src.counters || {}).slumber || 0) > 0 ? c => (c === src ? { kws: ["can't attack", "can't block"] } : null) : null)], // Arixmethes (read as a creature that can't attack or block)
+    [NEAR.RAYAMI_KW, (s, o, src, m, defOf) => { const kws = [...new Set([s, o].filter(Boolean).flatMap(t => t.zones.exile.map(iid => t.cards[iid]).filter(c => ((c.counters || {}).blood || 0) > 0 && G.isCreature(c)).flatMap(c => kwOfCard(c, defOf))))]; return kws.length ? c => (c === src ? { kws } : null) : null; }], // Rayami
+    [/^creatures with power greater than this creature's power can't block it\.?$/i, (s, o, src) => c => (c === src ? { kws: ['evade greater power'] } : null)], // Silumgar Assassin
+    [/^(.+?) gets \+x\/\+0, where x is the amount of life you've lost this turn\.?$/i, (s, o, src, m) => { if (!isSelf(m[1], src)) return null; const n = s.lostLife || 0; return n ? c => (c === src ? { pow: n } : null) : null; }], // Greven
+    // Symbiotic Swarm
+    [NEAR.CAIRN, (s, o, src, m, defOf) => { const kws = [...new Set([s, o].filter(Boolean).flatMap(t => t.zones.graveyard.map(iid => t.cards[iid]).filter(c => G.isCreature(c)).flatMap(c => kwOfCard(c, defOf))))]; return kws.length ? c => (c === src ? { kws } : null) : null; }], // Cairn Wanderer
+    [NEAR.SOULFLAYER, (s, o, src, m, defOf) => { const kws = [...new Set(s.zones.exile.map(iid => s.cards[iid]).filter(c => G.isCreature(c)).flatMap(c => kwOfCard(c, defOf)).filter(k => !['fear', 'shroud', 'menace'].includes(k)))]; return kws.length ? c => (c === src ? { kws } : null) : null; }], // Soulflayer (read as: creature cards in your exile)
+    [/^(.+?)'s power and toughness are each equal to twice the number of creatures you control\.?$/i, (s, o, src, m) => { if (!isSelf(m[1], src)) return null; const n = 2 * creatures(s).length; return c => (c === src ? { basePT: `${n}/${n}` } : null); }], // Majestic Myriarch
+    // Graveyard Overdrive, Spirit Squadron
+    [/^(.+?)'s power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1\.?$/i, (s, o, src, m) => { if (!isSelf(m[1], src)) return null; const n = new Set([s, o].filter(Boolean).flatMap(t => t.zones.graveyard.flatMap(iid => CARD_TYPE_CHOICES.filter(k => isA(t.cards[iid], k))))).size; return c => (c === src ? { basePT: `${n}/${n + 1}` } : null); }], // the goyfs
+    [/^(.+?) gets \+x\/\+0, where x is the greatest power among creature cards in all graveyards\.?$/i, (s, o, src, m, defOf) => { if (!isSelf(m[1], src)) return null; const n = Math.max(0, ...[s, o].filter(Boolean).flatMap(t => t.zones.graveyard.map(iid => t.cards[iid]).filter(c => G.isCreature(c)).map(c => num(factsOf(c, defOf).power)))); return n ? c => (c === src ? { pow: n } : null) : null; }], // Coram
+    // Evasive Maneuvers, Peer Through Time
+    [NEAR.FROST_TITAN, (s, o, src) => c => (c === src ? { kws: ['ward'] } : null)], // Frost Titan (read as ward)
+    [NEAR.INGESTER, (s, o, src, m, defOf) => { const ex = [s, o].filter(Boolean).flatMap(t => t.zones.exile.map(iid => t.cards[iid])).find(c => c.exiledWith === src.iid); if (!ex) return null; const f = factsOf(ex, defOf); const p = Math.max(0, num(f.power)); const q = Math.max(0, num(f.toughness)); return c => (c === src ? { pow: p, tou: q } : null); }],
+    // Mind Seize … Phantom Premonition
+    [NEAR.TRUE_NAME, (s, o, src) => c => (c === src ? { kws: ['hexproof', 'unblockable', 'protection from each color'] } : null)], // True-Name Nemesis (protection from the opponent, roughly)
+    [/^as long as this creature has (\w+) or more counters on it, it has (\w+) and is an? (\w+) in addition to its other types\.?$/i, (s, o, src, m) => (Object.values(src.counters || {}).reduce((k, v) => k + Math.max(0, v), 0) >= toNumber(m[1]) ? c => (c === src ? { kws: [m[2].toLowerCase()], types: [m[3].toLowerCase()] } : null) : null)], // Hero of Bretagard
+    // Blame Game … Legends' Legacy
+    [/^(.+?)'s power and toughness are each equal to the number of cards in the chosen player's graveyard\.?$/i, (s, o, src, m) => { if (!isSelf(m[1], src)) return null; const n = o ? o.zones.graveyard.length : 0; return c => (c === src ? { basePT: `${n}/${n}` } : null); }], // Sewer Nemesis (the opponent)
+    [/^(.+?)'s power is equal to the number of creature cards in all graveyards and its toughness is equal to that number plus 1\.?$/i, (s, o, src, m) => { if (!isSelf(m[1], src)) return null; const n = [s, o].filter(Boolean).reduce((k, t) => k + t.zones.graveyard.filter(iid => G.isCreature(t.cards[iid])).length, 0); return c => (c === src ? { basePT: `${n}/${n + 1}` } : null); }], // Lhurgoyf
+    [/^this creature can't attack unless defending player controls an? (\w+)\.?$/i, (s, o, src, m) => (o && permanents(o).some(c => isA(c, m[1])) ? null : c => (c === src ? { kws: ["can't attack"] } : null))], // Slipstream Eel
+    [/^this creature can't be blocked as long as defending player controls the most creatures or is tied for the most\.?$/i, (s, o, src) => (o && creatures(o).length >= creatures(s).length ? c => (c === src ? { kws: ['unblockable'] } : null) : null)], // Hooded Horror
+    [/^(.+?) gets \+1\/\+1 for each other creature you control with flying\.?$/i, (s, o, src, m, defOf) => { if (!isSelf(m[1], src)) return null; const n = creatures(s, c => c !== src && oracleLines(c, defOf).some(l => /^flying\b/i.test(l))).length; return n ? c => (c === src ? { pow: n, tou: n } : null) : null; }], // Skycat Sovereign
+    [/^creatures you control with flying have "spells your opponents cast that target this creature cost \{\d+\} more to cast\."\.?$/i, (s, o, src, m, defOf) => c => (oracleLines(c, defOf).some(l => /^flying\b/i.test(l)) ? { kws: ['ward'] } : null)], // Jubilant Skybonder (read as ward)
+    [/^(.+?)'s power is equal to the greatest number noted for it this turn\.?$/i, (s, o, src, m) => { if (!isSelf(m[1], src)) return null; const n = src.bellNote && src.bellNote.turn === s.turn ? src.bellNote.max : 0; return c => (c === src ? { basePT: `${n}/${(src.bot || {}).toughness || 5}` } : null); }], // Bell Borca
+    [/^equipped creature gets \+1\/\+1\. as long as it's legendary, it gets an additional \+2\/\+2\. as long as it's red, it has trample\.?$/i, (s, o, src, m, defOf) => c => (src.attachedTo === c.iid ? { pow: /\blegendary\b/i.test(c.typeLine || '') ? 2 : 0, tou: /\blegendary\b/i.test(c.typeLine || '') ? 2 : 0, kws: colorsOfInst(c, defOf).includes('R') ? ['trample'] : [] } : null)], // Tenza (its +1/+1: attachBonus)
+    [NEAR.DOUBLE_ALL, () => () => ({ kws: [DOUBLE_DMG] })], // Dictate of the Twin Gods (your creatures' damage; the rest in damagePlayer)
     [NEAR.UNREST, () => c => (((c.counters || {})['+1/+1'] || 0) > 0 ? { kws: [DOUBLE_DMG] } : null)], // Uncivil Unrest
     [/^(.+?) gets \+1\/\+1 for each other creature you control with a \+1\/\+1 counter on it\.?$/i, (s, o, src, m) => { if (!isSelf(m[1], src)) return null; const n = creatures(s, c => c !== src && ((c.counters || {})['+1/+1'] || 0) > 0).length; return n ? c => (c === src ? { pow: n, tou: n } : null) : null; }], // High Sentinels of Arashin
     [NEAR.DAXOS_EVADE, (s, o, src, m) => (isSelf(m[1], src) ? c => (c === src ? { kws: [`evade powerup ${m[2]}`] } : null) : null)], // Daxos
@@ -2899,7 +3497,7 @@ const Bot = (() => {
       if (item.fromExile) { // Nezahal: back from exile (tapped); The Eternal Wanderer's: at its owner's own end step (ownersTurn)
         if (item.ownersTurn && t.offTurn) { game.atEnd = [...(game.atEnd || []), item]; continue; }
         const x = t.cards[item.fromExile];
-        if (x && x.zone === 'exile') { G.move(t, x.iid, 'battlefield', { put: true }); if (item.tapped) x.tapped = true; if (item.plusOne && G.isCreature(x)) G.counter(t, x.iid, '+1/+1', 1, { effect: true }); G.log(t, `${item.why}: returned to the battlefield (end step).`); }
+        if (x && x.zone === 'exile') { G.move(t, x.iid, 'battlefield', { put: true }); if (item.tapped) x.tapped = true; if (item.plusOne && G.isCreature(x)) G.counter(t, x.iid, '+1/+1', 1, { effect: true }); const ra = item.reattach && t.cards[item.reattach]; if (ra && ra.zone === 'exile') { G.move(t, ra.iid, 'battlefield', { put: true }); G.attach(t, ra.iid, x.iid, attachBonus(oracleText(ra, defOf))); } G.log(t, `${item.why}: returned to the battlefield (end step).`); }
         continue;
       }
       if (item.keepFor) { // Satya's token: kept for its energy when there's enough (you and Opp both pay when they can)
@@ -5289,6 +5887,1165 @@ const Bot = (() => {
       const foe = creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) <= p && !stats(x, factsOf(x, defOf)).kw.has('hexproof')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
       if (foe) fightOn(gameOf(g, ctx) || g, g, mine, o, foe, defOf);
     }, (m, ctx) => !!ctx.other],
+    // ---- "drawing cards" (settleNear) ----
+    [/^create beau$/i, g => { const tok = G.createToken(g, { custom: true, name: 'Beau', typeLine: 'Legendary Token Creature — Ox', pt: '0/0', text: "This token's power and toughness are each equal to the number of lands you control." }, { quiet: true }); if (tok) tok.tokenColors = ['U']; }], // Bonny Pall
+    [/^draw three if three creatures died this turn$/i, (g, m, ctx) => { const n = [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).reduce((k, t) => k + (t.myDeathsTurn === t.turn ? t.myDeaths || 0 : 0), 0); if (n >= 3) G.drawCards(g, 3, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^inga and esika count the creature mana$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: creature mana isn't counted (not kept).`)],
+    [/^draw for each other permanent with mana value 3 or more$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const n = permanents(g).filter(c => c !== ctx.self && cmcOfInst(c, defOf) >= 3).length; if (n) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^planar genesis$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const ids = g.zones.library.slice(0, 4); const land = ids.find(iid => G.isLand(g.cards[iid])); let keep = null; if (land) { G.move(g, land, 'battlefield', { put: true }); g.cards[land].tapped = true; } else { keep = [...ids].sort((a, b) => cmcOfInst(g.cards[b], defOf) - cmcOfInst(g.cards[a], defOf))[0]; if (keep) G.move(g, keep, 'hand'); } G.shuffleArray(ids.filter(iid => iid !== land && iid !== keep)).forEach(iid => G.move(g, iid, 'library', { bottom: true })); }],
+    // ---- "zeno deck" (settleNear) ----
+    [/^zenos's first friend$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!me || !o || !o.zones) return; const chosen = creatures(o).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (chosen) chosen.zenosOf = me.iid; [g, o].forEach(t => creatures(t, c => c !== me && c !== chosen).forEach(c => pumpBy(c, -2, -2))); }, (m, ctx) => !!ctx.self], // (cardMoved transforms Zenos when the chosen one leaves)
+    [/^assimilate the best creature card in a graveyard$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const x = [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => ({ t, c: t.cards[iid] }))).filter(y => G.isCreature(y.c)).sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf))[0]; if (!x) return; const c = x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'graveyard', { quiet: true, defOf }); if (!c) return; G.move(g, c.iid, 'battlefield', { put: true }); G.counter(g, c.iid, '+1/+1', 1, { effect: true }); c.extraTypes = [...new Set([...(c.extraTypes || []), 'artifact', 'borg'])]; }], // Death Is Irrelevant (its other creature types stay)
+    [/^the statue awakens with three omens$/i, (g, m, ctx) => { const me = ctx.self; if (!me || me.zone !== 'battlefield' || ((me.counters || {}).omen || 0) < 3) return; me.tapped = false; me.tappedFor = null; transformNow(g, me, defOfCtx(ctx)); }, (m, ctx) => !!ctx.self],
+    [/^sacrifice this after combat$/i, (g, m, ctx) => { if (ctx.self) ctx.self.sacAfterCombat = g.turn; }], // Crumbling Colossus (nearPhase: second main)
+    [/^the opponent discards its best artifact or creature card$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && o.zones.hand.map(iid => o.cards[iid]).filter(x => isA(x, 'artifact') || G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (c) G.move(o, c.iid, 'graveyard'); }, (m, ctx) => !!ctx.other],
+    [/^the maggot holds the opponent's best card$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = me && o && o.zones && o.zones.hand.map(iid => o.cards[iid]).filter(x => !G.isLand(x)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; G.move(o, c.iid, 'exile'); Object.assign(c, { exiledWith: me.iid, returnWhenGone: true, returnToHand: true }); }, (m, ctx) => !!ctx.self],
+    [/^the defender's best dead creature joins the attack$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const x = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).filter(c => G.isCreature(c)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!x) return; const c = takeCard(o, x.iid, g, 'graveyard', { quiet: true, defOf }); if (!c) return; G.move(g, c.iid, 'battlefield', { put: true }); Object.assign(c, { tapped: true, tappedFor: null, attacking: true, attackedNow: true }); }, (m, ctx) => !!ctx.other],
+    [/^sacrifice this aura unless a nonland permanent left$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const left = [g, otherOf(g, ctx) || otherTable(g)].some(t => t && t.nonlandLeftTurn === t.turn); if (!left && ctx.self && ctx.self.zone === 'battlefield') G.move(g, ctx.self.iid, 'graveyard'); void game; }], // Chorale of the Void (cardMoved: nonlandLeftTurn)
+    [/^return the dead card to its owner's hand$/i, (g, m, ctx) => { const d = ctx.dead; if (!d) return; const t = lastTables.find(x => x && x.zones && x.cards[d.iid] === d); if (t && d.zone === 'graveyard') G.move(t, d.iid, 'hand'); }], // Demonic Vigor
+    // ---- The last twelve, chunk 4 (settleNear) ----
+    [/^the seven-fold chant$/i, (g, m, ctx) => { const n = [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).reduce((k, t) => k + (t.myDeathsTurn === t.turn ? t.myDeaths || 0 : 0), 0); if (!n) return; const k = n >= 7 ? 7 : 1; G.drawCards(g, k, isOpps(gameOf(g, ctx) || g, g)); runEffect(g, `you lose ${k} life`, ctx); }],
+    [/^the champion ascends$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (!me || me.zone !== 'battlefield') return; G.move(g, me.iid, 'graveyard'); let c = null; const seen = []; while (g.zones.library.length && !c) { const iid = g.zones.library[0]; const x = g.cards[iid]; if (G.isCreature(x)) c = x; else { G.move(g, iid, 'exile'); seen.push(iid); } } if (c) G.move(g, c.iid, 'battlefield', { put: true }); seen.forEach(iid => G.move(g, iid, 'library')); G.shuffle(g); if (c && isA(c, 'demon') && ctx.hitOpps) ctx.hitOpps(Math.max(0, stats(c, factsOf(c, defOf)).pow), true); }],
+    [/^your next noncreature spell this turn has cascade$/i, g => { g.cascadeNext = { ...(g.cascadeNext && g.cascadeNext.turn === g.turn ? g.cascadeNext : {}), turn: g.turn, noncreature: true }; }], // Dark Apostle (spellCast)
+    [/^the spell's mana value to the opponent$/i, (g, m, ctx) => { const n = ctx.castSpell ? cmcOfInst(ctx.castSpell, defOfCtx(ctx)) : 0; if (n && ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^it deals 4 damage to the opponent$/i, (g, m, ctx) => { if (ctx.hitOpps) ctx.hitOpps(4, true); }],
+    [/^let the galaxy burn$/i, (g, m, ctx) => { const n = ((ctx.self && ctx.self.xValue) || 0) + 2; const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || g; [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => creatures(t, c => c.enteredTurn !== t.turn).forEach(c => applyTarget(game, t, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g))); }],
+    [/^wheel into eight$/i, (g, m, ctx) => { [...g.zones.hand].forEach(iid => G.move(g, iid, 'graveyard')); G.drawCards(g, 8, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^destroy the opponent's best nonland permanent$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => !G.isLand(x) && !stats(x, factsOf(x, defOf)).kw.has('indestructible')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }],
+    [/^chaos mutation$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const pairs = []; const theirs = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (theirs) pairs.push([o, theirs]); const mine = creatures(g, c => !c.commander).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (mine && worthOf(mine, defOf) <= 3) pairs.push([g, mine]); pairs.forEach(([t, c]) => { G.move(t, c.iid, c.commander ? 'command' : 'exile'); const seen = []; let hit = null; while (t.zones.library.length && !hit) { const iid = t.zones.library[0]; if (G.isCreature(t.cards[iid])) hit = t.cards[iid]; else { G.move(t, iid, 'exile'); seen.push(iid); } } if (hit) G.move(t, hit.iid, 'battlefield', { put: true }); G.shuffleArray(seen).forEach(iid => G.move(t, iid, 'library', { bottom: true })); }); }],
+    [/^the heresy turns a traitor$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => !/\blegendary\b/i.test(x.typeLine || '')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c || !me) return; const got = gainControl(o, c.iid, g, defOf); if (got) got.heresyBy = me.iid; }], // (cardMoved: back when the Saga leaves)
+    [/^draw for each creature you borrowed$/i, (g, m, ctx) => { const n = creatures(g, c => c.owner).length; if (n) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^each player picks a creature to die$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [otherOf(g, ctx) || otherTable(g), g].filter(t => t && t.zones).forEach(t => { const c = creatures(t).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c && !stats(c, factsOf(c, defOf)).kw.has('indestructible')) G.move(t, c.iid, c.commander ? 'command' : 'graveyard'); }); }], // each picks the other's best
+    [/^lucius waits in exile$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!me || g.cards[me.iid] !== me || me.zone !== 'graveyard') return; G.move(g, me.iid, 'exile'); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c) c.luciusOf = me.iid; }], // (cardMoved: back when that creature leaves)
+    [/^the vortex flips$/i, (g, m, ctx) => { if (coinFlip(g, ctx)) G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); else if (ctx.hitOpps) ctx.hitOpps(3, true); }],
+    [/^the ruinous powers steal a card$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (!o || !o.zones) return; stealTop(g, o, 1, { turn: g.turn, anyMana: true }).forEach(c => { c.ruinousLoss = true; }); }], // (spellCast: its owner loses its mana value)
+    [/^it fires for your spells this turn$/i, (g, m, ctx) => { const n = g.spellTurn === g.turn ? g.spellsThisTurn || 0 : 0; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!n) return; const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); else if (ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^copy the infected creature as a tyranid$/i, (g, m, ctx) => { const d = ctx.dead; if (!d) return; const tok = G.createToken(g, { id: d.id, name: d.name, typeLine: front(d.typeLine) }, { quiet: true }); if (tok) tok.extraTypes = [...(tok.extraTypes || []), 'tyranid']; }],
+    [/^the exocrine bombards$/i, (g, m, ctx) => { const n = (ctx.self && ctx.self.xValue) || 0; const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!n || !game) return; ['you', 'opp'].forEach(w => addLife(game, w, -n)); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => creatures(t, c => c !== ctx.self).forEach(c => applyTarget(game, t, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g))); }],
+    [/^spread x counters among your other creatures$/i, (g, m, ctx) => { const n = (ctx.self && ctx.self.xValue) || 0; const defOf = defOfCtx(ctx); const list = creatures(g, c => c !== ctx.self).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf)); for (let i = 0; i < n && list.length; i++) G.counter(g, list[i % list.length].iid, '+1/+1', 1, { effect: true }); }],
+    [/^if an opponent had a creature enter this turn, (create .+)$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones && creatures(o, c => c.enteredTurn === o.turn || c.enteredTurn === g.turn).length) return runEffect(g, m[1], ctx); }],
+    [/^old one eye returns for two discards$/i, (g, m, ctx) => { const me = ctx.self; if (!me || me.zone !== 'graveyard' || g.zones.hand.length < 3) return; for (let i = 0; i < 2; i++) { const w = worstInHand(g); if (w) G.move(g, w, 'graveyard'); } G.move(g, me.iid, 'hand'); }],
+    [/^fetch x basic lands tapped$/i, (g, m, ctx) => { const n = (ctx.self && ctx.self.xValue) || 0; g.zones.library.filter(iid => G.isLand(g.cards[iid]) && /\bbasic\b/i.test(g.cards[iid].typeLine || '')).slice(0, n).forEach(iid => { G.move(g, iid, 'battlefield', { put: true }); g.cards[iid].tapped = true; }); G.shuffle(g); }],
+    [/^your creatures with counters are shielded$/i, g => { creatures(g, c => Object.values(c.counters || {}).some(v => v > 0)).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'hexproof', 'indestructible'])] }; }); }],
+    [/^the first tyrannic war$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = g.zones.hand.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; G.move(g, c.iid, 'battlefield', { put: true }); if (/\{X\}/i.test((defOf(c.id) || {}).manaCost || '')) { const n = permanents(g).filter(G.isLand).length; if (n) G.counter(g, c.iid, '+1/+1', n, { effect: true }); } }],
+    [/^the malanthrope feeds$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const t = [o, g].filter(x => x && x.zones).sort((a, b) => b.zones.graveyard.filter(iid => G.isCreature(b.cards[iid])).length - a.zones.graveyard.filter(iid => G.isCreature(a.cards[iid])).length)[0]; if (!t) return; const n = t.zones.graveyard.filter(iid => G.isCreature(t.cards[iid])).length; t.zones.graveyard.slice().forEach(iid => G.move(t, iid, 'exile')); if (me && n && me.zone === 'battlefield') G.counter(g, me.iid, '+1/+1', n, { effect: true }); }],
+    [/^the mawloc strikes$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!me || !o || !o.zones || !game) return; const p = stats(me, factsOf(me, defOf)).pow; const c = creatures(o, x => stats(x, factsOf(x, defOf)).tou <= p).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; fightOn(game, g, me, o, c, defOf); if (o.cards[c.iid] && c.zone === 'graveyard') G.move(o, c.iid, 'exile'); }],
+    [/^this enchantment deals 2 damage to the opponent$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (ctx.hitOpps) ctx.hitOpps(2, true); else if (game) addLife(game, g === game ? 'opp' : 'you', -2); }],
+    [/^it deals x damage to the best target$/i, (g, m, ctx) => { const n = (ctx.self && ctx.self.xValue) || 0; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!n) return; const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); else if (ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^destroy the opponent's best artifact; it draws$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => isA(x, 'artifact') && !x.token && !stats(x, factsOf(x, defOf)).kw.has('indestructible')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c || worthOf(c, defOf) < 3) return; G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); G.drawCards(o, 1, o !== (gameOf(g, ctx) || {})); }],
+    [/^trade a counter for a basic land$/i, (g, m, ctx) => { const me = ctx.self; if (!me || !((me.counters || {})['+1/+1'] > 0)) return; const iid = g.zones.library.find(i => G.isLand(g.cards[i]) && /\bbasic\b/i.test(g.cards[i].typeLine || '')); if (!iid) return; G.counter(g, me.iid, '+1/+1', -1); G.move(g, iid, 'battlefield', { put: true }); g.cards[iid].tapped = true; G.shuffle(g); }, (m, ctx) => !!ctx.self],
+    [/^the trygon tunnels$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (me && me.zone === 'battlefield') G.counter(g, me.iid, '+1/+1', 1, { effect: true }); const c = creatures(g, x => x.attacking && x !== me).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; G.counter(g, c.iid, '+1/+1', 1, { effect: true }); c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'unblockable'])] }; }],
+    // ---- The last twelve, chunk 3 (settleNear) ----
+    [/^sarah fires for each artifact$/i, (g, m, ctx) => { const n = permanents(g).filter(c => isA(c, 'artifact')).length; if (n && ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^shaun makes a synth$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = creatures(g, x => x.attacking && x !== ctx.self && /\blegendary\b/i.test(x.typeLine || '')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; const tok = G.copyAsToken(g, c.iid); if (!tok) return; tok.typeLine = `Artifact ${String(tok.typeLine || '').replace(/^legendary /i, '')}`; tok.extraTypes = [...(tok.extraTypes || []), 'synth', 'artifact']; Object.assign(tok, { tapped: true, tappedFor: null, attacking: true, attackedNow: true }); }],
+    [/^your synth tokens are exiled$/i, g => { creatures(g, c => c.token && isA(c, 'synth')).forEach(c => G.move(g, c.iid, 'exile')); }],
+    [/^the simulation pays out$/i, (g, m, ctx) => { const n = Math.min(g.energy || 0, 6); if (!n) return; g.energy -= n; G.shuffle(g); const ids = g.zones.library.slice(0, n); ids.forEach(iid => G.move(g, iid, 'exile')); const defOf = defOfCtx(ctx); const best = ids.map(iid => g.cards[iid]).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!best) return; if (G.isLand(best)) G.move(g, best.iid, 'battlefield', { put: true }); else castFree(g, best, ctx, defOf); }],
+    [/^the armor untaps its wearer with a trample counter$/i, (g, m, ctx) => { const me = ctx.self; const c = me && g.cards[me.attachedTo]; if (!c) return; c.tapped = false; c.tappedFor = null; G.counter(g, c.iid, 'trample', 1, { effect: true }); }],
+    [/^your artifact and human creatures gain indestructible$/i, g => { creatures(g, c => isA(c, 'artifact') || isA(c, 'human')).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'indestructible'])] }; }); }],
+    [/^nerd rage with ten cards$/i, (g, m, ctx) => { if (ctx.self && g.zones.hand.length >= 10) pumpBy(ctx.self, 10, 10); }],
+    [/^bottle-cap blast$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) < 5).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) { if (ctx.hitOpps) ctx.hitOpps(5, true); return; } const left = Math.max(0, stats(c, factsOf(c, defOf)).tou - (c.damageTaken || 0)); applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n: 5, what: 'creature' }, nameOfSrc(ctx), defOf, g); for (let i = 0; i < 5 - left; i++) { const t = artifactTokens(g, ctx.self, 1, 'treasure'); (Array.isArray(t) ? t : [t]).filter(Boolean).forEach(x => { x.tapped = true; }); } }],
+    [/^the behemoth spends energy to destroy$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => !G.isLand(x) && cmcOfInst(x, defOf) <= (g.energy || 0) && !stats(x, factsOf(x, defOf)).kw.has('indestructible')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; g.energy -= cmcOfInst(c, defOf); G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }],
+    [/^the endurance bobblehead$/i, (g, m, ctx) => { const n = permanents(g).filter(c => isA(c, 'bobblehead')).length; const defOf = defOfCtx(ctx); creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf)).slice(0, n).forEach(c => { pumpBy(c, 1, 0); c.pump.kw = [...new Set([...(c.pump.kw || []), 'indestructible'])]; }); }],
+    [/^the safe locks two cards$/i, (g, m, ctx) => { g.zones.library.slice(0, 2).forEach(iid => { G.move(g, iid, 'exile'); g.cards[iid].faceDown = true; if (ctx.self) g.cards[iid].exiledWith = ctx.self.iid; }); }],
+    [/^crack the safe$/i, (g, m, ctx) => { const me = ctx.self; if (!me) return; if (!G.randomInt(3)) { G.log(g, `${me.name}: the choices match.`); G.move(g, me.iid, 'graveyard'); g.zones.exile.map(iid => g.cards[iid]).filter(c => c.exiledWith === me.iid).forEach(c => { c.faceDown = false; G.move(g, c.iid, 'hand'); }); } else { const top = g.zones.library[0]; if (top) { G.move(g, top, 'exile'); g.cards[top].faceDown = true; g.cards[top].exiledWith = me.iid; } } }, (m, ctx) => !!ctx.self],
+    [/^draw if a player lost 4 life$/i, (g, m, ctx) => { if ([g, otherOf(g, ctx) || otherTable(g)].some(t => t && (t.lostLife || 0) >= 4)) G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^your legendary creatures gain (vigilance|menace)$/i, (g, m) => { creatures(g, c => /\blegendary\b/i.test(c.typeLine || '')).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), m[1].toLowerCase()])] }; }); }],
+    [/^the cane casts the defender's spell for \{3\}$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const opp = isOpps(gameOf(g, ctx) || g, g); const c = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).filter(x => /\b(instant|sorcery)\b/i.test(front(x.typeLine || ''))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; G.move(o, c.iid, 'exile'); if (!(opp ? affordable(g, '{3}', 0) : G.autoPay(JSON.parse(JSON.stringify(g)), '{3}'))) return; if (opp) onOpp(gameOf(g, ctx), () => G.autoPay(g, '{3}')); else G.autoPay(g, '{3}'); const mine = takeCard(o, c.iid, g, 'exile', { quiet: true, defOf }); mine.castAftermath = true; castFree(g, mine, ctx, defOf); }],
+    [/^estinien draws for the dragon hits$/i, (g, m, ctx) => { if (g.estinienTurn !== g.turn) return; G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); runEffect(g, 'you lose 1 life', ctx); }], // (nearHits marks it)
+    [/^fandaniel's choice$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!o || !o.zones || !game) return; const n = 2 * g.zones.graveyard.filter(iid => /\b(instant|sorcery)\b/i.test(front(g.cards[iid].typeLine || ''))).length; const c = creatures(o, x => !x.token && !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c && worthOf(c, defOf) < n) { G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); sacrificed(game, o, c, defOf); } else if (n) addLife(game, o === game ? 'you' : 'opp', -n); }, (m, ctx) => !!ctx.other],
+    [/^it can be cast from your graveyard until your next turn ends$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.zone === 'graveyard') me.graveOkUntil = g.turn + 1; }], // Hildibrand Manderville (graveCast)
+    [/^a creature card matching the spell's mana value returns$/i, (g, m, ctx) => { const n = ctx.castSpell ? cmcOfInst(ctx.castSpell, defOfCtx(ctx)) : -1; const c = g.zones.graveyard.map(iid => g.cards[iid]).find(x => G.isCreature(x) && cmcOfInst(x, defOfCtx(ctx)) === n); if (c) G.move(g, c.iid, 'hand'); }],
+    [/^observed stasis$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const c = me && o && o.zones && o.cards[me.attachedTo]; if (c) { delete c.attacking; delete c.blocking; } const n = o && o.zones ? creatures(o, x => x.tapped).length : 0; if (n) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^the opponent sacrifices its strongest if it lost life$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!o || !o.zones || !((o.lostLife || 0) > 0)) return; const c = creatures(o).sort((a, b) => stats(b, factsOf(b, defOf)).pow - stats(a, factsOf(a, defOf)).pow)[0]; if (c) { G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); if (game) sacrificed(game, o, c, defOf); } }, (m, ctx) => !!ctx.other],
+    [/^the moogle king copies tokens this turn$/i, g => { g.mogTurn = g.turn; }], // Summon: Good King Mog XII (spellCast)
+    [/^your best other legendary permanent gains indestructible$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = permanents(g).filter(x => x !== ctx.self && /\blegendary\b/i.test(x.typeLine || '')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) c.extraKw = [...new Set([...(c.extraKw || []), 'indestructible'])]; }], // Thancred (kept even if Thancred leaves)
+    [/^cast your best graveyard instant for free, exiled after$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => /\binstant\b/i.test(front(x.typeLine || ''))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; c.castAftermath = true; castFree(g, c, ctx, defOf); }],
+    [/^a wizard if cast from your hand$/i, (g, m, ctx) => { if (!ctx.self || ctx.self.castFrom !== 'hand') return; const tok = G.createToken(g, { custom: true, name: 'Wizard', typeLine: 'Token Creature — Wizard', pt: '0/1', text: 'Whenever you cast a noncreature spell, this token deals 1 damage to each opponent.' }, { quiet: true }); if (tok) tok.tokenColors = ['B']; }],
+    [/^urianger stores the top card$/i, (g, m, ctx) => { const top = g.zones.library[0]; if (!top || !ctx.self) return; G.move(g, top, 'exile'); Object.assign(g.cards[top], { faceDown: true, exiledWith: ctx.self.iid }); }],
+    [/^urianger's cards are playable$/i, (g, m, ctx) => { const me = ctx.self; if (!me) return; g.zones.exile.map(iid => g.cards[iid]).filter(c => c.exiledWith === me.iid).forEach(c => { c.faceDown = false; c.playable = { turn: g.turn }; c.uriangerTurn = g.turn; }); }], // (selfDiscount: {2} less)
+    [/^bile blight$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).tou <= 3).sort((a, b) => creatures(o, y => y.name === b.name).length - creatures(o, y => y.name === a.name).length || worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; [g, o].forEach(t => creatures(t, x => x.name === c.name).forEach(x => pumpBy(x, -3, -3))); }, (m, ctx) => !!ctx.other],
+    [/^a plaguebearer if the opponent has less life$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!game || lifeOf(game, g === game ? 'opp' : 'you') >= lifeOf(game, g === game ? 'you' : 'opp')) return; const tok = G.createToken(g, { custom: true, name: 'Plaguebearer of Nurgle', typeLine: 'Token Creature — Demon', pt: '1/3', text: '' }, { quiet: true }); if (tok) tok.tokenColors = ['B']; }],
+    [/^mandate of abaddon$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const p = Math.max(0, ...creatures(g).map(c => stats(c, factsOf(c, defOf)).pow)); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => creatures(t, c => stats(c, factsOf(c, defOf)).pow < p && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^mortarion raises the death guard$/i, (g, m, ctx) => { const opp = isOpps(gameOf(g, ctx) || g, g); let n = g.lostLife || 0; while (n > 0 && !(opp ? affordable(g, `{${n}}`, 0) : G.autoPay(JSON.parse(JSON.stringify(g)), `{${n}}`))) n--; if (!n) return; if (opp) onOpp(gameOf(g, ctx), () => G.autoPay(g, `{${n}}`)); else G.autoPay(g, `{${n}}`); for (let i = 0; i < n; i++) runEffect(g, 'create a 2/2 black Astartes Warrior creature token with menace', ctx); }],
+    [/^exile the opponent's graveyard$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones) o.zones.graveyard.slice().forEach(iid => G.move(o, iid, 'exile')); }],
+    [/^your next creature spell this turn has cascade$/i, g => { g.cascadeNext = { ...(g.cascadeNext && g.cascadeNext.turn === g.turn ? g.cascadeNext : {}), turn: g.turn, creature: true }; }], // Sloppity Bilepiper (spellCast)
+    // ---- The last twelve, chunk 2 (settleNear) ----
+    [/^boone takes his shot$/i, (g, m, ctx) => { const me = ctx.self; const n = me ? (me.counters || {}).quest || 0 : 0; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!n || !o || !o.zones) return; const c = creatures(o, x => stats(x, factsOf(x, defOf)).tou <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; if (game && lifeOf(game, o === game ? 'you' : 'opp') > 15 + n && worthOf(c, defOf) >= 4) return addLife(game, o === game ? 'you' : 'opp', -n); applyTarget(game || g, o, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); }],
+    [/^the opponent is decimated$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!o || !o.zones) return; const list = creatures(o, c => !cantSac(c, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)); list.slice(0, Math.ceil(creatures(o).length / 10)).forEach(c => { G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); if (game) sacrificed(game, o, c, defOf); }); }, (m, ctx) => !!ctx.other],
+    [/^the luck bobblehead rolls$/i, (g, m, ctx) => { const n = Math.max(1, permanents(g).filter(c => isA(c, 'bobblehead')).length); let sixes = 0; for (let i = 0; i < n; i++) { const r = 1 + G.randomInt(6); if (r === 6) sixes++; if (r % 2 === 0) { const t = artifactTokens(g, ctx.self, 1, 'treasure'); (Array.isArray(t) ? t : [t]).filter(Boolean).forEach(x => { x.tapped = true; }); } } if (sixes === 7) runEffect(g, 'you win the game', ctx); }],
+    [/^radaway$/i, (g, m, ctx) => { g.rad = 0; const me = ctx.self; if (me && me.zone === 'battlefield') G.move(g, me.iid, 'graveyard'); }], // Survivor's Med Kit (you)
+    [/^szarekh mills for a machine$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const ids = g.zones.library.slice(0, 3); G.mill(g, 3); const c = ids.map(iid => g.cards[iid]).filter(x => x.zone === 'graveyard' && ((isA(x, 'artifact') && G.isCreature(x)) || isA(x, 'vehicle'))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^anrakyr casts an artifact for life$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const life = lifeOfTable(g, ctx); const c = [...g.zones.hand, ...g.zones.graveyard].map(iid => g.cards[iid]).filter(x => isA(x, 'artifact') && !G.isLand(x) && cmcOfInst(x, defOf) < life - 10).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; runEffect(g, `you lose ${cmcOfInst(c, defOf)} life`, ctx); castFree(g, c, ctx, defOf); }],
+    [/^the cryptek guards an artifact creature$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = creatures(g, x => x !== ctx.self && isA(x, 'artifact')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) c.cryptekTurn = g.turn; }], // (nearDied)
+    [/^add \{b\} for the sacrificed creature's mana value$/i, (g, m, ctx) => { const n = ctx.lastSacMv || g.lastSacMv || 0; g.mana.B = (g.mana.B || 0) + n; }], // Illuminor Szeras
+    [/^mill for each eon counter$/i, (g, m, ctx) => { const n = ((ctx.self && ctx.self.counters) || {}).eon || 0; if (n) G.mill(g, n); }],
+    [/^the nightbringer drains half$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!game) return; const foe = g === game ? 'opp' : 'you'; const n = Math.ceil(lifeOf(game, foe) / 2); addLife(game, foe, -n); addLife(game, g === game ? 'you' : 'opp', n); }],
+    [/^return artifact creatures worth up to (\d+) in total$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); let left = Number(m[1]); g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c) && isA(c, 'artifact')).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf)).forEach(c => { const k = cmcOfInst(c, defOf); if (k <= left) { left -= k; G.move(g, c.iid, 'battlefield', { put: true }); } }); }],
+    [/^their number is legion$/i, (g, m, ctx) => { const x = (ctx.self && ctx.self.xValue) || 0; for (let i = 0; i < x; i++) { const tok = G.createToken(g, { custom: true, name: 'Necron Warrior', typeLine: 'Token Artifact Creature — Necron Warrior', pt: '2/2', text: '' }, { quiet: true }); if (tok) { tok.tokenColors = ['B']; tok.tapped = true; } } const n = permanents(g).filter(c => isA(c, 'artifact')).length; if (n) runEffect(g, `you gain ${n} life`, ctx); if (ctx.self) ctx.self.castAftermath = true; }],
+    [/^the tomb blade demands a toll$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!o || !o.zones || !game) return; const n = creatures(o).length; const fodder = creatures(o, c => !cantSac(c, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (fodder && n >= 3 && worthOf(fodder, defOf) <= n) { G.move(o, fodder.iid, fodder.commander ? 'command' : 'graveyard'); sacrificed(game, o, fodder, defOf); } else if (n) addLife(game, o === game ? 'you' : 'opp', -n); }, (m, ctx) => !!ctx.other],
+    [/^choose the opponent$/i, () => {}], // Triarch Stalker (two players)
+    [/^the war in heaven$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); let left = 8; let n = 0; g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf)).forEach(c => { const k = cmcOfInst(c, defOf); if (n >= 3 || k > left) return; left -= k; n++; G.move(g, c.iid, 'battlefield', { put: true }); G.counter(g, c.iid, 'necrodermis', 1, { effect: true }); c.extraTypes = [...new Set([...(c.extraTypes || []), 'artifact'])]; }); }],
+    [/^the scarabs feed$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const t = [o, g].filter(x => x && x.zones).sort((a, b) => b.zones.graveyard.filter(iid => isA(b.cards[iid], 'artifact') || G.isLand(b.cards[iid])).length - a.zones.graveyard.filter(iid => isA(a.cards[iid], 'artifact') || G.isLand(a.cards[iid])).length)[0]; if (!t) return; const ids = t.zones.graveyard.slice(); const n = ids.filter(iid => isA(t.cards[iid], 'artifact') || G.isLand(t.cards[iid])).length; ids.forEach(iid => G.move(t, iid, 'exile')); for (let i = 0; i < n; i++) { const tok = G.createToken(g, { custom: true, name: 'Insect', typeLine: 'Token Artifact Creature — Insect', pt: '1/1', text: 'Flying' }, { quiet: true }); if (tok) tok.tokenColors = []; } }],
+    [/^the wraith scouts$/i, (g, m, ctx) => { const me = ctx.self; const opp = isOpps(gameOf(g, ctx) || g, g); if (!me || me.zone !== 'battlefield' || !(opp ? affordable(g, '{3}', 0) : G.autoPay(JSON.parse(JSON.stringify(g)), '{3}'))) return; if (opp) onOpp(gameOf(g, ctx), () => G.autoPay(g, '{3}')); else G.autoPay(g, '{3}'); G.move(g, me.iid, 'graveyard'); const names = {}; g.zones.library.forEach(iid => { const c = g.cards[iid]; if (G.isLand(c) && /\bbasic\b/i.test(c.typeLine || '')) names[c.name] = (names[c.name] || 0) + 1; }); const name = Object.entries(names).sort((a, b) => b[1] - a[1]).map(x => x[0])[0]; if (!name) return; g.zones.library.filter(iid => g.cards[iid].name === name).slice(0, 2).forEach(iid => { G.move(g, iid, 'battlefield', { put: true }); g.cards[iid].tapped = true; }); G.shuffle(g); }],
+    [/^the ghost ark offers unearth$/i, g => { g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c) && isA(c, 'artifact')).forEach(c => { c.arkUnearthTurn = g.turn; }); }], // (unearthOf)
+    [/^the monolith opens$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 3); G.mill(g, 3); const n = ids.filter(iid => g.cards[iid].zone === 'graveyard' && G.isCreature(g.cards[iid])).length; for (let i = 0; i < n; i++) { const tok = G.createToken(g, { custom: true, name: 'Necron Warrior', typeLine: 'Token Artifact Creature — Necron Warrior', pt: '2/2', text: '' }, { quiet: true }); if (tok) tok.tokenColors = ['B']; } }],
+    [/^the orb returns it at the end step$/i, (g, m, ctx) => { const d = ctx.dead; const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!d || g.cards[d.iid] !== d || d.zone !== 'graveyard' || !game) return; G.move(g, d.iid, 'exile'); atNextEnd(game, g, { fromExile: d.iid, why: nameOfSrc(ctx) }); }],
+    [/^the opponent gets a clue, a food and a junk$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones) ['clue', 'food', 'junk'].forEach(k => artifactTokens(o, ctx.self || { name: 'Overencumbered' }, 1, k)); }, (m, ctx) => !!ctx.other],
+    [/^overencumbered taxes the attack$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: the attack tax isn't kept.`)],
+    [/^energy for each attacker$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const n = o && o.zones ? creatures(o, c => c.attacking).length : 0; if (n) gainEnergy(g, n, defOfCtx(ctx)); }],
+    [/^the vault takes the opponent's best$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => G.isCreature(x) || isA(x, 'enchantment')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!me || !c) return; G.move(o, c.iid, 'exile'); if (!c.token) { c.exiledWith = me.iid; c.returnWhenGone = true; } }, (m, ctx) => !!ctx.self],
+    [/^the vault lets them out$/i, (g, m, ctx) => { const me = ctx.self; if (!me) return; [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).flatMap(t => t.zones.exile.map(iid => ({ t, c: t.cards[iid] }))).filter(x => x.c.exiledWith === me.iid).forEach((x, i) => { delete x.c.returnWhenGone; G.move(x.t, x.c.iid, i < 2 ? 'battlefield' : 'library', i < 2 ? { put: true } : { bottom: true }); }); }],
+    [/^draw for its base power$/i, (g, m, ctx) => { const me = ctx.self; if (!me) return; const n = num((me.becomes && me.becomes.pt ? me.becomes.pt.split('/')[0] : factsOf(me, defOfCtx(ctx)).power)); if (n > 0) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^curie copies an exiled artifact creature$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); const c = me && creatures(g, x => x !== me && !x.token && isA(x, 'artifact')).sort((a, b) => num(factsOf(b, defOf).power) - num(factsOf(a, defOf).power))[0]; if (!c) return; G.move(g, c.iid, 'exile'); const keep = 'Whenever this creature deals combat damage to a player, draw cards equal to its base power.'; me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.typeLine = front(c.typeLine); if (me.bot) me.bot = facts(defOf(c.id) || { typeLine: me.typeLine }); me.keepLines = [keep]; }, (m, ctx) => !!ctx.self],
+    [/^your attacking artifact creature gets a \+1\/\+1 counter$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = (ctx.attacker && ctx.attacker.zone === 'battlefield' && ctx.attacker) || creatures(g, x => x.attacking && isA(x, 'artifact')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.counter(g, c.iid, '+1/+1', 1, { effect: true }); }], // Assaultron Dominator
+    [/^the motherlode digs in$/i, (g, m, ctx) => { if ((g.energy || 0) < 4) return; g.energy -= 4; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; const l = permanents(o).filter(c => G.isLand(c) && !/\bbasic\b/i.test(c.typeLine || '')).sort((a, b) => G.producesOf(b).length - G.producesOf(a).length)[0]; if (l) G.move(o, l.iid, 'graveyard'); creatures(o, c => !stats(c, factsOf(c, defOf)).kw.has('flying')).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), "can't block"])] }; }); }],
+    [/^the plasma caster fires$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => x.blocking).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; if (coinFlip(g, ctx)) G.move(o, c.iid, c.commander ? 'command' : 'exile'); else applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n: 1, what: 'creature' }, nameOfSrc(ctx), defOf, g); }],
+    [/^the eradicator scans$/i, (g, m, ctx) => { const top = g.cards[g.zones.library[0]]; if (!top) return; G.move(g, top.iid, 'exile'); const lands = permanents(g).filter(G.isLand).length; if ((G.isLand(top) && !g.landPlayedTurn) || (!G.isLand(top) && cmcOfInst(top, defOfCtx(ctx)) <= lands)) top.playable = { turn: g.turn }; else gainEnergy(g, 2, defOfCtx(ctx)); }],
+    [/^the opponent draws a card$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones) G.drawCards(o, 1, o !== (gameOf(g, ctx) || {})); }],
+    [/^the opponent mills two cards$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones) G.mill(o, 2); }],
+    [/^rex takes a brain$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const x = [otherOf(g, ctx) || otherTable(g), g].filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => ({ t, c: t.cards[iid] }))).filter(y => G.isCreature(y.c)).sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf))[0]; if (!x) return; G.move(x.t, x.c.iid, 'exile'); G.counter(x.t, x.c.iid, 'brain', 1); }],
+    // ---- The last twelve, chunk 1 (settleNear) ----
+    [/^move a counter to your best creature$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const list = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf)); const to = list[0]; const from = [...list].reverse().find(c => c !== to && ((c.counters || {})['+1/+1'] || 0) > 0); if (!to || !from) return; G.counter(g, from.iid, '+1/+1', -1); G.counter(g, to.iid, '+1/+1', 1, { effect: true }); }],
+    [/^auron grows and banishes a smaller foe$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (!me || me.zone !== 'battlefield') return; G.counter(g, me.iid, '+1/+1', 1, { effect: true }); const p = stats(me, factsOf(me, defOf)).pow; const o = otherOf(g, ctx) || otherTable(g); const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).pow < p).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; G.move(o, c.iid, 'exile'); if (!c.token) { c.exiledWith = me.iid; c.returnWhenGone = true; } }, (m, ctx) => !!ctx.self],
+    [/^support x$/i, (g, m, ctx) => { const n = (ctx.self && ctx.self.xValue) || 0; const defOf = defOfCtx(ctx); creatures(g, c => c !== ctx.self).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf)).slice(0, n).forEach(c => G.counter(g, c.iid, '+1/+1', 1, { effect: true })); }], // Blitzball Stadium
+    [/^go for the goal$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = creatures(g, x => !x.tapped || x.attacking).sort((a, b) => kindsOfCounters(b) - kindsOfCounters(a) || worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'unblockable'])], lines: [...((c.pump && c.pump.lines) || []), 'Whenever this creature deals combat damage to a player, draw a card for each kind of counter on it.'] }; }],
+    [/^your creatures with counters gain double strike$/i, g => { creatures(g, c => Object.values(c.counters || {}).some(v => v > 0)).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'double strike'])] }; }); }],
+    [/^the opponent's best nonland permanent goes on top of its library$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => !G.isLand(x)).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'library'); }, (m, ctx) => !!ctx.other],
+    [/^play the hidden card free with a 7-power creature$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); if (creatures(g, c => stats(c, factsOf(c, defOf)).pow >= 7).length) return runEffect(g, 'play the best card exiled with this creature for free', ctx); }], // Fight Rigging
+    [/^your best creature is guarded this turn$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'indestructible'])] }; }], // Gatta and Luzzu (read as indestructible this turn)
+    [/^kimahri rages$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (!me || me.zone !== 'battlefield') return; G.counter(g, me.iid, '+1/+1', 1, { effect: true }); const o = otherOf(g, ctx) || otherTable(g); const c = o && o.zones && creatures(o, x => !x.tapped).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; c.tapped = true; if (worthOf(c, defOf) <= worthOf(me, defOf)) return; const keep = oracleLines(me, defOf).find(l => /become a copy of that creature/i.test(l)); me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.typeLine = front(c.typeLine); if (me.bot) me.bot = facts(defOf(c.id) || { typeLine: me.typeLine }); if (keep) me.keepLines = [keep]; me.extraKw = [...new Set([...(me.extraKw || []), 'vigilance'])]; }, (m, ctx) => !!ctx.self],
+    [/^investigate if you put a counter on a creature$/i, (g, m, ctx) => { if (g.counterPutTurn === g.turn) return runEffect(g, 'investigate', ctx); }], // Lord Jyscal Guado (countersPut)
+    [/^steal a counter from the opponent's creature$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const from = o && o.zones && creatures(o, c => ((c.counters || {})['+1/+1'] || 0) > 0).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; const to = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!from || !to) return; G.counter(o, from.iid, '+1/+1', -1); G.counter(g, to.iid, '+1/+1', 1, { effect: true }); }, (m, ctx) => !!ctx.other],
+    [/^shelinda blesses the newcomer$/i, (g, m, ctx) => { const me = ctx.self; const c = ctx.entered; const defOf = defOfCtx(ctx); if (!me || !c) return; const to = c.zone === 'battlefield' && stats(c, factsOf(c, defOf)).pow < stats(me, factsOf(me, defOf)).pow ? c : me; if (to.zone === 'battlefield') G.counter(g, to.iid, '+1/+1', 1, { effect: true }); }, (m, ctx) => !!ctx.self],
+    [/^sin passes its counters on$/i, (g, m, ctx) => { const me = ctx.self; const counters = (me && ((me.lastInfo && me.lastInfo.counters) || me.counters)) || {}; const defOf = defOfCtx(ctx); const c = creatures(g, x => x !== me).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; Object.entries(counters).forEach(([k, v]) => { if (v > 0) G.counter(g, c.iid, k, v, { effect: true }); }); }],
+    [/^the opponent's costliest creature returns to hand$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf) || worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'hand'); }, (m, ctx) => !!ctx.other],
+    [/^yojimbo stands guard$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: the attack tax isn't kept.`)],
+    [/^yojimbo is paid$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (o && o.zones && creatures(o, c => stats(c, factsOf(c, defOf)).pow >= 4).length) artifactTokens(g, ctx.self, 1, 'treasure'); }],
+    [/^the summoner's sending$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const x = [otherOf(g, ctx) || otherTable(g), g].filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => ({ t, c: t.cards[iid] }))).filter(y => G.isCreature(y.c)).sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf))[0]; if (!x) return; const big = cmcOfInst(x.c, defOf) >= 4; G.move(x.t, x.c.iid, 'exile'); const tok = G.createToken(g, { custom: true, name: 'Spirit', typeLine: 'Token Creature — Spirit', pt: '1/1', text: 'Flying' }, { quiet: true }); if (!tok) return; tok.tokenColors = ['W']; if (big) G.counter(g, tok.iid, '+1/+1', 1, { effect: true }); }],
+    [/^proliferate for each newcomer$/i, (g, m, ctx) => { const n = creatures(g, c => !c.token && c.enteredTurn === g.turn).length; for (let i = 0; i < n; i++) runEffect(g, 'proliferate', ctx); }],
+    [/^wakka captains the team$/i, (g, m, ctx) => { const me = ctx.self; if (!me || me.counterTurn !== g.turn) return; creatures(g, c => c !== me).forEach(c => G.counter(g, c.iid, '+1/+1', 1, { effect: true })); }],
+    [/^yuna passes on the counters$/i, () => {}], // Yuna, Grand Summoner (nearDied does it)
+    [/^the whistle grows your best creature$/i, (g, m, ctx) => { const c = g.cards[g.zones.hand[g.zones.hand.length - 1]]; const n = c && G.isCreature(c) ? cmcOfInst(c, defOfCtx(ctx)) : 0; const best = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (n && best) G.counter(g, best.iid, '+1/+1', n, { effect: true }); }],
+    [/^caesar strikes for each token$/i, (g, m, ctx) => { const n = creatures(g, c => c.token).length; if (n && ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^mr house rolls$/i, (g, m, ctx) => { const roll = 1 + G.randomInt(6); G.log(g, `${nameOfSrc(ctx)}: rolled ${roll}.`); if (roll < 4) return; permanents(g).filter(w => oracleLines(w, defOfCtx(ctx)).some(l => NEAR.MR_HOUSE.test(l))).forEach(w => { const tok = G.createToken(g, { custom: true, name: 'Robot', typeLine: 'Token Artifact Creature — Robot', pt: '3/3', text: '' }, { quiet: true }); if (tok) tok.tokenColors = []; if (roll >= 6) artifactTokens(g, w, 1, 'treasure'); }); }],
+    [/^aradesh rewards the enlisted$/i, () => {}], // (nearAttack does it)
+    [/^the overseer spends three quests$/i, (g, m, ctx) => { const have = permanents(g).reduce((n, c) => n + ((c.counters || {}).quest || 0), 0); if (have < 3) return; let left = 3; permanents(g).forEach(c => { const k = Math.min(left, (c.counters || {}).quest || 0); if (k) { G.counter(g, c.iid, 'quest', -k); left -= k; } }); creatures(g).forEach(c => { G.counter(g, c.iid, '+1/+1', 1, { effect: true }); c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'vigilance'])] }; }); }],
+    [/^exile every creature with power (\d+) or more$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => creatures(t, c => stats(c, factsOf(c, defOf)).pow >= Number(m[1])).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'exile'))); }],
+    [/^yes man changes sides$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); if (!me || !o || !o.zones || me.zone !== 'battlefield') return; const moved = gainControl(g, me.iid, o, defOfCtx(ctx)); G.drawCards(g, 2, isOpps(gameOf(g, ctx) || g, g)); if (moved) G.counter(o, moved.iid, 'quest', 1, { effect: true }); }, (m, ctx) => !!ctx.self && !!ctx.other],
+    [/^yes man's owner gets soldiers$/i, (g, m, ctx) => { const me = ctx.self; const counters = (me && ((me.lastInfo && me.lastInfo.counters) || me.counters)) || {}; const n = counters.quest || 0; const owner = me && me.owner ? (otherOf(g, ctx) || otherTable(g)) : g; for (let i = 0; i < n && owner && owner.zones; i++) { const tok = G.createToken(owner, { custom: true, name: 'Soldier', typeLine: 'Token Creature — Soldier', pt: '1/1', text: '' }, { quiet: true }); if (tok) { tok.tokenColors = ['W']; tok.tapped = true; } } }],
+    [/^v\.a\.t\.s$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; const by = {}; creatures(o, c => !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => { const t = stats(c, factsOf(c, defOf)).tou; by[t] = [...(by[t] || []), c]; }); const pick = Object.values(by).sort((a, b) => b.reduce((n, c) => n + worthOf(c, defOf), 0) - a.reduce((n, c) => n + worthOf(c, defOf), 0))[0] || []; pick.forEach(c => G.move(o, c.iid, c.commander ? 'command' : 'graveyard')); }, (m, ctx) => !!ctx.other],
+    [/^the stranger steals a spell$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const got = [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).map(t => { const c = t.zones.graveyard.map(iid => t.cards[iid]).filter(x => /\b(instant|sorcery)\b/i.test(front(x.typeLine || ''))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return null; G.move(t, c.iid, 'exile'); return { t, c }; }).filter(Boolean); if (got.length < 2) return; const x = got[G.randomInt(got.length)]; const mine = x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'exile', { quiet: true, defOf }); mine.castAftermath = true; castFree(g, mine, ctx, defOf); }],
+    [/^the nipton lottery$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const o = otherOf(g, ctx) || otherTable(g); const all = [g, o].filter(t => t && t.zones).flatMap(t => creatures(t).map(c => ({ t, c }))); if (!all.length) return; const x = all[G.randomInt(all.length)]; const keep = x.t === g ? x.c : borrow(g, o, x.c, ctx); if (keep) { keep.tapped = false; keep.pump = { pow: 0, tou: 0, ...keep.pump, kw: [...new Set([...((keep.pump && keep.pump.kw) || []), 'haste'])] }; } [g, o].filter(t => t && t.zones).forEach(t => creatures(t, c => c !== keep && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^put a creature card from your hand onto the battlefield attacking$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const x = ctx.self ? stats(ctx.self, factsOf(ctx.self, defOf)).pow : 0; const c = g.zones.hand.map(iid => g.cards[iid]).filter(y => G.isCreature(y) && cmcOfInst(y, defOf) <= x).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; G.move(g, c.iid, 'battlefield', { put: true }); Object.assign(c, { tapped: true, tappedFor: null, attacking: true, attackedNow: true }); }],
+    [/^the vote destroys both favorites$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => { const c = creatures(t).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c && !stats(c, factsOf(c, defOf)).kw.has('indestructible')) G.move(t, c.iid, c.commander ? 'command' : 'graveyard'); }); }], // each player votes for the other's best
+    [/^ed-e counts the attackers$/i, (g, m, ctx) => { const me = ctx.self; if (me && creatures(g, c => c.attacking).length > ((me.counters || {}).quest || 0)) G.counter(g, me.iid, 'quest', 1, { effect: true }); }, (m, ctx) => !!ctx.self],
+    [/^ed-e draws for its quests$/i, (g, m, ctx) => { const me = ctx.self; const counters = (me && ((me.lastInfo && me.lastInfo.counters) || me.counters)) || {}; G.drawCards(g, 1 + (counters.quest || 0), isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^diamond city lends its shield$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (!me || !((me.counters || {}).shield > 0) || creatures(g, c => c.enteredTurn === g.turn).length < 2) return; const c = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; G.counter(g, me.iid, 'shield', -1); G.counter(g, c.iid, 'shield', 1, { effect: true }); }, (m, ctx) => !!ctx.self],
+    [/^each (.+?) you control gets \+(\d+)$/i, (g, m, ctx) => { const name = /^this creature$/i.test(m[1]) && ctx.self ? ctx.self.name : m[1]; creatures(g, c => String(c.name).toLowerCase() === String(name).toLowerCase()).forEach(c => pumpBy(c, Number(m[2]), 0)); }], // Gary Clone
+    [/^put a \+1\/\+1 counter on each of up to x target creatures$/i, (g, m, ctx) => runEffect(g, 'support x', ctx)], // Blitzball Stadium (support X spelled out)
+    [/^shuffle this card into your library$/i, (g, m, ctx) => { const me = ctx.self; if (me && g.cards[me.iid] === me && me.zone === 'graveyard') { G.move(g, me.iid, 'library'); G.shuffle(g); } }], // Sin
+    [/^desdemona lends escape$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x) && (isA(x, 'artifact') || cmcOfInst(x, defOf) <= 3)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (c) c.escapeTurn = g.turn; }], // (escapeOf)
+    // ---- 20-23 decks, chunk 4 (settleNear) ----
+    [/^flip a coin until you lose a flip$/i, (g, m, ctx) => { let n = 0; while (coinFlip(g, ctx) && n < 20) n++; }], // Zndrsplt, Okaun
+    [/^double (?:okaun's|this creature's) power and toughness until end of turn$/i, (g, m, ctx) => { const me = ctx.self; if (!me || me.zone !== 'battlefield') return; const x = stats(me, factsOf(me, defOfCtx(ctx))); pumpBy(me, Math.max(0, x.pow), Math.max(0, x.tou)); }, (m, ctx) => !!ctx.self],
+    [/^stitch in time$/i, (g, m, ctx) => { if (coinFlip(g, ctx)) return runEffect(g, 'take an extra turn after this one', ctx); }],
+    [/^manifest one for each counter it had$/i, (g, m, ctx) => { const me = ctx.self; const counters = (me && ((me.lastInfo && me.lastInfo.counters) || me.counters)) || {}; const n = Object.values(counters).reduce((k, v) => k + Math.max(0, v || 0), 0); for (let i = 0; i < n; i++) manifestFrom(g, g); }],
+    [/^remove a counter from your nonland permanent$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const bad = ['-1/-1', 'stun', 'time', 'ice']; const c = permanents(g).filter(x => !G.isLand(x) && Object.entries(x.counters || {}).some(([k, v]) => v > 0 && bad.includes(k))).concat(permanents(g).filter(x => !G.isLand(x) && Object.values(x.counters || {}).some(v => v > 0)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)))[0]; if (!c) return; const k = Object.keys(c.counters).find(n => c.counters[n] > 0 && bad.includes(n)) || Object.keys(c.counters).find(n => c.counters[n] > 0); G.counter(g, c.iid, k, -1); }], // O'aka's cost
+    [/^the archaic copies nothing$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: abilities on the stack aren't kept.`)], // Abstruse Archaic
+    [/^discard a match to counter the spell$/i, (g, m, ctx) => { const game = gameOf(g, ctx); const s = game && game.bot && game.bot.s; const inst = s && s.stack && s.cards[s.stack.iid]; if (!inst || isOpps(game, g)) return G.log(g, `${nameOfSrc(ctx)}: no spell to counter.`); const mv = cmcOfInst(inst, defOfCtx(ctx)); const c = g.zones.hand.map(iid => g.cards[iid]).find(x => cmcOfInst(x, defOfCtx(ctx)) === mv); if (!c) return G.log(g, `${nameOfSrc(ctx)}: no card with mana value ${mv} to discard.`); G.move(g, c.iid, 'graveyard'); counterStack(game); }], // Kozilek, the Great Distortion
+    [/^calamity of the titans$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const k = Math.max(0, ...g.zones.hand.map(iid => g.cards[iid]).filter(c => G.isCreature(c) && !colorsOfInst(c, defOf).length).map(c => cmcOfInst(c, defOf))); if (!k) return; [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => permanents(t).filter(c => (G.isCreature(c) || isPlaneswalker(c)) && cmcOfInst(c, defOf) < k).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'exile'))); }],
+    [/^titan's presence$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const p = Math.max(0, ...g.zones.hand.map(iid => g.cards[iid]).filter(c => G.isCreature(c) && !colorsOfInst(c, defOf).length).map(c => num(factsOf(c, defOf).power))); const o = otherOf(g, ctx) || otherTable(g); const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).pow <= p).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'exile'); }, (m, ctx) => !!ctx.other],
+    [/^desecrate reality$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const o = otherOf(g, ctx) || otherTable(g); const c = o && o.zones && permanents(o).filter(x => cmcOfInst(x, defOf) % 2 === 0).sort((a, b) => (G.isLand(a) - G.isLand(b)) || worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'exile'); if (permanents(g).filter(x => G.isLand(x) && G.producesOf(x).includes('C')).length < 3) return; const back = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => PERM_TYPES.some(k => isA(x, k)) && cmcOfInst(x, defOf) % 2 === 1).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (back) G.move(g, back.iid, 'battlefield', { put: true }); }],
+    [/^the cicada grows by the spell$/i, (g, m, ctx) => { const me = ctx.self; const n = ctx.castSpell ? cmcOfInst(ctx.castSpell, defOfCtx(ctx)) : 0; if (!me || me.zone !== 'battlefield') return; pumpBy(me, n, n); me.pump.kw = [...new Set([...(me.pump.kw || []), 'trample'])]; }, (m, ctx) => !!ctx.self],
+    [/^matter reshaper reveals$/i, (g, m, ctx) => { const c = g.cards[g.zones.library[0]]; if (!c) return; if (PERM_TYPES.some(k => isA(c, k)) && cmcOfInst(c, defOfCtx(ctx)) <= 3) G.move(g, c.iid, 'battlefield', { put: true }); else G.move(g, c.iid, 'hand'); }],
+    [/^the opponent exiles its two worst permanents$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (o && o.zones) permanents(o).filter(c => !c.commander).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)).slice(0, 2).forEach(c => G.move(o, c.iid, 'exile')); }, (m, ctx) => !!ctx.other],
+    [/^activate only if you have no cards in hand$/i, () => {}], // Sea Gate Wreckage (you keep to it)
+    // ---- 20-23 decks, chunk 3 (settleNear) ----
+    [/^the kaboomist lays a land mine$/i, (g, m, ctx) => { const tok = G.createToken(g, { custom: true, name: 'Land Mine', typeLine: 'Token Artifact', pt: '', text: '{R}, Sacrifice this token: This token deals 2 damage to target attacking creature without flying.' }, { quiet: true }); if (tok) tok.tokenColors = []; const me = ctx.self; if (!coinFlip(g, ctx) && me && me.zone === 'battlefield') applyTarget(gameOf(g, ctx) || g, g, me, { action: 'damage', n: 2, what: 'creature' }, me.name, defOfCtx(ctx), g); }],
+    [/^krark flips for the spell$/i, (g, m, ctx) => { const sp = ctx.castSpell; if (!sp) return; if (coinFlip(g, ctx)) { sp.extraCopies = (sp.extraCopies || 0) + 1; G.log(g, `${nameOfSrc(ctx)}: ${sp.name} is copied.`); } else if (sp.zone === 'battlefield' && /\b(instant|sorcery)\b/i.test(front(sp.typeLine || ''))) { G.move(g, sp.iid, 'hand'); G.log(g, `${nameOfSrc(ctx)}: ${sp.name} went back to the hand.`); } }],
+    [/^the archaeologist digs$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (coinFlip(g, ctx)) { const a = o && o.zones && permanents(o).filter(c => isA(c, 'artifact') && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).sort((x, y) => worthOf(y, defOf) - worthOf(x, defOf))[0]; if (a) G.move(o, a.iid, a.commander ? 'command' : 'graveyard'); if (me) { me.tapped = false; me.tappedFor = null; } } else if (me && me.zone === 'battlefield') G.move(g, me.iid, me.commander ? 'command' : 'graveyard'); }],
+    [/^fetch an artifact with mana value (\d+) to your hand$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const iid = g.zones.library.find(i => isA(g.cards[i], 'artifact') && cmcOfInst(g.cards[i], defOf) === Number(m[1])); if (iid) G.move(g, iid, 'hand'); G.shuffle(g); }],
+    [/^bin your best artifact from the library$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const iid = g.zones.library.filter(i => isA(g.cards[i], 'artifact')).sort((a, b) => cmcOfInst(g.cards[b], defOf) - cmcOfInst(g.cards[a], defOf))[0]; if (iid) G.move(g, iid, 'graveyard'); G.shuffle(g); }],
+    [/^yusri's flips$/i, (g, m, ctx) => { const n = lifeOfTable(g, ctx) > 20 ? 3 : 1; let won = 0; for (let i = 0; i < n; i++) { if (coinFlip(g, ctx)) { won++; G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); } else runEffect(g, 'you lose 2 life', ctx); } }],
+    [/^the assassin flips$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const o = otherOf(g, ctx) || otherTable(g); const theirs = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; const mine = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; const [t, c] = coinFlip(g, ctx) ? [o, theirs] : [g, mine]; if (c && !stats(c, factsOf(c, defOf)).kw.has('indestructible')) G.move(t, c.iid, c.commander ? 'command' : 'graveyard'); }],
+    [/^fiery gambit$/i, (g, m, ctx) => { let won = 0; while (won < 2) { if (!coinFlip(g, ctx)) { won = -1; break; } won++; } if (won <= 0) return G.log(g, `${nameOfSrc(ctx)}: lost the flip, no effect.`); const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n: 3, what: 'creature' }, nameOfSrc(ctx), defOf, g); if (won >= 2 && ctx.hitOpps) ctx.hitOpps(6, true); }],
+    [/^gamble$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const lands = permanents(g).filter(G.isLand).length; const iid = g.zones.library.filter(i => !G.isLand(g.cards[i]) && cmcOfInst(g.cards[i], defOf) <= lands + 1).sort((a, b) => cmcOfInst(g.cards[b], defOf) - cmcOfInst(g.cards[a], defOf))[0] || g.zones.library[0]; if (iid) G.move(g, iid, 'hand'); if (g.zones.hand.length) G.move(g, g.zones.hand[G.randomInt(g.zones.hand.length)], 'graveyard'); G.shuffle(g); }],
+    [/^fetch an artifact with mana value up to x$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const x = (ctx.self && ctx.self.xValue) || 0; const iid = g.zones.library.filter(i => isA(g.cards[i], 'artifact') && cmcOfInst(g.cards[i], defOf) <= x).sort((a, b) => cmcOfInst(g.cards[b], defOf) - cmcOfInst(g.cards[a], defOf))[0]; if (iid) G.move(g, iid, 'battlefield', { put: true }); G.shuffle(g); }],
+    [/^squee's revenge$/i, (g, m, ctx) => { const n = 2; for (let i = 0; i < n; i++) if (!coinFlip(g, ctx)) return; G.drawCards(g, 2 * n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^long-term plans$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const lands = permanents(g).filter(G.isLand).length; const iid = g.zones.library.filter(i => !G.isLand(g.cards[i])).sort((a, b) => Math.abs(cmcOfInst(g.cards[a], defOf) - lands - 2) - Math.abs(cmcOfInst(g.cards[b], defOf) - lands - 2))[0]; if (!iid) return; G.shuffle(g); const k = g.zones.library.indexOf(iid); g.zones.library.splice(k, 1); g.zones.library.splice(Math.min(2, g.zones.library.length), 0, iid); }],
+    [/^shadowspear pierces$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: hexproof and indestructible aren't taken away (not kept).`)],
+    [/^the crooked scales tip$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const o = otherOf(g, ctx) || otherTable(g); const [t, c] = coinFlip(g, ctx) ? [o, o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]] : [g, creatures(g).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]]; if (c && !stats(c, factsOf(c, defOf)).kw.has('indestructible')) G.move(t, c.iid, c.commander ? 'command' : 'graveyard'); }],
+    [/^mirror march$/i, (g, m, ctx) => { const c = ctx.entered; const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!c || c.zone !== 'battlefield') return; while (coinFlip(g, ctx)) { const tok = G.copyAsToken(g, c.iid); if (!tok) break; tok.pump = { pow: 0, tou: 0, kw: ['haste'] }; if (game) atNextEnd(game, g, { exile: tok.iid }); } }],
+    [/^flip a coin to keep this enchantment$/i, (g, m, ctx) => { const me = ctx.self; if (!coinFlip(g, ctx) && me && me.zone === 'battlefield') G.move(g, me.iid, 'graveyard'); }],
+    [/^planar chaos flips$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: spells aren't flipped for (not kept).`)],
+    [/^risky move stays$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: stays where it is (not kept).`)],
+    [/^attach your best equipment to this creature$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); const eq = permanents(g).filter(c => isA(c, 'equipment')).sort((a, b) => (!a.attachedTo - !b.attachedTo) * -1 || cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (me && eq && me.zone === 'battlefield') G.attach(g, eq.iid, me.iid, attachBonus(oracleText(eq, defOf))); }, (m, ctx) => !!ctx.self],
+    [/^attach your best equipment to your best rebel$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const r = creatures(g, c => isA(c, 'rebel')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; const eq = permanents(g).filter(c => isA(c, 'equipment') && c.attachedTo !== (r && r.iid)).sort((a, b) => (!b.attachedTo - !a.attachedTo) || cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (r && eq) G.attach(g, eq.iid, r.iid, attachBonus(oracleText(eq, defOf))); }],
+    [/^cloud's attack$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); const n = creatures(g, c => c.attacking && permanents(g).some(e => isA(e, 'equipment') && e.attachedTo === c.iid)).length; if (n) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); if (me && stats(me, factsOf(me, defOf)).pow >= 7) artifactTokens(g, me, 2, 'treasure'); }],
+    [/^aerith raises the fallen$/i, (g, m, ctx) => { if (g.gainTurn !== g.turn) return; const defOf = defOfCtx(ctx); const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; G.move(g, c.iid, condition(g, 'you gained 7 or more life this turn', ctx) ? 'battlefield' : 'hand', { put: true }); }],
+    [/^barret fires for each equipped creature$/i, (g, m, ctx) => { const n = creatures(g, c => permanents(g).some(e => isA(e, 'equipment') && e.attachedTo === c.iid)).length; if (n && ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^your best creature gets the exiled card's mana value$/i, (g, m, ctx) => { const c = g.cards[g.zones.exile[g.zones.exile.length - 1]]; const n = c ? cmcOfInst(c, defOfCtx(ctx)) : 0; const best = creatures(g, x => x.attacking || !x.tapped).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (n && best) pumpBy(best, n, 0); }],
+    [/^destroy the opponent's best tapped creature$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => x.tapped && !stats(x, factsOf(x, defOf)).kw.has('indestructible')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }, (m, ctx) => !!ctx.other],
+    [/^the shuriken conforms$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => !x.tapped).sort((a, b) => stats(b, factsOf(b, defOf)).pow - stats(a, factsOf(a, defOf)).pow)[0]; if (!c) return; c.tapped = true; const d = me ? stats(c, factsOf(c, defOf)).pow - stats(me, factsOf(me, defOf)).pow : 0; if (d > 0) G.counter(g, me.iid, '+1/+1', d, { effect: true }); }],
+    [/^furious rise keeps the card playable$/i, (g, m, ctx) => { const me = ctx.self; const c = g.cards[g.zones.exile[g.zones.exile.length - 1]]; if (!me || !c) return; const prev = g.cards[me.riseCard]; if (prev && prev.zone === 'exile') delete prev.playable; c.playable = { forever: true }; me.riseCard = c.iid; }],
+    [/^lifestream's blessing$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const x = Math.max(0, ...creatures(g).map(c => stats(c, factsOf(c, defOf)).pow)); if (x) G.drawCards(g, x, isOpps(gameOf(g, ctx) || g, g)); if (x && ctx.self && ctx.self.castFrom === 'exile') runEffect(g, `you gain ${2 * x} life`, ctx); }],
+    [/^jenova cells$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const modified = c => Object.values(c.counters || {}).some(v => v > 0) || permanents(g).some(a => a.attachedTo === c.iid); const c = creatures(g, x => !modified(x)).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.counter(g, c.iid, 'cell', 1, { effect: true }); creatures(g, modified).forEach(x => { x.becomes = { pt: '7/5', types: [], kw: [], turn: g.turn }; }); }],
+    [/^the opponent's three best creatures can't block this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (o && o.zones) creatures(o, x => !x.tapped).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf)).slice(0, 3).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), "can't block"])] }; }); }, (m, ctx) => !!ctx.other],
+    [/^kujata burns a discard$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const lands = permanents(g).filter(G.isLand).length; const c = g.zones.hand.map(iid => g.cards[iid]).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (c) { const n = cmcOfInst(c, defOf); G.move(g, c.iid, 'graveyard'); if (n && ctx.hitOpps && lands >= 0) ctx.hitOpps(n, true); } G.drawCards(g, 2, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^tifa takes another combat$/i, (g, m, ctx) => { if (g.tifaTurn === g.turn) return; g.tifaTurn = g.turn; return runEffect(g, 'there is an additional combat phase after this phase', ctx); }],
+    [/^if foretold, prevent all damage that would be dealt to you this turn$/i, (g, m, ctx) => { if (ctx.self && ctx.self.castFrom === 'exile') return runEffect(g, 'prevent all damage that would be dealt to you this turn', ctx); }],
+    [/^if foretold, destroy the opponent's best artifact or land$/i, (g, m, ctx) => { if (!ctx.self || ctx.self.castFrom !== 'exile') return; const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => (isA(x, 'artifact') || G.isLand(x)) && !stats(x, factsOf(x, defOf)).kw.has('indestructible')).sort((a, b) => (G.producesOf(b).length - G.producesOf(a).length) || worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }],
+    [/^no other opponent$/i, () => {}], // Vincent (two players)
+    // ---- 20-23 decks, chunk 2 (settleNear) ----
+    [/^leori picks a planeswalker type$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: no copies (not kept).`)],
+    [/^choose a direction$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: nothing to do with two players.`)], // Teyo, Vronos +1
+    [/^the beacon lends a loyalty counter$/i, (g, m, ctx) => { const me = ctx.self; const pw = ctx.entered; if (!me || !pw || !((me.counters || {}).loyalty > 0)) return; G.counter(g, me.iid, 'loyalty', -1); G.counter(g, pw.iid, 'loyalty', 1, { effect: true }); }, (m, ctx) => !!ctx.self],
+    [/^your planeswalkers become birds$/i, g => { permanents(g).filter(isPlaneswalker).forEach(c => { c.becomes = { pt: '3/3', types: ['bird'], kw: ['flying', 'hexproof'], turn: g.turn }; }); }],
+    [/^your best artifact becomes a 9\/9 construct$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = permanents(g).filter(x => isA(x, 'artifact') && !G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0] || permanents(g).filter(x => isA(x, 'artifact')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) c.becomes = { pt: '9/9', types: ['construct', 'artifact'], kw: ['vigilance', 'indestructible', 'unblockable'], forever: true }; }],
+    [/^chandra trades loyalty for cards$/i, g => { const pws = permanents(g).filter(c => ((c.counters || {}).loyalty || 0) >= 2); pws.forEach(c => G.counter(g, c.iid, 'loyalty', -1)); g.zones.library.slice(0, pws.length).forEach(iid => { G.move(g, iid, 'exile'); g.cards[iid].playable = { turn: g.turn }; }); }],
+    [/^guff rewrites history$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const o = otherOf(g, ctx) || otherTable(g); [[o, (a, b) => worthOf(b, defOf) - worthOf(a, defOf)], [g, (a, b) => worthOf(a, defOf) - worthOf(b, defOf)]].filter(x => x[0] && x[0].zones).forEach(([t, by]) => { const c = permanents(t).filter(x => !G.isLand(x) && !isA(x, 'enchantment') && !x.commander).sort(by)[0]; if (!c) return; G.move(t, c.iid, 'library'); G.shuffle(t); const seen = []; let hit = null; while (t.zones.library.length && !hit) { const iid = t.zones.library[0]; G.move(t, iid, 'exile'); if (G.isLand(t.cards[iid])) seen.push(iid); else hit = t.cards[iid]; } G.shuffleArray(seen).forEach(iid => G.move(t, iid, 'library', { bottom: true })); if (hit) castFree(t, hit, { other: t === g ? o : g, defOf }, defOf); }); }, (m, ctx) => !!ctx.other],
+    [/^deploy the gatewatch$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const ids = g.zones.library.slice(0, 7); const pws = ids.filter(iid => isA(g.cards[iid], 'planeswalker')).sort((a, b) => cmcOfInst(g.cards[b], defOf) - cmcOfInst(g.cards[a], defOf)).slice(0, 2); pws.forEach(iid => G.move(g, iid, 'battlefield', { put: true })); G.shuffleArray(ids.filter(iid => !pws.includes(iid))).forEach(iid => G.move(g, iid, 'library', { bottom: true })); }],
+    [/^a kicked jace copies itself$/i, (g, m, ctx) => { const me = ctx.self; if (!me || !me.kicked || me.zone !== 'battlefield') return; const tok = G.copyAsToken(g, me.iid); if (!tok) return; tok.typeLine = String(tok.typeLine || '').replace(/^legendary /i, ''); tok.counters = { ...(tok.counters || {}), loyalty: 1 }; }, (m, ctx) => !!ctx.self],
+    [/^jace pays for the card drawn$/i, (g, m, ctx) => { const me = ctx.self; G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); const c = g.cards[g.zones.hand[g.zones.hand.length - 1]]; const n = c ? cmcOfInst(c, defOfCtx(ctx)) : 0; if (me && n) { G.counter(g, me.iid, 'loyalty', -n); if (me.zone === 'battlefield' && !((me.counters || {}).loyalty > 0)) G.move(g, me.iid, 'graveyard'); } }],
+    [/^chandra exiles the top card to cast$/i, (g, m, ctx) => { const top = g.cards[g.zones.library[0]]; if (!top) return; G.move(g, top.iid, 'exile'); if (!G.isLand(top) && cmcOfInst(top, defOfCtx(ctx)) <= permanents(g).filter(G.isLand).length) top.playable = { turn: g.turn }; else if (ctx.hitOpps) ctx.hitOpps(2, true); }],
+    [/^copy your next spell or loyalty ability twice$/i, g => { g.copyNextTurn = g.turn; g.copyNextN = 2; g.reverbTurn = g.turn; }], // Repeated Reverberation (spellCast; app.js's activateLoyalty)
+    [/^the dragons answer the attacker$/i, () => {}], // Sarkhan the Masterless (nearAttack does it)
+    [/^your planeswalkers become dragons$/i, g => { permanents(g).filter(isPlaneswalker).forEach(c => { c.becomes = { pt: '4/4', types: ['dragon'], kw: ['flying'], turn: g.turn }; }); }],
+    [/^narset draws and flings a card$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); const o = otherOf(g, ctx) || otherTable(g); const card = g.zones.hand.map(iid => g.cards[iid]).filter(c => !G.isLand(c)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf)).find(c => o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).tou <= cmcOfInst(c, defOf)).length && cmcOfInst(c, defOf) > permanents(g).filter(G.isLand).length + 1); if (!card) return; const n = cmcOfInst(card, defOf); G.move(g, card.iid, 'graveyard'); const t = creatures(o, x => stats(x, factsOf(x, defOf)).tou <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (t) applyTarget(gameOf(g, ctx) || g, o, t, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); }],
+    [/^narset reveals four free spells$/i, g => { g.zones.library.slice(0, 4).forEach(iid => { G.move(g, iid, 'exile'); const c = g.cards[iid]; if (!G.isLand(c) && !G.isCreature(c)) c.playable = { turn: g.turn, free: true }; }); }],
+    [/^blink your best entering permanent until the end step$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const c = permanents(g).filter(x => x !== ctx.self && !x.token && !x.commander && oracleLines(x, defOf).some(l => /^when .+ enters\b/i.test(l))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c || !game) return; G.move(g, c.iid, 'exile'); atNextEnd(game, g, { fromExile: c.iid, why: nameOfSrc(ctx) }); }],
+    [/^you lose 2 life unless you used a loyalty ability$/i, (g, m, ctx) => { if (g.loyaltyActTurn !== g.turn) runEffect(g, 'you lose 2 life', ctx); }],
+    [/^your planeswalkers may act again$/i, g => { permanents(g).filter(isPlaneswalker).forEach(c => { delete c.loyaltyTurn; delete c.loyaltyTwice; }); }],
+    [/^dryads for your commander casts$/i, (g, m, ctx) => { const n = Object.values(g.cards).filter(c => c.commander).reduce((k, c) => k + (c.castCount || 0), 0); for (let i = 0; i < n; i++) { const tok = G.createToken(g, { custom: true, name: 'Forest Dryad', typeLine: 'Token Land Creature — Forest Dryad', pt: '1/1', text: '' }, { quiet: true }); if (tok) tok.tokenColors = ['G']; } }],
+    [/^march from velis vel$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const basics = ['plains', 'island', 'swamp', 'mountain', 'forest']; const kinds = {}; permanents(g).filter(G.isLand).forEach(l => (String(front(l.typeLine || '')).split('—')[1] || '').toLowerCase().split(/\s+/).filter(k => k && !basics.includes(k)).forEach(k => { kinds[k] = (kinds[k] || 0) + 1; })); const k = Object.entries(kinds).sort((a, b) => b[1] - a[1]).map(x => x[0])[0]; const c = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!k || !c) return; const x = stats(c, factsOf(c, defOf)); permanents(g).filter(l => G.isLand(l) && isA(l, k)).forEach(l => { l.becomes = { pt: `${x.pow}/${x.tou}`, types: creatureTypes(c), kw: [...x.kw, 'haste'], turn: g.turn }; }); }],
+    [/^draw, and discard unless the land was special$/i, (g, m, ctx) => { G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); const basics = ['plains', 'island', 'swamp', 'mountain', 'forest']; const special = g.zones.hand.map(iid => g.cards[iid]).some(c => G.isLand(c) && (String(front(c.typeLine || '')).split('—')[1] || '').toLowerCase().split(/\s+/).some(k => k && !basics.includes(k))); if (special) return; const w = worstInHand(g); if (w) G.move(g, w, 'graveyard'); }],
+    [/^sand warriors for your deserts$/i, (g, m, ctx) => { const n = permanents(g).filter(c => isDesert(c, g, defOfCtx(ctx))).length; if (n < 5) return; for (let i = 0; i < n; i++) { const tok = G.createToken(g, { custom: true, name: 'Sand Warrior', typeLine: 'Token Creature — Sand Warrior', pt: '1/1', text: '' }, { quiet: true }); if (tok) { tok.tokenColors = ['R', 'G', 'W']; tok.pump = { pow: 0, tou: 0, kw: ['haste'] }; } } }],
+    [/^a land of yours becomes a citizen of the gates$/i, g => { const n = 2 * permanents(g).filter(c => isA(c, 'gate')).length; const l = permanents(g).filter(c => G.isLand(c) && !G.isCreature(c)).sort((a, b) => (a.tapped - b.tapped))[0]; if (!n || !l) return; l.becomes = { pt: `${n}/${n}`, types: ['citizen'], kw: ['haste'], turn: g.turn }; }],
+    [/^frogantua mills and keeps the lands$/i, (g, m, ctx) => { const me = ctx.self; const n = me ? Math.max(0, stats(me, factsOf(me, defOfCtx(ctx))).pow) : 0; const ids = g.zones.library.slice(0, n); G.mill(g, n); ids.filter(iid => g.cards[iid].zone === 'graveyard' && G.isLand(g.cards[iid])).forEach(iid => { G.move(g, iid, 'battlefield', { put: true }); g.cards[iid].tapped = true; }); }],
+    [/^copy your next spell this turn$/i, g => { g.copyNextTurn = g.turn; g.copyNextN = 1; }], // Sunken Palace
+    [/^exile seven of your graveyard cards$/i, g => { g.zones.graveyard.slice(0, 7).forEach(iid => G.move(g, iid, 'exile')); }], // Sunken Palace's cost
+    [/^add two mana of different colors$/i, g => { const a = neededColor(g); g.mana[a] = (g.mana[a] || 0) + 1; const b = WUBRG.find(k => k !== a); g.mana[b] = (g.mana[b] || 0) + 1; }], // Interplanar Beacon
+    [/^add one mana of any type that a land you control could produce$/i, g => { const k = neededColor(g); g.mana[k] = (g.mana[k] || 0) + 1; }], // Horizon of Progress
+    [/^aggressive biomancy$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const x = (ctx.self && ctx.self.xValue) || 0; const c = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; const o = otherOf(g, ctx) || otherTable(g); if (!c || !x) return; for (let i = 0; i < x; i++) { const tok = G.copyAsToken(g, c.iid); const foe = tok && o && o.zones && creatures(o, f => stats(f, factsOf(f, defOf)).tou <= stats(tok, factsOf(tok, defOf)).pow).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (foe && game) fightOn(game, g, tok, o, foe, defOf); } }],
+    [/^the opponent's best creature phases out$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) { c.phasedOut = true; delete c.attacking; } }],
+    [/^untap (\w+) of your lands$/i, (g, m) => { permanents(g).filter(c => G.isLand(c) && c.tapped).slice(0, toNumber(m[1]) || 0).forEach(c => { c.tapped = false; c.tappedFor = null; }); }],
+    [/^blast the charge counters$/i, (g, m, ctx) => { const n = ((ctx.self && ctx.self.counters) || {}).charge || 0; const defOf = defOfCtx(ctx); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => permanents(t).filter(c => !G.isLand(c) && cmcOfInst(c, defOf) === n && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^sacrifice this unless it escaped$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.zone === 'battlefield' && !me.escaped) G.move(g, me.iid, me.commander ? 'command' : 'graveyard'); }, (m, ctx) => !!ctx.self],
+    [/^dark depths thaws$/i, (g, m, ctx) => { const me = ctx.self; if (!me || me.zone !== 'battlefield') return; if (((me.counters || {}).ice || 0) > 0) G.counter(g, me.iid, 'ice', -1); if (((me.counters || {}).ice || 0) > 0) return; G.move(g, me.iid, 'graveyard'); const tok = G.createToken(g, { custom: true, name: 'Marit Lage', typeLine: 'Legendary Token Creature — Avatar', pt: '20/20', text: 'Flying, indestructible' }, { quiet: true }); if (tok) tok.tokenColors = ['B']; G.log(g, 'Dark Depths: Marit Lage arrives.'); }, (m, ctx) => !!ctx.self],
+    [/^the opponent fetches a basic land$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const iid = o && o.zones && o.zones.library.find(i => /\bbasic\b/i.test(o.cards[i].typeLine || '') && G.isLand(o.cards[i])); if (iid) { G.move(o, iid, 'battlefield', { put: true }); G.shuffle(o); } }],
+    // ---- 20-23 decks, chunk 1 (settleNear) ----
+    [/^the opponent's best creature can't attack or block this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), "can't attack", "can't block"])] }; }, (m, ctx) => !!ctx.other], // Endbringer
+    [/^mirko raises a smaller creature$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (!me) return; const p = stats(me, factsOf(me, defOf)).pow; const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x) && num(factsOf(x, defOf).power) < p).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; G.move(g, c.iid, 'battlefield', { put: true }); G.counter(g, c.iid, 'finality', 1); }, (m, ctx) => !!ctx.self],
+    [/^the steamboat takes two from each player$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (!me) return; [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => creatures(t, c => !c.token && !G.isVehicle(c) && c !== me).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)).slice(0, 2).forEach(c => { G.move(t, c.iid, 'exile'); c.exiledWith = me.iid; c.returnWhenGone = true; })); }, (m, ctx) => !!ctx.self],
+    [/^the steamboat drops one off and investigates$/i, (g, m, ctx) => { const me = ctx.self; if (!me) return; const x = [otherOf(g, ctx) || otherTable(g), g].filter(t => t && t.zones).flatMap(t => t.zones.exile.map(iid => ({ t, c: t.cards[iid] }))).find(y => y.c.exiledWith === me.iid); if (!x) return; delete x.c.returnWhenGone; G.move(x.t, x.c.iid, 'graveyard'); runEffect(g, 'investigate', ctx); }, (m, ctx) => !!ctx.self],
+    [/^an instant or sorcery card in your graveyard is castable this turn, exiled after$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => x !== ctx.self && /\b(instant|sorcery)\b/i.test(front(x.typeLine || ''))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; c.graveOkTurn = g.turn; c.castAftermath = true; }],
+    [/^lazav copies a graveyard creature with mana value (\w+)$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); const n = toNumber(m[1]); const c = me && g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x) && cmcOfInst(x, defOf) === n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; const keep = oracleLines(me, defOf).find(l => /^\{x\}: .+ becomes a copy of target creature card in your graveyard/i.test(l)); me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.typeLine = `Legendary ${front(c.typeLine).replace(/^legendary /i, '')}`; if (me.bot) me.bot = facts(defOf(c.id) || { typeLine: me.typeLine }); if (keep) me.keepLines = [keep]; }, (m, ctx) => !!ctx.self],
+    [/^pay 1 life to return this card from your graveyard$/i, (g, m, ctx) => { const me = ctx.self; if (!me || me.zone !== 'graveyard' || lifeOfTable(g, ctx) <= 5) return; runEffect(g, 'you lose 1 life', ctx); G.move(g, me.iid, 'hand'); }],
+    [/^the opponent returns its costliest permanent and discards$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; const c = permanents(o).filter(x => !G.isLand(x)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'hand'); const w = worstInHand(o); if (w) G.move(o, w, 'graveyard'); }, (m, ctx) => !!ctx.other],
+    [/^benthic copies the opponent's best creature$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; const st1 = stats(c, factsOf(c, defOf)); const tok = G.createToken(g, { id: c.id, name: c.name, typeLine: front(c.typeLine) }, { quiet: true }); if (!tok) return; tok.becomes = { pt: `${st1.pow}/${st1.tou}`, types: ['eldrazi'], kw: [], forever: true }; tok.tokenColors = []; G.log(g, `${nameOfSrc(ctx)}: a ${st1.pow}/${st1.tou} Eldrazi copy of ${c.name}.`); }, (m, ctx) => !!ctx.other],
+    [/^selective obliteration$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => { const by = {}; permanents(t).forEach(c => colorsOfInst(c, defOf).forEach(k => { by[k] = (by[k] || 0) + worthOf(c, defOf); })); const keep = Object.entries(by).sort((a, b) => b[1] - a[1]).map(x => x[0])[0]; permanents(t).filter(c => { const cs = colorsOfInst(c, defOf); return cs.length && !(cs.length === 1 && cs[0] === keep); }).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'exile')); }); }],
+    [/^trade your 1s for eldrazi angels$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const list = creatures(g, c => c !== ctx.self && !c.commander && (num(factsOf(c, defOf).power) <= 1 || num(factsOf(c, defOf).toughness) <= 1)); list.forEach(c => G.move(g, c.iid, 'graveyard')); for (let i = 0; i < list.length; i++) runEffect(g, 'create a 4/4 colorless Eldrazi Angel creature token with flying and vigilance', ctx); }],
+    [/^the mindrender steals the next spell for life$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; let c = null; while (o.zones.library.length && !c) { const iid = o.zones.library[0]; G.move(o, iid, 'exile'); if (!G.isLand(o.cards[iid])) c = o.cards[iid]; } if (!c) return; const mine = takeCard(o, c.iid, g, 'exile', { quiet: true, defOf }); const k = cmcOfInst(mine, defOf); if (lifeOfTable(g, ctx) <= k + 5) return; runEffect(g, `you lose ${k} life`, ctx); mine.playable = { turn: g.turn, free: true }; }, (m, ctx) => !!ctx.other],
+    [/^the twins pick the opponent's blockers$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; const odd = creatures(o, c => !c.tapped && cmcOfInst(c, defOf) % 2 === 1); const even = creatures(o, c => !c.tapped && cmcOfInst(c, defOf) % 2 === 0); const sum = l => l.reduce((n, c) => n + worthOf(c, defOf), 0); (sum(odd) >= sum(even) ? odd : even).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), "can't block"])] }; }); }, (m, ctx) => !!ctx.other],
+    [/^the cultist takes counters for a discount$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const total = c => Object.values(c.counters || {}).reduce((n, k) => n + Math.max(0, k || 0), 0); const c = o && o.zones && permanents(o).filter(x => total(x) > 0).sort((a, b) => total(b) - total(a))[0]; const n = c ? total(c) : 0; if (c) c.counters = {}; if (n) g.cultistNext = { turn: g.turn, n }; }], // Mutated Cultist (selfDiscount; spellCast uses it up)
+    [/^blink the opponent's best nonland permanent tapped$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; const c = permanents(o).filter(x => !G.isLand(x) && x !== ctx.self).sort((a, b) => (b.token - a.token) || worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; G.move(o, c.iid, 'exile'); if (c.token || o.cards[c.iid] !== c) return; G.move(o, c.iid, 'battlefield', { put: true }); c.tapped = true; }, (m, ctx) => !!ctx.other],
+    [/^the behemoth inverts$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); creatures(g, c => { const x = stats(c, factsOf(c, defOf)); return x.tou > x.pow; }).forEach(c => { const x = stats(c, factsOf(c, defOf)); pumpBy(c, x.tou - x.pow, x.pow - x.tou); }); const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones) creatures(o, c => stats(c, factsOf(c, defOf)).pow <= 0).forEach(c => { const x = stats(c, factsOf(c, defOf)); pumpBy(c, x.tou - x.pow, x.pow - x.tou); }); }],
+    [/^ugin hides a card under a spirit$/i, (g, m, ctx) => { const top = g.zones.library[0]; if (top) { G.move(g, top, 'exile'); g.cards[top].faceDown = true; } const tok = G.createToken(g, { custom: true, name: 'Spirit', typeLine: 'Token Creature — Spirit', pt: '2/2', text: '' }, { quiet: true }); if (tok) { tok.tokenColors = []; if (top) tok.uginCard = top; } }], // the card comes back as the token leaves (cardMoved)
+    [/^the opponent exiles its top two cards$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones) o.zones.library.slice(0, 2).forEach(iid => G.move(o, iid, 'exile')); }],
+    [/^scions for your nontoken dead$/i, (g, m, ctx) => { const n = g.myDeathsTurn === g.turn ? (g.myDead || []).filter(d => !d.token).length : 0; for (let i = 0; i < n; i++) runEffect(g, 'create a 1/1 colorless Eldrazi Scion creature token with "Sacrifice this token: Add {C}."', ctx); }],
+    [/^process two to counter target spell$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const ids = o && o.zones ? o.zones.exile.filter(iid => !o.cards[iid].suspended && !o.cards[iid].playable) : []; if (ids.length < 2) return; ids.slice(0, 2).forEach(iid => G.move(o, iid, 'graveyard')); return runEffect(g, 'counter target spell', ctx); }],
+    [/^exile the opponent's best creature with power or toughness 1 or less$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => { const y = stats(x, factsOf(x, defOf)); return y.pow <= 1 || y.tou <= 1; }).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'exile'); }, (m, ctx) => !!ctx.other],
+    [/^stir up a colorless card$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const ids = g.zones.library.slice(0, 5); const lands = permanents(g).filter(G.isLand).length; const pick = ids.filter(iid => !colorsOfInst(g.cards[iid], defOf).length).sort((a, b) => { const v = c => (G.isLand(c) ? (lands < 5 ? 20 : 0) : 5 + cmcOfInst(c, defOf)); return v(g.cards[b]) - v(g.cards[a]); })[0]; if (pick) G.move(g, pick, 'hand'); ids.filter(iid => iid !== pick).forEach(iid => G.move(g, iid, 'library', { bottom: true })); }],
+    // ---- Miracle Worker, Maestros Massacre, Timeless Wisdom (settleNear) ----
+    [/^the master of keys grows and mills$/i, (g, m, ctx) => { const me = ctx.self; const x = (me && me.xValue) || 0; if (!x) return; if (me.zone === 'battlefield') G.counter(g, me.iid, '+1/+1', x, { effect: true }); G.mill(g, 2 * x); }],
+    [/^counters for the spell on your best creature$/i, (g, m, ctx) => { const n = ctx.castSpell ? cmcOfInst(ctx.castSpell, defOfCtx(ctx)) : 0; const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (n && c) G.counter(g, c.iid, '+1/+1', n, { effect: true }); }],
+    [/^the vents burn the opponent's best creature$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!o || !o.zones) return; const c = creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; const left = Math.max(0, stats(c, factsOf(c, defOf)).tou - (c.damageTaken || 0)); applyTarget(game || g, o, c, { action: 'damage', n: 6, what: 'creature' }, nameOfSrc(ctx), defOf, g); if (game && 6 > left) addLife(game, g === game ? 'you' : 'opp', 6 - left); }],
+    [/^bounce your cheapest nonland permanent to draw$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = permanents(g).filter(x => !G.isLand(x) && !x.token && !x.owner && !x.commander && x !== ctx.self && cmcOfInst(x, defOf) <= 3).sort((a, b) => cmcOfInst(a, defOf) - cmcOfInst(b, defOf))[0]; if (!c) return; G.move(g, c.iid, 'hand'); G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^arvinox takes the bottom card$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (!o || !o.zones || !o.zones.library.length) return; const c = takeCard(o, o.zones.library[o.zones.library.length - 1], g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); if (c && !G.isLand(c) && !/\b(instant|sorcery)\b/i.test(front(c.typeLine || ''))) c.playable = { forever: true, anyMana: true }; }],
+    [/^the shepherd remakes the dead as a nightmare$/i, (g, m, ctx) => { const d = ctx.dead; if (!d || g.cards[d.iid] !== d || d.zone !== 'graveyard') return; G.move(g, d.iid, 'exile'); const tok = G.copyAsToken(g, d.iid); if (tok) tok.becomes = { pt: '1/1', types: ['nightmare'], kw: [], forever: true }; }],
+    [/^spirit-sister's call trades up$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const cards = g.zones.graveyard.map(iid => g.cards[iid]).filter(c => PERM_TYPES.some(k => isA(c, k))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf)); for (const card of cards) { const kinds = PERM_TYPES.filter(k => isA(card, k)); const fodder = permanents(g).filter(p => !p.commander && kinds.some(k => isA(p, k)) && (p.token || cmcOfInst(p, defOf) < cmcOfInst(card, defOf))).sort((a, b) => (b.token - a.token) || cmcOfInst(a, defOf) - cmcOfInst(b, defOf))[0]; if (!fodder) continue; G.move(g, fodder.iid, 'graveyard'); G.move(g, card.iid, 'battlefield', { put: true }); card.exileOnLeave = true; return; } }],
+    [/^diabolic vision$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 5); const lands = permanents(g).filter(G.isLand).length; const want = c => (G.isLand(c) ? (lands < 5 ? 10 : 0) : cmcOfInst(c, defOfCtx(ctx)) <= lands + 1 ? 5 + cmcOfInst(c, defOfCtx(ctx)) : 1); const best = [...ids].sort((a, b) => want(g.cards[b]) - want(g.cards[a]))[0]; if (best) G.move(g, best, 'hand'); }],
+    [/^discard two cards or an enchantment$/i, (g, m, ctx) => { const ench = g.zones.hand.map(iid => g.cards[iid]).filter(c => isA(c, 'enchantment')).sort((a, b) => cmcOfInst(a, defOfCtx(ctx)) - cmcOfInst(b, defOfCtx(ctx)))[0]; if (ench) return G.move(g, ench.iid, 'graveyard'); for (let i = 0; i < 2; i++) { const w = worstInHand(g); if (w) G.move(g, w, 'graveyard'); } }],
+    [/^your spells this turn cost one less$/i, g => { g.sopranoN = (g.sopranoTurn === g.turn ? g.sopranoN || 0 : 0) + 1; g.sopranoTurn = g.turn; }], // Spellbinding Soprano (selfDiscount)
+    [/^the concierge suspends itself and a foe$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (!me || g.cards[me.iid] !== me || me.zone !== 'graveyard') return; G.move(g, me.iid, 'exile'); me.counters = { ...(me.counters || {}), time: 3 }; me.suspended = true; const o = otherOf(g, ctx) || otherTable(g); const c = o && o.zones && creatures(o, x => !x.commander).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; G.move(o, c.iid, 'exile'); if (!c.token) { c.counters = { ...(c.counters || {}), time: 3 }; c.suspended = true; } }],
+    [/^your best phoenix burns if a creature left your graveyard$/i, (g, m, ctx) => { if (g.creatureLeftGraveTurn !== g.turn) return; const defOf = defOfCtx(ctx); const p = creatures(g, c => isA(c, 'phoenix')).map(c => stats(c, factsOf(c, defOf)).pow).sort((a, b) => b - a)[0]; if (p > 0 && ctx.hitOpps) ctx.hitOpps(p, true); }],
+    [/^this card is castable from your graveyard this turn$/i, (g, m, ctx) => { if (ctx.self && ctx.self.zone === 'graveyard' && !g.offTurn) ctx.self.graveOkTurn = g.turn; }], // Syrix, Skyclave Shade (nearDied, landEnteredNow when it's in the graveyard)
+    [/^make an example$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; const piles = [[], []]; const sum = k => piles[k].reduce((n, c) => n + worthOf(c, defOf), 0); creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf)).forEach(c => piles[sum(0) <= sum(1) ? 0 : 1].push(c)); piles[sum(0) >= sum(1) ? 0 : 1].forEach(c => G.move(o, c.iid, c.commander ? 'command' : 'graveyard')); }, (m, ctx) => !!ctx.other],
+    [/^the opponent's nonland permanents go home$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (!o || !o.zones) return; permanents(o).filter(c => !G.isLand(c)).forEach(c => G.move(o, c.iid, c.commander ? 'command' : 'hand')); }, (m, ctx) => !!ctx.other],
+    [/^xander takes the top card for life$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones || !o.zones.library.length) return; const c = takeCard(o, o.zones.library[0], g, 'exile', { quiet: true, defOf }); if (!c || G.isLand(c)) return; const k = cmcOfInst(c, defOf); if (lifeOfTable(g, ctx) <= k + 5) return; runEffect(g, `you lose ${k} life`, ctx); c.playable = { turn: g.turn, free: true }; }, (m, ctx) => !!ctx.other],
+    [/^friend and foe$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const mine = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (mine) G.copyAsToken(g, mine.iid); const o = otherOf(g, ctx) || otherTable(g); const foe = o && o.zones && creatures(o).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (foe) G.move(o, foe.iid, foe.commander ? 'command' : 'hand'); }],
+    [/^dig five, keep one, bin the rest$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 5); const lands = permanents(g).filter(G.isLand).length; const want = c => (G.isLand(c) ? (lands < 5 ? 10 : 0) : cmcOfInst(c, defOfCtx(ctx)) <= lands + 1 ? 5 + cmcOfInst(c, defOfCtx(ctx)) : 1); const best = [...ids].sort((a, b) => want(g.cards[b]) - want(g.cards[a]))[0]; ids.forEach(iid => G.move(g, iid, iid === best ? 'hand' : 'graveyard')); }],
+    [/^waste management$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; const pile = o.zones.graveyard.map(iid => o.cards[iid]).sort((a, b) => (G.isCreature(b) - G.isCreature(a)) || cmcOfInst(b, defOf) - cmcOfInst(a, defOf)); const gone = ctx.self && ctx.self.kicked ? pile : pile.slice(0, 2); const n = gone.filter(c => G.isCreature(c)).length; gone.forEach(c => G.move(o, c.iid, 'exile')); for (let i = 0; i < n; i++) runEffect(g, 'create a 2/2 black Rogue creature token', ctx); }],
+    [/^the audacious swap$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; const c = permanents(o).filter(x => !G.isLand(x) && !isA(x, 'enchantment') && !x.commander).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; G.move(o, c.iid, 'library'); G.shuffle(o); const top = o.cards[o.zones.library[0]]; if (!top) return; G.move(o, top.iid, 'exile'); if (G.isLand(top)) G.move(o, top.iid, 'battlefield', { put: true }); else castFree(o, top, { defOf }, defOf); }, (m, ctx) => !!ctx.other],
+    [/^draw for your dead this turn$/i, (g, m, ctx) => { const n = g.myDeathsTurn === g.turn ? g.myDeaths || 0 : 0; if (n) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^the buggy goes home if its card is gone$/i, (g, m, ctx) => { const me = ctx.self; if (!me || me.zone !== 'battlefield') return; if (!g.zones.exile.some(iid => g.cards[iid].exiledWith === me.iid || g.cards[iid].hideawayOf === me.iid)) G.move(g, me.iid, 'hand'); }, (m, ctx) => !!ctx.self],
+    [/^pursue the fallen spell$/i, (g, m, ctx) => { const d = ctx.dead; if (!d || g.cards[d.iid] !== d || d.zone !== 'graveyard' || !/\b(instant|sorcery)\b/i.test(front(d.typeLine || ''))) return; G.move(g, d.iid, 'exile'); d.playable = { until: g.turn + 1 }; }],
+    [/^wheel your hand plus one$/i, (g, m, ctx) => { const n = g.zones.hand.length; [...g.zones.hand].forEach(iid => G.move(g, iid, 'graveyard')); G.drawCards(g, n + 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^the herald returns the cyclers$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); g.zones.graveyard.map(iid => g.cards[iid]).filter(c => PERM_TYPES.some(k => isA(c, k)) && hasCycling(c, defOf)).forEach(c => G.move(g, c.iid, 'battlefield', { put: true })); }],
+    [/^the forager returns a delved spell$/i, (g, m, ctx) => { const me = ctx.self; const c = me && g.zones.exile.map(iid => g.cards[iid]).filter(x => x.exiledWith === me.iid && /\b(instant|sorcery)\b/i.test(front(x.typeLine || ''))).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^a cycling spell returns to your hand$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => /\b(instant|sorcery)\b/i.test(front(x.typeLine || '')) && hasCycling(x, defOf)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^this card returns to your hand if you cycled twice$/i, (g, m, ctx) => { if (ctx.self && ctx.self.zone === 'graveyard' && g.cycleTurn === g.turn && g.cycleCount >= 2) G.move(g, ctx.self.iid, 'hand'); }],
+    [/^counter target activated or triggered ability you don't control$/i, (g, m, ctx) => G.log(g, `${nameOfSrc(ctx)}: no ability to counter.`)], // Nimble Obstructionist (abilities on the stack aren't kept)
+    [/^the moloch frees a cycler$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => hasCycling(x, defOf)).sort((a, b) => (G.isLand(a) - G.isLand(b)) || cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; G.move(g, c.iid, 'exile'); c.playable = { until: g.turn + 1 }; }],
+    [/^zenith flare$/i, (g, m, ctx) => { const n = g.zones.graveyard.filter(iid => hasCycling(g.cards[iid], defOfCtx(ctx))).length; const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!n) return; if (ctx.hitOpps) ctx.hitOpps(n, true); if (game) addLife(game, g === game ? 'you' : 'opp', n); }],
+    // ---- 16-20 decks, chunk 4 (settleNear) ----
+    [/^your best party attacker is shielded and explores$/i, (g, m, ctx) => { const c = creatures(g, x => x.attacking && PARTY.some(k => isA(x, k))).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'protection from creature'])] }; runEffect(g, 'it explores', { ...ctx, self: c }); }],
+    [/^your best creature card with power (\d+) or less returns tapped$/i, (g, m, ctx) => { const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x) && num(factsOf(x, defOfCtx(ctx)).power) <= Number(m[1])).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) { G.move(g, c.iid, 'battlefield', { put: true }); c.tapped = true; } }],
+    [/^pay \{1\} to loot$/i, (g, m, ctx) => { const opp = isOpps(gameOf(g, ctx) || g, g); if (!g.zones.hand.length || !(opp ? affordable(g, '{1}', 0) : G.autoPay(JSON.parse(JSON.stringify(g)), '{1}'))) return; if (opp) onOpp(gameOf(g, ctx), () => G.autoPay(g, '{1}')); else G.autoPay(g, '{1}'); const w = worstInHand(g); if (w) G.move(g, w, 'graveyard'); G.drawCards(g, 1, opp); }],
+    [/^trade your spare cards, plus one$/i, (g, m, ctx) => { const lands = permanents(g).filter(G.isLand).length; const away = g.zones.hand.filter(iid => { const c = g.cards[iid]; return G.isLand(c) ? lands >= 5 : cmcOfInst(c, defOfCtx(ctx)) > lands + 2; }); away.forEach(iid => G.move(g, iid, 'graveyard')); G.drawCards(g, away.length + 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^espers to magicite$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones) return; const best = o.zones.graveyard.map(iid => o.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; o.zones.graveyard.slice().forEach(iid => G.move(o, iid, 'exile')); if (best) { const tok = G.createToken(g, { id: best.id, name: best.name, typeLine: `Artifact ${front(best.typeLine).replace(/\bcreature\b/i, 'Creature')}` }, { quiet: true }); if (tok) tok.typeLine = `Artifact Creature — ${(front(best.typeLine).split('—')[1] || '').trim()}`; } }, (m, ctx) => !!ctx.other],
+    [/^its power to the opponent if a card left your graveyard$/i, (g, m, ctx) => { if (g.graveLeftTurn !== g.turn) return; const me = ctx.self; const n = me ? Math.max(0, stats(me, factsOf(me, defOfCtx(ctx))).pow) : 0; if (n && ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^gogo mimics your best creature$/i, (g, m, ctx) => { const me = ctx.self; const c = creatures(g, x => x !== me).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!me || !c) return; me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.typeLine = front(c.typeLine); if (me.bot) me.bot = facts(defOfCtx(ctx)(c.id) || { typeLine: me.typeLine }); me.copyUntil = g.turn; [me, c].forEach(x => { pumpBy(x, 2, 0); x.pump.kw = [...new Set([...(x.pump.kw || []), 'haste'])]; x.mustAttackUntil = g.turn; }); }, (m, ctx) => !!ctx.self],
+    [/^kefka's dance$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); if (!o || !o.zones || !o.zones.graveyard.length) return; const iid = o.zones.graveyard[G.randomInt(o.zones.graveyard.length)]; const c = o.cards[iid]; G.move(o, iid, 'exile'); if (G.isLand(c)) return; const mv = cmcOfInst(c, defOf); castFree(g, takeCard(o, iid, g, 'exile', { quiet: true, defOf }), ctx, defOf); if (mv && ctx.hitOpps) ctx.hitOpps(mv); }, (m, ctx) => !!ctx.other],
+    [/^locke's mug$/i, (g, m, ctx) => { let land = false; [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones && t.zones.library.length).forEach(t => { const iid = t.zones.library[0]; G.mill(t, 1); const c = t.cards[iid]; if (G.isLand(c)) land = true; else if (t === g) c.graveOkTurn = g.turn; }); if (land) artifactTokens(g, ctx.self, 1, 'treasure'); }],
+    [/^mog's dance$/i, (g, m, ctx) => { const w = worstInHand(g); if (!w) return; const c = g.cards[w]; G.move(g, w, 'graveyard'); G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); if (G.isCreature(c)) runEffect(g, 'create a 1/2 white Moogle creature token with lifelink', ctx); else creatures(g, x => isA(x, 'moogle')).forEach(x => G.counter(g, x.iid, '+1/+1', 1, { effect: true })); }],
+    [/^rejoin the fight$/i, (g, m, ctx) => { G.mill(g, 3); const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(a, defOfCtx(ctx)) - cmcOfInst(b, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'battlefield', { put: true }); }],
+    [/^create the blackjack$/i, g => { const tok = G.createToken(g, { id: 'The Blackjack', name: 'The Blackjack', typeLine: 'Legendary Token Artifact — Vehicle', custom: true, pt: '3/3', text: 'Flying\nCrew 2' }, { quiet: true }); if (tok) tok.tokenColors = []; }],
+    [/^flip a coin for luck$/i, (g, m, ctx) => { coinFlip(g, ctx); }],
+    [/^snort$/i, (g, m, ctx) => { if (g.zones.hand.length >= 5) return; [...g.zones.hand].forEach(iid => G.move(g, iid, 'graveyard')); G.drawCards(g, 5, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^strago sketches$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!o || !o.zones) return; const k = o.zones.library.findIndex(iid => /\b(instant|sorcery|creature)\b/i.test(front(o.cards[iid].typeLine || ''))); if (k < 0) return; o.zones.library.slice(0, k).forEach(iid => G.move(o, iid, 'exile')); const c = takeCard(o, o.zones.library[0], g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); castFree(g, c, ctx, defOfCtx(ctx)); if (G.isCreature(c) && c.zone === 'battlefield') { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'haste'])] }; if (game) atNextEnd(game, g, { sacrifice: c.iid }); } }, (m, ctx) => !!ctx.other],
+    [/^valigarmanda takes a spell from each graveyard$/i, (g, m, ctx) => { [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => { const c = t.zones.graveyard.map(iid => t.cards[iid]).filter(x => /\b(instant|sorcery)\b/i.test(front(x.typeLine || ''))).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(t, c.iid, 'exile'); c.exiledWith = ctx.self && ctx.self.iid; }); }],
+    [/^valigarmanda's spells are playable$/i, (g, m, ctx) => { lastTables.filter(t => t && t.zones).forEach(t => t.zones.exile.map(iid => t.cards[iid]).filter(c => ctx.self && c.exiledWith === ctx.self.iid).forEach(c => { const mine = t === g ? c : takeCard(t, c.iid, g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); mine.playable = { turn: g.turn, anyMana: true }; })); }],
+    [/^regal slivers$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (game && monarchOf(game) === (g === game ? 'you' : 'opp')) creatures(g, c => isA(c, 'sliver')).forEach(c => pumpBy(c, 1, 1)); else runEffect(g, 'you become the monarch', ctx); }],
+    [/^for the ancestors$/i, (g, m, ctx) => { const types = {}; creatures(g).forEach(c => creatureTypes(c).forEach(k => { types[k] = (types[k] || 0) + 1; })); const k = Object.entries(types).sort((a, b) => b[1] - a[1]).map(x => x[0])[0]; const ids = g.zones.library.slice(0, 6); ids.forEach(iid => { if (k && isA(g.cards[iid], k)) G.move(g, iid, 'hand'); }); G.shuffleArray(ids.filter(iid => g.cards[iid].zone === 'library')).forEach(iid => G.move(g, iid, 'library', { bottom: true })); }],
+    [/^harsh mercy$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const main = t => { const n = {}; creatures(t).forEach(c => creatureTypes(c).forEach(k => { n[k] = (n[k] || 0) + 1; })); return Object.entries(n).sort((a, b) => b[1] - a[1]).map(x => x[0])[0]; }; const ts = [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones); const keep = ts.map(main).filter(Boolean); ts.forEach(t => creatures(t, c => !keep.some(k => isA(c, k)) && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^the djinn's wish$/i, (g, m, ctx) => { const top = g.cards[g.zones.library[0]]; if (!top) return; if (G.isLand(top)) G.move(g, top.iid, 'battlefield', { put: true }); else if (cmcOfInst(top, defOfCtx(ctx)) >= 2) castFree(g, top, ctx, defOfCtx(ctx)); else G.move(g, top.iid, 'exile'); }],
+    [/^the seer reveals$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones && t.zones.library.length).forEach(t => { const c = t.cards[t.zones.library[0]]; G.move(t, c.iid, 'hand'); const n = cmcOfInst(c, defOfCtx(ctx)); if (n && game) addLife(game, t === game ? 'you' : 'opp', -n); }); }],
+    [/^terminus$/i, (g, m, ctx) => { [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => creatures(t).forEach(c => G.move(t, c.iid, c.commander ? 'command' : (c.token ? 'graveyard' : 'library'), { bottom: true }))); }],
+    [/^dream cache$/i, (g, m, ctx) => { G.drawCards(g, 3, isOpps(gameOf(g, ctx) || g, g)); for (let i = 0; i < 2; i++) { const w = worstInHand(g); if (w) G.move(g, w, 'library', { bottom: true }); } }],
+    [/^portent$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 3); const lands = permanents(g).filter(G.isLand).length; const want = c => (G.isLand(c) ? (lands < 5 ? 3 : 0) : cmcOfInst(c, defOfCtx(ctx)) <= lands + 1 ? 2 : 1); g.zones.library.splice(0, ids.length, ...[...ids].sort((a, b) => want(g.cards[b]) - want(g.cards[a]))); G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^treasure hunt$/i, g => { while (g.zones.library.length) { const iid = g.zones.library[0]; G.move(g, iid, 'hand'); if (!G.isLand(g.cards[iid])) break; } }],
+    [/^predict$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (o && o.zones) G.mill(o, 1); G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^telling time$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 3); if (!ids.length) return; const sorted = [...ids].sort((a, b) => cmcOfInst(g.cards[b], defOfCtx(ctx)) - cmcOfInst(g.cards[a], defOfCtx(ctx))); G.move(g, sorted[0], 'hand'); if (sorted[2]) G.move(g, sorted[2], 'library', { bottom: true }); }],
+    [/^this aura dresses a manifest$/i, (g, m, ctx) => { const me = ctx.self; const c = manifestFrom(g, g); if (!me || !c) return; G.attach(g, me.iid, c.iid, attachBonus(oracleText(me, defOfCtx(ctx)))); }, (m, ctx) => !!ctx.self],
+    [/^aminatou's augury$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const ids = g.zones.library.slice(0, 8); ids.forEach(iid => G.move(g, iid, 'exile')); const cards = ids.map(iid => g.cards[iid]); const land = cards.find(c => G.isLand(c)); if (land) G.move(g, land.iid, 'battlefield', { put: true }); const used = new Set(); cards.filter(c => !G.isLand(c)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf)).forEach(c => { const k = CARD_TYPE_CHOICES.find(t => t !== 'land' && isA(c, t) && !used.has(t)); if (!k) return; used.add(k); castFree(g, c, ctx, defOf); }); }],
+    [/^skull storm$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!o || !o.zones || !game) return; const c = creatures(o, x => !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); else addLife(game, o === game ? 'you' : 'opp', -Math.ceil(lifeOf(game, o === game ? 'you' : 'opp') / 2)); }],
+    [/^the opponent loses the drawn card's mana value$/i, (g, m, ctx) => { const c = g.cards[g.zones.hand[g.zones.hand.length - 1]]; const n = c ? cmcOfInst(c, defOfCtx(ctx)) : 0; if (n && ctx.hitOpps) ctx.hitOpps(n); }],
+    [/^the watchtower$/i, (g, m, ctx) => { runEffect(g, 'scry 1', ctx); const top = g.cards[g.zones.library[0]]; if (top && G.isLand(top) && /\bbasic\b/i.test(top.typeLine || '')) { G.move(g, top.iid, 'battlefield', { put: true }); top.tapped = true; } }],
+    [/^discover for the newcomer's toughness$/i, (g, m, ctx) => { const c = ctx.entered || ctx.self; const n = c ? Math.max(0, stats(c, factsOf(c, defOfCtx(ctx))).tou) : 0; if (n) runEffect(g, `discover ${n}`, ctx); }],
+    [/^a chosen-type creature returns with finality$/i, (g, m, ctx) => { const k = ctx.self && ctx.self.chosenType; const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x) && (!k || isA(x, k))).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(g, c.iid, 'battlefield', { put: true }); G.counter(g, c.iid, 'finality', 1); }],
+    [/^the raptor greets the newcomer$/i, (g, m, ctx) => { const c = ctx.entered; const me = ctx.self; if (!c || !me || c.zone !== 'battlefield') return; applyTarget(gameOf(g, ctx) || g, g, c, { action: 'damage', n: 2, what: 'creature' }, me.name, defOfCtx(ctx), g); if (isA(c, 'dinosaur')) pumpBy(me, 2, 0); }, (m, ctx) => !!ctx.self],
+    [/^the descendants' path$/i, (g, m, ctx) => { const top = g.cards[g.zones.library[0]]; if (!top) return; if (G.isCreature(top) && creatures(g).some(c => sharesType(c, top))) castFree(g, top, ctx, defOfCtx(ctx)); else G.move(g, top.iid, 'library', { bottom: true }); }],
+    [/^exile two of your creature cards with this$/i, (g, m, ctx) => { g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx))).slice(0, 2).forEach(c => { G.move(g, c.iid, 'exile'); c.exiledWith = ctx.self && ctx.self.iid; }); }], // Coin of Fate's cost
+    [/^the coin of fate falls$/i, (g, m, ctx) => { const two = g.zones.exile.map(iid => g.cards[iid]).filter(c => ctx.self && c.exiledWith === ctx.self.iid).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx))); if (two[0]) G.move(g, two[0].iid, 'library', { bottom: true }); if (two[1]) { G.move(g, two[1].iid, 'battlefield', { put: true }); two[1].tapped = true; } }], // Opp sends the better one to the bottom
+    [/^exile two of your graveyard cards$/i, g => { g.zones.graveyard.slice(0, 2).forEach(iid => G.move(g, iid, 'exile')); }], // Varina's cost
+    // ---- 16-20 decks, chunk 3 (settleNear) ----
+    [/^from the catacombs$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const pool = [g, otherOf(g, ctx)].filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => ({ t, c: t.cards[iid] }))).filter(x => G.isCreature(x.c)); const x = pool.sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf))[0]; if (x) { const c = x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'graveyard', { quiet: true, defOf }); G.move(g, c.iid, 'battlefield', { put: true }); G.counter(g, c.iid, 'corpse', 1); } g.initiative = true; venture(g, ctx); }],
+    [/^exile your face-down permanent face up to play$/i, (g, m, ctx) => { const c = permanents(g).find(x => x.faceDown); if (!c) return; c.faceDown = false; G.move(g, c.iid, 'exile'); c.playable = { turn: g.turn }; }], // Primordial Mist's cost
+    [/^the opponent's best creature attacks this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) c.mustAttackUntil = o.turn; }, (m, ctx) => !!ctx.other],
+    [/^the whelp burns out on the fourth$/i, (g, m, ctx) => { const me = ctx.self; const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!me) return; me.whelp = me.whelp && me.whelp.turn === g.turn ? { turn: g.turn, n: me.whelp.n + 1 } : { turn: g.turn, n: 1 }; if (me.whelp.n === 4 && game) atNextEnd(game, g, { sacrifice: me.iid }); }, (m, ctx) => !!ctx.self],
+    [/^the cacodemon arrives$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.castFrom && me.castFrom !== 'hand') return; const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); (o && o.zones ? creatures(o, c => !stats(c, factsOf(c, defOf)).kw.has('indestructible')) : []).forEach(c => G.move(o, c.iid, c.commander ? 'command' : 'graveyard')); creatures(g, c => c !== me).forEach(c => { c.tapped = true; }); }],
+    [/^discard your hand for the opponent's creatures$/i, (g, m, ctx) => { const n = g.zones.hand.length; [...g.zones.hand].forEach(iid => { G.move(g, iid, 'graveyard'); discardWatch(g, g.cards[iid], defOfCtx(ctx), gameOf(g, ctx)); }); const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); (o && o.zones ? creatures(o, c => !cantSac(c, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)).slice(0, n) : []).forEach(c => G.move(o, c.iid, c.commander ? 'command' : 'graveyard')); }],
+    [/^join forces for power$/i, (g, m, ctx) => { const x = joinForces(g); if (x && ctx.self) pumpBy(ctx.self, x, 0); }, (m, ctx) => !!ctx.self],
+    [/^3 damage to each nonwhite creature$/i, (g, m, ctx) => { damageEach(g, ctx, 3, c => !colorsOfInst(c, defOfCtx(ctx)).includes('W'), { what: 'nonwhite creature' }); }],
+    [/^the reiver demon arrives$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.castFrom && me.castFrom !== 'hand') return; const defOf = defOfCtx(ctx); [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => !isA(c, 'artifact') && !colorsOfInst(c, defOf).includes('B') && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^a random creature card from the opponent's graveyard joins you$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const ids = o && o.zones ? o.zones.graveyard.filter(iid => G.isCreature(o.cards[iid])) : []; if (!ids.length) return; const c = takeCard(o, ids[G.randomInt(ids.length)], g, 'graveyard', { quiet: true, defOf: defOfCtx(ctx) }); G.move(g, c.iid, 'battlefield', { put: true }); }, (m, ctx) => !!ctx.other],
+    [/^your creatures gain protection from the opponent's main color this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const k = o ? mainColorOfTable(o, defOfCtx(ctx)) : 'R'; creatures(g).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), `protection from ${k}`])] }; }); }],
+    [/^2 damage to the opponent's best creature and those sharing its color$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const best = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!best) return; const ks = colorsOfInst(best, defOf); damageEach(g, ctx, 2, c => c === best || colorsOfInst(c, defOf).some(k => ks.includes(k)), { what: 'creature sharing a color' }); }, (m, ctx) => !!ctx.other],
+    [/^the sulfurous blast$/i, (g, m, ctx) => { const n = g.offTurn ? 2 : 3; damageEach(g, ctx, n, () => true); runEffect(g, `you lose ${n} life`, ctx); if (ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^sacrifice this with no creatures out$/i, (g, m, ctx) => { if ([g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).some(t => creatures(t).length)) return; if (ctx.self && ctx.self.zone === 'battlefield') G.move(g, ctx.self.iid, 'graveyard'); }],
+    [/^manifest dread$/i, g => { manifestDread(g); }],
+    [/^manifest dread the first time, else turn something up$/i, (g, m, ctx) => { if (allianceCount(g, ctx.self) === 1) return void manifestDread(g); const c = permanents(g).find(x => x.faceDown); if (c) turnUp(gameOf(g, ctx) || g, g, c, defOfCtx(ctx), ctx); }],
+    [/^the glitch hides$/i, (g, m, ctx) => { if (permanents(g).some(c => c.faceDown)) return; if (ctx.self && ctx.self.zone === 'battlefield') G.move(g, ctx.self.iid, 'hand'); manifestDread(g); }],
+    [/^the disorienting choice$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => isA(x, 'artifact') || isA(x, 'enchantment')).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (!c) return; if (worthOf(c, defOf) <= 3) G.move(o, c.iid, 'exile'); else { const land = g.zones.library.map(iid => g.cards[iid]).find(x => G.isLand(x)); if (land) { G.move(g, land.iid, 'battlefield', { put: true }); land.tapped = true; } G.shuffle(g); } }, (m, ctx) => !!ctx.other],
+    [/^untap lands for your strongest attacker$/i, (g, m, ctx) => { const x = Math.max(0, ...creatures(g, c => c.attacking).map(c => stats(c, factsOf(c, defOfCtx(ctx))).pow)); permanents(g).filter(c => G.isLand(c) && c.tapped).slice(0, x).forEach(c => { c.tapped = false; c.tappedFor = null; }); }],
+    [/^the opponent's best milled card this turn joins you$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const c = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).filter(x => x.milledTurn === o.turn && (G.isCreature(x) || isA(x, 'artifact'))).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; const mine = takeCard(o, c.iid, g, 'graveyard', { quiet: true, defOf: defOfCtx(ctx) }); G.move(g, mine.iid, 'battlefield', { put: true }); }],
+    [/^a slime counter on the opponent's best creature$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) G.counter(o, c.iid, 'slime', 1); }, (m, ctx) => !!ctx.other],
+    [/^destroy the opponent's best creature its graveyard allows$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const n = o && o.zones ? o.zones.graveyard.length : 0; const c = o && o.zones && creatures(o, x => cmcOfInst(x, defOf) <= n && !stats(x, factsOf(x, defOf)).kw.has('indestructible')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }, (m, ctx) => !!ctx.other],
+    [/^a 1\/1 copy of the enchanted creature$/i, (g, m, ctx) => { const host = ctx.self && g.cards[ctx.self.attachedTo]; if (!host) return; const tok = G.copyAsToken(g, host.iid); if (tok) tok.becomes = { pt: '1/1', types: [], kw: [], forever: true }; }, (m, ctx) => !!ctx.self],
+    [/^this aura returns if a horror died$/i, (g, m, ctx) => { const d = ctx.dead; const me = ctx.self; if (d && isA(d, 'horror') && me && me.zone === 'graveyard') G.move(g, me.iid, 'hand'); }],
+    [/^cast the best graveyard spell for free$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const pool = [g, otherOf(g, ctx)].filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => ({ t, c: t.cards[iid] }))).filter(x => x.c !== ctx.self && /\b(instant|sorcery)\b/i.test(front(x.c.typeLine || '')) && !G.isCounterspell(factsOf(x.c, defOf).oracle || '')); const x = pool.sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf))[0]; if (!x) return; const c = x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'graveyard', { quiet: true, defOf }); c.castAftermath = true; castFree(g, c, ctx, defOf); }],
+    [/^an opponent's creature card for a copy of this$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const c = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).find(x => G.isCreature(x)); if (!c) return; G.move(o, c.iid, 'exile'); if (ctx.self && ctx.self.zone === 'battlefield') G.copyAsToken(g, ctx.self.iid); }],
+    [/^extra turns by five coins$/i, (g, m, ctx) => { const heads = Array.from({ length: 5 }, () => G.randomInt(2)).filter(Boolean).length; const o = otherOf(g, ctx) || otherTable(g); if (o && heads) o.skipTurn = (o.skipTurn || 0) + heads; G.log(g, `${nameOfSrc(ctx)}: ${heads} heads.`); }],
+    [/^the opponent's creatures are 1\/1 this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); (o && o.zones ? creatures(o) : []).forEach(c => { c.becomes = { pt: '1/1', types: [], kw: [], turn: o.turn }; }); }, (m, ctx) => !!ctx.other],
+    [/^your best exiled flashback card to your hand$/i, (g, m, ctx) => { const c = g.zones.exile.map(iid => g.cards[iid]).filter(x => oracleLines(x, defOfCtx(ctx)).some(l => /^flashback\b/i.test(l))).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^end the combat$/i, (g, m, ctx) => { [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t).forEach(c => { delete c.attacking; delete c.blocking; })); }],
+    [/^copy your next spell, twice from a graveyard$/i, (g, m, ctx) => { g.copyNextTurn = g.turn; g.copyNextN = ctx.self && ctx.self.castFrom === 'graveyard' ? 2 : 1; }],
+    [/^a full party grows deadly$/i, (g, m, ctx) => { if (partyOf(g).length < 4) return; creatures(g).forEach(c => { G.counter(g, c.iid, '+1/+1', 1, { effect: true }); c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'deathtouch'])] }; }); }],
+    [/^a full party lifts your best creature$/i, (g, m, ctx) => { if (partyOf(g).length < 4) return; const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; pumpBy(c, 1, 1); c.pump.kw = [...new Set([...(c.pump.kw || []), 'flying'])]; }],
+    [/^your best creature gains protection from white this turn$/i, (g, m, ctx) => { const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'protection from W'])] }; }],
+    [/^the balance$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx) || otherTable(g);
+      const defOf = defOfCtx(ctx);
+      if (!o || !o.zones) return;
+      const ts = [g, o];
+      const lands = Math.min(...ts.map(t => permanents(t).filter(G.isLand).length));
+      ts.forEach(t => permanents(t).filter(G.isLand).sort((a, b) => G.producesOf(b).length - G.producesOf(a).length).slice(lands).forEach(c => G.move(t, c.iid, 'graveyard')));
+      const hand = Math.min(...ts.map(t => t.zones.hand.length));
+      ts.forEach(t => t.zones.hand.map(iid => t.cards[iid]).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf)).slice(hand).forEach(c => G.move(t, c.iid, 'graveyard')));
+      const crs = Math.min(...ts.map(t => creatures(t).length));
+      ts.forEach(t => creatures(t).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf)).slice(crs).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard')));
+    }],
+    [/^kor warriors for your party$/i, (g, m, ctx) => { const n = partyOf(g).length; if (n) runEffect(g, `create ${n} 1/1 white Kor Warrior creature tokens`, ctx); }],
+    [/^drain by your party$/i, (g, m, ctx) => { const n = partyOf(g).length; if (!n) return; if (ctx.hitOpps) ctx.hitOpps(n); runEffect(g, `you gain ${n} life`, ctx); }],
+    [/^your angels strike down the opponent's smaller creatures$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); creatures(g, c => isA(c, 'angel')).forEach(a => { const p = stats(a, factsOf(a, defOf)).pow; const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).pow < p && !stats(x, factsOf(x, defOf)).kw.has('indestructible')).sort((x, y) => worthOf(y, defOf) - worthOf(x, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }); }],
+    [/^the opponent loses the sacrificed creature's power in life$/i, (g, m, ctx) => { const c = g.lastSacCard; const n = c ? Math.max(0, num((c.custom && c.custom.pt ? { power: c.custom.pt.split('/')[0] } : factsOf(c, defOfCtx(ctx))).power)) : 0; if (n && ctx.hitOpps) ctx.hitOpps(n); }],
+    [/^drain and treasures by your party$/i, (g, m, ctx) => { const n = partyOf(g).length; if (!n) return; if (ctx.hitOpps) ctx.hitOpps(n); artifactTokens(g, ctx.self, n, 'treasure'); }],
+    // ---- 16-20 decks, chunk 2 (settleNear) ----
+    [/^venture into the dungeon$/i, (g, m, ctx) => venture(g, ctx)],
+    [/^the ursine charge$/i, (g, m, ctx) => { G.mill(g, 1); const me = ctx.self; if (!me) return; me.mustAttackUntil = g.turn; const n = new Set(g.zones.graveyard.flatMap(iid => CARD_TYPE_CHOICES.filter(k => isA(g.cards[iid], k)))).size; pumpBy(me, n, n); me.pump.kw = [...new Set([...(me.pump.kw || []), 'indestructible'])]; }, (m, ctx) => !!ctx.self],
+    [/^the hidden card is free with twenty in your graveyard$/i, (g, m, ctx) => { if (g.zones.graveyard.length < 20) return; const c = g.zones.exile.map(iid => g.cards[iid]).find(x => ctx.self && (x.exiledWith === ctx.self.iid || x.hideawayOf === ctx.self.iid)); if (c) castFree(g, c, ctx, defOfCtx(ctx)); }],
+    [/^the best of your top three into your hand, the rest milled$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 3); if (!ids.length) return; const pick = [...ids].sort((a, b) => cmcOfInst(g.cards[b], defOfCtx(ctx)) - cmcOfInst(g.cards[a], defOfCtx(ctx)))[0]; ids.forEach(iid => G.move(g, iid, iid === pick ? 'hand' : 'graveyard')); }],
+    [/^seven rounds of discard or 3 life$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (!o || !o.zones) return; for (let i = 0; i < 7; i++) { const c = o.zones.hand.map(iid => o.cards[iid]).sort((a, b) => cmcOfInst(a, defOfCtx(ctx)) - cmcOfInst(b, defOfCtx(ctx)))[0]; if (c) G.move(o, c.iid, 'graveyard'); else if (ctx.hitOpps) ctx.hitOpps(3); } }],
+    [/^a treefolk as big as your lands$/i, g => { const tok = G.createToken(g, { id: 'Treefolk', name: 'Treefolk', typeLine: 'Token Creature — Treefolk', custom: true, pt: '0/0', text: "Reach\nThis token's power and toughness are each equal to the number of lands you control." }, { quiet: true }); if (tok) tok.tokenColors = ['G']; }],
+    [/^mill creatures for (x|\d+)$/i, (g, m, ctx) => { const x = Number(m[1]) || (ctx.self && ctx.self.xValue) || 0; let n = 0; const shown = []; while (n < x && g.zones.library.length) { const iid = g.zones.library[0]; if (G.isCreature(g.cards[iid])) { G.move(g, iid, 'graveyard'); n++; } else { shown.push(iid); G.move(g, iid, 'exile'); } } G.shuffleArray(shown).forEach(iid => G.move(g, iid, 'library', { bottom: true })); }],
+    [/^the opponent loses an enchantment before a creature$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); if (!o || !o.zones) return; ['enchantment', 'creature'].forEach(k => { const c = permanents(o).filter(x => isA(x, k) && !x.token && !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }); }, (m, ctx) => !!ctx.other],
+    [/^vanish into memory$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => !x.commander).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; const p = Math.max(0, stats(c, factsOf(c, defOf)).pow); G.move(o, c.iid, c.token ? 'graveyard' : 'exile'); if (!c.token && game) atNextEnd(game, o, { fromExile: c.iid, why: 'Vanish into Memory' }); if (p) G.drawCards(g, p, isOpps(game || g, g)); }, (m, ctx) => !!ctx.other],
+    [/^nihiloor takes the opponent's creature$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const mine = creatures(g, c => !c.tapped && c !== ctx.self).sort((a, b) => stats(b, factsOf(b, defOf)).pow - stats(a, factsOf(a, defOf)).pow)[0]; const o = otherOf(g, ctx); if (!mine || !o || !o.zones) return; mine.tapped = true; const p = stats(mine, factsOf(mine, defOf)).pow; const c = creatures(o, x => stats(x, factsOf(x, defOf)).pow <= p && !x.commander).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) gainControl(o, c.iid, g, defOf); }],
+    [/^revivify$/i, (g, m, ctx) => { const dead = g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c) && c.diedTurn === g.turn); const r = rollDice(g, 1, 20, nameOfSrc(ctx), ctx)[0] + dead.length; dead.forEach(c => G.move(g, c.iid, r >= 15 ? 'battlefield' : 'hand', r >= 15 ? { put: true } : undefined)); }],
+    [/^a permanent from your hand for the illusion's power$/i, (g, m, ctx) => { const d = ctx.dead; const p = d ? Math.max(0, num(factsOf(d, defOfCtx(ctx)).power)) : 0; const c = g.zones.hand.map(iid => g.cards[iid]).filter(x => (G.isLand(x) || PERM_TYPES.some(k => isA(x, k))) && cmcOfInst(x, defOfCtx(ctx)) <= p).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'battlefield', { put: true }); }],
+    [/^an attacking copy of what this exiled$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const ex = g.zones.exile.map(iid => g.cards[iid]).find(c => ctx.self && c.exiledWith === ctx.self.iid && G.isCreature(c)); if (!ex) return; const tok = G.createToken(g, { id: ex.id, name: ex.name, typeLine: ex.typeLine }, { quiet: true }); if (!tok) return; tok.tapped = true; tok.attacking = true; if (game) atNextEnd(game, g, { sacrifice: tok.iid }); }],
+    [/^cast what this rod absorbed for (x|\d+)$/i, (g, m, ctx) => { let budget = Number(m[1]) || Number(ctx.x) || 0; const defOf = defOfCtx(ctx); const pool = lastTables.filter(t => t && t.zones).flatMap(t => t.zones.exile.map(iid => ({ t, c: t.cards[iid] }))).filter(x => ctx.self && x.c.exiledWith === ctx.self.iid).sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf)); for (const x of pool) { const v = cmcOfInst(x.c, defOf); if (v > budget || G.isCounterspell(factsOf(x.c, defOf).oracle || '')) continue; budget -= v; delete x.c.exiledWith; castFree(g, x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'exile', { quiet: true, defOf }), ctx, defOf); } }],
+    [/^your spells from hand cascade this turn$/i, g => { g.yidrisTurn = g.turn; }],
+    [/^thrasios's scry$/i, (g, m, ctx) => { runEffect(g, 'scry 1', ctx); const top = g.cards[g.zones.library[0]]; if (!top) return; if (G.isLand(top)) { G.move(g, top.iid, 'battlefield', { put: true }); top.tapped = true; } else G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^the gamekeeper trades itself for a creature$/i, (g, m, ctx) => { const d = ctx.dead; if (d && g.cards[d.iid] && g.cards[d.iid].zone === 'graveyard') G.move(g, d.iid, 'exile'); const k = g.zones.library.findIndex(iid => G.isCreature(g.cards[iid])); if (k < 0) return; g.zones.library.slice(0, k).forEach(iid => G.move(g, iid, 'graveyard')); G.move(g, g.zones.library[0], 'battlefield', { put: true }); }],
+    [/^the opponent discards at random$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const h = o && o.zones ? o.zones.hand : []; if (!h.length) return; const iid = h[G.randomInt(h.length)]; G.move(o, iid, 'graveyard'); discardWatch(o, o.cards[iid], defOfCtx(ctx), gameOf(g, ctx)); }, (m, ctx) => !!ctx.other],
+    [/^the blood tax$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (!game) return; addLife(game, 'you', -1); addLife(game, 'opp', -1); if (ctx.self) G.counter(g, ctx.self.iid, '+1/+1', 2, { effect: true }); }],
+    [/^the whims of the fates$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => { const list = permanents(t).filter(c => !G.isLand(c) && c !== ctx.self); G.shuffleArray(list.map(c => c.iid)).slice(0, Math.floor(list.length / 3)).forEach(iid => { const c = t.cards[iid]; if (!cantSac(c, defOf)) G.move(t, iid, c.commander ? 'command' : 'graveyard'); }); }); }],
+    [/^boompile$/i, (g, m, ctx) => { if (G.randomInt(2)) return G.log(g, 'Boompile: lost the flip.'); const defOf = defOfCtx(ctx); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => permanents(t).filter(c => !G.isLand(c) && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^a food golem copy of the creature that died$/i, (g, m, ctx) => { const d = ctx.dead; if (!d || d.token || !g.cards[d.iid] || g.cards[d.iid].zone !== 'graveyard') return; G.move(g, d.iid, 'exile'); const tok = G.createToken(g, { id: d.id, name: d.name, typeLine: d.typeLine }, { quiet: true }); if (!tok) return; tok.becomes = { pt: '1/1', types: ['food', 'golem', 'artifact'], kw: [], forever: true }; tok.keepLines = ['{2}, {T}, Sacrifice this token: You gain 3 life.']; }],
+    [/^an ox or a spell from the top$/i, (g, m, ctx) => { const top = g.zones.library[0]; if (!top) return; G.move(g, top, 'exile'); const c = g.cards[top]; if (G.isLand(c)) runEffect(g, 'create a 2/2 white Ox creature token', ctx); else c.playable = { until: g.turn + 1 }; }],
+    [/^a party from your top four$/i, g => { const ids = g.zones.library.slice(0, 4); const taken = []; ids.forEach(iid => { const k = PARTY.find(x => isA(g.cards[iid], x) && !taken.includes(x)); if (k) { taken.push(k); G.move(g, iid, 'hand'); } }); G.shuffleArray(ids.filter(iid => g.cards[iid].zone === 'library')).forEach(iid => G.move(g, iid, 'library', { bottom: true })); }],
+    [/^this land is a 2\/2 changeling this turn$/i, (g, m, ctx) => { if (ctx.self) ctx.self.becomes = { pt: '2/2', types: ['shapeshifter'], kw: ['changeling'], turn: g.turn }; }, (m, ctx) => !!ctx.self],
+    [/^the realmbreaker takes a land$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones) return; G.mill(o, 3); const c = o.zones.graveyard.map(iid => o.cards[iid]).find(x => G.isLand(x)); if (!c) return; const mine = takeCard(o, c.iid, g, 'graveyard', { quiet: true, defOf: defOfCtx(ctx) }); G.move(g, mine.iid, 'battlefield', { put: true }); mine.tapped = true; }, (m, ctx) => !!ctx.other],
+    [/^this becomes a copy of the best creature this turn$/i, (g, m, ctx) => { const me = ctx.self; const c = [g, otherOf(g, ctx)].filter(t => t && t.zones).flatMap(t => creatures(t)).filter(x => x !== me).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!me || !c) return; me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.name = c.name; me.typeLine = front(c.typeLine); if (me.bot) me.bot = facts(defOfCtx(ctx)(c.id) || { typeLine: me.typeLine }); me.copyUntil = g.turn; }, (m, ctx) => !!ctx.self],
+    [/^your creatures get \+0\/\+1 this turn$/i, g => { creatures(g).forEach(c => pumpBy(c, 0, 1)); }],
+    [/^stick together$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => { const keep = partyOf(t).map(x => x.c); creatures(t, c => !keep.includes(c) && !cantSac(c, defOf)).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard')); }); }],
+    [/^your shapeshifters are 4\/4$/i, g => { creatures(g, c => isA(c, 'shapeshifter')).forEach(c => { c.becomes = { pt: '4/4', types: ['shapeshifter'], kw: [], forever: true }; }); }],
+    [/^your big creatures hit the opponent's best creature$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const n = creatures(g, c => stats(c, factsOf(c, defOf)).pow >= 4).reduce((k, c) => k + stats(c, factsOf(c, defOf)).pow, 0); const o = otherOf(g, ctx); const c = n && o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); }],
+    [/^vivien's creature from the top three$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 3); const pick = ids.filter(iid => G.isCreature(g.cards[iid])).sort((a, b) => cmcOfInst(g.cards[b], defOfCtx(ctx)) - cmcOfInst(g.cards[a], defOfCtx(ctx)))[0]; ids.filter(iid => iid !== pick).forEach(iid => G.move(g, iid, 'library', { bottom: true })); if (pick) { G.move(g, pick, 'exile'); g.cards[pick].faceDown = true; g.cards[pick].playable = { forever: true }; } }],
+    [/^xenagos's revel$/i, g => { g.zones.library.slice(0, 7).forEach(iid => { const c = g.cards[iid]; G.move(g, iid, G.isCreature(c) || G.isLand(c) ? 'battlefield' : 'exile', G.isCreature(c) || G.isLand(c) ? { put: true } : undefined); }); }],
+    [/^three counters on each of your creatures that entered this turn$/i, (g, m, ctx) => { creatures(g, c => c.enteredTurn === g.turn).forEach(c => G.counter(g, c.iid, '+1/+1', 3, { effect: true })); }],
+    [/^steal the opponent's top card this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (o && o.zones) stealTop(g, o, 1, { turn: g.turn, anyMana: true }); }, (m, ctx) => !!ctx.other],
+    [/^durnan's creature from the top four$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 4); const pick = ids.filter(iid => G.isCreature(g.cards[iid])).sort((a, b) => cmcOfInst(g.cards[b], defOfCtx(ctx)) - cmcOfInst(g.cards[a], defOfCtx(ctx)))[0]; ids.filter(iid => iid !== pick).forEach(iid => G.move(g, iid, 'library', { bottom: true })); if (pick) { G.move(g, pick, 'exile'); g.cards[pick].playable = { forever: true }; } }],
+    [/^the delayed blast$/i, (g, m, ctx) => { const n = ctx.self && ctx.self.castFrom === 'exile' ? 5 : 2; const o = otherOf(g, ctx); if (o && o.zones) damageEach(g, ctx, n, () => true, { only: o, what: 'creature the opponent controls' }); if (ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^the journey exiles four before a d20$/i, (g, m, ctx) => { const me = ctx.self; g.zones.library.slice(0, 4).forEach(iid => { G.move(g, iid, 'exile'); g.cards[iid].exiledWith = me && me.iid; }); const r = rollDice(g, 1, 20, nameOfSrc(ctx), ctx)[0]; ctx.roll = r; rollTable(g, r, ctx); }, (m, ctx) => !!ctx.self],
+    [/^a land from the journey$/i, (g, m, ctx) => { const c = g.zones.exile.map(iid => g.cards[iid]).find(x => ctx.self && x.exiledWith === ctx.self.iid && G.isLand(x)); if (c) G.move(g, c.iid, 'battlefield', { put: true }); }],
+    [/^a wolf grown by the journey$/i, (g, m, ctx) => { const n = g.zones.exile.filter(iid => ctx.self && g.cards[iid].exiledWith === ctx.self.iid && G.isCreature(g.cards[iid])).length; const tok = G.createToken(g, { id: 'Wolf', name: 'Wolf', typeLine: 'Token Creature — Wolf', custom: true, pt: '2/2', text: '' }, { quiet: true }); if (!tok) return; tok.tokenColors = ['G']; if (n) G.counter(g, tok.iid, '+1/+1', n, { effect: true }); }],
+    [/^the journey ends$/i, (g, m, ctx) => { g.zones.exile.map(iid => g.cards[iid]).filter(c => ctx.self && c.exiledWith === ctx.self.iid && (G.isLand(c) || PERM_TYPES.some(k => isA(c, k)))).forEach(c => G.move(g, c.iid, 'battlefield', { put: true })); if (ctx.self && ctx.self.zone === 'battlefield') G.move(g, ctx.self.iid, 'graveyard'); }],
+    [/^your best creature card is yours to cast until your next turn$/i, (g, m, ctx) => { const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(g, c.iid, 'exile'); c.playable = { until: g.turn + 1 }; }],
+    [/^the tome's free spell$/i, (g, m, ctx) => { if (!(g.dungeonsDone > 0)) return; const k = g.zones.library.findIndex(iid => !G.isLand(g.cards[iid])); if (k < 0) return; g.zones.library.slice(0, k).forEach(iid => G.move(g, iid, 'exile')); castFree(g, g.cards[g.zones.library[0]], ctx, defOfCtx(ctx)); }],
+    [/^add \{([WUBRGC])\} for each card you've drawn this turn$/i, (g, m) => { g.mana[m[1]] = (g.mana[m[1]] || 0) + (g.drawnThisTurn || 0); }], // Kydele
+    // ---- 16-20 decks, chunk 1 (settleNear) ----
+    [/^pako fetches$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const haldan = permanents(g).some(w => oracleLines(w, defOf).some(l => NEAR.HALDAN.test(l)));
+      let k = 0;
+      [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones && t.zones.library.length).forEach(t => {
+        const iid = t.zones.library[0];
+        G.move(t, iid, 'exile');
+        G.counter(t, iid, 'fetch', 1);
+        const c = t.cards[iid];
+        if (!G.isCreature(c)) k++;
+        if (haldan && !G.isCreature(c)) { const mine = t === g ? c : takeCard(t, iid, g, 'exile', { quiet: true, defOf }); mine.playable = { forever: true, anyMana: true }; }
+      });
+      if (k && ctx.self) G.counter(g, ctx.self.iid, '+1/+1', k, { effect: true });
+    }],
+    [/^the opponent takes an extra turn if this was cast$/i, (g, m, ctx) => { if (!(ctx.self && ctx.self.castFrom)) return; g.skipTurn = (g.skipTurn || 0) + 1; }],
+    [/^this becomes the opponent's next creature card this turn$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const o = otherOf(g, ctx);
+      if (!me || !o || !o.zones) return;
+      const k = o.zones.library.findIndex(iid => G.isCreature(o.cards[iid]));
+      const shown = k < 0 ? o.zones.library.slice() : o.zones.library.slice(0, k + 1);
+      const c = k >= 0 ? o.cards[o.zones.library[k]] : null;
+      if (c) { me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.name = c.name; me.typeLine = front(c.typeLine); if (me.bot) me.bot = facts(defOfCtx(ctx)(c.id) || { typeLine: me.typeLine }); me.copyUntil = g.turn; }
+      G.shuffleArray(shown).forEach(iid => G.move(o, iid, 'library', { bottom: true }));
+    }, (m, ctx) => !!ctx.self],
+    [/^an off-turn caster draws a card$/i, (g, m, ctx) => { const sp = ctx.castSpell; const t = sp && lastTables.find(x => x && x.zones && x.cards[sp.iid] === sp); if (t && t.offTurn) G.drawCards(t, 1, isOpps(gameOf(g, ctx) || g, t)); }],
+    [/^this creature fights the opponent's best creature$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (me && c && me.zone === 'battlefield') fightOn(gameOf(g, ctx) || g, g, me, o, c, defOf); }, (m, ctx) => !!ctx.self],
+    [/^rashmi reveals$/i, (g, m, ctx) => { const top = g.cards[g.zones.library[0]]; if (!top) return; const mv = ctx.castSpell ? cmcOfInst(ctx.castSpell, defOfCtx(ctx)) : 0; if (!G.isLand(top) && cmcOfInst(top, defOfCtx(ctx)) < mv) castFree(g, top, ctx, defOfCtx(ctx)); else G.move(g, top.iid, 'hand'); }],
+    [/^the decoy gambit$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!c) return; if (worthOf(c, defOf) >= 3) G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); else G.move(o, c.iid, c.commander ? 'command' : (c.token ? 'graveyard' : 'hand')); }, (m, ctx) => !!ctx.other],
+    [/^x counters on your best creature$/i, (g, m, ctx) => { const n = (ctx.self && ctx.self.xValue) || 1; const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) G.counter(g, c.iid, '+1/+1', n, { effect: true }); }],
+    [/^the channeled force$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const x = Math.min((ctx.self && ctx.self.xValue) || 2, g.zones.hand.length);
+      for (let i = 0; i < x; i++) { const w = worstInHand(g); if (w) G.move(g, w, 'graveyard'); }
+      G.drawCards(g, x, isOpps(gameOf(g, ctx) || g, g));
+      const o = otherOf(g, ctx);
+      const c = x && o && o.zones && creatures(o, y => stats(y, factsOf(y, defOf)).tou - (y.damageTaken || 0) <= x).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (c) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n: x, what: 'creature' }, nameOfSrc(ctx), defOf, g);
+    }],
+    [/^your best creature grows and fights the opponent's$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const me = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (!me) return; pumpBy(me, 1, 1); const o = otherOf(g, ctx); const p = stats(me, factsOf(me, defOf)).pow; const c = o && o.zones && (creatures(o, y => stats(y, factsOf(y, defOf)).tou - (y.damageTaken || 0) <= p).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]); if (c) fightOn(gameOf(g, ctx) || g, g, me, o, c, defOf); }],
+    [/^creatures with power (\d+) or less can't block$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => stats(c, factsOf(c, defOf)).pow <= Number(m[1])).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), "can't block"])] }; })); }],
+    [/^the floodgates count down$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const a = activeTable(g, ctx);
+      const o = otherTable(a);
+      const defOf = defOfCtx(ctx);
+      if (!me || me.zone !== 'battlefield') return;
+      const mine = creatures(a).reduce((k, c) => k + worthOf(c, defOf), 0);
+      const theirs = o ? creatures(o).reduce((k, c) => k + worthOf(c, defOf), 0) : 0;
+      G.counter(g, me.iid, 'doom', mine < theirs ? 1 : -1);
+      if (((me.counters || {}).doom || 0) >= 3) { G.move(g, me.iid, 'graveyard'); damageEach(g, ctx, 6, () => true); }
+    }, (m, ctx) => !!ctx.self],
+    [/^a hasty copy of the new wizard for \{1\}$/i, (g, m, ctx) => {
+      const c = ctx.entered;
+      const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot);
+      const opp = isOpps(game || g, g);
+      if (!c || c.token || !(opp ? affordable(g, '{1}', 0) : G.autoPay(JSON.parse(JSON.stringify(g)), '{1}'))) return;
+      if (opp) onOpp(game, () => G.autoPay(g, '{1}')); else G.autoPay(g, '{1}');
+      const tok = G.copyAsToken(g, c.iid);
+      if (!tok) return;
+      tok.pump = { pow: 0, tou: 0, ...tok.pump, kw: [...new Set([...((tok.pump && tok.pump.kw) || []), 'haste'])] };
+      if (game) atNextEnd(game, g, { exile: tok.iid });
+    }],
+    [/^cage your best artifact or creature card$/i, (g, m, ctx) => { const c = [...g.zones.graveyard, ...g.zones.hand].map(iid => g.cards[iid]).filter(x => (G.isCreature(x) || isA(x, 'artifact')) && oracleLines(x, defOfCtx(ctx)).some(l => /^[^:"]+:\s*.+$/.test(l))).sort((a, b) => (a.zone === 'graveyard' ? 0 : 1) - (b.zone === 'graveyard' ? 0 : 1) || cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(g, c.iid, 'exile'); G.counter(g, c.iid, 'cage', 1); }],
+    [/^the mind magus$/i, (g, m, ctx) => { G.shuffle(g); const o = otherTable(g); const casts = (g.spellTurn === g.turn ? (g.castThisTurn || []).length : 0) + (o && o.spellTurn === o.turn ? (o.castThisTurn || []).length : 0); g.zones.library.slice(0, 1 + casts).forEach(iid => { G.move(g, iid, 'exile'); g.cards[iid].playable = { turn: g.turn, free: true }; }); }],
+    [/^the opponent discards (\w+) cards$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (!o || !o.zones) return; o.zones.hand.map(iid => o.cards[iid]).sort((a, b) => cmcOfInst(a, defOfCtx(ctx)) - cmcOfInst(b, defOfCtx(ctx))).slice(0, toNumber(m[1])).forEach(c => G.move(o, c.iid, 'graveyard')); }],
+    [/^the opponent's best creature shrinks by your exiled cards$/i, (g, m, ctx) => { const x = Number(ctx.x) || 2; const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && (creatures(o, y => stats(y, factsOf(y, defOf)).tou <= x).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0] || creatures(o)[0]); if (c) pumpBy(c, -x, -x); }],
+    [/^your best creature card returns hasty until the end step$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(g, c.iid, 'battlefield', { put: true }); c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'haste'])] }; if (game) atNextEnd(game, g, { sacrifice: c.iid }); }],
+    [/^the discarded card's mana value in damage to the opponent's creature$/i, (g, m, ctx) => { const n = g.lastDiscard ? cmcOfInst(g.lastDiscard, defOfCtx(ctx)) : 0; const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = n && o && o.zones && creatures(o, y => stats(y, factsOf(y, defOf)).tou - (y.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); }],
+    [/^clone the stronger legion$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const worth = t => creatures(t).reduce((k, c) => k + worthOf(c, defOf), 0); const t = o && o.zones && worth(o) > worth(g) ? o : g; creatures(t).forEach(c => { if (t === g) G.copyAsToken(g, c.iid); else G.createToken(g, { id: c.id, name: c.name, typeLine: c.typeLine }, { quiet: true }); }); }],
+    [/^twin spells from both graveyards$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => { const c = t.zones.graveyard.map(iid => t.cards[iid]).filter(x => x !== ctx.self && /\b(instant|sorcery)\b/i.test(front(x.typeLine || '')) && !G.isCounterspell(factsOf(x, defOf).oracle || '')).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (!c) return; const mine = t === g ? c : takeCard(t, c.iid, g, 'graveyard', { quiet: true, defOf }); mine.castAftermath = true; castFree(g, mine, ctx, defOf); }); }],
+    [/^the opponent's creatures are frogs this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); (o && o.zones ? creatures(o) : []).forEach(c => { c.becomes = { pt: '1/1', types: ['frog'], kw: [], turn: o.turn, loseAll: true }; }); }, (m, ctx) => !!ctx.other],
+    [/^cast the opponent's best graveyard spell$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).filter(x => /\b(instant|sorcery)\b/i.test(front(x.typeLine || '')) && !G.isCounterspell(factsOf(x, defOf).oracle || '')).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (c) castFree(g, takeCard(o, c.iid, g, 'graveyard', { quiet: true, defOf }), ctx, defOf); }, (m, ctx) => !!ctx.other],
+    [/^the cauldron dance$/i, (g, m, ctx) => {
+      const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot);
+      const haste = c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'haste'])] }; };
+      const back = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0];
+      if (back) { G.move(g, back.iid, 'battlefield', { put: true }); haste(back); if (game) atNextEnd(game, g, { bounce: back.iid, why: 'Cauldron Dance' }); }
+      const hand = g.zones.hand.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0];
+      if (hand) { G.move(g, hand.iid, 'battlefield', { put: true }); haste(hand); if (game) atNextEnd(game, g, { sacrifice: hand.iid }); }
+    }],
+    [/^the opponent's best attacker leaves until the end step$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const c = o && o.zones && creatures(o, x => x.attacking && !x.commander).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(o, c.iid, c.token ? 'graveyard' : 'exile'); if (!c.token && game) atNextEnd(game, o, { fromExile: c.iid, tapped: true, why: nameOfSrc(ctx) }); }, (m, ctx) => !!ctx.other],
+    [/^your best creature grows by your counter kinds$/i, (g, m, ctx) => { const n = kindsOfCounters(g); const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; pumpBy(c, n, n); c.pump.kw = [...new Set([...(c.pump.kw || []), 'trample'])]; }],
+    [/^share a counter kind$/i, (g, m, ctx) => { const kinds = [...new Set(permanents(g).flatMap(c => Object.entries(c.counters || {}).filter(([, v]) => v > 0).map(([k]) => k)))]; const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; const k = c && kinds.find(x => !((c.counters || {})[x] > 0)); if (k) G.counter(g, c.iid, k, 1, { effect: true }); }],
+    [/^counters on this for your counter kinds$/i, (g, m, ctx) => { const n = kindsOfCounters(g); if (n && ctx.self) G.counter(g, ctx.self.iid, '+1/+1', n, { effect: true }); }, (m, ctx) => !!ctx.self],
+    [/^a random new counter on this$/i, (g, m, ctx) => { const me = ctx.self; if (!me) return; const kinds = ['flying', 'first strike', 'deathtouch', 'hexproof', 'lifelink', 'menace', 'reach', 'trample', 'vigilance', '+1/+1'].filter(k => !((me.counters || {})[k] > 0)); if (kinds.length) G.counter(g, me.iid, kinds[G.randomInt(kinds.length)], 1, { effect: true }); }, (m, ctx) => !!ctx.self],
+    [/^copy this creature's counters onto the newcomer$/i, (g, m, ctx) => { const me = ctx.self; const c = ctx.entered; if (!me || !c || c.token) return; Object.entries(me.counters || {}).filter(([, v]) => v > 0).forEach(([k, v]) => G.counter(g, c.iid, k, v, { effect: true })); }, (m, ctx) => !!ctx.self],
+    [/^more of each counter on your best permanent$/i, (g, m, ctx) => { const c = permanents(g).sort((a, b) => Object.keys(b.counters || {}).length - Object.keys(a.counters || {}).length)[0]; if (c) Object.entries(c.counters || {}).filter(([, v]) => v > 0).forEach(([k]) => G.counter(g, c.iid, k, 1, { effect: true })); }],
+    [/^a \+1\/\+1 counter on each of your fliers$/i, (g, m, ctx) => { creatures(g, c => stats(c, factsOf(c, defOfCtx(ctx))).kw.has('flying')).forEach(c => G.counter(g, c.iid, '+1/+1', 1, { effect: true })); }],
+    [/^the declaration in stone$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; const all = creatures(o, x => x.name === c.name); const real = all.filter(x => !x.token).length; all.forEach(x => G.move(o, x.iid, x.commander ? 'command' : 'exile')); if (real) artifactTokens(o, { name: 'Declaration in Stone' }, real, 'clue'); }, (m, ctx) => !!ctx.other],
+    [/^destroy every creature without counters$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => !Object.values(c.counters || {}).some(v => v > 0) && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^the contractual safeguard$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const best = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (!best) return;
+      if (!g.offTurn) G.counter(g, best.iid, 'shield', 1);
+      const kind = ['shield', '+1/+1', 'indestructible', 'flying', 'deathtouch', 'lifelink', 'trample', 'vigilance'].find(k => creatures(g).some(c => (c.counters || {})[k] > 0));
+      if (!kind) return;
+      const from = creatures(g).find(c => (c.counters || {})[kind] > 0);
+      creatures(g, c => c !== from).forEach(c => G.counter(g, c.iid, kind, 1, { effect: true }));
+    }],
+    [/^more of the opponent's permanents return for your counter kinds$/i, (g, m, ctx) => { for (let i = 0; i < kindsOfCounters(g); i++) runEffect(g, "the opponent's best nonland permanent returns to its hand", ctx); }],
+    [/^your shielded attackers draw on a hit this turn$/i, g => { creatures(g, c => c.attacking && (c.counters || {}).shield > 0).forEach(c => { c.favorTurn = g.turn; }); }],
+    [/^a counter from this onto the newcomer$/i, (g, m, ctx) => { const me = ctx.self; const c = ctx.entered; if (!me || !c || !G.isCreature(c)) return; const k = ['+1/+1', 'shield', 'deathtouch', 'flying'].find(x => (me.counters || {})[x] > 0); if (!k) return; G.counter(g, me.iid, k, -1); G.counter(g, c.iid, k, 1, { effect: true }); }, (m, ctx) => !!ctx.self],
+    [/^a token copy of your best creature with a counter$/i, (g, m, ctx) => { const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; const tok = G.copyAsToken(g, c.iid); if (tok) G.counter(g, tok.iid, '+1/+1', 1, { effect: true }); }],
+    [/^steal the poisoned opponent's top card$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (o && o.zones && (o.poison || 0) >= 3) stealTop(g, o, 1, { forever: true, anyMana: true }); }, (m, ctx) => !!ctx.other],
+    [/^a card back if the opponent is poisoned$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (!o || (o.poison || 0) < 3) return; const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => x !== ctx.self).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^each player gets a poison counter each$/i, (g, m, ctx) => { [g, otherOf(g, ctx) || otherTable(g)].forEach(t => addPoison(t, 1)); }],
+    [/^the caress of phyrexia$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones) return; G.drawCards(o, 3, isOpps(gameOf(g, ctx) || g, o)); if (ctx.hitOpps) ctx.hitOpps(3); addPoison(o, 3); }, (m, ctx) => !!ctx.other],
+    [/^expand the sphere$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 6); const lands = ids.filter(iid => G.isLand(g.cards[iid])).slice(0, 2); lands.forEach(iid => { G.move(g, iid, 'battlefield', { put: true }); g.cards[iid].tapped = true; }); G.shuffleArray(ids.filter(iid => !lands.includes(iid))).forEach(iid => G.move(g, iid, 'library', { bottom: true })); for (let i = lands.length; i < 2; i++) runEffect(g, 'proliferate', ctx); }],
+    [/^a poisoned opponent loses (\d+) life$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && (o.poison || 0) >= 3 && ctx.hitOpps) ctx.hitOpps(Number(m[1])); }],
+    [/^the poisoned opponent's best creature card joins you$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (o && (o.poison || 0) >= 3) runEffect(g, "the opponent's best creature card from its graveyard joins you", ctx); }, (m, ctx) => !!ctx.other],
+    [/^the opponent gets (a|\w+) poison$/i, (g, m, ctx) => addPoison(otherOf(g, ctx) || otherTable(g), toNumber(m[1]) || 1)],
+    [/^blockers poison their controller this turn$/i, g => { g.noxiousTurn = g.turn; }],
+    [/^the phyresis outbreak$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones) return; addPoison(o, 1); const n = o.poison || 0; creatures(o).forEach(c => pumpBy(c, -n, -n)); }, (m, ctx) => !!ctx.other],
+    [/^another wurm if the opponent is poisoned$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && (o.poison || 0) >= 3) { const n = ctx.self ? cmcOfInst(ctx.self, defOfCtx(ctx)) : 6; runEffect(g, `create a ${n}/${n} green Phyrexian Wurm creature token with trample and toxic 1`, ctx); } }],
+    [/^your best graveyard card on top of your library$/i, (g, m, ctx) => { const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => x !== ctx.self).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(g, c.iid, 'library'); const k = g.zones.library.indexOf(c.iid); if (k > 0) { g.zones.library.splice(k, 1); g.zones.library.unshift(c.iid); } }],
+    [/^the opponent sacrifices a creature$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => (G.isCreature(x) || isA(x, 'planeswalker')) && !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }],
+    [/^winter's delirium$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const cards = g.zones.graveyard.map(iid => g.cards[iid]);
+      if (new Set(cards.flatMap(c => CARD_TYPE_CHOICES.filter(k => isA(c, k)))).size < 4) return;
+      const pick = cards.filter(c => G.isLand(c) || PERM_TYPES.some(k => isA(c, k))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0];
+      if (!pick) return;
+      const used = new Set();
+      cards.filter(c => c !== pick && CARD_TYPE_CHOICES.some(k => isA(c, k) && !used.has(k) && used.add(k))).forEach(c => G.move(g, c.iid, 'exile'));
+      G.move(g, pick.iid, 'battlefield', { put: true });
+      G.counter(g, pick.iid, 'finality', 1);
+    }],
+    [/^the demonic covenant$/i, (g, m, ctx) => { runEffect(g, 'create a 5/5 black Demon creature token with flying', ctx); runEffect(g, 'mill two cards', ctx); runEffect(g, 'the demonic covenant check', ctx); }],
+    [/^the demonic covenant check$/i, (g, m, ctx) => { const ids = (g.lastMilled || []).slice(-2); if (ids.length < 2) return; const types = c => CARD_TYPE_CHOICES.filter(k => isA(c, k)).join(','); if (types(g.cards[ids[0]]) === types(g.cards[ids[1]]) && ctx.self && ctx.self.zone === 'battlefield') G.move(g, ctx.self.iid, 'graveyard'); }],
+    [/^delirium: other attackers get \+(\d+)\/\+(\d+)$/i, (g, m, ctx) => { if (new Set(g.zones.graveyard.flatMap(iid => CARD_TYPE_CHOICES.filter(k => isA(g.cards[iid], k)))).size < 4) return; creatures(g, c => c.attacking && c !== ctx.self).forEach(c => pumpBy(c, Number(m[1]), Number(m[2]))); }],
+    // ---- 16-17 decks, second half (settleNear) ----
+    [/^the boneyard parley$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const pool = [g, otherOf(g, ctx)].filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => ({ t, c: t.cards[iid] }))).filter(x => G.isCreature(x.c)).sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf)).slice(0, 5);
+      // the opponent splits the best one from the rest; you take the richer pile
+      const piles = [pool.slice(0, 1), pool.slice(1)];
+      const value = p => p.reduce((k, x) => k + cmcOfInst(x.c, defOf), 0);
+      const mine = value(piles[0]) >= value(piles[1]) ? piles[0] : piles[1];
+      mine.forEach(x => { const c = x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'graveyard', { quiet: true, defOf }); G.move(g, c.iid, 'battlefield', { put: true }); });
+    }],
+    [/^destroy the opponent's creatures and planeswalkers$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); (o && o.zones ? permanents(o).filter(c => (G.isCreature(c) || isA(c, 'planeswalker')) && !stats(c, factsOf(c, defOf)).kw.has('indestructible')) : []).forEach(c => G.move(o, c.iid, c.commander ? 'command' : 'graveyard')); }, (m, ctx) => !!ctx.other],
+    [/^your commander returns to your hand$/i, g => { const c = permanents(g).find(x => x.commander); if (c) G.move(g, c.iid, 'hand'); }],
+    [/^steal the best card from the opponent's hand$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && o.zones.hand.map(iid => o.cards[iid]).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; const mine = takeCard(o, c.iid, g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); mine.playable = { forever: true, anyMana: true }; }, (m, ctx) => !!ctx.other],
+    [/^cast what this creature exiled for free$/i, (g, m, ctx) => { g.zones.exile.map(iid => g.cards[iid]).filter(c => ctx.self && c.exiledWith === ctx.self.iid).forEach(c => { delete c.exiledWith; castFree(g, c, ctx, defOfCtx(ctx)); }); }],
+    [/^the exiled cards are free if this came from a graveyard$/i, (g, m, ctx) => { if (!(ctx.self && ctx.self.castFrom === 'graveyard')) return; (g.lastExiledIds || []).map(iid => g.cards[iid]).filter(c => c && c.zone === 'exile' && c.playable).forEach(c => { c.playable = { ...c.playable, free: true }; }); }],
+    [/^steal the top cards of the dead creature's library$/i, (g, m, ctx) => { const d = ctx.dead; const t = ctx.deadT || otherTable(g); const n = d ? Math.max(0, num(factsOf(d, defOfCtx(ctx)).power)) : 0; if (n && t && t !== g) stealTop(g, t, n, { forever: true, anyMana: true }); }],
+    [/^what this exiled returns to hand$/i, (g, m, ctx) => { const r = rollDice(g, 1, 10, nameOfSrc(ctx), ctx)[0]; g.zones.exile.map(iid => g.cards[iid]).filter(c => ctx.self && c.exiledWith === ctx.self.iid).slice(0, r).forEach(c => G.move(g, c.iid, 'hand')); }],
+    [/^the danse macabre$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      let mine = null;
+      const dead = [];
+      [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => { const c = creatures(t, x => !x.token && !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (!c) return; if (t === g) mine = c; G.move(t, c.iid, c.commander ? 'command' : 'graveyard'); if (c.zone === 'graveyard') dead.push({ t, c }); });
+      const r = rollDice(g, 1, 20, nameOfSrc(ctx), ctx)[0] + (mine ? Math.max(0, num(factsOf(mine, defOf).toughness)) : 0);
+      dead.sort((a, b) => worthOf(b.c, defOf) - worthOf(a.c, defOf)).slice(0, r >= 15 ? 2 : 1).forEach(x => { const c = x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'graveyard', { quiet: true, defOf }); G.move(g, c.iid, 'battlefield', { put: true }); });
+    }],
+    [/^hellish rebuke$/i, (g, m, ctx) => { g.rebukeKey = turnKey(g, ctx); }],
+    [/^exile each player's top card for the spoils$/i, (g, m, ctx) => { [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones && t.zones.library.length).forEach(t => { const iid = t.zones.library[0]; G.move(t, iid, 'exile'); if (t === g) g.cards[iid].playable = { forever: true, anyMana: true }; }); }],
+    [/^cast the opponent's next spell for free$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones) return; const k = o.zones.library.findIndex(iid => !G.isLand(o.cards[iid])); if (k < 0) return; o.zones.library.slice(0, k).forEach(iid => G.move(o, iid, 'exile')); castFree(g, takeCard(o, o.zones.library[k], g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }), ctx, defOfCtx(ctx)); }, (m, ctx) => !!ctx.other],
+    [/^hurl the opponent's best creature to your side$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && creatures(o, x => !x.commander).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; if (c.token) return void G.move(o, c.iid, 'graveyard'); G.move(o, c.iid, 'exile'); const mine = takeCard(o, c.iid, g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); mine.playable = { until: g.turn + 1, anyMana: true }; }, (m, ctx) => !!ctx.other],
+    [/^one of the opponent's top three is yours to play$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones) return; const ids = o.zones.library.slice(0, 3); ids.forEach(iid => G.move(o, iid, 'exile')); const pick = ids.map(iid => o.cards[iid]).sort((a, b) => (G.isLand(a) - G.isLand(b)) || cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!pick) return; const mine = takeCard(o, pick.iid, g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); mine.playable = { until: g.turn + 1, anyMana: true }; }, (m, ctx) => !!ctx.other],
+    [/^treasures by a d(\d+) before passing this on$/i, (g, m, ctx) => { const r = rollDice(g, 1, Number(m[1]), nameOfSrc(ctx), ctx)[0]; artifactTokens(g, ctx.self, r, 'treasure'); const o = otherOf(g, ctx) || otherTable(g); if (ctx.self && o && ctx.self.zone === 'battlefield') gainControl(g, ctx.self.iid, o, defOfCtx(ctx)); }],
+    [/^the capricious destruction$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const mine = permanents(g).filter(c => !G.isLand(c) && c !== ctx.self).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0];
+      const theirs = o && o.zones ? permanents(o).filter(c => !G.isLand(c)).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf)).slice(0, 2).map(c => ({ t: o, c })) : [];
+      const pool = [...(mine ? [{ t: g, c: mine }] : [{ t: g, c: ctx.self }].filter(x => x.c)), ...theirs];
+      const x = pool[G.randomInt(pool.length)];
+      if (x && x.c.zone === 'battlefield' && !stats(x.c, factsOf(x.c, defOf)).kw.has('indestructible')) G.move(x.t, x.c.iid, x.c.commander ? 'command' : 'graveyard');
+    }],
+    [/^your creatures that died this turn return to your hand$/i, g => { g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c) && c.diedTurn === g.turn).forEach(c => G.move(g, c.iid, 'hand')); }],
+    [/^the opponent sacrifices its worst (creature|artifact|enchantment)$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => isA(x, m[1]) && !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }, (m, ctx) => !!ctx.other],
+    [/^your best creature gains fear this turn$/i, (g, m, ctx) => { const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'fear'])] }; }],
+    [/^a land with a basic type onto the battlefield$/i, g => { const c = g.zones.library.map(iid => g.cards[iid]).find(x => G.isLand(x) && /\b(plains|island|swamp|mountain|forest)\b/i.test(x.typeLine || '')); if (c) G.move(g, c.iid, 'battlefield', { put: true }); G.shuffle(g); }],
+    [/^(x|\d+) damage to the opponent's main color$/i, (g, m, ctx) => {
+      const n = Number(m[1]) || (ctx.self && ctx.self.xValue) || 0;
+      const defOf = defOfCtx(ctx);
+      const o = otherOf(g, ctx);
+      const score = k => [o, g].filter(t => t && t.zones).reduce((v, t) => v + (t === g ? -1 : 1) * creatures(t, c => colorsOfInst(c, defOf).includes(k)).reduce((a, c) => a + worthOf(c, defOf), 0), 0);
+      const k = WUBRG.slice().sort((a, b) => score(b) - score(a))[0];
+      if (n) damageEach(g, ctx, n, c => colorsOfInst(c, defOf).includes(k), { what: 'creature of the chosen color' });
+    }],
+    [/^your best creature reincarnates this turn$/i, (g, m, ctx) => { const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) c.reincarnate = g.turn; }],
+    [/^tend the plague$/i, (g, m, ctx) => { const me = ctx.self; const o = otherOf(g, ctx); if (!me) return; const defOf = defOfCtx(ctx); const net = o && o.zones ? permanents(o).filter(c => !G.isLand(c)).reduce((k, c) => k + worthOf(c, defOf), 0) - permanents(g).filter(c => !G.isLand(c)).reduce((k, c) => k + worthOf(c, defOf), 0) : 0; G.counter(g, me.iid, 'plague', net > 0 ? 1 : -1); }, (m, ctx) => !!ctx.self],
+    [/^the dead creature's controller draws a card$/i, (g, m, ctx) => { const t = ctx.deadT || g; G.drawCards(t, 1, isOpps(gameOf(g, ctx) || g, t)); }],
+    [/^your next creature card into your hand, the rest milled$/i, g => { const k = g.zones.library.findIndex(iid => G.isCreature(g.cards[iid])); if (k < 0) return; g.zones.library.slice(0, k).forEach(iid => G.move(g, iid, 'graveyard')); G.move(g, g.zones.library[0], 'hand'); }],
+    [/^cycle your whole hand$/i, (g, m, ctx) => { const n = g.zones.hand.length; [...g.zones.hand].forEach(iid => G.move(g, iid, 'library', { bottom: true })); G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^put the opponent's creatures to sleep$/i, (g, m, ctx) => { const o = otherOf(g, ctx); (o && o.zones ? creatures(o) : []).forEach(c => { c.tapped = true; c.tappedFor = null; c.skipUntap = true; }); }, (m, ctx) => !!ctx.other],
+    [/^steal the opponent's best permanent$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && permanents(o).filter(x => !x.commander).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) gainControl(o, c.iid, g, defOfCtx(ctx)); }, (m, ctx) => !!ctx.other],
+    [/^discard a random card$/i, (g, m, ctx) => { const h = g.zones.hand; if (!h.length) return; const iid = h[G.randomInt(h.length)]; G.move(g, iid, 'graveyard'); discardWatch(g, g.cards[iid], defOfCtx(ctx), gameOf(g, ctx)); }],
+    [/^urza's rage$/i, (g, m, ctx) => {
+      const n = ctx.self && ctx.self.kicked ? 10 : 3;
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (c && (n === 3 || worthOf(c, defOf) > 10)) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); else if (ctx.hitOpps) ctx.hitOpps(n, true);
+    }],
+    [/^the best of your top four into your hand when alone$/i, (g, m, ctx) => { if (creatures(g, c => c !== ctx.self).length) return; runEffect(g, 'the best of your top four into your hand', ctx); }],
+    [/^the steam augury$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 5); const sorted = [...ids].sort((a, b) => cmcOfInst(g.cards[b], defOfCtx(ctx)) - cmcOfInst(g.cards[a], defOfCtx(ctx))); const hand = sorted.filter((x, i) => i % 2 === 1); ids.forEach(iid => G.move(g, iid, hand.includes(iid) ? 'hand' : 'graveyard')); }],
+    [/^firemind's foresight$/i, (g, m, ctx) => { [3, 2, 1].forEach(v => { const c = g.zones.library.map(iid => g.cards[iid]).find(x => isA(x, 'instant') && cmcOfInst(x, defOfCtx(ctx)) === v); if (c) G.move(g, c.iid, 'hand'); }); G.shuffle(g); }],
+    [/^the opponent's best nonland permanent returns to its hand$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && permanents(o).filter(x => !G.isLand(x)).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : (c.token ? 'graveyard' : 'hand')); }, (m, ctx) => !!ctx.other],
+    [/^this creature is (\d+|x)\/(?:\d+|x) this turn$/i, (g, m, ctx) => { const n = Number(m[1]) || Number(ctx.x) || 0; if (ctx.self && n) ctx.self.basePTUntil = `${n}/${n}`; }, (m, ctx) => !!ctx.self],
+    [/^your best (x|\d+) creatures are unblockable card-drawers this turn$/i, (g, m, ctx) => { const n = Number(m[1]) || (ctx.self && ctx.self.xValue) || 0; creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx))).slice(0, n).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'unblockable'])], lines: [...((c.pump && c.pump.lines) || []), 'Whenever this creature deals combat damage to a player, draw a card.'] }; }); }],
+    [/^the fated return$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const pool = [g, otherOf(g, ctx)].filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => ({ t, c: t.cards[iid] }))).filter(x => G.isCreature(x.c)); const x = pool.sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf))[0]; if (!x) return; const c = x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'graveyard', { quiet: true, defOf }); G.move(g, c.iid, 'battlefield', { put: true }); c.extraKw = [...new Set([...(c.extraKw || []), 'indestructible'])]; if (!g.offTurn) runEffect(g, 'scry 2', ctx); }],
+    [/^the opponent's best creature card is yours to cast this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; const mine = takeCard(o, c.iid, g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); mine.playable = { turn: g.turn, anyMana: true }; }, (m, ctx) => !!ctx.other],
+    [/^this becomes an unblockable (\d+)\/(\d+) (\w+) this turn$/i, (g, m, ctx) => { if (!ctx.self) return; ctx.self.becomes = { pt: `${m[1]}/${m[2]}`, types: [m[3].toLowerCase(), 'artifact'], kw: ['unblockable'], turn: g.turn }; }, (m, ctx) => !!ctx.self],
+    // ---- 16-17 decks, first half (settleNear) ----
+    [/^a mask on your best creature$/i, (g, m, ctx) => { const host = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!host) return; const tok = G.createToken(g, { id: 'Mask', name: 'Mask', typeLine: 'Token Enchantment — Aura', custom: true, pt: '', text: 'Enchant permanent\nUmbra armor' }, { quiet: true }); if (!tok) return; tok.tokenColors = ['W']; G.attach(g, tok.iid, host.iid, attachBonus(oracleText(tok, defOfCtx(ctx)))); }],
+    [/^mill seven before your enchantments return$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot);
+      G.mill(g, 7);
+      const ench = g.zones.graveyard.map(iid => g.cards[iid]).filter(c => isA(c, 'enchantment'));
+      ench.filter(c => !G.isAura(c)).forEach(c => G.move(g, c.iid, 'battlefield', { put: true }));
+      ench.filter(c => G.isAura(c)).forEach(c => { if (game) placeAura(game, g, c, defOf); });
+    }],
+    [/^your auras gather on this creature$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const defOf = defOfCtx(ctx);
+      if (!me || me.zone !== 'battlefield') return;
+      [...g.zones.hand, ...g.zones.graveyard].map(iid => g.cards[iid]).filter(c => G.isAura(c) && /^enchant creature$/im.test(oracleText(c, defOf))).forEach(c => { G.move(g, c.iid, 'battlefield', { put: true }); G.attach(g, c.iid, me.iid, attachBonus(oracleText(c, defOf))); });
+      permanents(g).filter(c => G.isAura(c) && c.attachedTo && c.attachedTo !== me.iid && /^enchant creature$/im.test(oracleText(c, defOf))).forEach(c => G.attach(g, c.iid, me.iid, attachBonus(oracleText(c, defOf))));
+    }, (m, ctx) => !!ctx.self],
+    [/^your most common permanent type from your graveyard to your hand$/i, g => { const cards = g.zones.graveyard.map(iid => g.cards[iid]); const k = [...PERM_TYPES, 'land'].map(t => ({ t, n: cards.filter(c => isA(c, t)).length })).sort((a, b) => b.n - a.n)[0]; if (k && k.n) cards.filter(c => isA(c, k.t)).forEach(c => G.move(g, c.iid, 'hand')); }],
+    [/^kruphix's insight$/i, g => { const ids = g.zones.library.slice(0, 6); let n = 0; ids.forEach(iid => { if (n < 3 && isA(g.cards[iid], 'enchantment')) { G.move(g, iid, 'hand'); n++; } else G.move(g, iid, 'graveyard'); }); }],
+    [/^your auras and equipment gather on this creature$/i, (g, m, ctx) => { const me = ctx.self; const defOf = defOfCtx(ctx); if (!me || me.zone !== 'battlefield') return; permanents(g).filter(c => (G.isAura(c) || isA(c, 'equipment')) && c.attachedTo && c.attachedTo !== me.iid && !c.enchanting).forEach(c => G.attach(g, c.iid, me.iid, attachBonus(oracleText(c, defOf)))); }, (m, ctx) => !!ctx.self],
+    [/^the next nonland permanent of your library onto the battlefield$/i, g => { const k = g.zones.library.findIndex(iid => !G.isLand(g.cards[iid]) && PERM_TYPES.some(t => isA(g.cards[iid], t))); const shown = k < 0 ? g.zones.library.slice() : g.zones.library.slice(0, k); if (k >= 0) G.move(g, g.zones.library[k], 'battlefield', { put: true }); G.shuffleArray(shown).forEach(iid => G.move(g, iid, 'library', { bottom: true })); }],
+    [/^double your best creature's power and toughness this turn$/i, (g, m, ctx) => { const c = creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; const st = stats(c, factsOf(c, defOfCtx(ctx))); pumpBy(c, Math.max(0, st.pow), Math.max(0, st.tou)); }],
+    [/^a slumber counter off this$/i, (g, m, ctx) => { const me = ctx.self; if (me && ((me.counters || {}).slumber || 0) > 0) G.counter(g, me.iid, 'slumber', -1); }, (m, ctx) => !!ctx.self],
+    [/^your creatures are shielded this turn if your commander is out$/i, g => { if (!permanents(g).some(c => c.commander)) return; creatures(g).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'indestructible'])] }; }); }],
+    [/^no rebound$/i, () => {}],
+    [/^the opponent sacrifices a creature, else you (create .+)$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o, x => !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); else runEffect(g, m[1], ctx); }],
+    [/^every (\w+) gets \+(\d+)\/\+(\d+) this turn$/i, (g, m, ctx) => { [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => isA(c, singular(m[1]))).forEach(c => pumpBy(c, Number(m[2]), Number(m[3])))); }],
+    [/^the opponent discards its hand's main color$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones) return; const defOf = defOfCtx(ctx); const hand = o.zones.hand.map(iid => o.cards[iid]); const k = WUBRG.map(x => ({ x, n: hand.filter(c => colorsOfInst(c, defOf).includes(x)).length })).sort((a, b) => b.n - a.n)[0]; if (k && k.n) hand.filter(c => colorsOfInst(c, defOf).includes(k.x)).forEach(c => G.move(o, c.iid, 'graveyard')); }, (m, ctx) => !!ctx.other],
+    [/^this becomes your best (\w+) from your library this turn$/i, (g, m, ctx) => { const me = ctx.self; const c = g.zones.library.map(iid => g.cards[iid]).filter(x => isA(x, m[1]) && PERM_TYPES.some(t => isA(x, t))).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; G.shuffle(g); if (!c || !me) return; G.move(g, c.iid, 'graveyard'); me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.name = c.name; me.typeLine = front(c.typeLine); if (me.bot) me.bot = facts(defOfCtx(ctx)(c.id) || { typeLine: me.typeLine }); me.copyUntil = g.turn; }, (m, ctx) => !!ctx.self],
+    [/^the opponent's creatures get -(\d+)\/-(\d+) this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); (o && o.zones ? creatures(o) : []).forEach(c => pumpBy(c, -Number(m[1]), -Number(m[2]))); }, (m, ctx) => !!ctx.other],
+    [/^loot for power$/i, (g, m, ctx) => { G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); const c = g.zones.hand.map(iid => g.cards[iid]).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(g, c.iid, 'graveyard'); discardWatch(g, c, defOfCtx(ctx), gameOf(g, ctx)); if (ctx.self) pumpBy(ctx.self, cmcOfInst(c, defOfCtx(ctx)), 0); }],
+    [/^draw a card with an? (\w+) in hand or play$/i, (g, m, ctx) => { if (creatures(g, c => c !== ctx.self && isA(c, m[1])).length || g.zones.hand.some(iid => isA(g.cards[iid], m[1]))) G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^the fortunate few$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const keepTheirs = o && o.zones && permanents(o).filter(c => !G.isLand(c)).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      const keepMine = permanents(g).filter(c => !G.isLand(c) && c !== ctx.self).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      [g, o].filter(t => t && t.zones).forEach(t => permanents(t).filter(c => !G.isLand(c) && c !== keepTheirs && c !== keepMine && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard')));
+    }],
+    [/^destroy every (\w+) creature$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => isA(c, singular(m[1])) && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^this becomes a copy of your best creature of the chosen type this turn$/i, (g, m, ctx) => { const me = ctx.self; const k = me && me.chosenType; const c = creatures(g, x => x !== me && (!k || isA(x, k))).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!me || !c) return; me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.name = c.name; me.typeLine = `Artifact ${front(c.typeLine)}`; me.copyUntil = g.turn; }, (m, ctx) => !!ctx.self],
+    [/^the active player loses 1 life, a -1\/-1 counter on its best creature$/i, (g, m, ctx) => { const a = activeTable(g, ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (a === g || !game) return; addLife(game, a === game ? 'you' : 'opp', -1); const c = creatures(a).sort((x, y) => worthOf(y, defOfCtx(ctx)) - worthOf(x, defOfCtx(ctx)))[0]; if (c) G.counter(a, c.iid, '-1/-1', 1); }],
+    [/^the shell game$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const list = o && o.zones ? creatures(o).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)) : []; [...new Set([list[0], list[list.length - 1]])].filter(Boolean).forEach(c => { if (!stats(c, factsOf(c, defOf)).kw.has('indestructible')) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }); }, (m, ctx) => !!ctx.other],
+    [/^its power in damage to the opponent$/i, (g, m, ctx) => { const me = ctx.self; const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const n = me ? Math.max(0, stats(me, factsOf(me, defOfCtx(ctx))).pow) : 0; if (n && game) damagePlayer(game, g === game ? 'opp' : 'you', n, me.name, defOfCtx(ctx)); }, (m, ctx) => !!ctx.self],
+    [/^the opponent gives up a permanent or takes 5$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && permanents(o).filter(x => !G.isLand(x)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (c && worthOf(c, defOf) < 5) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); else if (ctx.hitOpps) ctx.hitOpps(5, true); }],
+    [/^the active player gives up a creature or takes (\d+)$/i, (g, m, ctx) => { const a = activeTable(g, ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const defOf = defOfCtx(ctx); if (a === g || !game) return; const c = creatures(a, x => !cantSac(x, defOf)).sort((x, y) => worthOf(x, defOf) - worthOf(y, defOf))[0]; if (c && worthOf(c, defOf) <= Number(m[1])) G.move(a, c.iid, c.commander ? 'command' : 'graveyard'); else damagePlayer(game, a === game ? 'you' : 'opp', Number(m[1]), nameOfSrc(ctx), defOf); }],
+    [/^the opponent takes 1 if you control a red permanent$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (game && permanents(g).some(c => colorsOfInst(c, defOfCtx(ctx)).includes('R'))) damagePlayer(game, g === game ? 'opp' : 'you', 1, nameOfSrc(ctx), defOfCtx(ctx)); }],
+    [/^pay its power in life for that many cards$/i, (g, m, ctx) => { const d = ctx.dead; const n = d ? Math.max(0, num(factsOf(d, defOfCtx(ctx)).power)) : 0; if (!n || lifeOfTable(g, ctx) <= n + 10) return; runEffect(g, `you lose ${n} life`, ctx); G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^the newcomer's controller takes 1$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const t = ctx.enteredT || g; if (game) damagePlayer(game, t === game ? 'you' : 'opp', 1, nameOfSrc(ctx), defOfCtx(ctx)); }],
+    [/^the cast spell's mana value in damage to the opponent$/i, (g, m, ctx) => { const n = ctx.castSpell ? cmcOfInst(ctx.castSpell, defOfCtx(ctx)) : 0; if (n && ctx.hitOpps) ctx.hitOpps(n, true); }],
+    [/^this becomes a 7\/5 copy of the best creature with a counter$/i, (g, m, ctx) => { const me = ctx.self; const c = [g, otherOf(g, ctx)].filter(t => t && t.zones).flatMap(t => creatures(t)).filter(x => x !== me && Object.values(x.counters || {}).some(v => v > 0)).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!me || !c) return; me.original = me.original || { id: me.id, name: me.name, typeLine: me.typeLine, bot: me.bot, copiedName: null }; me.id = c.id; me.name = c.name; me.typeLine = front(c.typeLine); me.copyUntil = g.turn; me.basePTUntil = '7/5'; }, (m, ctx) => !!ctx.self],
+    [/^draw cards for this creature's power$/i, (g, m, ctx) => { const c = ctx.dead || ctx.self; const n = c ? Math.max(0, c.zone === 'battlefield' ? stats(c, factsOf(c, defOfCtx(ctx))).pow : num(factsOf(c, defOfCtx(ctx)).power) + (((c.diedCounters || {})['+1/+1']) || 0)) : 0; if (n) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^each player makes a (\d+)\/(\d+) (\w+) (\w+)$/i, (g, m, ctx) => { [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => runEffect(t, `create a ${m[1]}/${m[2]} ${m[3]} ${m[4].charAt(0).toUpperCase()}${m[4].slice(1)} creature token`, { self: ctx.self, defOf: defOfCtx(ctx) })); }],
+    [/^every other tapped creature returns to its hand$/i, (g, m, ctx) => { [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => c.tapped && c !== ctx.self).forEach(c => G.move(t, c.iid, c.commander ? 'command' : (c.token ? 'graveyard' : 'hand')))); }],
+    [/^manifest the creature cards of the fuller graveyard$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const t = [g, o].filter(x => x && x.zones).sort((a, b) => b.zones.graveyard.filter(iid => G.isCreature(b.cards[iid])).length - a.zones.graveyard.filter(iid => G.isCreature(a.cards[iid])).length)[0];
+      if (!t) return;
+      G.shuffleArray(t.zones.graveyard.filter(iid => G.isCreature(t.cards[iid]))).forEach(iid => { const c = t === g ? g.cards[iid] : takeCard(t, iid, g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); G.move(g, c.iid, 'battlefield', { put: true }); c.faceDown = true; c.manifested = true; });
+    }],
+    [/^the luxa bounty$/i, (g, m, ctx) => { const me = ctx.self; if (!me) return; if (((me.counters || {}).flood || 0) > 0) { G.counter(g, me.iid, 'flood', -me.counters.flood); g.mana.C = (g.mana.C || 0) + 1; g.mana.G = (g.mana.G || 0) + 1; g.mana.U = (g.mana.U || 0) + 1; } else { G.counter(g, me.iid, 'flood', 1); G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); } }, (m, ctx) => !!ctx.self],
+    [/^your best creature card is castable from your graveyard this turn$/i, (g, m, ctx) => { const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) c.graveOkTurn = g.turn; }],
+    [/^the newcomer gains haste unless cast from your hand$/i, (g, m, ctx) => { const c = ctx.entered; if (c && c.castFrom !== 'hand') c.untilNextKw = [...new Set([...(c.untilNextKw || []), 'haste'])]; }],
+    [/^a card for 1 life if the active player has no hand$/i, (g, m, ctx) => { const a = activeTable(g, ctx); if (a.zones.hand.length) return; G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); runEffect(g, 'you lose 1 life', ctx); }],
+    // ---- Symbiotic Swarm (settleNear) ----
+    [/^keyword counters for your graveyard$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const have = new Set(g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c)).flatMap(c => kwOfCard(c, defOf)));
+      const kinds = ['flying', 'first strike', 'double strike', 'deathtouch', 'hexproof', 'indestructible', 'lifelink', 'menace', 'reach', 'trample', 'vigilance'].filter(k => have.has(k));
+      const best = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (!best || !kinds.length) return;
+      kinds.forEach(k => G.counter(g, best.iid, k, 1));
+      if (ctx.self && ctx.self.zone === 'battlefield') G.counter(g, ctx.self.iid, '+1/+1', kinds.length, { effect: true });
+    }],
+    [/^your top three permanents into your hand$/i, g => { const ids = g.zones.library.slice(0, 3); ids.forEach(iid => { const c = g.cards[iid]; if (!G.isLand(c) && PERM_TYPES.some(k => isA(c, k))) G.move(g, iid, 'hand'); else G.move(g, iid, 'library', { bottom: true }); }); }],
+    [/^a card for a creature that had counters$/i, (g, m, ctx) => { const d = ctx.dead || ctx.left; if (d && !Object.values(d.diedCounters || d.counters || {}).some(v => v > 0)) return; G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); runEffect(g, 'you lose 1 life', ctx); }],
+    [/^yannik holds a creature for its power in counters$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const defOf = defOfCtx(ctx);
+      const c = creatures(g, x => x !== me && !x.commander).sort((a, b) => (b.token - a.token) || worthOf(a, defOf) - worthOf(b, defOf))[0];
+      if (!me || !c) return;
+      const n = Math.max(0, stats(c, factsOf(c, defOf)).pow);
+      G.move(g, c.iid, c.token ? 'graveyard' : 'exile');
+      if (!c.token) { c.exiledWith = me.iid; c.returnWhenGone = true; }
+      const best = creatures(g).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (best && n) G.counter(g, best.iid, '+1/+1', n, { effect: true });
+    }, (m, ctx) => !!ctx.self],
+    [/^lifelink counters on your best creatures$/i, (g, m, ctx) => { const n = ((ctx.self && ctx.self.counters) || {})['+1/+1'] || 1; creatures(g).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx))).slice(0, n).forEach(c => G.counter(g, c.iid, 'lifelink', 1)); }],
+    [/^this creature gains your creatures' keywords this turn$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const defOf = defOfCtx(ctx);
+      if (!me) return;
+      const kws = [...new Set(creatures(g, c => c !== me).flatMap(c => [...stats(c, factsOf(c, defOf)).kw].filter(k => SWARM_KW.includes(k))))];
+      if (kws.length) me.pump = { pow: 0, tou: 0, ...me.pump, kw: [...new Set([...((me.pump && me.pump.kw) || []), ...kws])] };
+    }, (m, ctx) => !!ctx.self],
+    [/^the selective adaptation$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const ids = g.zones.library.slice(0, 7);
+      const chosen = [];
+      SWARM_KW.filter(k => !['fear', 'shroud'].includes(k)).forEach(k => { const c = ids.map(iid => g.cards[iid]).find(x => !chosen.includes(x) && kwOfCard(x, defOf).includes(k)); if (c) chosen.push(c); });
+      const onto = chosen.filter(c => PERM_TYPES.some(k => isA(c, k))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0];
+      ids.forEach(iid => { const c = g.cards[iid]; if (c === onto) G.move(g, iid, 'battlefield', { put: true }); else G.move(g, iid, chosen.includes(c) ? 'hand' : 'graveyard'); });
+    }],
+    [/^your two best creature cards return as zombies$/i, (g, m, ctx) => { g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx))).slice(0, 2).forEach(c => { G.move(g, c.iid, 'battlefield', { put: true }); if (!isA(c, 'zombie')) c.extraTypes = [...(c.extraTypes || []), 'zombie']; }); }],
+    [/^you lose 3 life per soul counter$/i, (g, m, ctx) => { const n = ((ctx.self && ctx.self.counters) || {}).soul || 0; if (n) runEffect(g, `you lose ${3 * n} life`, ctx); }],
+    // ---- Graveyard Overdrive, Spirit Squadron (settleNear) ----
+    [/^create a goyf token named tarmogoyf$/i, g => { const tok = G.createToken(g, { id: 'Tarmogoyf', name: 'Tarmogoyf', typeLine: 'Token Creature — Lhurgoyf', custom: true, pt: '0/1', text: "Tarmogoyf's power is equal to the number of card types among cards in all graveyards and its toughness is equal to that number plus 1." }, { quiet: true }); if (tok) tok.tokenColors = ['G']; }],
+    [/^the gluttonous feast$/i, (g, m, ctx) => {
+      const x = (ctx.self && ctx.self.xValue) || 0;
+      const defOf = defOfCtx(ctx);
+      let n = 0;
+      [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => creatures(t, c => c !== ctx.self && !cantSac(c, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)).slice(0, x).forEach(c => { G.move(t, c.iid, c.commander ? 'command' : 'graveyard'); n++; }));
+      if (n && ctx.self) ctx.self.counters = { ...(ctx.self.counters || {}), '+1/+1': ((ctx.self.counters || {})['+1/+1'] || 0) + 2 * n };
+    }],
+    [/^mill for its power, keeping a creature card$/i, (g, m, ctx) => { const n = ctx.self ? Math.max(0, stats(ctx.self, factsOf(ctx.self, defOfCtx(ctx))).pow) : 0; const ids = g.zones.library.slice(0, n); if (!ids.length) return; G.mill(g, ids.length); const c = ids.map(iid => g.cards[iid]).filter(x => G.isCreature(x) && x.zone === 'graveyard').sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^your dying creatures leave saprolings this turn$/i, g => { g.thrinaxTurn = g.turn; }],
+    [/^your best milled creature card into your hand$/i, (g, m, ctx) => { const c = (g.lastMilled || []).map(iid => g.cards[iid]).filter(x => x && x.zone === 'graveyard' && G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^a random card from your graveyard$/i, g => { const ids = g.zones.graveyard; if (!ids.length) return; const c = g.cards[ids[G.randomInt(ids.length)]]; G.move(g, c.iid, G.isCreature(c) ? 'battlefield' : 'hand', G.isCreature(c) ? { put: true } : undefined); }],
+    [/^insects while insects are milled$/i, (g, m, ctx) => {
+      for (let i = 0; i < 20; i++) {
+        runEffect(g, 'create a 1/1 black and green Insect creature token', ctx);
+        const top = g.zones.library[0];
+        if (!top) return;
+        G.mill(g, 1);
+        if (!isA(g.cards[top], 'insect')) return;
+        if (ctx.self && ctx.self.zone === 'battlefield') G.counter(g, ctx.self.iid, 'loyalty', 1);
+      }
+    }],
+    [/^fling a spare creature for three treasures$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const c = creatures(g, x => x !== ctx.self && !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0];
+      if (!c || worthOf(c, defOf) > 4) return;
+      const n = Math.max(0, stats(c, factsOf(c, defOf)).pow);
+      G.move(g, c.iid, c.commander ? 'command' : 'graveyard');
+      const o = otherOf(g, ctx);
+      const foe = n && o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (foe && worthOf(foe, defOf) > n) applyTarget(gameOf(g, ctx) || g, o, foe, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); else if (n && ctx.hitOpps) ctx.hitOpps(n, true);
+      artifactTokens(g, ctx.self, 3, 'treasure');
+    }],
+    [/^your hits grow this planeswalker this turn$/i, (g, m, ctx) => { if (ctx.self) g.dovinHits = { turn: g.turn, iid: ctx.self.iid }; }, (m, ctx) => !!ctx.self],
+    [/^cast a cheap instant or sorcery from a graveyard for your (\w+?)s$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const n = creatures(g, c => isA(c, m[1])).length;
+      const pool = lastTables.filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => ({ t, c: t.cards[iid] }))).filter(x => /\b(instant|sorcery)\b/i.test(front(x.c.typeLine || '')) && cmcOfInst(x.c, defOf) <= n && !G.isCounterspell(factsOf(x.c, defOf).oracle || ''));
+      const x = pool.sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf))[0];
+      if (!x) return;
+      const c = x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'graveyard', { quiet: true, defOf });
+      c.castAftermath = true;
+      castFree(g, c, ctx, defOf);
+    }],
+    [/^an attacking angel until the end step$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const tok = G.createToken(g, { id: 'Angel', name: 'Angel', typeLine: 'Token Creature — Angel', custom: true, pt: '4/4', text: 'Flying' }, { quiet: true }); if (!tok) return; tok.tokenColors = ['W']; tok.tapped = true; tok.attacking = true; if (game) atNextEnd(game, g, { exile: tok.iid }); }],
+    [/^the council returns two of your cards$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); const list = g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isCreature(c) || isA(c, 'artifact') || isA(c, 'enchantment')).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf)); [...new Set([list[0], list[list.length - 1]])].filter(Boolean).forEach(c => G.move(g, c.iid, 'hand')); }],
+    [/^haunting imitations$/i, (g, m, ctx) => { [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones && t.zones.library.length).map(t => t.cards[t.zones.library[0]]).filter(c => G.isCreature(c)).forEach(c => { const tok = G.createToken(g, { id: c.id, name: c.name, typeLine: c.typeLine }, { quiet: true }); if (tok) tok.becomes = { pt: '1/1', types: ['spirit'], kw: ['flying'], forever: true }; }); }],
+    [/^the flood of tears$/i, (g, m, ctx) => {
+      const mine = permanents(g).filter(c => !G.isLand(c) && !c.token && c !== ctx.self).length;
+      [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => permanents(t).filter(c => !G.isLand(c)).forEach(c => G.move(t, c.iid, c.commander ? 'command' : (c.token ? 'graveyard' : 'hand'))));
+      if (mine < 4) return;
+      const c = g.zones.hand.map(iid => g.cards[iid]).filter(x => PERM_TYPES.some(k => isA(x, k)) && !G.isLand(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0];
+      if (c) G.move(g, c.iid, 'battlefield', { put: true });
+    }],
+    // ---- Evasive Maneuvers, Peer Through Time (settleNear) ----
+    [/^this comes out of the command zone$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.zone === 'command') G.move(g, me.iid, 'battlefield', { put: true }); }, (m, ctx) => !!ctx.self],
+    [/^swap your worst creature for their best$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const legend = c => /\blegendary\b/i.test(c.typeLine || '');
+      const theirs = o && o.zones && creatures(o, c => !legend(c)).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      const mine = creatures(g, c => !legend(c) && c !== ctx.self).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0];
+      if (!theirs || !mine || worthOf(theirs, defOf) <= worthOf(mine, defOf)) return;
+      gainControl(o, theirs.iid, g, defOf);
+      gainControl(g, mine.iid, o, defOf);
+    }, (m, ctx) => !!ctx.other],
+    [/^draw for the opponent's tapped creatures$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const n = o && o.zones ? creatures(o, c => c.tapped).length : 0; if (n) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }, (m, ctx) => !!ctx.other],
+    [/^kirtar's wrath$/i, (g, m, ctx) => { const threshold = g.zones.graveyard.length >= 7; const defOf = defOfCtx(ctx); [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); if (threshold) runEffect(g, 'create two 1/1 white Spirit creature tokens with flying', ctx); }],
+    [/^the glorious offer$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones || !creatures(o).length) return; creatures(o).forEach(c => G.counter(o, c.iid, '+1/+1', 1, { effect: true })); creatures(g).forEach(c => G.counter(g, c.iid, '+1/+1', 1, { effect: true })); }],
+    [/^wash out the opponent's main color$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const score = k => [o, g].filter(t => t && t.zones).reduce((v, t) => v + (t === g ? -1 : 1) * permanents(t).filter(c => !G.isLand(c) && colorsOfInst(c, defOf).includes(k)).reduce((a, c) => a + worthOf(c, defOf), 0), 0);
+      const k = WUBRG.slice().sort((a, b) => score(b) - score(a))[0];
+      if (score(k) <= 0) return;
+      [g, o].filter(t => t && t.zones).forEach(t => permanents(t).filter(c => colorsOfInst(c, defOf).includes(k)).forEach(c => G.move(t, c.iid, c.commander ? 'command' : (c.token ? 'graveyard' : 'hand'))));
+    }],
+    [/^aethermage's touch$/i, (g, m, ctx) => {
+      const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot);
+      const ids = g.zones.library.slice(0, 4);
+      const pick = ids.filter(iid => G.isCreature(g.cards[iid])).sort((a, b) => cmcOfInst(g.cards[b], defOfCtx(ctx)) - cmcOfInst(g.cards[a], defOfCtx(ctx)))[0];
+      ids.filter(iid => iid !== pick).forEach(iid => G.move(g, iid, 'library', { bottom: true }));
+      if (!pick) return;
+      G.move(g, pick, 'battlefield', { put: true });
+      if (game) atNextEnd(game, g, { bounce: pick, why: "Aethermage's Touch" });
+    }],
+    [/^(\d+) damage to each attacker without flying$/i, (g, m, ctx) => { damageEach(g, ctx, Number(m[1]), c => c.attacking && !stats(c, factsOf(c, defOfCtx(ctx))).kw.has('flying'), { what: 'attacking creature without flying' }); }],
+    [/^a basic land if you are two lands behind$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (!o || permanents(o).filter(G.isLand).length < permanents(g).filter(G.isLand).length + 2) return; const c = g.zones.library.map(iid => g.cards[iid]).find(x => G.isLand(x) && /\bbasic\b/i.test(x.typeLine || '')); if (c) G.move(g, c.iid, 'battlefield', { put: true }); G.shuffle(g); }],
+    [/^untap the equipped creature$/i, (g, m, ctx) => { const c = ctx.self && g.cards[ctx.self.attachedTo]; if (c) { c.tapped = false; c.tappedFor = null; } }, (m, ctx) => !!ctx.self],
+    [/^flicker the enchanted creature until the end step$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot);
+      const c = me && g.cards[me.attachedTo];
+      if (!c || c.zone !== 'battlefield' || !game) return;
+      G.move(g, c.iid, 'exile');
+      G.move(g, me.iid, 'exile');
+      atNextEnd(game, g, { fromExile: c.iid, reattach: me.iid, why: me.name });
+    }, (m, ctx) => !!ctx.self],
+    [/^untap four of your permanents$/i, g => { permanents(g).filter(c => c.tapped).sort((a, b) => G.isLand(b) - G.isLand(a)).slice(0, 4).forEach(c => { c.tapped = false; c.tappedFor = null; }); }],
+    [/^no target changed$/i, () => {}],
+    [/^your best creature attacks this turn$/i, (g, m, ctx) => { const c = creatures(g, x => x !== ctx.self).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) c.mustAttackUntil = g.turn; }],
+    [/^shape the best creature to change$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const kill = o && o.zones && creatures(o, c => stats(c, factsOf(c, defOf)).tou - (c.damageTaken || 0) <= 2).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (kill) return pumpBy(kill, 2, -2);
+      const mine = creatures(g, c => stats(c, factsOf(c, defOf)).tou > 2).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (mine) pumpBy(mine, 2, -2);
+    }],
+    [/^the opponent skips its next untap$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones) permanents(o).forEach(c => { if (c.tapped) c.skipUntap = true; }); }],
+    [/^freeze the opponent's best permanent$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && (creatures(o, x => !x.tapped).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0] || permanents(o).find(x => G.isLand(x) && !x.tapped)); if (c) { c.tapped = true; c.tappedFor = null; c.skipUntap = true; } }, (m, ctx) => !!ctx.other],
+    [/^pay \{(\d+)\} to freeze the opponent's best (\w+)$/i, (g, m, ctx) => {
+      const cost = `{${m[1]}}`;
+      const opp = isOpps(gameOf(g, ctx) || g, g);
+      if (!(opp ? affordable(g, cost, 0) : G.autoPay(JSON.parse(JSON.stringify(g)), cost))) return;
+      if (opp) onOpp(gameOf(g, ctx), () => G.autoPay(g, cost)); else G.autoPay(g, cost);
+      const o = otherOf(g, ctx);
+      (o && o.zones ? permanents(o).filter(c => !c.tapped).sort((a, b) => G.isCreature(b) - G.isCreature(a) || worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx))).slice(0, toNumber(m[2])) : []).forEach(c => { c.tapped = true; c.tappedFor = null; c.skipUntap = true; });
+    }],
+    [/^freeze all nonblue creatures if cast from your hand$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.castFrom && me.castFrom !== 'hand') return; const defOf = defOfCtx(ctx); [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => !colorsOfInst(c, defOf).includes('U')).forEach(c => { c.tapped = true; c.tappedFor = null; c.skipUntap = true; })); }],
+    [/^a time counter off this suspended card$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.suspended && ((me.counters || {}).time || 0) > 0) { G.counter(g, me.iid, 'time', -1); if (!me.counters.time) timeTravelCast(g, me, ctx); } }, (m, ctx) => !!ctx.self],
+    // ---- Mind Seize, Draconic Dissent, Phantom Premonition (settleNear) ----
+    [/^each player exiles cards with this for its mana value$/i, (g, m, ctx) => { const me = ctx.self; const n = me ? cmcOfInst(me, defOfCtx(ctx)) : 0; [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => t.zones.library.slice(0, n).forEach(iid => { G.move(t, iid, 'exile'); t.cards[iid].exiledWith = me && me.iid; })); }, (m, ctx) => !!ctx.self],
+    [/^cast the best instant or sorcery exiled with this for free$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const defOf = defOfCtx(ctx);
+      const pool = lastTables.filter(t => t && t.zones).flatMap(t => t.zones.exile.map(iid => ({ t, c: t.cards[iid] }))).filter(x => me && x.c.exiledWith === me.iid && /\b(instant|sorcery)\b/i.test(front(x.c.typeLine || '')));
+      const x = pool.sort((a, b) => cmcOfInst(b.c, defOf) - cmcOfInst(a.c, defOf))[0];
+      if (!x) return;
+      delete x.c.exiledWith;
+      castFree(g, x.t === g ? x.c : takeCard(x.t, x.c.iid, g, 'exile', { quiet: true, defOf }), ctx, defOf);
+    }, (m, ctx) => !!ctx.self],
+    [/^copy target instant or sorcery spell you control twice$/i, g => { g.copyNextTurn = g.turn; g.copyNextN = 2; }],
+    [/^the drawing opponent takes 1 damage$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (game) damagePlayer(game, g === game ? 'opp' : 'you', 1, nameOfSrc(ctx), defOfCtx(ctx)); }],
+    [/^the opponent takes its hand size minus (\d+)$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const n = o && o.zones ? o.zones.hand.length - Number(m[1]) : 0; if (n > 0 && game) damagePlayer(game, o === game ? 'you' : 'opp', n, nameOfSrc(ctx), defOfCtx(ctx)); }],
+    [/^the cruel ultimatum$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      if (o && o.zones) {
+        const c = creatures(o, x => !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0];
+        if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard');
+        o.zones.hand.map(iid => o.cards[iid]).sort((a, b) => cmcOfInst(a, defOf) - cmcOfInst(b, defOf)).slice(0, 3).forEach(x => G.move(o, x.iid, 'graveyard'));
+      }
+      if (ctx.hitOpps) ctx.hitOpps(5);
+      const back = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0];
+      if (back) G.move(g, back.iid, 'hand');
+      G.drawCards(g, 3, isOpps(gameOf(g, ctx) || g, g));
+      runEffect(g, 'you gain 5 life', ctx);
+    }],
+    [/^every hand is traded for new cards$/i, (g, m, ctx) => { [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => { const n = t.zones.hand.length; [...t.zones.hand].forEach(iid => G.move(t, iid, 'graveyard')); G.drawCards(t, n, isOpps(gameOf(g, ctx) || g, t)); }); }],
+    [/^destroy the opponent's best creature, its power and toughness lost as life$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (!c) return;
+      const st = stats(c, factsOf(c, defOf));
+      if (!st.kw.has('indestructible')) G.move(o, c.iid, c.commander ? 'command' : 'graveyard');
+      const n = Math.max(0, st.pow) + Math.max(0, st.tou);
+      if (n && ctx.hitOpps) ctx.hitOpps(n);
+    }, (m, ctx) => !!ctx.other],
+    [/^doom counters on the best nonland permanents$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const defOf = defOfCtx(ctx); [[o, o], [g, g]].forEach(([t]) => { const c = t && t.zones && permanents(t).filter(x => !G.isLand(x) && x !== ctx.self).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.counter(t, c.iid, 'doom', 1); }); }],
+    [/^destroy the doomed permanents$/i, (g, m, ctx) => { [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => permanents(t).filter(c => ((c.counters || {}).doom || 0) > 0 && !stats(c, factsOf(c, defOfCtx(ctx))).kw.has('indestructible')).forEach(c => G.move(t, c.iid, c.commander ? 'command' : 'graveyard'))); }],
+    [/^the opponent's two best creatures are (\d+)\/(\d+) without abilities this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); (o && o.zones ? creatures(o).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx))).slice(0, 2) : []).forEach(c => { c.becomes = { pt: `${m[1]}/${m[2]}`, types: [], kw: [], turn: o.turn, loseAll: true }; }); }, (m, ctx) => !!ctx.other],
+    [/^your spells are cheaper this turn$/i, g => { g.kenrithTurn = g.turn; }],
+    [/^you get the spell-copying emblem$/i, g => { g.willEmblem = true; }],
+    [/^you get the ability-copying emblem$/i, () => {}], // (not applied)
+    [/^(\d+) damage to each of the opponent's tapped creatures$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (o && o.zones) damageEach(g, ctx, Number(m[1]), c => c.tapped, { only: o, what: 'tapped creature' }); }, (m, ctx) => !!ctx.other],
+    [/^the active player gets a goblin that makes its creatures attack$/i, (g, m, ctx) => { const a = activeTable(g, ctx); const tok = G.createToken(a, { id: 'Goblin', name: 'Goblin', typeLine: 'Token Creature — Goblin', custom: true, pt: '1/1', text: 'Creatures you control attack each combat if able.' }, { quiet: true }); if (tok) tok.tokenColors = ['R']; }],
+    [/^the opponent takes (\d+|the damage)$/i, (g, m, ctx) => { const n = Number(m[1]) || ctx.dealt || 0; const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); if (n && game) damagePlayer(game, g === game ? 'opp' : 'you', n, nameOfSrc(ctx), defOfCtx(ctx)); }],
+    [/^this creature hurts itself$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.zone === 'battlefield') applyTarget(gameOf(g, ctx) || g, g, me, { action: 'damage', n: 1, what: 'creature' }, me.name, defOfCtx(ctx), g); }, (m, ctx) => !!ctx.self],
+    [/^borrow three of the opponent's idle creatures this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); (o && o.zones ? creatures(o, c => !c.attacking).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx))).slice(0, 3) : []).forEach(c => borrow(g, o, c, ctx)); }, (m, ctx) => !!ctx.other],
+    [/^each tapped creature hurts itself$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => c.tapped).forEach(c => { const n = Math.max(0, stats(c, factsOf(c, defOf)).pow); if (n) applyTarget(gameOf(g, ctx) || g, t, c, { action: 'damage', n, what: 'creature' }, c.name, defOf, t); })); }],
+    [/^two dragon copies of the best noncreature permanent$/i, (g, m, ctx) => {
+      const defOf = defOfCtx(ctx);
+      const o = otherOf(g, ctx);
+      const mine = permanents(g).filter(c => !G.isCreature(c) && !G.isLand(c) && !c.token).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0];
+      const theirs = o && o.zones && permanents(o).filter(c => !G.isCreature(c) && !G.isLand(c) && !c.token).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0];
+      const src = mine || theirs;
+      for (let i = 0; i < 2 && src; i++) {
+        const tok = mine ? G.copyAsToken(g, mine.iid) : G.createToken(g, { id: src.id, name: src.name, typeLine: src.typeLine }, { quiet: true });
+        if (tok) tok.becomes = { pt: '3/3', types: ['dragon'], kw: ['flying'], forever: true };
+      }
+    }],
+    [/^goad the opponent's best creatures, one per counter$/i, (g, m, ctx) => { const n = ((ctx.self && ctx.self.counters) || {})['+1/+1'] || 0; const o = otherOf(g, ctx); (o && o.zones ? creatures(o).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx))).slice(0, n) : []).forEach(c => goad(g, c)); }],
+    [/^take the initiative$/i, (g, m, ctx) => { g.initiative = true; venture(g, ctx); }], // (the Undercity read as the one dungeon here)
+    [/^the artisan makes a creature token from your hand$/i, (g, m, ctx) => {
+      G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g));
+      const c = g.zones.hand.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0];
+      if (!c) { const w = worstInHand(g); if (w) G.move(g, w, 'exile'); return; }
+      G.move(g, c.iid, 'exile');
+      const tok = G.createToken(g, { id: c.id, name: c.name, typeLine: c.typeLine }, { quiet: true });
+      if (tok && ctx.self) tok.artisanOf = ctx.self.iid;
+    }],
+    [/^exile the artisan's tokens at the next end step$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); permanents(g).filter(c => c.token && ctx.self && c.artisanOf === ctx.self.iid).forEach(c => { if (game) atNextEnd(game, g, { exile: c.iid }); }); }],
+    [/^blink your creatures that do something when they enter$/i, (g, m, ctx) => { creatures(g, c => !c.token && c !== ctx.self && oracleLines(c, defOfCtx(ctx)).some(l => /^when(?:ever)? .+? enters\b/i.test(l))).forEach(c => { G.move(g, c.iid, 'exile'); G.move(g, c.iid, 'battlefield', { put: true }); }); }],
+    [/^foretell your costliest card$/i, (g, m, ctx) => { const c = g.zones.hand.map(iid => g.cards[iid]).filter(x => !G.isLand(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(g, c.iid, 'exile'); c.faceDown = true; c.foretold = true; c.foretoldTurn = g.turn; c.playable = { forever: true }; }],
+    [/^soldiers for your devotion to white$/i, (g, m, ctx) => { const n = devotionTo(g, 'W', defOfCtx(ctx)); if (n) runEffect(g, `create ${n} 1/1 white Soldier creature tokens`, ctx); }],
+    [/^the opponent's best creature leaves until the end step$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const c = o && o.zones && creatures(o, x => !x.commander).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(o, c.iid, c.token ? 'graveyard' : 'exile'); if (!c.token && game) atNextEnd(game, o, { fromExile: c.iid, why: nameOfSrc(ctx) }); }, (m, ctx) => !!ctx.other],
+    [/^the best of your top two into your hand$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 2); if (!ids.length) return; const lands = permanents(g).filter(c => G.isLand(c)).length; const want = c => (G.isLand(c) ? (lands < 5 ? 3 : 0) : cmcOfInst(c, defOfCtx(ctx)) <= lands + 1 ? 2 : 1); const pick = [...ids].sort((a, b) => want(g.cards[b]) - want(g.cards[a]))[0]; G.move(g, pick, 'hand'); ids.filter(iid => iid !== pick).forEach(iid => G.move(g, iid, 'library', { bottom: true })); }],
+    [/^a plains, onto the battlefield if you are behind on lands$/i, (g, m, ctx) => { const c = g.zones.library.map(iid => g.cards[iid]).find(x => G.isLand(x) && /\bbasic\b/i.test(x.typeLine || '') && isA(x, 'plains')); const o = otherOf(g, ctx) || otherTable(g); if (c) { const behind = o && permanents(o).filter(G.isLand).length > permanents(g).filter(G.isLand).length; G.move(g, c.iid, behind ? 'battlefield' : 'hand', behind ? { put: true } : undefined); if (behind) c.tapped = true; } G.shuffle(g); }],
+    [/^cast your best instant or sorcery from your hand for free$/i, (g, m, ctx) => { const c = g.zones.hand.map(iid => g.cards[iid]).filter(x => /\b(instant|sorcery)\b/i.test(front(x.typeLine || '')) && !G.isCounterspell(factsOf(x, defOfCtx(ctx)).oracle || '')).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) castFree(g, c, ctx, defOfCtx(ctx)); }],
+    [/^your permanents come back at the end step this turn$/i, g => { g.cosmicTurn = g.turn; }],
+    [/^blink your two best permanents$/i, (g, m, ctx) => { permanents(g).filter(c => !c.token && (G.isCreature(c) || G.isLand(c) || isA(c, 'artifact'))).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx))).slice(0, 2).forEach(c => { G.move(g, c.iid, 'exile'); G.move(g, c.iid, 'battlefield', { put: true }); }); }],
+    [/^everyone draws up to the biggest hand$/i, (g, m, ctx) => { const ts = [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones); const most = Math.max(...ts.map(t => t.zones.hand.length)); ts.forEach(t => { const n = most - t.zones.hand.length; if (n > 0) G.drawCards(t, n, isOpps(gameOf(g, ctx) || g, t)); }); }],
+    [/^you gain (\d+) life for each foretold card of yours$/i, (g, m, ctx) => { const n = Number(m[1]) * g.zones.exile.filter(iid => g.cards[iid].foretold).length; if (n) runEffect(g, `you gain ${n} life`, ctx); }],
+    [/^your best foretell card from your graveyard to your hand$/i, (g, m, ctx) => { const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => oracleLines(x, defOfCtx(ctx)).some(l => /^foretell\b/i.test(l))).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^exile (\w+) creature cards from a single graveyard$/i, (g, m, ctx) => { const n = toNumber(m[1]); const t = [otherOf(g, ctx), g].filter(x => x && x.zones).find(x => x.zones.graveyard.filter(iid => G.isCreature(x.cards[iid])).length >= n); if (t) t.zones.graveyard.filter(iid => G.isCreature(t.cards[iid])).slice(0, n).forEach(iid => G.move(t, iid, 'exile')); }], // Night Soil's cost
+    [/^return (\w+) lands you control to their owner's hand$/i, (g, m, ctx) => { permanents(g).filter(G.isLand).sort((a, b) => !!b.tapped - !!a.tapped).slice(0, toNumber(m[1])).forEach(c => G.move(g, c.iid, 'hand')); }], // Uyo's cost (paid as it resolves)
+    // ---- Blame Game … Legends' Legacy (settleNear) ----
+    [/^suspect the opponent's best creature, goading the suspects$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (!o || !o.zones) return; suspect(creatures(o, c => !c.suspected).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]); creatures(o, c => c.suspected).forEach(c => goad(g, c)); }, (m, ctx) => !!ctx.other],
+    [/^the opponent's weakest creature card returns on duty$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(a, defOfCtx(ctx)) - cmcOfInst(b, defOfCtx(ctx)))[0]; if (!c) return; G.move(o, c.iid, 'battlefield', { put: true }); G.counter(o, c.iid, 'duty', 1); c.extraKw = [...new Set([...(c.extraKw || []), "can't attack", "can't block"])]; }, (m, ctx) => !!ctx.other],
+    [/^it returns as a spirit unless it is one$/i, (g, m, ctx) => { const d = ctx.dead || ctx.self; const t = ctx.deadT || g; if (!d || isA(d, 'spirit') || !t.cards[d.iid] || t.cards[d.iid].zone !== 'graveyard') return; G.move(t, d.iid, 'battlefield', { put: true }); G.counter(t, d.iid, 'charge', 4); d.typeLine = 'Creature — Spirit Detective'; }],
+    [/^goad the opponent's strongest creature, counters for its power$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const defOf = defOfCtx(ctx); const c = o && o.zones && creatures(o).sort((a, b) => stats(b, factsOf(b, defOf)).pow - stats(a, factsOf(a, defOf)).pow)[0]; if (!c) return; goad(g, c); const n = Math.max(0, stats(c, factsOf(c, defOf)).pow); if (n && ctx.self) G.counter(g, ctx.self.iid, '+1/+1', n, { effect: true }); }, (m, ctx) => !!ctx.other],
+    [/^suspect the opponent's best creature, goaded$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (!c) return; suspect(c); goad(g, c); if (c.goad) c.goad.forever = true; }, (m, ctx) => !!ctx.other],
+    [/^the mob verdict$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (o && o.zones) damageEach(g, ctx, 2, () => true, { only: o, what: 'creature the opponent controls' }); if (ctx.hitOpps) ctx.hitOpps(2, true); G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^the opponent stays silent for (\d+)$/i, (g, m, ctx) => ctx.hitOpps(Number(m[1]), true), (m, ctx) => !!ctx.hitOpps],
+    [/^the attackers untap goaded$/i, (g, m, ctx) => { [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => c.attacking).forEach(c => { c.tapped = false; c.tappedFor = null; goad(g, c); })); }],
+    [/^the opponent's best attacker leaves combat$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && creatures(o, x => x.attacking).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) delete c.attacking; }],
+    [/^the active player keeps two creatures$/i, (g, m, ctx) => { const a = activeTable(g, ctx); if (a === g) return; creatures(a).sort((x, y) => worthOf(y, defOfCtx(ctx)) - worthOf(x, defOfCtx(ctx))).slice(2).forEach(c => G.move(a, c.iid, c.commander ? 'command' : 'graveyard')); }],
+    [/^the opponent's best creature card from its graveyard joins you$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); const c = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; const mine = takeCard(o, c.iid, g, 'exile', { quiet: true, defOf: defOfCtx(ctx) }); G.move(g, mine.iid, 'battlefield', { put: true }); }],
+    [/^the opponent discards, losing its mana value$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && o.zones.hand.map(iid => o.cards[iid]).sort((a, b) => cmcOfInst(a, defOfCtx(ctx)) - cmcOfInst(b, defOfCtx(ctx)))[0]; if (!c) return; G.move(o, c.iid, 'graveyard'); const n = cmcOfInst(c, defOfCtx(ctx)); if (n && ctx.hitOpps) ctx.hitOpps(n); }, (m, ctx) => !!ctx.other],
+    [/^the opponent sacrifices its costliest creature$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && permanents(o).filter(x => G.isCreature(x) || isA(x, 'planeswalker')).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(o, c.iid, c.commander ? 'command' : 'graveyard'); }, (m, ctx) => !!ctx.other],
+    [/^exile your top two, one playable until your next turn ends$/i, g => { const ids = g.zones.library.slice(0, 2); ids.forEach(iid => G.move(g, iid, 'exile')); const pick = ids.map(iid => g.cards[iid]).sort((a, b) => G.isLand(a) - G.isLand(b))[0]; if (pick) pick.playable = { until: g.turn + 1 }; }],
+    [/^the cast spell's mana value in damage$/i, (g, m, ctx) => {
+      const n = ctx.castSpell ? cmcOfInst(ctx.castSpell, defOfCtx(ctx)) : 0;
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      if (!n) return;
+      const c = o && o.zones && creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (c && worthOf(c, defOf) > n) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g); else if (ctx.hitOpps) ctx.hitOpps(n, true);
+    }],
+    [/^each player draws a card, losing 1 life$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); [g, otherOf(g, ctx) || otherTable(g)].filter(t => t && t.zones).forEach(t => { G.drawCards(t, 1, t !== game); if (game) addLife(game, t === game ? 'you' : 'opp', -1); }); }],
+    [/^the opponent pays a creature or 3 life, else you draw$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx) || otherTable(g);
+      const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot);
+      const defOf = defOfCtx(ctx);
+      const c = o && o.zones && creatures(o, x => !cantSac(x, defOf)).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0];
+      const life = game ? lifeOf(game, o === game ? 'you' : 'opp') : 0;
+      if (c && worthOf(c, defOf) <= 2) G.move(o, c.iid, c.commander ? 'command' : 'graveyard');
+      else if (game && life > 12) addLife(game, o === game ? 'you' : 'opp', -3);
+      else G.drawCards(g, 1, isOpps(game || g, g));
+    }],
+    [/^5 damage to the opponent$/i, (g, m, ctx) => ctx.hitOpps(5, true), (m, ctx) => !!ctx.hitOpps],
+    [/^the opponent takes 3 with your artifact$/i, (g, m, ctx) => { if (permanents(g).some(c => isA(c, 'artifact'))) ctx.hitOpps(3, true); }, (m, ctx) => !!ctx.hitOpps],
+    [/^flip this if the opponent's graveyard is empty$/i, (g, m, ctx) => { const o = otherOf(g, ctx); if (ctx.self && o && o.zones && !o.zones.graveyard.length) ctx.self.flipped = true; }, (m, ctx) => !!ctx.self],
+    [/^the opponent mills (\w+) cards$/i, (g, m, ctx) => { const o = otherOf(g, ctx) || otherTable(g); if (o && o.zones) G.mill(o, toNumber(m[1])); }],
+    [/^the active player mills its hand size$/i, (g, m, ctx) => { const a = activeTable(g, ctx); if (a.zones.hand.length) G.mill(a, a.zones.hand.length); }],
+    [/^your strongest creature card from your graveyard to your hand$/i, (g, m, ctx) => { const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => num(factsOf(b, defOfCtx(ctx)).power) - num(factsOf(a, defOfCtx(ctx)).power))[0]; if (c) G.move(g, c.iid, 'hand'); }],
+    [/^draw up to seven$/i, (g, m, ctx) => { const n = 7 - g.zones.hand.length; if (n > 0) G.drawCards(g, n, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^join forces for mills$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const x = o && o.zones ? Math.min(joinForces(g), o.zones.library.length) : 0; if (x) G.mill(o, x); }], // (only the opponent mills: you'd rather not)
+    [/^your three best creature cards from your library into your graveyard$/i, (g, m, ctx) => { g.zones.library.map(iid => g.cards[iid]).filter(c => G.isCreature(c)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx))).slice(0, 3).forEach(c => G.move(g, c.iid, 'graveyard')); G.shuffle(g); }],
+    [/^this land is an? (\w+) (\w+) sized by your creature cards this turn$/i, (g, m, ctx) => { const n = g.zones.graveyard.filter(iid => G.isCreature(g.cards[iid])).length; if (ctx.self) ctx.self.becomes = { pt: `${n}/${n}`, types: [m[1].toLowerCase(), m[2].toLowerCase()], kw: [], turn: g.turn }; }, (m, ctx) => !!ctx.self],
+    [/^your top card into your hand for its mana value in life$/i, (g, m, ctx) => { const top = g.zones.library[0]; if (!top) return; G.move(g, top, 'hand'); const n = cmcOfInst(g.cards[top], defOfCtx(ctx)); if (n) runEffect(g, `you gain ${n} life`, ctx); }],
+    [/^you gain the sacrificed creature's toughness in life$/i, (g, m, ctx) => { const c = g.lastSacCard; const n = c ? Math.max(0, num((c.custom && c.custom.pt ? { toughness: c.custom.pt.split('/')[1] } : factsOf(c, defOfCtx(ctx))).toughness)) : 0; if (n) runEffect(g, `you gain ${n} life`, ctx); }],
+    [/^trade power with the strongest attacker$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const a = o && o.zones && creatures(o, x => x.attacking).sort((x, y) => stats(y, factsOf(y, defOf)).pow - stats(x, factsOf(x, defOf)).pow)[0];
+      if (!me || !a) return;
+      const mp = stats(me, factsOf(me, defOf)).pow;
+      const ap = stats(a, factsOf(a, defOf)).pow;
+      pumpBy(me, ap - mp, 0);
+      pumpBy(a, mp - ap, 0);
+    }, (m, ctx) => !!ctx.self],
+    [/^your life gain drains this turn$/i, g => { g.vizkopaTurn = g.turn; }],
+    [/^swap best creatures$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const theirs = o && o.zones && creatures(o, c => !c.commander).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      const mine = creatures(g, c => !c.commander).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (theirs) gainControl(o, theirs.iid, g, defOf);
+      if (mine) gainControl(g, mine.iid, o, defOf);
+    }, (m, ctx) => !!ctx.other],
+    [/^the tempting offer$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const c = o && o.zones && o.zones.graveyard.map(iid => o.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (!c) return; G.move(o, c.iid, 'battlefield', { put: true }); const mine = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x)).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (mine) G.move(g, mine.iid, 'battlefield', { put: true }); }],
+    [/^lim-dul's vault$/i, (g, m, ctx) => {
+      // the five on top, the best of them first (no life paid)
+      const ids = g.zones.library.slice(0, 5);
+      const lands = permanents(g).filter(c => G.isLand(c)).length;
+      const want = c => (G.isLand(c) ? (lands < 5 ? 3 : 0) : cmcOfInst(c, defOfCtx(ctx)) <= lands + 1 ? 2 : 1);
+      const sorted = [...ids].sort((a, b) => want(g.cards[b]) - want(g.cards[a]));
+      g.zones.library.splice(0, ids.length, ...sorted);
+    }],
+    [/^the spinal embrace$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot);
+      const c = o && o.zones && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (!c) return;
+      const mine = gainControl(o, c.iid, g, defOf);
+      if (!mine) return;
+      mine.tapped = false; mine.tappedFor = null; mine.enteredTurn = -1;
+      mine.pump = { pow: 0, tou: 0, ...mine.pump, kw: [...new Set([...((mine.pump && mine.pump.kw) || []), 'haste'])] };
+      if (game) atNextEnd(game, g, { sacrifice: mine.iid });
+      const n = Math.max(0, stats(mine, factsOf(mine, defOf)).tou);
+      if (n) runEffect(g, `you gain ${n} life`, ctx); // (gained now)
+    }, (m, ctx) => !!ctx.other],
+    [/^exile the opponent's best artifact or enchantment, giving this away$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx) || otherTable(g);
+      const defOf = defOfCtx(ctx);
+      const c = o && o.zones && permanents(o).filter(x => isA(x, 'artifact') || isA(x, 'enchantment')).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0];
+      if (!c || cmcOfInst(c, defOf) < 3) return;
+      G.move(o, c.iid, c.commander ? 'command' : 'exile');
+      if (ctx.self && ctx.self.zone === 'battlefield') gainControl(g, ctx.self.iid, o, defOf);
+    }],
+    [/^you gain the newcomer's power in life$/i, (g, m, ctx) => { const c = ctx.entered || ctx.self; const n = c ? Math.max(0, stats(c, factsOf(c, defOfCtx(ctx))).pow) : 0; if (n) runEffect(g, `you gain ${n} life`, ctx); }],
+    [/^this becomes a (\d+)\/(\d+) (\w+) (\w+) this turn$/i, (g, m, ctx) => { if (ctx.self) ctx.self.becomes = { pt: `${m[1]}/${m[2]}`, types: [m[3].toLowerCase(), m[4].toLowerCase()], kw: ['indestructible'], turn: g.turn }; }, (m, ctx) => !!ctx.self],
+    [/^you gain (\d+) life for each of your fliers$/i, (g, m, ctx) => { const n = Number(m[1]) * creatures(g, c => stats(c, factsOf(c, defOfCtx(ctx))).kw.has('flying')).length; if (n) runEffect(g, `you gain ${n} life`, ctx); }],
+    [/^your best legend is guarded until your next turn$/i, (g, m, ctx) => { const c = creatures(g, x => /\blegendary\b/i.test(x.typeLine || '')).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c) c.untilNextKw = [...new Set([...(c.untilNextKw || []), 'vigilance', 'lifelink', 'indestructible'])]; }],
+    [/^legends from your top four, treasures for the rest$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 4); let n = 0; ids.forEach(iid => { if (/\blegendary\b/i.test(g.cards[iid].typeLine || '')) G.move(g, iid, 'hand'); else { G.move(g, iid, 'graveyard'); n++; } }); if (n) artifactTokens(g, ctx.self, n, 'treasure'); }],
+    [/^borrow all the opponent's creatures this turn$/i, (g, m, ctx) => { const o = otherOf(g, ctx); (o && o.zones ? creatures(o) : []).forEach(c => borrow(g, o, c, ctx)); }, (m, ctx) => !!ctx.other],
+    [/^ashling erupts on the third time this turn$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      if (!me || allianceCount(g, me) !== 3) return;
+      const n = (me.counters || {})['+1/+1'] || 0;
+      if (!n) return;
+      G.counter(g, me.iid, '+1/+1', -n);
+      damageEach(g, ctx, n, () => true);
+      runEffect(g, `you lose ${n} life`, ctx);
+      if (ctx.hitOpps) ctx.hitOpps(n, true);
+    }, (m, ctx) => !!ctx.self],
+    [/^kaya's wrath$/i, (g, m, ctx) => { const defOf = defOfCtx(ctx); let mine = 0; [g, otherOf(g, ctx)].filter(t => t && t.zones).forEach(t => creatures(t, c => !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => { if (t === g) mine++; G.move(t, c.iid, c.commander ? 'command' : 'graveyard'); })); if (mine) runEffect(g, `you gain ${mine} life`, ctx); }],
+    [/^your best legend becomes a god$/i, (g, m, ctx) => { const c = creatures(g, x => /\blegendary\b/i.test(x.typeLine || '')).sort((a, b) => worthOf(b, defOfCtx(ctx)) - worthOf(a, defOfCtx(ctx)))[0]; if (c && !isA(c, 'god')) c.extraTypes = [...(c.extraTypes || []), 'god']; }],
+    [/^your permanents that died this turn return tapped$/i, g => { g.zones.graveyard.map(iid => g.cards[iid]).filter(c => c.diedTurn === g.turn && (G.isLand(c) || PERM_TYPES.some(k => isA(c, k)))).forEach(c => { G.move(g, c.iid, 'battlefield', { put: true }); c.tapped = true; }); }],
+    [/^your best creature that died this turn returns$/i, (g, m, ctx) => { const c = g.zones.graveyard.map(iid => g.cards[iid]).filter(x => G.isCreature(x) && x.diedTurn === g.turn).sort((a, b) => cmcOfInst(b, defOfCtx(ctx)) - cmcOfInst(a, defOfCtx(ctx)))[0]; if (c) G.move(g, c.iid, 'battlefield', { put: true }); }],
+    [/^nothing to copy$/i, () => {}],
+    [/^add x mana of any one colou?r$|^you gain x life$/i, () => {}], // Springjack Pasture (app.js fills X in as it's activated)
+    [/^(other )?(attacking|blocking) fliers get \+(\d+)\/\+(\d+) this turn$/i, (g, m, ctx) => { creatures(g, c => (m[2].toLowerCase() === 'attacking' ? c.attacking : c.blocking) && (!m[1] || c !== ctx.self) && stats(c, factsOf(c, defOfCtx(ctx))).kw.has('flying')).forEach(c => pumpBy(c, Number(m[3]), Number(m[4]))); }],
+    // ---- Desert Bloom, Upgrades Unleashed (settleNear) ----
+    [/^untap all modified creatures you control$/i, g => { creatures(g, c => Object.values(c.counters || {}).some(v => v > 0) || G.attachmentsOf(g, c.iid).length).forEach(c => { c.tapped = false; c.tappedFor = null; }); }], // Akki Battle Squad
+    [/^mill two cards for life per land$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 2); G.mill(g, 2); const n = ids.filter(iid => G.isLand(g.cards[iid])).length; if (n) runEffect(g, `you gain ${n} life`, ctx); }],
+    [/^tapped treasures for your deserts$/i, (g, m, ctx) => { const n = Math.min((ctx.self && ctx.self.xValue) || 0, permanents(g).filter(c => isDesert(c, g, defOfCtx(ctx))).length); if (n) artifactTokens(g, ctx.self, n, 'treasure', true); }],
+    [/^three lands from your graveyard, a plant for each$/i, (g, m, ctx) => { const lands = g.zones.graveyard.map(iid => g.cards[iid]).filter(c => G.isLand(c)).slice(0, 3); lands.forEach(c => { G.move(g, c.iid, 'battlefield', { put: true }); c.tapped = true; }); for (let i = 0; i < lands.length; i++) runEffect(g, 'create a 4/2 green Plant Warrior creature token with reach', ctx); }],
+    [/^the winding way$/i, (g, m, ctx) => { const ids = g.zones.library.slice(0, 4); const cr = ids.filter(iid => G.isCreature(g.cards[iid])).length; const ld = ids.filter(iid => G.isLand(g.cards[iid])).length; const keep = cr >= ld ? (c => G.isCreature(c)) : (c => G.isLand(c)); ids.forEach(iid => G.move(g, iid, keep(g.cards[iid]) ? 'hand' : 'graveyard')); }],
+    [/^unholy heat$/i, (g, m, ctx) => {
+      const types = new Set(g.zones.graveyard.flatMap(iid => CARD_TYPE_CHOICES.filter(k => isA(g.cards[iid], k))));
+      const n = types.size >= 4 ? 6 : 2;
+      const o = otherOf(g, ctx);
+      const defOf = defOfCtx(ctx);
+      const c = o && o.zones && (creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0] || creatures(o)[0]);
+      if (c) applyTarget(gameOf(g, ctx) || g, o, c, { action: 'damage', n, what: 'creature' }, nameOfSrc(ctx), defOf, g);
+    }, (m, ctx) => !!ctx.other],
+    [/^trade two cards for three$/i, (g, m, ctx) => { if (g.zones.hand.length < 2) return; for (let i = 0; i < 2; i++) { const w = worstInHand(g); if (w) { G.move(g, w, 'graveyard'); discardWatch(g, g.cards[w], defOfCtx(ctx), gameOf(g, ctx)); } } G.drawCards(g, 3, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^two basics or deserts onto the battlefield tapped$/i, (g, m, ctx) => { g.zones.library.map(iid => g.cards[iid]).filter(c => G.isLand(c) && (/\bbasic\b/i.test(c.typeLine || '') || isA(c, 'desert'))).slice(0, 2).forEach(c => { G.move(g, c.iid, 'battlefield', { put: true }); c.tapped = true; }); G.shuffle(g); }],
+    [/^trade your spare land cards for counters and cards$/i, (g, m, ctx) => {
+      const lands = g.zones.hand.filter(iid => G.isLand(g.cards[iid]));
+      const keep = permanents(g).filter(c => G.isLand(c)).length < 5 ? 1 : 0;
+      const away = lands.slice(keep);
+      away.forEach(iid => { G.move(g, iid, 'graveyard'); discardWatch(g, g.cards[iid], defOfCtx(ctx), gameOf(g, ctx)); });
+      if (!away.length) return;
+      if (ctx.self && ctx.self.zone === 'battlefield') G.counter(g, ctx.self.iid, '+1/+1', away.length, { effect: true });
+      G.drawCards(g, away.length, isOpps(gameOf(g, ctx) || g, g));
+    }],
+    [/^goad what your auras enchant, a counter each$/i, (g, m, ctx) => {
+      const o = otherOf(g, ctx) || otherTable(g);
+      const list = o && o.zones ? creatures(o, c => permanents(g).some(a => a.enchanting && a.enchanting.iid === c.iid)) : [];
+      list.forEach(c => goad(g, c));
+      if (list.length && ctx.self) G.counter(g, ctx.self.iid, '+1/+1', list.length, { effect: true });
+    }],
+    [/^its \+1\/\+1 counters in damage to the opponent$/i, (g, m, ctx) => { const n = ((ctx.self && ctx.self.counters) || {})['+1/+1'] || 0; if (n) ctx.hitOpps(n, true); }, (m, ctx) => !!ctx.hitOpps],
+    [/^the collision of realms$/i, (g, m, ctx) => {
+      for (const t of [g, otherOf(g, ctx)].filter(x => x && x.zones)) {
+        const mine = creatures(t);
+        const real = mine.filter(c => !c.token && !c.commander).length;
+        mine.forEach(c => G.move(t, c.iid, c.token ? 'graveyard' : c.commander ? 'command' : 'library'));
+        G.shuffle(t);
+        if (!real) continue;
+        const k = t.zones.library.findIndex(iid => G.isCreature(t.cards[iid]));
+        const shown = k < 0 ? t.zones.library.slice() : t.zones.library.slice(0, k);
+        if (k >= 0) G.move(t, t.zones.library[k], 'battlefield', { put: true });
+        G.shuffleArray(shown).forEach(iid => G.move(t, iid, 'library', { bottom: true }));
+      }
+    }],
+    [/^smoke blessings on (x|\d+) of the opponent's creatures$/i, (g, m, ctx) => { const n = Number(m[1]) || (ctx.self && ctx.self.xValue) || 0; const o = otherOf(g, ctx); (o && o.zones ? creatures(o).sort((a, b) => worthOf(a, defOfCtx(ctx)) - worthOf(b, defOfCtx(ctx))).slice(0, n) : []).forEach(c => { c.smokeBlessing = roleOf(g); }); }],
+    [/^it deals its power to the opponent$/i, (g, m, ctx) => { const me = ctx.self; const n = me ? Math.max(0, stats(me, factsOf(me, defOfCtx(ctx))).pow) : 0; if (n) ctx.hitOpps(n, true); }, (m, ctx) => !!ctx.hitOpps && !!ctx.self],
+    [/^it deals the opponent's hand size to the opponent$/i, (g, m, ctx) => { const o = otherOf(g, ctx); const n = o && o.zones ? o.zones.hand.length : 0; if (n) ctx.hitOpps(n, true); }, (m, ctx) => !!ctx.hitOpps],
+    [/^draw a card with an enchanted creature$/i, (g, m, ctx) => { if (creatures(g, c => G.attachmentsOf(g, c.iid).some(id => G.isAura(g.cards[id]))).length) G.drawCards(g, 1, isOpps(gameOf(g, ctx) || g, g)); }],
+    [/^a spirit with an equipped creature$/i, (g, m, ctx) => { if (creatures(g, c => G.attachmentsOf(g, c.iid).some(id => isA(g.cards[id], 'equipment'))).length) runEffect(g, 'create a 1/1 colorless Spirit creature token', ctx); }],
+    [/^exile the new tokens at the next end step$/i, (g, m, ctx) => { const game = gameOf(g, ctx) || lastTables.find(t => t && t.bot); const ids = (ctx.made || []).filter(iid => g.cards[iid]); (ids.length ? ids : permanents(g).filter(c => c.token && c.enteredTurn === g.turn && /elemental/i.test(c.typeLine || '')).map(c => c.iid)).forEach(iid => { if (game) atNextEnd(game, g, { exile: iid }); }); }],
+    [/^shift the shadow$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const defOf = defOfCtx(ctx);
+      if (!me || me.zone !== 'battlefield') return;
+      const aura = G.attachmentsOf(g, me.iid).map(id => g.cards[id]).find(a => a && /shifting shadow/i.test(a.name));
+      G.move(g, me.iid, me.commander ? 'command' : 'graveyard');
+      const k = g.zones.library.findIndex(iid => G.isCreature(g.cards[iid]));
+      const shown = k < 0 ? g.zones.library.slice() : g.zones.library.slice(0, k);
+      const hit = k >= 0 ? g.cards[g.zones.library[k]] : null;
+      if (hit) G.move(g, hit.iid, 'battlefield', { put: true });
+      if (aura && hit) { if (aura.zone !== 'battlefield') G.move(g, aura.iid, 'battlefield', { put: true }); G.attach(g, aura.iid, hit.iid, attachBonus(oracleText(aura, defOf))); }
+      G.shuffleArray(shown).forEach(iid => G.move(g, iid, 'library', { bottom: true }));
+    }, (m, ctx) => !!ctx.self],
+    [/^the ordeal grows this creature$/i, (g, m, ctx) => {
+      const me = ctx.self;
+      const defOf = defOfCtx(ctx);
+      if (!me) return;
+      G.counter(g, me.iid, '+1/+1', 1, { effect: true });
+      if (((me.counters || {})['+1/+1'] || 0) < 3) return;
+      const aura = G.attachmentsOf(g, me.iid).map(id => g.cards[id]).find(a => a && oracleLines(a, defOf).some(l => NEAR.ORDEAL_SAC.test(l)));
+      if (!aura) return;
+      const sac = oracleLines(aura, defOf).map(l => NEAR.ORDEAL_SAC.exec(l)).find(Boolean);
+      G.move(g, aura.iid, 'graveyard');
+      runEffect(g, sac[1], { ...ctx, self: aura });
+    }, (m, ctx) => !!ctx.self],
+    [/^return this card to your hand$/i, (g, m, ctx) => { const me = ctx.self; if (me && me.zone === 'graveyard') G.move(g, me.iid, 'hand'); }, (m, ctx) => !!ctx.self],
     // ---- Cabaretti Cacophony, Mirror Mastery, Call for Backup, Obscura Operation (settleNear) ----
     [/^each player grows a creature to be goaded$/i, (g, m, ctx) => {
       const defOf = defOfCtx(ctx);
@@ -6349,6 +8106,8 @@ const Bot = (() => {
     }],
     // ---------- the 2026 Foundations precons (FDC) ----------
     // Thrill of Possibility, Unexpected Windfall: "As an additional cost to cast this spell, discard a card." (asked as it resolves)
+    // Magmatic Insight: "As an additional cost to cast this spell, discard a land card." (your worst land card, as it resolves)
+    [/^as an additional cost to cast this spell, discard a land card$/i, g => { const c = g.zones.hand.map(iid => g.cards[iid]).find(x => G.isLand(x)); if (c) G.move(g, c.iid, 'graveyard'); }],
     [new RegExp(`^as an additional cost to cast this spell, discard ${COUNT} cards?$`, 'i'), (g, m, ctx) => {
       const n = toNumber(m[1]);
       const spec = { from: 'hand', min: Math.min(n, g.zones.hand.length), max: n, action: 'discard', title: `Discard ${m[1]} card${n === 1 ? '' : 's'} (the additional cost)` };
@@ -10030,8 +11789,10 @@ const Bot = (() => {
     [new RegExp(`^(scry|surveil) ${COUNT}$`, 'i'), (g, m, ctx) => {
       const kind = m[1].toLowerCase();
       const src = (ctx.self && ctx.self.name) || 'Effect';
-      if (!ctx.scry) return autoScry(g, toNumber(m[2]), kind, src, ctx.defOf || (() => null));
-      ctx.scry(toNumber(m[2]), kind, src);
+      if (kind === 'scry' && permanents(g).some(w => oracleLines(w, ctx.defOf || (() => null)).some(l => NEAR.ELIGETH.test(l)))) { G.drawCards(g, toNumber(m[2]), isOpps(gameOf(g, ctx) || g, g)); return; } // Eligeth
+      const n = toNumber(m[2]) + (kind === 'surveil' ? permanents(g).flatMap(w => oracleLines(w, ctx.defOf || (() => null)).map(l => NEAR.ENHANCED_SURVEIL.exec(l))).filter(Boolean).reduce((k, x) => k + (toNumber(x[1]) || 0), 0) : 0); // Enhanced Surveillance
+      if (!ctx.scry) return autoScry(g, n, kind, src, ctx.defOf || (() => null));
+      ctx.scry(n, kind, src);
       return 'pause';
     }],
     [/^untap (.+)$/i, (g, m, ctx) => { ctx.self.tapped = false; ctx.self.tappedFor = null; }, (m, ctx) => !!ctx.self && isSelf(m[1], ctx.self)],
@@ -10939,6 +12700,7 @@ const Bot = (() => {
     }],
     // Plea for Power: "take an extra turn after this one" (the other player skips their next turn: beginTurn, app.js's startNextTurn).
     [/^take an extra turn after this one$/i, (g, m, ctx) => {
+      if (lastTables.some(t => t && t.zones && permanents(t).some(w => oracleLines(w, defOfCtx(ctx)).some(l => NEAR.NO_EXTRA_ANY.test(l) || (t !== g && NEAR.NO_EXTRA_OPP.test(l)))))) return G.log(g, `${nameOfSrc(ctx)}: the extra turn is skipped.`);
       const other = otherOf(g, ctx);
       other.skipTurn = (other.skipTurn || 0) + 1;
       G.log(g, `${nameOfSrc(ctx)}: an extra turn after this one.`);
@@ -14185,6 +15947,12 @@ const Bot = (() => {
   const DISCARD_PAY = /^whenever you discard an? (?:(\w+) )?card, you may pay ((?:\{[^}]+\})+)\. if you do, (.+?)\.?$/i;
   function discardWatch(s, inst, defOf, game = null) {
     if (inst.faceDown) return null;
+    s.lastDiscard = inst; // Mercurial Chemister
+    // Waste Not (the other side's)
+    const wnSide = game && game.bot && (s === game ? game.bot.s : game);
+    if (wnSide) permanents(wnSide).forEach(w => oracleLines(w, defOf).forEach(l => { const wn = NEAR.WASTE_NOT.exec(l); if (!wn) return; const k = wn[1].toLowerCase(); const fits = k === 'creature' ? G.isCreature(inst) : k === 'land' ? G.isLand(inst) : !G.isCreature(inst) && !G.isLand(inst); if (!fits) return; if (/^add \{B\}\{B\}$/i.test(wn[2])) wnSide.mana.B = (wnSide.mana.B || 0) + 2; else runEffect(wnSide, wn[2].replace(/2\/2 black zombie/i, '2/2 black Zombie'), { self: w, defOf }); }));
+    // Bone Miser: a creature card discarded makes a Zombie, a land {B}{B}, anything else a card
+    permanents(s).forEach(w => oracleLines(w, defOf).forEach(l => { const bm = NEAR.BONE_MISER.exec(l); if (!bm) return; const k = bm[1].toLowerCase(); const fits = k === 'creature' ? G.isCreature(inst) : k === 'land' ? G.isLand(inst) : !G.isCreature(inst) && !G.isLand(inst); if (!fits) return; if (/^add \{B\}\{B\}$/i.test(bm[2])) s.mana.B = (s.mana.B || 0) + 2; else runEffect(s, bm[2].replace(/2\/2 black zombie/i, '2/2 black Zombie'), { self: w, defOf }); }));
     // Oskar, Rubbish Reclaimer: a nonland card discarded can be cast from the graveyard this turn
     if (!G.isLand(inst) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.OSKAR.test(l)))) inst.graveOkTurn = s.turn;
     // Sangromancer (the other side's): "Whenever an opponent discards a card, you may gain 3 life."
@@ -14197,6 +15965,10 @@ const Bot = (() => {
     s.discardCount++;
     inst.discardedTurn = s.turn; // mayhem
     s.lastDiscardedIid = inst.iid; // Fiery Encore
+    // Brallin: a +1/+1 counter and 1 damage to each opponent
+    permanents(s).forEach(w => { const br = oracleLines(w, defOf).map(l => NEAR.BRALLIN.exec(l)).find(Boolean); if (!br) return; G.counter(s, w.iid, '+1/+1', 1, { effect: true }); if (game) addLife(game, s === game ? 'opp' : 'you', -Number(br[1])); });
+    // Spirit Cairn (either table's): pay {W} for a Spirit
+    if (game) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).forEach(w => { const sc = oracleLines(w, defOf).map(l => NEAR.SPIRIT_CAIRN.exec(l)).find(Boolean); if (sc) fireOn(game, t, w, `${inst.name} was discarded`, `you may pay ${sc[1]} to do "${sc[2]}"`, t === game ? { other: game.bot ? game.bot.s : null, defOf } : null, defOf); }));
     // Jo Grant: "Whenever you cycle a card, …" (read on any discard of yours)
     permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.CYCLE_COUNTER.test(l))).forEach(w => G.counter(s, w.iid, '+1/+1', 1, { effect: true }));
     // Veronica: the first nonland discard each turn makes a Junk token
@@ -14245,6 +16017,69 @@ const Bot = (() => {
     }
     return to;
   }
+  // Table s surveiled (applyScry; away: the cards put into the graveyard): "Whenever you surveil (for the first time each turn), …" (Mirko, Copy
+  // Catchers, Whispering Snitch, Disinformation Campaign), Eye of Duskmantle's cards (surveiledTurn), Unshakable Tail.
+  function surveiled(s, away) {
+    const game = lastTables.find(t => t && t.bot);
+    const defOf = lastDefOf || (() => null);
+    const first = s.surveilTurn !== s.turn;
+    s.surveilTurn = s.turn;
+    away.forEach(iid => { if (s.cards[iid]) s.cards[iid].surveiledTurn = s.turn; });
+    if (!game) return;
+    const o = s === game ? game.bot && game.bot.s : game;
+    const yours = s === game ? { other: o, defOf, hitOpps: k => { game.oppLife -= k; } } : null;
+    for (const w of permanents(s)) {
+      for (const l of oracleLines(w, defOf)) {
+        const sw = NEAR.SURVEIL_WATCH.exec(l);
+        if (sw && (!sw[1] || first)) fireOn(game, s, w, 'surveiled', sw[2], yours, defOf);
+      }
+    }
+    if (away.some(iid => s.cards[iid] && G.isCreature(s.cards[iid]))) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.TAIL_WATCH.test(l))).forEach(w => fireOn(game, s, w, 'creature cards were surveiled away', 'investigate', yours, defOf));
+  }
+  // Table g flips a coin: true when it wins. Its "Whenever you win a coin flip, …" (Setzer's token, Karplusan Minotaur's ping, Chance Encounter's luck
+  // counter) and "Whenever you lose a coin flip, …" (the Minotaur pings you).
+  function coinFlip(g, ctx) {
+    const defOf = defOfCtx(ctx || {});
+    const thumb = permanents(g).some(w => oracleLines(w, defOf).some(l => NEAR.KRARKS_THUMB.test(l))); // Krark's Thumb: two flips, the better kept
+    const won = !G.randomInt(2) || (thumb && !G.randomInt(2));
+    const game = gameOf(g, ctx || {}) || lastTables.find(t => t && t.bot);
+    G.log(g, `${nameOfSrc(ctx || {})}: ${won ? 'won' : 'lost'} the flip.`);
+    for (const w of permanents(g)) {
+      for (const l of oracleLines(w, defOf)) {
+        let m;
+        if (won && (m = NEAR.COIN_WIN.exec(l))) runEffect(g, m[1], { ...(ctx || {}), self: w });
+        if (won && (m = NEAR.COIN_WIN_HIT.exec(l)) && game) addLife(game, g === game ? 'opp' : 'you', -Number(m[1]));
+        if (won && (m = NEAR.COIN_LUCK.exec(l))) G.counter(g, w.iid, m[1].toLowerCase(), 1, { effect: true });
+        if (!won && (m = NEAR.COIN_LOSE_HIT.exec(l)) && game) addLife(game, g === game ? 'you' : 'opp', -Number(m[1]));
+      }
+    }
+    // Zndrsplt, Okaun (either table's): "Whenever a player wins a coin flip, …"
+    if (won) [game, game && game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).forEach(w => { const aw = oracleLines(w, defOf).map(l => NEAR.COIN_ANY_WIN.exec(l)).find(Boolean); if (aw) runEffect(t, aw[1], { self: w, defOf, other: t === game ? game.bot && game.bot.s : game }); }));
+    return won;
+  }
+  // Oath of Teferi: your planeswalkers' loyalty abilities twice each turn (app.js's activateLoyalty)
+  const loyaltyTwice = (s, defOf) => permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.OATH_TEFERI.test(l)));
+  // You cycled a card (app.js): Valiant Rescuer, Savai Thundermane, Astral Drift, Lightning Rift (either table's), and the count Spellpyre
+  // Phoenix and Gavi read.
+  function cycled(game, inst, defOf, ctx) {
+    const s = game;
+    if (s.cycleTurn !== s.turn) { s.cycleTurn = s.turn; s.cycleCount = 0; }
+    s.cycleCount++;
+    const o = game.bot && game.bot.s;
+    const yours = { other: o, defOf, ...(ctx || {}) };
+    const astral = l => NEAR.ASTRAL_DRIFT.test(l);
+    if (oracleLines(inst, defOf).some(astral)) runFor(game, s, inst, "exile target creature. return that card to the battlefield under its owner's control at the beginning of the next end step", `${inst.name} was cycled`, yours, defOf);
+    for (const w of permanents(s)) {
+      for (const l of oracleLines(w, defOf)) {
+        const cf = NEAR.CYCLE_FIRST.exec(l);
+        if (cf && s.cycleCount === 1) runFor(game, s, w, cf[1], `${inst.name} was cycled`, yours, defOf);
+        const sv = NEAR.SAVAI.exec(l);
+        if (sv) fireOn(game, s, w, `${inst.name} was cycled`, `you may pay ${sv[1]} to do "this creature deals ${sv[2]} damage to target creature. you gain ${sv[3]} life"`, yours, defOf);
+        if (astral(l)) runFor(game, s, w, "exile target creature. return that card to the battlefield under its owner's control at the beginning of the next end step", `${inst.name} was cycled`, yours, defOf);
+      }
+    }
+    [s, o].filter(Boolean).forEach(t => permanents(t).forEach(w => { const lr = oracleLines(w, defOf).map(l => NEAR.LIGHTNING_RIFT.exec(l)).find(Boolean); if (lr) fireOn(game, t, w, `${inst.name} was cycled`, `you may pay ${lr[1]} to do "this enchantment deals ${lr[2]} damage to any target"`, t === game ? yours : null, defOf); }));
+  }
   // Impending (Overlord of the Mistmoors): "At the beginning of your end step, remove a time counter
   // from it." With none left it's a creature (inst.impending goes).
   function endImpending(s) {
@@ -14259,6 +16094,7 @@ const Bot = (() => {
     s.speedLife = { turn: s.turn, life: lifeOf(game, s === game ? 'opp' : 'you') }; // speed (refreshGrants)
     // Drumbellower: "Untap all creatures you control during each other player's untap step." (the other table, as this turn begins)
     const o = s === game ? game.bot && game.bot.s : game;
+    if (o) permanents(o).filter(c => c.tapped && !c.frozenBy && oracleLines(c, defOf).some(l => NEAR.ENDBRINGER.test(l))).forEach(c => { c.tapped = false; c.tappedFor = null; }); // Endbringer
     const seedborn = o && permanents(o).some(w => oracleLines(w, defOf).some(l => /^untap all permanents you control during each other player's untap step\.?$/i.test(l))); // Seedborn Muse
     if (o && (seedborn || permanents(o).some(w => oracleLines(w, defOf).some(l => /^untap (?:all|each) creatures? you control during each other player's untap step\.?$/i.test(l))))) { // (Prop Room: "each creature")
       const list = (seedborn ? permanents(o) : creatures(o)).filter(c => c.tapped && !c.frozenBy);
@@ -14730,8 +16566,19 @@ const Bot = (() => {
   function applyTarget(game, s, inst, eff, src, defOf, caster = s) {
     caster.lastTarget = lastTargetOf(s, inst); // Dispatch's "that creature", Fight for the Throne's "it"
     caster.lastTargetCounters = Object.values(inst.counters || {}).reduce((n, v) => n + Math.max(0, v), 0); // Parting Thoughts
+    // Feather, Radiant Arbiter: your noncreature spell targeting Feather is copied onto your other creatures, {2} each (while you can pay)
+    if (src && typeof src === 'object' && s === caster && !G.isCreature(src) && oracleLines(inst, defOf).some(l => NEAR.FEATHER.test(l)) && !src.featherCopy) {
+      for (const c of creatures(s, x => x !== inst)) {
+        const opp = isOpps(game, s);
+        if (!(opp ? affordable(s, '{2}', 0) : G.autoPay(JSON.parse(JSON.stringify(s)), '{2}'))) break;
+        if (opp) onOpp(game, () => G.autoPay(s, '{2}')); else G.autoPay(s, '{2}');
+        applyTarget(game, s, c, { ...eff }, Object.assign({}, src, { featherCopy: true }), defOf, caster);
+      }
+    }
     // Bill Potts: your instant or sorcery targeting only Bill Potts is copied (once a turn)
     if (src && typeof src === 'object' && s === caster && /\b(instant|sorcery)\b/i.test(front(src.typeLine || '')) && inst.billTurn !== s.turn && oracleLines(inst, defOf).some(l => NEAR.BILL.test(l))) { inst.billTurn = s.turn; applyTarget(game, s, inst, { ...eff }, src.name ? `${src.name} (copy)` : src, defOf, caster); }
+    // Scalelord Reckoner: your Dragon targeted by the other side: destroy that player's best nonland permanent
+    if (s !== caster && caster) permanents(s).forEach(w => { const sr = oracleLines(w, defOf).map(l => NEAR.SCALELORD.exec(l)).find(Boolean); if (!sr || !isA(inst, sr[1])) return; const c = permanents(caster).filter(x => !G.isLand(x)).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c && !stats(c, factsOf(c, defOf)).kw.has('indestructible')) G.move(caster, c.iid, c.commander ? 'command' : 'graveyard'); });
     // Fey Steed: your creature or planeswalker targeted by the other side: you draw
     if (s !== caster && (G.isCreature(inst) || isA(inst, 'planeswalker')) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.FEY.test(l)))) G.drawCards(s, 1, !!(game && game.bot && s === game.bot.s));
     // Mila: one of your permanents targeted by the other side: you draw
@@ -15076,6 +16923,14 @@ const Bot = (() => {
   // Girl, Most Wanted and the like on the damage dealer's side see it.
   function damagePlayer(game, who, n, src, defOf) {
     const hurt = who === 'you' ? game : game.bot && game.bot.s;
+    // Fiendish Duo (the other side's), Dictate of the Twin Gods (anyone's): double damage
+    const foe = who === 'you' ? game.bot && game.bot.s : game;
+    const doubles = (foe ? permanents(foe).filter(w => oracleLines(w, defOf || lastDefOf || (() => null)).some(l => NEAR.DOUBLE_TO_OPP.test(l) || NEAR.SAWHORN.test(l))).length : 0) + [game, game.bot && game.bot.s].filter(Boolean).flatMap(permanents).filter(w => oracleLines(w, defOf || lastDefOf || (() => null)).some(l => NEAR.DOUBLE_ALL.test(l))).length;
+    if (doubles && n > 0) n *= 2 ** doubles;
+    if (foe && n > 0 && permanents(foe).some(w => oracleLines(w, defOf || lastDefOf || (() => null)).some(l => NEAR.TORTURE_PIT.test(l)))) n += 2; // Torture Pit
+    if (hurt && n > 0) permanents(hurt).forEach(w => { const st = oracleLines(w, defOf || lastDefOf || (() => null)).map(l => NEAR.SKY_TYRANT.exec(l)).find(Boolean); if (st && w.zone === 'battlefield') { G.move(hurt, w.iid, 'graveyard'); runEffect(hurt, st[1].replace(/5\/5 red dragon/i, '5/5 red Dragon'), { self: w, defOf }); } }); // Awaken the Sky Tyrant
+    // Fear of Burning Alive (the other side's, delirium): the same damage to the player's best creature
+    if (foe && hurt && n > 0 && permanents(foe).some(w => oracleLines(w, defOf || lastDefOf || (() => null)).some(l => NEAR.FEAR_BURNING.test(l))) && new Set(foe.zones.graveyard.flatMap(iid => CARD_TYPE_CHOICES.filter(k => isA(foe.cards[iid], k)))).size >= 4) { const c = creatures(hurt, x => stats(x, factsOf(x, defOf || lastDefOf)).tou - (x.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf || lastDefOf) - worthOf(a, defOf || lastDefOf))[0]; if (c) applyTarget(game, hurt, c, { action: 'damage', n, what: 'creature' }, 'Fear of Burning Alive', defOf || lastDefOf, foe); }
     if (hurt && monarchOf(game) === who && permanents(hurt).some(w => oracleLines(w, defOf || lastDefOf || (() => null)).some(l => NEAR.ARCHON_CROWN.test(l)))) return G.log(hurt, `${src}: no life lost (Archon of Coronation).`);
     if (n > 0 && defOf) n += plusDamage(who === 'you' ? game.bot && game.bot.s : game, src, defOf); // Thor
     if (n > 0 && defOf) n = Math.max(0, n - preventsOne(who === 'you' ? game : game.bot && game.bot.s, defOf)); // Heart-Shaped Herb
@@ -17388,6 +19243,854 @@ const Bot = (() => {
     t = t.replace(/^until your next turn, you may cast creature spells as though they had flash, and each creature you control enters with an additional \+1\/\+1 counter on it\.?$/i, 'your creatures enter with an extra counter until your next turn');
     // Tovolar's Packleader
     t = t.replace(/^another target (\w+) or (\w+) you control fights target creature you don't control\.?$/i, "your best other $1 or $2 fights the opponent's best creature it can kill");
+    // ---- "drawing cards" ----
+    t = t.replace(/^create beau, a legendary blue ox creature token with "beau's power and toughness are each equal to the number of lands you control\."\.?$/i, 'create beau');
+    t = t.replace(/^draw three cards if three or more creatures died this turn\.?$/i, 'draw three if three creatures died this turn');
+    t = t.replace(/^if three or more mana from creatures was spent to cast it, draw a card\.?$/i, 'inga and esika count the creature mana');
+    t = t.replace(/^draw a card for each other permanent you control with mana value 3 or greater\.?$/i, 'draw for each other permanent with mana value 3 or more');
+    t = t.replace(/^look at the top four cards of your library\. you may put a land card from among them onto the battlefield tapped\. if you don't, put a card from among them into your hand\. put the rest on the bottom of your library in a random order\.?$/i, 'planar genesis');
+    // ---- "zeno deck" ----
+    t = t.replace(/^choose a creature an opponent controls\. until end of turn, creatures other than (?:zenos yae galvus|this creature) and the chosen creature get -2\/-2\.?$/i, "zenos's first friend");
+    t = t.replace(/^assimilate target creature card from a graveyard\.?$/i, 'assimilate the best creature card in a graveyard');
+    t = t.replace(/^if there are three or more omen counters on this creature, untap it, then transform it\.?$/i, 'the statue awakens with three omens');
+    t = t.replace(/^sacrifice it at end of combat\.?$/i, 'sacrifice this after combat');
+    t = t.replace(/(^|\.\s+)you choose an artifact or creature card from it\. that player discards that card\.?$/i, '$1the opponent discards its best artifact or creature card');
+    t = t.replace(/(^|\.\s+)(?:target opponent reveals their hand and )?you choose a nonland card from it\. exile that card until this creature leaves the battlefield\.?$/i, "$1the maggot holds the opponent's best card");
+    t = t.replace(/^put target creature card from defending player's graveyard onto the battlefield under your control tapped and attacking\.?$/i, "the defender's best dead creature joins the attack");
+    t = t.replace(/^sacrifice this aura unless a nonland permanent left the battlefield this turn or a spell was warped this turn\.?$/i, 'sacrifice this aura unless a nonland permanent left');
+    t = t.replace(/^return that card to its owner's hand\.?$/i, "return the dead card to its owner's hand");
+    // ---- The last twelve, chunk 4 ----
+    t = t.replace(/^if a creature died this turn, you draw a card and you lose 1 life\. if seven or more creatures died this turn, instead you draw seven cards and you lose 7 life\.?$/i, 'the seven-fold chant');
+    t = t.replace(/^(?:you may )?sacrifice it\. if you do, reveal cards from the top of your library until you reveal a creature card\. put that card onto the battlefield, then shuffle the rest into your library\. if that creature is a demon, it deals damage equal to its power to each opponent\.?$/i, 'the champion ascends');
+    t = t.replace(/^you may sacrifice it to do "reveal cards from the top of your library until you reveal a creature card\. put that card onto the battlefield, then shuffle the rest into your library\. if that creature is a demon, it deals damage equal to its power to each opponent"$/i, 'the champion ascends');
+    t = t.replace(/^the next noncreature spell you cast this turn has cascade\.?$/i, 'your next noncreature spell this turn has cascade');
+    t = t.replace(/^this creature deals damage equal to that spell's mana value to target opponent\.?$/i, "the spell's mana value to the opponent");
+    t = t.replace(/^it deals 4 damage to target opponent chosen at random\.?$/i, 'it deals 4 damage to the opponent');
+    t = t.replace(/^(?:let the galaxy burn|this spell) deals (?:x|\d+) plus 2 damage to each creature that didn't enter this turn\.?$/i, 'let the galaxy burn');
+    t = t.replace(/(^|\.\s+)discard your hand, then draw eight cards\./i, '$1wheel into eight.');
+    t = t.replace(/^for each opponent, choose a nonland permanent that player controls\. destroy one of them chosen at random\.?$/i, "destroy the opponent's best nonland permanent");
+    t = t.replace(/^exile any number of target creatures controlled by different players\. for each creature exiled this way, its controller reveals cards from the top of their library until they reveal a creature card, puts that card onto the battlefield, then puts the rest on the bottom of their library in a random order\.?$/i, 'chaos mutation');
+    t = t.replace(/^for each opponent, gain control of up to one target nonlegendary creature that player controls for as long as this saga remains on the battlefield\.?$/i, 'the heresy turns a traitor');
+    t = t.replace(/^draw a card for each creature you control but don't own\.?$/i, 'draw for each creature you borrowed');
+    t = t.replace(/^starting with you, each player chooses a creature\. destroy each creature chosen this way\.?$/i, 'each player picks a creature to die');
+    t = t.replace(/^exile it and choose target creature an opponent controls\. when that creature leaves the battlefield, return this card from exile to the battlefield under its owner's control\.?$/i, 'lucius waits in exile');
+    t = t.replace(/^flip a coin for each opponent you have\. for each flip you win, draw a card\. for each flip you lose, this creature deals 3 damage to that player\.?$/i, 'the vortex flips');
+    t = t.replace(/^choose an opponent at random\. exile the top card of that player's library\. until end of turn, you may play that card and you may spend mana as though it were mana of any colou?r to cast it\. when you cast a spell this way, its owner loses life equal to its mana value\.?$/i, 'the ruinous powers steal a card');
+    t = t.replace(/^copy the next instant or sorcery spell you cast this turn when you cast it\. you may choose new targets for the copy\.?$/i, 'copy your next spell this turn');
+    t = t.replace(/^copy the next instant or sorcery spell you cast this turn when you cast it\.?$/i, 'copy your next spell this turn');
+    t = t.replace(/^it deals damage equal to the number of spells you've cast this turn to any target\.?$/i, 'it fires for your spells this turn');
+    t = t.replace(/^create a token that's a copy of that creature, except it's a tyranid in addition to its other types\.?$/i, 'copy the infected creature as a tyranid');
+    t = t.replace(/^it deals x damage to each player and each other creature\.?$/i, 'the exocrine bombards');
+    t = t.replace(/^distribute x \+1\/\+1 counters among any number of other target creatures you control\.?$/i, 'spread x counters among your other creatures');
+    t = t.replace(/^if a creature entered the battlefield under an opponent's control this turn, (create .+)$/i, 'if an opponent had a creature enter this turn, $1');
+    t = t.replace(/^(?:you may )?discard two cards\. if you do, return this card from your graveyard to your hand\.?$/i, 'old one eye returns for two discards');
+    t = t.replace(/^search your library for up to x basic land cards, put them onto the battlefield tapped, then shuffle\.?$/i, 'fetch x basic lands tapped');
+    t = t.replace(/^creatures you control with counters on them gain hexproof and indestructible until end of turn\.?$/i, 'your creatures with counters are shielded');
+    t = t.replace(/^(?:you may )?put a creature card from your hand onto the battlefield\. if its mana cost contains \{x\}, it enters with a number of \+1\/\+1 counters on it equal to the number of lands you control\.?$/i, 'the first tyrannic war');
+    t = t.replace(/^exile target player's graveyard\. put a \+1\/\+1 counter on this creature for each creature card exiled this way\.?$/i, 'the malanthrope feeds');
+    t = t.replace(/^it fights up to one target creature an opponent controls\. if that creature would die this turn, exile it instead\.?$/i, 'the mawloc strikes');
+    t = t.replace(/^this enchantment deals 2 damage to that player\.?$/i, 'this enchantment deals 2 damage to the opponent');
+    t = t.replace(/^it deals x damage to any target\.?$/i, 'it deals x damage to the best target');
+    t = t.replace(/^destroy up to one target artifact\. if an artifact is destroyed this way, its controller draws a card\.?$/i, "destroy the opponent's best artifact; it draws");
+    t = t.replace(/^(?:you may )?remove a \+1\/\+1 counter from it\. if you do, search your library for a basic land card, put it onto the battlefield tapped, then shuffle\.?$/i, 'trade a counter for a basic land');
+    t = t.replace(/^put a \+1\/\+1 counter on it and a \+1\/\+1 counter on up to one other target attacking creature\. that creature can't be blocked this turn\.?$/i, 'the trygon tunnels');
+    // ---- The last twelve, chunk 3 ----
+    t = t.replace(/^(?:sentinel sarah lyons|this creature) deals damage equal to the number of artifacts you control to target player\.?$/i, 'sarah fires for each artifact');
+    t = t.replace(/^(?:you may )?create a tapped and attacking token that's a copy of target attacking legendary creature you control other than (?:shaun|this creature), except it's not legendary and it's a synth artifact creature in addition to its other types\.?$/i, 'shaun makes a synth');
+    t = t.replace(/^exile all synth tokens you control\.?$/i, 'your synth tokens are exiled');
+    t = t.replace(/^pay any amount of \{e\}\. if you paid one or more \{e\} this way, shuffle your library, then exile that many cards from the top\. you may play one of those cards without paying its mana cost\.?$/i, 'the simulation pays out');
+    t = t.replace(/untap equipped creature, then put your choice of a menace, trample, or lifelink counter on it/i, 'the armor untaps its wearer with a trample counter');
+    t = t.replace(/^each creature you control that's an artifact or human gains indestructible until end of turn\.?$/i, 'your artifact and human creatures gain indestructible');
+    t = t.replace(/^if you have ten or more cards in hand, it gets \+10\/\+10 until end of turn\.?$/i, 'nerd rage with ten cards');
+    t = t.replace(/^(?:bottle-cap blast|this spell) deals 5 damage to any target\. if excess damage was dealt to a permanent this way, create that many tapped treasure tokens\.?$/i, 'bottle-cap blast');
+    t = t.replace(/(^|\.\s+)if excess damage was dealt to a permanent this way, create that many tapped treasure tokens\.?$/i, '$1');
+    t = t.replace(/^(?:you may )?pay an amount of \{e\} equal to target nonland permanent's mana value\. when you do, destroy that permanent\.?$/i, 'the behemoth spends energy to destroy');
+    t = t.replace(/^up to x target creatures you control get \+1\/\+0 and gain indestructible until end of turn, where x is the number of bobbleheads you control as you activate this ability\.(?: activate only as a sorcery\.?)?$/i, 'the endurance bobblehead');
+    t = t.replace(/^exile the top two cards of your library face down\.?$/i, 'the safe locks two cards');
+    t = t.replace(/^you and target opponent each secretly choose 1, 2, or 3\. then those choices are revealed\. if they match, sacrifice this artifact and put all cards exiled with it into their owners' hands\. otherwise, exile the top card of your library face down\.?$/i, 'crack the safe');
+    t = t.replace(/^if a player lost 4 or more life this turn, you draw a card\.?$/i, 'draw if a player lost 4 life');
+    t = t.replace(/^they gain (vigilance|menace) until end of turn\.?$/i, 'your legendary creatures gain $1');
+    t = t.replace(/^exile up to one target instant or sorcery card from defending player's graveyard\. if you do, copy it\. you may cast the copy by paying \{3\} rather than paying its mana cost\.?$/i, "the cane casts the defender's spell for {3}");
+    t = t.replace(/^you draw x cards and lose x life, where x is the number of your opponents who were dealt combat damage by (?:estinien varlineau|this creature) or a dragon this turn\.?$/i, 'estinien draws for the dragon hits');
+    t = t.replace(/^each opponent may sacrifice a nontoken creature of their choice\. each opponent who doesn't loses 2 life for each instant and sorcery card in your graveyard\.?$/i, "fandaniel's choice");
+    t = t.replace(/^(?:you may )?cast it from your graveyard as an adventure until the end of your next turn\.?$/i, 'it can be cast from your graveyard until your next turn ends');
+    t = t.replace(/^return target creature card with mana value equal to that spell's mana value from your graveyard to your hand\.?$/i, "a creature card matching the spell's mana value returns");
+    t = t.replace(/^remove enchanted creature from combat\. then draw a card for each tapped creature its controller controls\.?$/i, 'observed stasis');
+    t = t.replace(/^each opponent who lost life this turn sacrifices a creature with the greatest power among creatures they control\.?$/i, "the opponent sacrifices its strongest if it lost life");
+    t = t.replace(/^whenever you cast a noncreature spell this turn, create a token that's a copy of a non-saga token you control\.?$/i, 'the moogle king copies tokens this turn');
+    t = t.replace(/^target opponent may draw a card\.?$/i, 'the opponent draws a card');
+    t = t.replace(/^another target legendary permanent you control gains indestructible for as long as you control (?:thancred waters|this creature)\.?$/i, 'your best other legendary permanent gains indestructible');
+    t = t.replace(/^(?:you may )?cast target instant card from your graveyard without paying its mana cost\. if that spell would be put into your graveyard, exile it instead\.?$/i, 'cast your best graveyard instant for free, exiled after');
+    t = t.replace(/^(?:you may )?cast target instant card from your graveyard without paying its mana cost\.?$/i, 'cast your best graveyard instant for free, exiled after');
+    t = t.replace(/(^|\.\s+)if this spell was cast from your hand, create a 0\/1 black wizard creature token with "whenever you cast a noncreature spell, this token deals 1 damage to each opponent\."\.?$/i, '$1a wizard if cast from your hand');
+    t = t.replace(/^look at the top card of your library\. (?:you may )?exile it face down\.?$/i, 'urianger stores the top card');
+    t = t.replace(/^until end of turn, you may play cards exiled with (?:urianger augurelt|this creature)\. spells you cast this way cost \{2\} less to cast\.?$/i, "urianger's cards are playable");
+    t = t.replace(/^target creature and all other creatures with the same name as that creature get -3\/-3 until end of turn\.?$/i, 'bile blight');
+    t = t.replace(/(^|\.\s+)then for each opponent who has less life than you, create a 1\/3 black demon creature token named plaguebearer of nurgle\.?$/i, '$1a plaguebearer if the opponent has less life');
+    t = t.replace(/^choose target creature you control\. destroy all creatures with power less than that creature's power\.?$/i, 'mandate of abaddon');
+    t = t.replace(/^(?:you may pay \{x\}\. if you do, create|you may pay \{x\} to do "create) x 2\/2 black astartes warrior creature tokens with menace\. x can't be greater than the amount of life you lost this turn"?\.?$/i, 'mortarion raises the death guard');
+    t = t.replace(/(^|,\s+then\s+|\.\s+)exile that player's graveyard\.?$/i, "$1exile the opponent's graveyard");
+    t = t.replace(/^the next creature spell you cast this turn has cascade\.?$/i, 'your next creature spell this turn has cascade');
+    // ---- The last twelve, chunk 2 ----
+    t = t.replace(/^(?:craig boone|this creature) deals damage equal to the number of quest counters on it to up to one target creature unless that creature's controller has (?:craig boone|this creature) deal (?:that much|\d+) damage to them\.?$/i, 'boone takes his shot');
+    t = t.replace(/^each opponent sacrifices a tenth of the creatures they control of their choice, rounded up\.?$/i, 'the opponent is decimated');
+    t = t.replace(/^if another (\w+) died under your control this turn, /i, 'if a $1 died under your control this turn, ');
+    t = t.replace(/^roll (?:x|\d+) six-sided dice(?:, where x is the number of bobbleheads you control)?\. create a tapped treasure token for each even result\. if you rolled 6 exactly seven times, you win the game\.?$/i, 'the luck bobblehead rolls');
+    t = t.replace(/^target player loses all rad counters\. sacrifice this artifact\.?$/i, 'radaway');
+    t = t.replace(/^target player loses all rad counters\.?$/i, 'radaway');
+    t = t.replace(/^mill three cards\. (?:you may )?put an artifact creature card or vehicle card from among the cards milled this way into your hand\.?$/i, 'szarekh mills for a machine');
+    t = t.replace(/^(?:you may )?cast an artifact spell from your hand or graveyard by paying life equal to its mana value rather than paying its mana cost\.?$/i, 'anrakyr casts an artifact for life');
+    t = t.replace(/^choose another target artifact creature you control\. when that creature dies this turn, return it to the battlefield tapped under your control\.?$/i, 'the cryptek guards an artifact creature');
+    t = t.replace(/^add an amount of \{b\} equal to the sacrificed creature's mana value\.?$/i, "add {B} for the sacrificed creature's mana value");
+    t = t.replace(/(^|,\s+then\s+|\.\s+)mill cards equal to the number of eon counters on it\.?$/i, '$1mill for each eon counter');
+    t = t.replace(/^if you cast it, target opponent loses half their life, rounded up\. you gain life equal to the life lost this way\.?$/i, 'the nightbringer drains half');
+    t = t.replace(/(^|,\s+then\s+|\.\s+)return any number of artifact creature cards with total mana value (\d+) or less from your graveyard to the battlefield\.?$/i, '$1return artifact creatures worth up to $2 in total');
+    t = t.replace(/^create (?:x|\d+) tapped 2\/2 black necron warrior artifact creature tokens, then you gain life equal to the number of artifacts you control\. exile their number is legion\.(?: you may cast this card from your graveyard\.?)?$/i, 'their number is legion');
+    t = t.replace(/^that player loses life equal to the number of creatures they control unless they sacrifice a creature of their choice\.?$/i, 'the tomb blade demands a toll');
+    t = t.replace(/^choose an opponent\.?$/i, 'choose the opponent');
+    t = t.replace(/^choose up to three target creature cards with total mana value 8 or less in your graveyard\. return each of them to the battlefield with a necrodermis counter on it\. they're artifacts in addition to their other types\.?$/i, 'the war in heaven');
+    t = t.replace(/^exile target player's graveyard\. for each artifact or land card exiled this way, create a 1\/1 colorless insect artifact creature token with flying\.?$/i, 'the scarabs feed');
+    t = t.replace(/^(?:you may )?pay \{3\} and sacrifice it\. if you do, choose a land you control\. then search your library for up to two basic land cards which have the same name as the chosen land, put them onto the battlefield tapped, then shuffle\.?$/i, 'the wraith scouts');
+    t = t.replace(/^each artifact creature card in your graveyard gains unearth \{3\} until end of turn\.?$/i, 'the ghost ark offers unearth');
+    t = t.replace(/^mill three cards\. for each creature card milled this way, create a 2\/2 black necron warrior artifact creature token\.?$/i, 'the monolith opens');
+    t = t.replace(/^return that card to the battlefield under its owner's control at the beginning of the next end step\.?$/i, 'the orb returns it at the end step');
+    t = t.replace(/^enchanted opponent creates a clue token, a food token, and a junk token\.?$/i, 'the opponent gets a clue, a food and a junk');
+    t = t.replace(/^that player may pay \{1\} for each artifact they control\. if they don't, creatures can't attack this combat\.?$/i, 'overencumbered taxes the attack');
+    t = t.replace(/^you get (?:1 energy|\{e\}) for each creature attacking you\.?$/i, 'energy for each attacker');
+    t = t.replace(/^for each player, exile up to one other target enchantment or creature that player controls until this saga leaves the battlefield\.?$/i, "the vault takes the opponent's best");
+    t = t.replace(/^return two cards exiled with this saga to the battlefield under their owners' control and put the rest on the bottom of their owners' libraries\.?$/i, 'the vault lets them out');
+    t = t.replace(/^draw cards equal to its base power\.?$/i, 'draw for its base power');
+    t = t.replace(/^put your choice of a \+1\/\+1, first strike, or trample counter on that creature\.?$/i, 'your attacking artifact creature gets a +1/+1 counter');
+    t = t.replace(/^(?:you may )?pay \{e\}\{e\}\{e\}\{e\}\. when you do, destroy target nonbasic land defending player controls, and creatures that player controls without flying can't block this turn\.?$/i, 'the motherlode digs in');
+    t = t.replace(/^choose target creature that's blocking equipped creature\. flip a coin\. if you win the flip, exile the chosen creature\. otherwise, this equipment deals 1 damage to it\.?$/i, 'the plasma caster fires');
+    t = t.replace(/^exile the top card of your library\. (?:you may )?get \{e\}\{e\}\s*\. if you don't, you may play that card this turn\.?$/i, 'the eradicator scans');
+    t = t.replace(/^exile the top card of your library\. (?:you may )?get \{e\}\{e\}\. if you don't, you may play that card this turn\.?$/i, 'the eradicator scans');
+    t = t.replace(/(^|\.\s+)that player draws a card\.?$/i, '$1the opponent draws a card');
+    t = t.replace(/^they mill two cards\.?$/i, 'the opponent mills two cards');
+    t = t.replace(/^choose target creature card in a graveyard\. exile it with a brain counter on it\.(?: activate only as a sorcery\.?)?$/i, 'rex takes a brain');
+    // ---- The last twelve, chunk 1 ----
+    t = t.replace(/^(?:you may )?move a counter from target creature you control onto a second target creature you control\.?$/i, 'move a counter to your best creature');
+    t = t.replace(/^(?:you may )?draw a card and proliferate\.?$/i, 'draw a card. proliferate');
+    t = t.replace(/^put a \+1\/\+1 counter on it\. when you do, exile target creature defending player controls with power less than (?:auron's|this creature's) power until (?:auron|this creature) leaves the battlefield\.?$/i, 'auron grows and banishes a smaller foe');
+    t = t.replace(/^put a \+1\/\+1 counter on each of up to (?:x|\d+) target creatures\.?$/i, 'support x');
+    t = t.replace(/^until end of turn, target creature gains "whenever this creature deals combat damage to a player, draw a card for each kind of counter on it" and it can't be blocked this turn\.?$/i, 'go for the goal');
+    t = t.replace(/^creatures you control with counters on them gain double strike until end of turn\.?$/i, 'your creatures with counters gain double strike');
+    t = t.replace(/^the owner of target spell, nonland permanent, or card in a graveyard puts it on their choice of the top or bottom of their library\.?$/i, "the opponent's best nonland permanent goes on top of its library");
+    t = t.replace(/(^|\.\s+)then if you control a creature with power 7 or greater, (?:you may )?play the exiled card without paying its mana cost\.?$/i, '$1play the hidden card free with a 7-power creature');
+    t = t.replace(/^(?:choose target creature you control\. )?if damage would be dealt to that creature this turn, prevent that damage and put that many \+1\/\+1 counters on it\.?$/i, 'your best creature is guarded this turn');
+    t = t.replace(/^put a \+1\/\+1 counter on (?:kimahri|this creature) and tap target creature an opponent controls\. then you may have (?:kimahri|this creature) become a copy of that creature, except .+$/i, 'kimahri rages');
+    t = t.replace(/^if you put a counter on a creature this turn, investigate\.?$/i, 'investigate if you put a counter on a creature');
+    t = t.replace(/^move a counter from target creature an opponent controls onto target creature you control\.(?: activate only as a sorcery\.?)?$/i, "steal a counter from the opponent's creature");
+    t = t.replace(/^put a \+1\/\+1 counter on that creature if its power is less than (?:shelinda's|this creature's) power\. otherwise, put a \+1\/\+1 counter on (?:shelinda|this creature)\.?$/i, 'shelinda blesses the newcomer');
+    t = t.replace(/^put its counters on target creature you control, then shuffle this card into its owner's library\.?$/i, 'sin passes its counters on. shuffle this card into your library');
+    t = t.replace(/^put its counters on target creature you control\.?$/i, 'sin passes its counters on');
+    t = t.replace(/^(?:aerospark|sonic wings|combine powers!|defense!|fight!) — /i, '');
+    t = t.replace(/^each opponent chooses a creature with the greatest mana value among creatures they control\. return those creatures to their owners' hands\.?$/i, "the opponent's costliest creature returns to hand");
+    t = t.replace(/^until your next turn, creatures can't attack you unless their controller pays \{2\} for each of those creatures\.?$/i, 'yojimbo stands guard');
+    t = t.replace(/^create x treasure tokens, where x is the number of opponents who control a creature with power 4 or greater\.?$/i, 'yojimbo is paid');
+    t = t.replace(/^(?:you may )?exile target creature card from a graveyard\. if you do, create a 1\/1 white spirit creature token with flying\. put a \+1\/\+1 counter on it if the exiled card's mana value is 4 or greater\.?$/i, "the summoner's sending");
+    t = t.replace(/^proliferate x times, where x is the number of nontoken creatures you control that entered this turn\.?$/i, 'proliferate for each newcomer');
+    t = t.replace(/^if a counter was put on (?:wakka|this creature) this turn, put a \+1\/\+1 counter on each other creature you control\.?$/i, 'wakka captains the team');
+    t = t.replace(/^if it had one or more counters on it, (?:you may )?put that number of \+1\/\+1 counters on target creature\.?$/i, 'yuna passes on the counters');
+    t = t.replace(/(^|\.\s+)when you reveal a creature card this way, put x \+1\/\+1 counters on target creature you control, where x is the mana value of that card\.?$/i, '$1the whistle grows your best creature');
+    t = t.replace(/^(?:caesar|this creature) deals damage equal to the number of creature tokens you control to target opponent\.?$/i, 'caesar strikes for each token');
+    t = t.replace(/^roll a six-sided die plus an additional six-sided die for each mana from treasures spent to activate this ability\.?$/i, 'mr house rolls');
+    t = t.replace(/^if it enlisted a creature this combat, the creature that attacked gains double strike until end of turn\. if that creature's power is 4 or greater, draw a card\.?$/i, 'aradesh rewards the enlisted');
+    t = t.replace(/^(?:you may )?remove three quest counters from among permanents you control\. when you do, put a \+1\/\+1 counter on each creature you control and they gain vigilance until end of turn\.?$/i, 'the overseer spends three quests');
+    t = t.replace(/^exile all creatures with power (\d+) or greater\.?$/i, 'exile every creature with power $1 or more');
+    t = t.replace(/^target opponent gains control of (?:yes man|this creature)\. when they do, you draw two cards and put a quest counter on (?:yes man|this creature)\.(?: activate only during your turn\.?)?$/i, 'yes man changes sides');
+    t = t.replace(/^its owner creates a tapped 1\/1 white soldier creature token for each quest counter on it\.?$/i, "yes man's owner gets soldiers");
+    t = t.replace(/^choose any number of target creatures with equal toughness\. destroy the chosen creatures\.?$/i, 'v.a.t.s');
+    t = t.replace(/^for each graveyard with an instant or sorcery card in it, exile target instant or sorcery card from that graveyard\. if two or more cards are exiled this way, choose one of them at random and copy it\. you may cast the copy without paying its mana cost\.?$/i, 'the stranger steals a spell');
+    t = t.replace(/^choose a creature at random\. you gain control of that creature until end of turn\. untap it\. it gains haste until end of turn\. then destroy all other creatures\.?$/i, 'the nipton lottery');
+    t = t.replace(/(^|,\s+then\s+|\.\s+)(?:you may )?put a creature card with mana value (?:x|\d+) or less from your hand onto the battlefield tapped and attacking(?:, where x is .+?'s power)?\.?$/i, '$1put a creature card from your hand onto the battlefield attacking');
+    t = t.replace(/^each player secretly votes for up to one creature, then those votes are revealed\. if no creature got votes, each player draws a card\. otherwise, destroy each creature with the most votes or tied for most votes\.?$/i, 'the vote destroys both favorites');
+    t = t.replace(/^if the number of attacking creatures is greater than the number of quest counters on (?:ed-e|this creature), put a quest counter on it\.?$/i, 'ed-e counts the attackers');
+    t = t.replace(/^draw a card, then draw an additional card for each quest counter on (?:ed-e|this creature)\.?$/i, 'ed-e draws for its quests');
+    t = t.replace(/^move a shield counter from this land onto target creature\. activate only if two or more creatures entered the battlefield under your control this turn\.?$/i, 'diamond city lends its shield');
+    t = t.replace(/^each creature you control named ([^.]+?) gets \+(\d+)\/\+0 until end of turn\.?$/i, 'each $1 you control gets +$2');
+    t = t.replace(/^(?:target|a) creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn\. the escape cost is equal to its mana cost plus exile two other cards from your graveyard\.?$/i, 'desdemona lends escape');
+    t = t.replace(/^target creature card in your graveyard that's an artifact or that has mana value 3 or less gains escape until end of turn\. the escape cost is equal to its mana cost plus exile two other cards from your graveyard\.?$/i, 'desdemona lends escape');
+    // ---- 20-23 decks, chunk 4 ----
+    t = t.replace(/^flip a coin\. if you win the flip, take an extra turn after this one\.?$/i, 'stitch in time');
+    t = t.replace(/^manifest a number of cards from the top of your library equal to the number of counters on it\.?$/i, 'manifest one for each counter it had');
+    t = t.replace(/^copy target activated or triggered ability you control from a colorless source\. you may choose new targets for the copy\.?$/i, 'the archaic copies nothing');
+    t = t.replace(/^as an additional cost to cast this spell, reveal a colorless creature card from your hand\. exile each creature and planeswalker with mana value less than the revealed card's mana value\.?$/i, 'calamity of the titans');
+    t = t.replace(/^as an additional cost to cast this spell, reveal a colorless creature card from your hand\. exile target creature if its power is less than or equal to the revealed card's power\.?$/i, "titan's presence");
+    t = t.replace(/^for each opponent, exile up to one target permanent that player controls with an even mana value\.(?: adamant — | )?if at least three colorless mana was spent to cast this spell, return a permanent card with an odd mana value from your graveyard to the battlefield\.?$/i, 'desecrate reality');
+    t = t.replace(/(^|\.\s+)until end of turn, it has base power and toughness 10\/10 and gains trample, annihilator 2, and haste\.?$/i, '$1it gains trample, annihilator 2, and haste until end of turn');
+    t = t.replace(/^until end of turn, this creature gains trample and gets \+(?:x|\d+)\/\+(?:x|\d+)(?:, where x is that spell's mana value)?\.?$/i, 'the cicada grows by the spell');
+    t = t.replace(/^reveal the top card of your library\. you may put that card onto the battlefield if it's a permanent card with mana value 3 or less\. otherwise, put that card into your hand\.?$/i, 'matter reshaper reveals');
+    t = t.replace(/^defending player exiles two permanents they control\.?$/i, 'the opponent exiles its two worst permanents');
+    // ---- 20-23 decks, chunk 3 ----
+    t = t.replace(/^create a colorless artifact token named land mine with "\{r\}, sacrifice this token: this token deals 2 damage to target attacking creature without flying\." then flip a coin(?:\. |; )if you lose the flip, this creature deals 2 damage to itself\.?$/i, 'the kaboomist lays a land mine');
+    t = t.replace(/^flip a coin(?:\. |; )if you lose the flip, return that spell to its owner's hand\. if you win the flip, copy that spell, and you may choose new targets for the copy\.?$/i, 'krark flips for the spell');
+    t = t.replace(/^flip a coin\. if you win the flip, destroy target artifact and untap this creature\. if you lose the flip, sacrifice this creature\.?$/i, 'the archaeologist digs');
+    t = t.replace(/^(?:you may )?search your library for an artifact card with mana value (\d+), reveal (?:that card|it), put it into your hand, then shuffle\.?$/i, 'fetch an artifact with mana value $1 to your hand');
+    t = t.replace(/^(?:you may )?search your library for an artifact card, put it into your graveyard, then shuffle\.?$/i, 'bin your best artifact from the library');
+    t = t.replace(/^choose a number between 1 and 5\. flip that many coins\. for each flip you win, draw a card\. for each flip you lose, (?:yusri|this creature) deals 2 damage to you\. if you won five flips this way, you may cast spells from your hand this turn without paying their mana costs\.?$/i, "yusri's flips");
+    t = t.replace(/^you choose target creature an opponent controls, and that opponent chooses target creature\. flip a coin\. if you win the flip, destroy the creature you chose\. if you lose the flip, destroy the creature your opponent chose\.?$/i, 'the assassin flips');
+    t = t.replace(/^flip a coin until you lose a flip or choose to stop flipping\. if you lose a flip, fiery gambit has no effect\. if you win one or more flips, fiery gambit deals 3 damage to target creature\. if you win two or more flips, fiery gambit deals 6 damage to each opponent\. if you win three or more flips, draw nine cards and untap all lands you control\.?$/i, 'fiery gambit');
+    t = t.replace(/^search your library for a card, put that card into your hand, discard a card at random, then shuffle\.?$/i, 'gamble');
+    t = t.replace(/(^|\.\s+)search your library for an artifact card with mana value (?:x|\d+) or less, put it onto the battlefield, then shuffle\.?$/i, '$1fetch an artifact with mana value up to x');
+    t = t.replace(/^choose a number\. flip a coin that many times or until you lose a flip, whichever comes first\. if you win all the flips, draw two cards for each flip\.?$/i, "squee's revenge");
+    t = t.replace(/^search your library for a card, then shuffle and put that card third from the top\.?$/i, 'long-term plans');
+    t = t.replace(/^permanents your opponents control lose hexproof and indestructible until end of turn\.?$/i, 'shadowspear pierces');
+    t = t.replace(/^flip a coin\. if you win the flip, destroy target creature an opponent controls\. if you lose the flip, destroy target creature you control unless you pay \{3\} and repeat this process\.?$/i, 'the crooked scales tip');
+    t = t.replace(/^flip a coin until you lose a flip\. for each flip you won, create a token that's a copy of that creature\. those tokens gain haste\. exile them at the beginning of the next end step\.?$/i, 'mirror march');
+    t = t.replace(/^flip a coin(?:\. |; )if you lose the flip, sacrifice this enchantment\.?$/i, 'flip a coin to keep this enchantment');
+    t = t.replace(/^that player flips a coin\. if they lose the flip, counter that spell\.?$/i, 'planar chaos flips');
+    t = t.replace(/^that player gains control of this enchantment\.?$/i, 'risky move stays');
+    t = t.replace(/^attach up to one target equipment you control to (?:it|cloud|this creature)\.?$/i, 'attach your best equipment to this creature');
+    t = t.replace(/^draw a card for each equipped attacking creature you control\. then if (?:cloud|this creature) has power 7 or greater, create two treasure tokens\.?$/i, "cloud's attack");
+    t = t.replace(/^if you gained life this turn, return target creature card from your graveyard to your hand\. if you gained 7 or more life this turn, return that card to the battlefield instead\.?$/i, 'aerith raises the fallen');
+    t = t.replace(/^it deals damage equal to the number of equipped creatures you control to defending player\.?$/i, 'barret fires for each equipped creature');
+    t = t.replace(/^attach up to one target equipment you control to target rebel you control\.?$/i, 'attach your best equipment to your best rebel');
+    t = t.replace(/^when you exile a card this way, target creature you control gets \+x\/\+0 until end of turn, where x is that card's mana value\.?$/i, "your best creature gets the exiled card's mana value");
+    t = t.replace(/^tiered\s*•\s*cross-slash\s*[—-]\s*\{0\}\s*[—-]\s*destroy target tapped creature\..*$/i, "destroy the opponent's best tapped creature");
+    t = t.replace(/^tap target creature defending player controls\. if that creature has greater power than this creature, put a number of \+1\/\+1 counters on this creature equal to the difference\.?$/i, 'the shuriken conforms');
+    t = t.replace(/(^|\.\s+)you may play that card until you exile another card with this enchantment\.?$/i, '$1furious rise keeps the card playable');
+    t = t.replace(/^draw x cards, where x is the greatest power among creatures you controlled as you cast this spell\. if this spell was cast from exile, you gain twice x life\.?$/i, "lifestream's blessing");
+    t = t.replace(/^(?:you may )?put a cell counter on target creature\. until end of turn, each modified creature you control has base power and toughness 7\/5\.?$/i, 'jenova cells');
+    t = t.replace(/(^|\.\s+)if you control a commander, you may choose both instead\.?$/i, '$1');
+    t = t.replace(/^(?:lightning|ice|fire) — /i, '');
+    t = t.replace(/^up to three target creatures can't block this turn\.?$/i, "the opponent's three best creatures can't block this turn");
+    t = t.replace(/^discard a card, then draw two cards\. when you discard a card this way, this creature deals damage equal to that card's mana value to each opponent\.?$/i, 'kujata burns a discard');
+    t = t.replace(/^(?:fire — )?discard a card, then draw two cards\. this creature deals x damage to each opponent, where x is the discarded card's mana value\.?$/i, 'kujata burns a discard');
+    t = t.replace(/(^|\.\s+)if it's the first combat phase of your turn, there is an additional combat phase after this phase\.?$/i, '$1tifa takes another combat');
+    t = t.replace(/(^|\.\s+)if this spell was cast from exile, prevent all damage that would be dealt to you this turn\.?$/i, '$1if foretold, prevent all damage that would be dealt to you this turn');
+    t = t.replace(/(^|\.\s+)if this spell was cast from exile, for each opponent, choose an artifact or land that player controls\. destroy the chosen permanents\.?$/i, "$1if foretold, destroy the opponent's best artifact or land");
+    t = t.replace(/^it deals (?:that much|\d+) damage to each other opponent if (?:vincent|this creature)'s power is 7 or greater\.?$/i, 'no other opponent');
+    t = t.replace(/^then you may attach an equipment you control to (?:yuffie|this creature)\.?$/i, 'attach your best equipment to this creature');
+    // ---- 20-23 decks, chunk 2 ----
+    t = t.replace(/^choose a planeswalker type\. until end of turn, whenever you activate an ability of a planeswalker of that type, copy that ability\. you may choose new targets for the copies\.?$/i, 'leori picks a planeswalker type');
+    t = t.replace(/^if this artifact has loyalty counters on it, (?:you may )?move a loyalty counter from this artifact onto that planeswalker\.?$/i, 'the beacon lends a loyalty counter');
+    t = t.replace(/^choose left or right\. until your next turn, each player may attack only the nearest opponent in the last chosen direction and planeswalkers controlled by that opponent\.?$/i, 'choose a direction');
+    t = t.replace(/^choose any number of target planeswalkers you control\. until end of turn, they become 3\/3 blue bird creatures with flying, hexproof, and "whenever this creature deals combat damage to a player, scry 1\."\.?$/i, 'your planeswalkers become birds');
+    t = t.replace(/^up to two other target planeswalkers you control phase out at the beginning of the next end step\.?$/i, 'choose a direction');
+    t = t.replace(/^target artifact you control becomes a 9\/9 construct artifact creature and gains vigilance, indestructible, and "this creature can't be blocked\."\.?$/i, 'your best artifact becomes a 9/9 construct');
+    t = t.replace(/^remove a loyalty counter from each of any number of permanents you control\. exile that many cards from the top of your library\. you may play them this turn\.?$/i, 'chandra trades loyalty for cards');
+    t = t.replace(/^for each player, choose target nonenchantment, nonland permanent that player controls\. those permanents' owners shuffle them into their libraries\. each player who controlled one of those permanents exiles cards from the top of their library until they exile a nonland card, then puts the rest on the bottom of their library in a random order\. each player may cast the nonland card they exiled without paying its mana cost\.?$/i, 'guff rewrites history');
+    t = t.replace(/^until end of turn, up to one target creature gets \+1\/\+1 and gains first strike, vigilance, and lifelink\.?$/i, 'target creature gets +1/+1 and gains first strike, vigilance, and lifelink until end of turn');
+    t = t.replace(/^look at the top seven cards of your library\. put up to two planeswalker cards from among them onto the battlefield\. put the rest on the bottom of your library in a random order\.?$/i, 'deploy the gatewatch');
+    t = t.replace(/^if (?:jace|this planeswalker) was kicked, create a token that's a copy of (?:jace|this planeswalker), except it's not legendary and its starting loyalty is 1\.?$/i, 'a kicked jace copies itself');
+    t = t.replace(/^draw a card and reveal it\. remove a number of loyalty counters equal to that card's mana value from (?:jace|this planeswalker)\.?$/i, 'jace pays for the card drawn');
+    t = t.replace(/^each opponent gets an emblem with "at the beginning of your upkeep, this emblem deals 1 damage to you\."\.?$/i, 'the opponent gets an emblem: at the beginning of your upkeep, you lose 1 life');
+    t = t.replace(/\.\s+if a permanent dealt damage this way would die this turn, exile it instead\.?$/i, '.');
+    t = t.replace(/^exile the top card of your library\. you may cast that card\. if you don't, (?:chandra|this planeswalker) deals 2 damage to each opponent\.?$/i, 'chandra exiles the top card to cast');
+    t = t.replace(/^when you next cast an instant spell, cast a sorcery spell, or activate a loyalty ability this turn, copy that spell or ability twice\. you may choose new targets for the copies\.?$/i, 'copy your next spell or loyalty ability twice');
+    t = t.replace(/^each dragon you control deals (\d+) damage to that creature\.?$/i, 'the dragons answer the attacker');
+    t = t.replace(/^until end of turn, each planeswalker you control becomes a 4\/4 red dragon creature and gains flying\.?$/i, 'your planeswalkers become dragons');
+    t = t.replace(/(^|\.\s+)add \{u\}, \{r\}, or \{w\}\.\s+spend this mana only to cast a noncreature spell\.?$/i, '$1add one mana of any color');
+    t = t.replace(/^draw a card, then you may discard a card\. when you discard a nonland card this way, (?:narset|this planeswalker) deals damage equal to that card's mana value to target creature or planeswalker\.?$/i, 'narset draws and flings a card');
+    t = t.replace(/^exile the top four cards of your library\. until end of turn, you may cast noncreature spells from among those cards without paying their mana costs\.?$/i, 'narset reveals four free spells');
+    t = t.replace(/^exile another target permanent you control\. return it to the battlefield under its owner's control at the beginning of the next end step\.?$/i, 'blink your best entering permanent until the end step');
+    t = t.replace(/^if you didn't activate a loyalty ability of a planeswalker this turn, you lose 2 life\.?$/i, 'you lose 2 life unless you used a loyalty ability');
+    t = t.replace(/^for each planeswalker you control, you may activate one of its loyalty abilities once this turn as though none of its loyalty abilities have been activated this turn\.?$/i, 'your planeswalkers may act again');
+    t = t.replace(/(^|\.\s+)spend this mana only to cast planeswalker spells\.?$/i, '$1');
+    t = t.replace(/^create a 1\/1 green forest dryad land creature token for each time you've cast your commander from the command zone this game\.?$/i, 'dryads for your commander casts');
+    t = t.replace(/^choose a nonbasic land type\. each land you control of that type becomes a copy of target creature you control until end of turn and gains haste until end of turn\.?$/i, 'march from velis vel');
+    t = t.replace(/^draw a card\. then discard a card unless that land had a nonbasic land type\.?$/i, 'draw, and discard unless the land was special');
+    t = t.replace(/^if you control five or more deserts, create that many 1\/1 red, green, and white sand warrior creature tokens\. they gain haste\.?$/i, 'sand warriors for your deserts');
+    t = t.replace(/^until end of turn, target land you control becomes an x\/x citizen creature with haste in addition to its other types, where x is twice the number of gates you control\.(?: activate only as a sorcery\.?)?$/i, 'a land of yours becomes a citizen of the gates');
+    t = t.replace(/^(?:you may )?mill (?:that many|\w+) cards?\. put any number of land cards from among them onto the battlefield tapped\.?$/i, 'frogantua mills and keeps the lands');
+    t = t.replace(/^draw a card, then you may discard a card\. (?:narset|this planeswalker) deals x damage to target creature or planeswalker, where x is the discarded nonland card's mana value\.?$/i, 'narset draws and flings a card');
+    t = t.replace(/(^|\.\s+)when you spend this mana to cast a spell or activate an ability, copy that spell or ability\. you may choose new targets for the copy\.?$/i, '$1copy your next spell this turn');
+    t = t.replace(/^create (?:x|\d+) tokens that are copies of target creature you control, except they have "when this token enters, it fights up to one target creature you don't control\."\.?$/i, 'aggressive biomancy');
+    t = t.replace(/^up to one target creature phases out\.?$/i, "the opponent's best creature phases out");
+    t = t.replace(/^untap (\w+) target lands\.?$/i, 'untap $1 of your lands');
+    t = t.replace(/^destroy each nonland permanent with mana value equal to the number of charge counters on this land\.?$/i, 'blast the charge counters');
+    t = t.replace(/^exile all other spells and counter all abilities\.?$/i, 'counter target spell');
+    t = t.replace(/^sacrifice it unless it escaped\.?$/i, 'sacrifice this unless it escaped');
+    t = t.replace(/^remove an ice counter from (?:dark depths|this land)\.?$/i, 'dark depths thaws');
+    t = t.replace(/(^|\.\s+)that player may search their library for a basic land card, put it onto the battlefield, then shuffle\.?/i, '$1the opponent fetches a basic land.');
+    // ---- 20-23 decks, chunk 1 ----
+    t = t.replace(/^(?:you may )?return target creature card with power less than (?:mirko's|this creature's) from your graveyard to the battlefield with a finality counter on it\.?$/i, 'mirko raises a smaller creature');
+    t = t.replace(/^each player chooses two nontoken, non-vehicle creatures they control\. exile them until this vehicle leaves the battlefield\.?$/i, 'the steamboat takes two from each player');
+    t = t.replace(/^put a card exiled with it into its owner's graveyard\. if you do, investigate\.?$/i, 'the steamboat drops one off and investigates');
+    t = t.replace(/(^|\.\s+)then choose an instant or sorcery card in your graveyard\. you may cast it this turn\. if that spell would be put into your graveyard, exile it instead\.?$/i, '$1an instant or sorcery card in your graveyard is castable this turn, exiled after');
+    t = t.replace(/, then choose an instant or sorcery card in your graveyard\. you may cast it this turn\. if that spell would be put into your graveyard, exile it instead\.?$/i, '. an instant or sorcery card in your graveyard is castable this turn, exiled after');
+    t = t.replace(/^(?:lazav|this creature)(?:, the multifarious)? becomes a copy of target creature card in your graveyard with mana value (\w+), except .+$/i, 'lazav copies a graveyard creature with mana value $1');
+    t = t.replace(/^if this card is in your graveyard, (?:you may )?pay 1 life\. if you do, return it to your hand\.?$/i, 'pay 1 life to return this card from your graveyard');
+    t = t.replace(/^if it's on the battlefield, it becomes an aura with "enchant creature put onto the battlefield with necromancy\." put target creature card from a graveyard onto the battlefield under your control and attach this enchantment to it\.(?: when this enchantment leaves the battlefield, that creature's controller sacrifices it\.?)?$/i, 'animate the best creature card in a graveyard');
+    t = t.replace(/(^|\.\s+)each opponent returns a nonland permanent they control with the greatest mana value among permanents they control to its owner's hand, then discards a card\.?$/i, '$1the opponent returns its costliest permanent and discards');
+    t = t.replace(/^target creature can't attack or block this turn\.?$/i, "the opponent's best creature can't attack or block this turn");
+    t = t.replace(/copy all spells you control, then copy all other activated and triggered abilities you control\. you may choose new targets for the copies/i, 'copy that spell');
+    t = t.replace(/^for each opponent, choose a creature that player controls\. create a token that's a copy of one of those creatures, except its power is equal to the total power of those creatures, its toughness is equal to the total toughness of those creatures, and it's a colorless eldrazi creature\.?$/i, "benthic copies the opponent's best creature");
+    t = t.replace(/^each player chooses a colou?r\. then exile each permanent unless it's colorless or it's only the colou?r its controller chose\.?$/i, 'selective obliteration');
+    t = t.replace(/^sacrifice any number of creatures each with base power or toughness 1 or less\. create that many 4\/4 colorless eldrazi angel creature tokens with flying and vigilance\.?$/i, 'trade your 1s for eldrazi angels');
+    t = t.replace(/^that player exiles cards from the top of their library until they exile a nonland card\. you may cast that card by paying life equal to the spell's mana value rather than paying its mana cost\.?$/i, 'the mindrender steals the next spell for life');
+    t = t.replace(/^for each opponent, gain control of up to one target creature that player controls until end of turn\. untap those creatures\. they gain trample, haste, and annihilator 1 until end of turn\.?$/i, 'gain control of target creature an opponent controls until end of turn. untap that creature. it gains trample, haste, and annihilator 1 until end of turn');
+    t = t.replace(/^choose odd or even\. creatures with mana value of that quality can't block this turn\.?$/i, "the twins pick the opponent's blockers");
+    t = t.replace(/^remove all counters from up to one target permanent or opponent\. the next spell you cast this turn costs \{1\} less to cast for each counter removed this way\.?$/i, 'the cultist takes counters for a discount');
+    t = t.replace(/^exile (?:another )?target (?:nonland permanent|creature), then return it to the battlefield tapped under its owner's control\.?$/i, "blink the opponent's best nonland permanent tapped");
+    t = t.replace(/^switch the power and toughness of each of any number of target creatures until end of turn\.?$/i, 'the behemoth inverts');
+    t = t.replace(/^exile the top card of your library face down and look at it\. create a 2\/2 colorless spirit creature token\. when that token leaves the battlefield, put the exiled card into your hand\.?$/i, 'ugin hides a card under a spirit');
+    t = t.replace(/^that player exiles the top two cards of their library\.?$/i, 'the opponent exiles its top two cards');
+    t = t.replace(/create a 1\/1 colorless eldrazi scion creature token for each nontoken creature that died under your control this turn\. those tokens have "sacrifice this token: add \{c\}\."/i, 'scions for your nontoken dead');
+    t = t.replace(/^(?:you may )?put two cards your opponents own from exile into their owners' graveyards\. if you do, counter target spell\.?$/i, 'process two to counter target spell');
+    t = t.replace(/^exile target creature with power or toughness 1 or less\.?$/i, "exile the opponent's best creature with power or toughness 1 or less");
+    t = t.replace(/^look at the top five cards of your library\. you may reveal a colorless card from among them and put it into your hand\. then put the rest on the bottom of your library in any order\.?$/i, 'stir up a colorless card');
+    // ---- Miracle Worker, Maestros Massacre, Timeless Wisdom ----
+    t = t.replace(/^put x \+1\/\+1 counters on it and mill twice x cards\.?$/i, 'the master of keys grows and mills');
+    t = t.replace(/^put a number of \+1\/\+1 counters equal to that spell's mana value on up to one target creature\.?$/i, 'counters for the spell on your best creature');
+    t = t.replace(/^this room deals 6 damage to target creature an opponent controls\. you gain life equal to the excess damage dealt this way\.?$/i, "the vents burn the opponent's best creature");
+    t = t.replace(/^(?:you may )?return a nonland permanent you own to your hand\. if you do, draw a card\.?$/i, 'bounce your cheapest nonland permanent to draw');
+    t = t.replace(/^when you do, (?:you may )?(return target nonland permanent an opponent controls to its owner's hand\.?)$/i, '$1');
+    t = t.replace(/^exile the bottom card of each opponent's library face down\. for as long as those cards remain exiled, you may look at them, you may cast permanent spells from among them, and you may spend mana as though it were mana of any colou?r to cast those spells\.?$/i, 'arvinox takes the bottom card');
+    t = t.replace(/^(?:you may )?exile it\. if you do, create a token that's a copy of that creature, except it's 1\/1 and it's a nightmare in addition to its other types\.?$/i, 'the shepherd remakes the dead as a nightmare');
+    t = t.replace(/^choose target permanent card in your graveyard\. you may sacrifice a permanent that shares a card type with the chosen card\. if you do, return the chosen card from your graveyard to the battlefield and it gains "if this permanent would leave the battlefield, exile it instead of putting it anywhere else\."\.?$/i, "spirit-sister's call trades up");
+    t = t.replace(/^look at the top five cards of your library\. put one of them into your hand and the rest on top of your library in any order\.?$/i, 'diabolic vision');
+    t = t.replace(/(^|\.\s+)then discard two cards unless you discard an enchantment card\.?$/i, '$1discard two cards or an enchantment');
+    t = t.replace(/^instant and sorcery spells you cast this turn cost \{1\} less to cast\.?$/i, 'your spells this turn cost one less');
+    t = t.replace(/^(?:you may )?exile it and put three time counters on it\. if you do, exile up to one target creature and put three time counters on it\. each card exiled this way that doesn't have suspend gains suspend\.?$/i, 'the concierge suspends itself and a foe');
+    t = t.replace(/^if a creature card left your graveyard this turn, target phoenix you control deals damage equal to its power to any target\.?$/i, 'your best phoenix burns if a creature left your graveyard');
+    t = t.replace(/^(?:you may )?cast this card from your graveyard\.?$/i, 'this card is castable from your graveyard this turn');
+    t = t.replace(/^if this card is in your graveyard and it's your turn, (?:you may )?cast it from your graveyard this turn\.?$/i, 'this card is castable from your graveyard this turn');
+    t = t.replace(/^exile target instant or sorcery card from an opponent's graveyard\. copy that card\. you may cast the copy without paying its mana cost\.?$/i, "cast an instant or sorcery card from the opponent's graveyard for free, exiled after");
+    t = t.replace(/^each opponent separates the creatures they control into two piles\. for each opponent, you choose one of their piles\. each opponent sacrifices the creatures in their chosen pile\.?$/i, 'make an example');
+    t = t.replace(/^return all nonland permanents target player controls to their owner's hand\.?$/i, "the opponent's nonland permanents go home");
+    t = t.replace(/^each opponent exiles the top card of their library\. you may cast spells from among those cards this turn\. if you cast a spell this way, pay life equal to that spell's mana value rather than pay its mana cost\.?$/i, 'xander takes the top card for life');
+    t = t.replace(/^for each player, choose friend or foe\. each friend creates a token that's a copy of a creature they control\. each foe returns a creature they control to its owner's hand\.?$/i, 'friend and foe');
+    t = t.replace(/^look at the top five cards of your library\. put one of those cards into your hand and the rest into your graveyard\.?$/i, 'dig five, keep one, bin the rest');
+    t = t.replace(/^exile up to two target cards from a single graveyard\. if this spell was kicked, instead exile target player's graveyard\. create a 2\/2 black rogue creature token for each creature card exiled this way\.?$/i, 'waste management');
+    t = t.replace(/^the owner of target nonenchantment permanent shuffles it into their library, then exiles the top card of their library\. if it's a land card, they put it onto the battlefield\. otherwise, they may cast it without paying its mana cost\.?$/i, 'the audacious swap');
+    t = t.replace(/^draw a card for each creature that died under your control this turn\.?$/i, 'draw for your dead this turn');
+    t = t.replace(/^if you do, return this vehicle to its owner's hand\.?$/i, 'the buggy goes home if its card is gone');
+    t = t.replace(/^exile it if it's an instant or sorcery card\. you may cast that card until the end of your next turn\.?$/i, 'pursue the fallen spell');
+    t = t.replace(/^discard all the cards in your hand, then draw that many cards plus one\.?$/i, 'wheel your hand plus one');
+    t = t.replace(/^if you cast it, return any number of target permanent cards with cycling abilities from your graveyard to the battlefield\.?$/i, 'the herald returns the cyclers');
+    t = t.replace(/^(?:you may )?return an instant or sorcery card exiled with this creature to its owner's hand\.?$/i, 'the forager returns a delved spell');
+    t = t.replace(/^(?:you may )?return target instant or sorcery card with a cycling ability from your graveyard to your hand\.?$/i, 'a cycling spell returns to your hand');
+    t = t.replace(/^if you cycled two or more cards this turn, return this card from your graveyard to your hand\.?$/i, 'this card returns to your hand if you cycled twice');
+    t = t.replace(/^exile target card with a cycling ability from your graveyard\. until the end of your next turn, you may play that card\.?$/i, 'the moloch frees a cycler');
+    t = t.replace(/^zenith flare deals x damage to any target and you gain x life, where x is the number of cards with a cycling ability in your graveyard\.?$/i, 'zenith flare');
+    t = t.replace(/(^|\.\s+)spend this mana only to (?:cast instant and\/or sorcery spells|activate abilities)\.?$/i, '$1');
+    t = t.replace(/(^|\.\s+)(create a .+? token that's tapped and attacking) that player\.?$/i, '$1$2');
+    // ---- 16-20 decks, chunk 4 ----
+    t = t.replace(/^target attacking cleric, rogue, warrior, or wizard gains protection from creatures until end of turn\. it explores\.?$/i, 'your best party attacker is shielded and explores');
+    t = t.replace(/^return target creature card with power (\d+) or less from your graveyard to the battlefield tapped\.?$/i, 'your best creature card with power $1 or less returns tapped');
+    t = t.replace(/^(?:you may )?pay \{1\} and discard a card\. if you do, draw a card\.?$/i, 'pay {1} to loot');
+    t = t.replace(/^discard any number of cards, then draw that many cards plus one\.?$/i, 'trade your spare cards, plus one');
+    t = t.replace(/^exile each opponent's graveyard\. when you do, choose up to one target creature card exiled this way\. create a token that's a copy of that card, except it's an artifact and it loses all other card types\.?$/i, "espers to magicite");
+    t = t.replace(/^if a card left your graveyard this turn, (?:gau|.+?) deals damage equal to its power to each opponent\.?$/i, 'its power to the opponent if a card left your graveyard');
+    t = t.replace(/^(?:you may )?have (?:gogo|this creature) become a copy of another target creature you control until end of turn, except its name is .+?\. if you do, .+? and that creature each get \+2\/\+0 and gain haste until end of turn and attack this turn if able\.?$/i, 'gogo mimics your best creature');
+    t = t.replace(/^exile a card at random from each opponent's graveyard\. you may cast any number of spells from among cards exiled this way without paying their mana costs\. then each player who owns a spell you cast this way loses life equal to its mana value\.?$/i, "kefka's dance");
+    t = t.replace(/^each player mills a card\. if a land card was milled this way, create a treasure token\. until end of turn, you may cast a spell from among those cards\.?$/i, "locke's mug");
+    t = t.replace(/^each player may discard a card\. each player who discarded a card this way draws a card\.[\s\S]*$/i, "mog's dance");
+    t = t.replace(/^mill three cards\. then starting with the next opponent in turn order, each opponent chooses a creature card in your graveyard that hasn't been chosen\. return each card chosen this way to the battlefield under your control\.?$/i, 'rejoin the fight');
+    t = t.replace(/^create the blackjack, a legendary 3\/3 colorless vehicle artifact token with flying and crew 2\.?$/i, 'create the blackjack');
+    t = t.replace(/^flip a coin\.?$/i, 'flip a coin for luck');
+    t = t.replace(/^each player may discard their hand and draw five cards\. then (?:snort|.+?) deals 5 damage to each opponent who discarded their hand this way\.?$/i, 'snort');
+    t = t.replace(/^target opponent exiles cards from the top of their library until they exile an instant, sorcery, or creature card\. you may cast that card without paying its mana cost\. if you cast a creature spell this way, it gains haste and "at the beginning of the end step, sacrifice this creature\."(?:\s*activate only as a sorcery\.?)?$/i, 'strago sketches');
+    t = t.replace(/^exile an instant or sorcery card from each graveyard\.?$/i, 'valigarmanda takes a spell from each graveyard');
+    t = t.replace(/^(?:you may )?cast an instant or sorcery card exiled with this saga, and mana of any type can be spent to cast that spell\.?$/i, "valigarmanda's spells are playable");
+    t = t.replace(/^slivers you control get \+1\/\+1 until end of turn if you're the monarch\. otherwise, you become the monarch\.?$/i, 'regal slivers');
+    t = t.replace(/^choose a creature type\. look at the top six cards of your library\. you may reveal any number of cards of the chosen type from among them and put the revealed cards into your hand\. put the rest on the bottom of your library in a random order\.?$/i, 'for the ancestors');
+    t = t.replace(/^each player chooses a creature type\. destroy all creatures that aren't of a type chosen this way\. they can't be regenerated\.?$/i, 'harsh mercy');
+    t = t.replace(/^regenerate this permanent\.?$/i, 'regenerate this creature');
+    t = t.replace(/^regenerate target sliver\.?$/i, 'regenerate this creature');
+    t = t.replace(/^return this permanent to its owner's hand\.?$/i, 'return this creature to its owner\'s hand');
+    t = t.replace(/^reveal the top card of your library\. you may play that card without paying its mana cost\. if you don't, exile it\.?$/i, "the djinn's wish");
+    t = t.replace(/^each player reveals the top card of their library, loses life equal to that card's mana value, then puts it into their hand\.?$/i, 'the seer reveals');
+    t = t.replace(/^put all creatures on the bottom of their owners' libraries\.?(?=\s|$)/i, 'terminus.');
+    t = t.replace(/^draw three cards, then put two cards from your hand both on top of your library or both on the bottom of your library\.?$/i, 'dream cache');
+    t = t.replace(/^look at the top three cards of target player's library, then put them back in any order\. you may have that player shuffle\.\s*draw a card at the beginning of the next turn's upkeep\.?$/i, 'portent');
+    t = t.replace(/^reveal cards from the top of your library until you reveal a nonland card, then put all cards revealed this way into your hand\.?$/i, 'treasure hunt');
+    t = t.replace(/^choose a card name, then target player mills a card\. if a card with the chosen name was milled this way, you draw two cards\. otherwise, you draw a card\.?$/i, 'predict');
+    t = t.replace(/^look at the top three cards of your library\. put one of those cards into your hand, one on top of your library, and one on the bottom of your library\.?$/i, 'telling time');
+    t = t.replace(/^it becomes an aura with enchant creature\. manifest the top card of your library and attach this enchantment to it\.?$/i, 'this aura dresses a manifest');
+    t = t.replace(/^exile the top eight cards of your library\. you may put a land card from among them onto the battlefield\. until end of turn, for each nonland card type, you may cast a spell of that type from among the exiled cards without paying its mana cost\.?$/i, "aminatou's augury");
+    t = t.replace(/^each opponent sacrifices a creature of their choice\. each opponent who can't loses half their life, rounded up\.?$/i, 'skull storm');
+    t = t.replace(/^each opponent who can't loses half their life, rounded up\.?$/i, 'no rebound');
+    t = t.replace(/^each opponent loses life equal to that card's mana value\.?$/i, 'the opponent loses the drawn card\'s mana value');
+    t = t.replace(/^scry 1, then you may reveal the top card of your library\. if a basic land card is revealed this way, put it onto the battlefield tapped\.(?:\s*activate only if an opponent controls at least two more lands than you\.?)?$/i, 'the watchtower');
+    t = t.replace(/^(?:you may )?discover x, where x is that creature's toughness\.?$/i, "discover for the newcomer's toughness");
+    t = t.replace(/(^|\.\s+)this ability costs \{2\} less to activate if it targets two creatures you control\.?$/i, '$1');
+    t = t.replace(/^put target card with mana value (x|\d+) exiled with this creature into its owner's graveyard\. you gain (?:x|\d+) life\.?$/i, 'no rebound');
+    t = t.replace(/^return target creature card of the chosen type from your graveyard to the battlefield with a finality counter on it\.?$/i, 'a chosen-type creature returns with finality');
+    t = t.replace(/^(?:you may )?have it become a copy of another target dinosaur you control, except its name is .+? and it has this ability\.?$/i, 'this becomes a copy of the best creature this turn');
+    t = t.replace(/^this creature deals 2 damage to it\. if a dinosaur is dealt damage this way, this creature gets \+2\/\+0 until end of turn\.?$/i, 'the raptor greets the newcomer');
+    t = t.replace(/^reveal the top card of your library\. if it's a creature card that shares a creature type with a creature you control, you may cast it without paying its mana cost\. if you don't cast it, put it on the bottom of your library\.?$/i, "the descendants' path");
+    t = t.replace(/^this creature gains your choice of reach, trample, or haste until end of turn\.?$/i, 'this creature gains trample until end of turn');
+    t = t.replace(/^target dinosaur you control deals damage equal to its power to another target creature\.?$/i, "target creature you control deals damage equal to its power to target creature you don't control");
+    t = t.replace(/^put a \+1\/\+1 counter on target creature you control\. then that creature fights target creature you don't control\.?$/i, 'your best creature grows and fights the opponent\'s');
+    t = t.replace(/(^|\.\s+)an opponent chooses one of the exiled cards\. you put that card on the bottom of your library and return the other to the battlefield tapped\.?/i, '$1the coin of fate falls.');
+    t = t.replace(/^target player adds one mana of any colou?r\.?$/i, 'add one mana of any color');
+    t = t.replace(/^target player discards (\w+) cards\.?$/i, 'the opponent discards $1 cards');
+    t = t.replace(/^exile two cards from your graveyard\.?$/i, 'exile two of your graveyard cards');
+    // ---- 16-20 decks, chunk 3 ----
+    t = t.replace(/^target creature attacks this turn if able\.?$/i, "the opponent's best creature attacks this turn");
+    t = t.replace(/(^|\.\s+)if this ability has been activated four or more times this turn, sacrifice this creature at the beginning of the next end step\.?$/i, '$1the whelp burns out on the fourth');
+    t = t.replace(/^if you cast it from your hand, destroy all creatures your opponents control, then tap all other creatures you control\.?$/i, 'the cacodemon arrives');
+    t = t.replace(/^discard your hand\. each opponent sacrifices a creature of their choice for each card discarded this way\.?$/i, 'discard your hand for the opponent\'s creatures');
+    t = t.replace(/^each player starting with you may pay any amount of mana\. this creature gets \+x\/\+0 until end of turn, where x is the total amount of mana paid this way\.?$/i, 'join forces for power');
+    t = t.replace(/^(?:oros|.+?) deals 3 damage to each nonwhite creature\.?$/i, '3 damage to each nonwhite creature');
+    t = t.replace(/^if you cast it from your hand, destroy all nonartifact, nonblack creatures\. they can't be regenerated\.?$/i, 'the reiver demon arrives');
+    t = t.replace(/^choose a creature card at random from target opponent's graveyard\. put that card onto the battlefield under your control\.?$/i, "a random creature card from the opponent's graveyard joins you");
+    t = t.replace(/^(?:radiance — )?choose a colou?r\. target creature and each other creature that shares a colou?r with it gain protection from the chosen colou?r until end of turn\.?$/i, "your creatures gain protection from the opponent's main color this turn");
+    t = t.replace(/^(?:radiance — )?(.+?) deals 2 damage to target creature and each other creature that shares a colou?r with it\.?$/i, "2 damage to the opponent's best creature and those sharing its color");
+    t = t.replace(/^(.+?) deals 2 damage to each creature and each player\. if you cast this spell during your main phase, .+? deals 3 damage to each creature and each player instead\.?$/i, 'the sulfurous blast');
+    t = t.replace(/^if no creatures are on the battlefield, sacrifice this enchantment\.?$/i, 'sacrifice this with no creatures out');
+    t = t.replace(/^manifest dread if this is the first time this ability has resolved this turn\. otherwise, you may turn a permanent you control face up\.?$/i, 'manifest dread the first time, else turn something up');
+    t = t.replace(/^if you control no face-down permanents, return this creature to its owner's hand and manifest dread\.?$/i, 'the glitch hides');
+    t = t.replace(/^manifest dread twice\.?$/i, 'manifest dread. manifest dread');
+    t = t.replace(/^for each opponent, choose up to one target artifact or enchantment that player controls\. for each permanent chosen this way, its controller may exile it\. then if one or more of the chosen permanents are still on the battlefield, you search your library for up to that many land cards, put them onto the battlefield tapped, then shuffle\.?$/i, 'the disorienting choice');
+    t = t.replace(/^turn that creature face up or put a \+1\/\+1 counter on it\.?$/i, 'put a +1/+1 counter on this creature');
+    t = t.replace(/^untap up to x lands, where x is the greatest power among those creatures\.?$/i, 'untap lands for your strongest attacker');
+    t = t.replace(/^draw a card, then you may return a land you control to its owner's hand\.?$/i, 'draw a card');
+    t = t.replace(/^(?:you may )?tap or untap target creature\.?$/i, 'tap or untap target permanent');
+    t = t.replace(/^choose target artifact or creature card in an opponent's graveyard that was put there from their library this turn\. put it onto the battlefield under your control\.?$/i, "the opponent's best milled card this turn joins you");
+    t = t.replace(/^put a slime counter on up to one other target creature\.?$/i, "a slime counter on the opponent's best creature");
+    t = t.replace(/^defending player mills (\w+) cards\.?$/i, 'the opponent mills $1 cards');
+    t = t.replace(/^change a target of target spell or ability to this creature\.?$/i, 'no rebound');
+    t = t.replace(/^each opponent sacrifices a creature of their choice, discards a card, and loses (\d+) life\.?$/i, 'the opponent sacrifices a creature. the opponent discards 1 cards. each opponent loses $1 life');
+    t = t.replace(/^counter target spell with mana value less than or equal to the number of cards in its controller's graveyard\.?$/i, 'no rebound');
+    t = t.replace(/^destroy target creature with mana value less than or equal to the number of cards in its controller's graveyard\.?$/i, "destroy the opponent's best creature its graveyard allows");
+    t = t.replace(/^that player mills that many cards\.?$/i, 'the opponent mills 1 cards');
+    t = t.replace(/^create a token that's a copy of enchanted creature, except the token is 1\/1\.?$/i, 'a 1/1 copy of the enchanted creature');
+    t = t.replace(/^if that creature was a horror, return this card to its owner's hand\.?$/i, 'this aura returns if a horror died');
+    t = t.replace(/^each horror you control gains all activated abilities of target artifact an opponent controls until end of turn\. you may spend blue mana as though it were mana of any color to activate those abilities\.?$/i, 'no rebound');
+    t = t.replace(/^exile target instant or sorcery card from a graveyard and copy it\. you may cast the copy without paying its mana cost\.(?=\s|$)/i, 'cast the best graveyard spell for free.');
+    t = t.replace(/^put target creature card from a graveyard onto the battlefield under your control with a corpse counter on it\. you take the initiative\. if that creature would leave the battlefield, exile it instead of putting it anywhere else\.?$/i, 'from the catacombs');
+    t = t.replace(/^exile up to one target creature card from an opponent's graveyard\. if you do, create a token that's a copy of this creature\.?$/i, "an opponent's creature card for a copy of this");
+    t = t.replace(/^flip five coins\. take an extra turn after this one for each coin that comes up heads\.?$/i, 'extra turns by five coins');
+    t = t.replace(/^exile it and return to the battlefield all artifact and creature cards in your graveyard that were put there from the battlefield this turn\.?$/i, 'your permanents that died this turn return tapped');
+    t = t.replace(/^until your next turn, creatures target player controls have base power and toughness 1\/1\.?$/i, "the opponent's creatures are 1/1 this turn");
+    t = t.replace(/^return target exiled card with flashback you own to your hand\.?$/i, 'your best exiled flashback card to your hand');
+    t = t.replace(/(^|\.\s+)end the combat phase\.?$/i, '$1end the combat');
+    t = t.replace(/^copy target instant or sorcery spell you control\. if this spell was cast from a graveyard, copy that spell twice instead\.(?:\s*you may choose new targets for the copies\.?)?$/i, 'copy your next spell, twice from a graveyard');
+    t = t.replace(/^refuse deals damage to target spell's controller equal to that spell's mana value\.?$/i, 'no rebound');
+    t = t.replace(/^refuse deals damage to target spell's controller equal to that spell's mana value\.\s+/i, ''); // (Refuse // Cooperate fused)
+    t = t.replace(/^prevent all damage that sources of the colou?r of your choice would deal this turn\.?$/i, 'prevent all damage that would be dealt to you this turn');
+    t = t.replace(/^if you have a full party, put a \+1\/\+1 counter on each creature you control and those creatures gain deathtouch until end of turn\.?$/i, 'a full party grows deadly');
+    t = t.replace(/^if you have a full party, target creature gets \+1\/\+1 and gains flying until end of turn\.?$/i, 'a full party lifts your best creature');
+    t = t.replace(/^target permanent you control gains protection from white until end of turn\.?$/i, 'your best creature gains protection from white this turn');
+    t = t.replace(/^target spell or permanent becomes white until end of turn\.?$/i, 'no rebound');
+    t = t.replace(/^(?:you may )?exile any number of non-angel creatures you control until this creature leaves the battlefield\.?$/i, 'no rebound');
+    t = t.replace(/^each player chooses a number of lands they control equal to the number of lands controlled by the player who controls the fewest, then sacrifices the rest\. players discard cards and sacrifice creatures the same way\.?$/i, 'the balance');
+    t = t.replace(/^create a 1\/1 white kor warrior creature token for each creature in your party\.?$/i, 'kor warriors for your party');
+    t = t.replace(/^each opponent loses x life and you gain x life, where x is the number of creatures in your party\.?$/i, 'drain by your party');
+    t = t.replace(/^until end of turn, angels you control gain "\{t\}: destroy target creature with power less than this creature's power\."\.?$/i, "your angels strike down the opponent's smaller creatures");
+    t = t.replace(/^target player loses life equal to the sacrificed creature's power\.?$/i, "the opponent loses the sacrificed creature's power in life");
+    t = t.replace(/^defending player loses x life and you create x treasure tokens, where x is the number of creatures in your party\.?$/i, 'drain and treasures by your party');
+    t = t.replace(/^exile a face-down permanent you control face up\.?$/i, 'no rebound');
+    // ---- 16-20 decks, chunk 2 ----
+    t = t.replace(/^venture into the dungeon\.?$/i, 'venture into the dungeon');
+    t = t.replace(/^mill a card and choose an opponent at random\. this creature attacks that player this combat if able\. until end of turn, this creature gains indestructible and gets \+1\/\+1 for each card type among cards in your graveyard\.?$/i, 'the ursine charge');
+    t = t.replace(/(^|\.\s+)then if there are twenty or more cards in your graveyard, you may play the exiled card without paying its mana cost\.?/i, '$1the hidden card is free with twenty in your graveyard.');
+    t = t.replace(/^you lose 1 life\. look at the top three cards of your library\. put one of them into your hand and the rest into your graveyard\.?$/i, 'you lose 1 life. the best of your top three into your hand, the rest milled');
+    t = t.replace(/^each opponent may discard a card\. if they don't, they lose 3 life\. repeat this process six more times\.?$/i, 'seven rounds of discard or 3 life');
+    t = t.replace(/^create a green treefolk creature token with reach and "this token's power and toughness are each equal to the number of lands you control\."\.?$/i, 'a treefolk as big as your lands');
+    t = t.replace(/^reveal cards from the top of your library until you reveal (x|\d+) creature cards\. put all creature cards revealed this way into your graveyard, then put the rest on the bottom of your library in a random order\.?$/i, 'mill creatures for x');
+    t = t.replace(/^each opponent sacrifices a nontoken enchantment of their choice, then sacrifices a nontoken creature of their choice\.?$/i, 'the opponent loses an enchantment before a creature');
+    t = t.replace(/^exile target creature\. you draw cards equal to that creature's power\. at the beginning of your next upkeep, return that card to the battlefield under its owner's control\. if you do, discard cards equal to that creature's toughness\.?$/i, 'vanish into memory');
+    t = t.replace(/^for each opponent, tap up to one untapped creature you control\. when you do, gain control of target creature that player controls with power less than or equal to the tapped creature's power for as long as you control (?:nihiloor|.+?)\.?$/i, "nihiloor takes the opponent's creature");
+    t = t.replace(/^for as long as this artifact remains tapped, another target permanent loses all abilities and can't attack or block\.?$/i, "the opponent's best nonland permanent is held in the pandorica");
+    t = t.replace(/^venture into the dungeon and you gain (\d+) life\.?$/i, 'venture into the dungeon. you gain $1 life');
+    t = t.replace(/^roll a d20 and add the number of creature cards in your graveyard that were put there from the battlefield this turn\.[\s\S]*$/i, 'revivify');
+    t = t.replace(/^return all creature cards in your graveyard that were put there from the battlefield this turn to your hand\.?$/i, 'your creatures that died this turn return to your hand');
+    t = t.replace(/^return those cards from your graveyard to the battlefield\.?$/i, 'no rebound');
+    t = t.replace(/^(?:you may )?put a permanent card with mana value less than or equal to that creature's power from your hand onto the battlefield\.?$/i, "a permanent from your hand for the illusion's power");
+    t = t.replace(/^create a tapped and attacking token that's a copy of the exiled card, except it's an illusion in addition to its other types\. sacrifice that token at end of combat\.?$/i, 'an attacking copy of what this exiled');
+    t = t.replace(/^(?:you may )?cast any number of spells from among cards exiled with this artifact with total mana value (x|\d+) or less without paying their mana costs\.?$/i, 'cast what this rod absorbed for $1');
+    t = t.replace(/^exile it instead of putting it into a graveyard as it resolves\.?$/i, 'no rebound');
+    t = t.replace(/^as you cast spells from your hand this turn, they gain cascade\.?$/i, 'your spells from hand cascade this turn');
+    t = t.replace(/^scry 1, then reveal the top card of your library\. if it's a land card, put it onto the battlefield tapped\. otherwise, draw a card\.?$/i, "thrasios's scry");
+    t = t.replace(/^(?:you may )?exile it\. if you do, reveal cards from the top of your library until you reveal a creature card\. put that card onto the battlefield and put all other cards revealed this way into your graveyard\.?$/i, 'the gamekeeper trades itself for a creature');
+    t = t.replace(/^(?:you may )?have target opponent discard a card at random\.?$/i, 'the opponent discards at random');
+    t = t.replace(/^each player loses 1 life\. put a \+1\/\+1 counter on this creature for each 1 life lost this way\.?$/i, 'the blood tax');
+    t = t.replace(/^starting with you, each player separates all permanents they control into three piles\. then each player chooses one of their piles at random and sacrifices those permanents\.?$/i, 'the whims of the fates');
+    t = t.replace(/^choose target player and another target player\. the first player controls the second player during the second player's next turn, and the second player controls the first player during the first player's next turn\.?$/i, 'no rebound');
+    t = t.replace(/(^|\.\s+)then that permanent's controller may sacrifice a land of their choice\. if the player does, they may copy this spell and may choose a new target for that copy\.?/i, '$1');
+    t = t.replace(/^flip a coin\. if you win the flip, destroy all nonland permanents\.?$/i, 'boompile');
+    t = t.replace(/^target creature (gains|loses) all creature types until end of turn\.?$/i, 'no rebound');
+    t = t.replace(/^(?:you may )?exile it\. if you do, create a token that's a copy of that creature, except it's a 1\/1 food golem artifact creature in addition to its other types and it has "\{2\}, \{t\}, sacrifice this token: you gain 3 life\."\.?$/i, 'a food golem copy of the creature that died');
+    t = t.replace(/^exile the top card of your library\. if it's a land card, create a 2\/2 white ox creature token\. otherwise, you may cast it until the end of your next turn\.?$/i, 'an ox or a spell from the top');
+    t = t.replace(/(^|\.\s+)activate no more than twice each turn\.?$/i, '$1');
+    t = t.replace(/^look at the top four cards of your library\. you may reveal a cleric card, a rogue card, a warrior card, and\/or a wizard card from among them and put those cards into your hand\. put the rest on the bottom of your library in a random order\.?$/i, 'a party from your top four');
+    t = t.replace(/^this land becomes a 2\/2 creature with all creature types until end of turn\. it's still a land\.?$/i, 'this land is a 2/2 changeling this turn');
+    t = t.replace(/^target creature gets \+3\/-3 and loses all creature types until end of turn\.?$/i, 'target creature gets +3/-3 until end of turn');
+    t = t.replace(/^target opponent mills three cards\. put a land card from their graveyard onto the battlefield tapped under your control\. it gains "if this land would leave the battlefield, exile it instead of putting it anywhere else\."\.?$/i, "the realmbreaker takes a land");
+    t = t.replace(/^target shapeshifter becomes a copy of target creature until your next turn\.?$/i, 'this becomes a copy of the best creature this turn');
+    t = t.replace(/^creatures target player controls get \+0\/\+1 and gain all creature types until end of turn\.?$/i, 'your creatures get +0/+1 this turn');
+    t = t.replace(/^each player chooses a party from among creatures they control, then sacrifices the rest\.?$/i, 'stick together');
+    t = t.replace(/^any number of target shapeshifter creatures you control have base power and toughness 4\/4\.?$/i, 'your shapeshifters are 4/4');
+    t = t.replace(/^choose up to one target creature or planeswalker\. each creature with power 4 or greater you control deals damage equal to its power to that permanent\.?$/i, "your big creatures hit the opponent's best creature");
+    t = t.replace(/^until your next turn, up to one target creature gains reach and vigilance\.?$/i, 'your best creature gains reach until your next turn, untapped');
+    t = t.replace(/^look at the top three cards of your library\. exile one face down and put the rest on the bottom of your library in any order\. for as long as it remains exiled, you may cast it if it's a creature spell\.?$/i, "vivien's creature from the top three");
+    t = t.replace(/^exile the top seven cards of your library\. you may put any number of creature and\/or land cards from among them onto the battlefield\.?$/i, "xenagos's revel");
+    t = t.replace(/(^|\.\s+)damage can't be prevented this turn\.?/i, '$1');
+    t = t.replace(/^put three \+1\/\+1 counters on each of any number of target creatures that entered this turn\.?$/i, 'three counters on each of your creatures that entered this turn');
+    t = t.replace(/^exile the top card of each opponent's library\. until end of turn, you may cast spells from among those exiled cards, and you may spend mana as though it were mana of any color to cast those spells\.?$/i, "steal the opponent's top card this turn");
+    t = t.replace(/^look at the top four cards of your library\. you may exile a creature card from among them\. put the rest on the bottom of your library in any order\. for as long as that card remains exiled, you may cast it\. that spell has undaunted\.?$/i, "durnan's creature from the top four");
+    t = t.replace(/^(.+?) deals 2 damage to each opponent and each creature they control\. if this spell was cast from exile, it deals 5 damage to each opponent and each creature they control instead\.?$/i, 'the delayed blast');
+    t = t.replace(/^counter target activated or triggered ability from an artifact or enchantment source\. if a permanent's ability is countered this way, destroy that permanent\.?$/i, 'no rebound');
+    t = t.replace(/^exile the top four cards of your library, then roll a d20\.?$/i, 'the journey exiles four before a d20');
+    t = t.replace(/^(?:you may )?put a land card from among those cards onto the battlefield\.?$/i, 'a land from the journey');
+    t = t.replace(/^create a 2\/2 green wolf creature token, then put a \+1\/\+1 counter on it for each creature card among those cards\.?$/i, 'a wolf grown by the journey');
+    t = t.replace(/^put all permanent cards exiled with this enchantment onto the battlefield, then sacrifice it\.?$/i, 'the journey ends');
+    t = t.replace(/^exile target creature card from your graveyard\. until the end of your next turn, you may cast that card\.?$/i, 'your best creature card is yours to cast until your next turn');
+    t = t.replace(/^exile cards from the top of your library until you exile a nonland card\. you may cast that card without paying its mana cost\.(?:\s*activate only if you've completed a dungeon\.?)?$/i, "the tome's free spell");
+    t = t.replace(/^the copy gains haste and "at the beginning of the end step, sacrifice this permanent\."\.?$/i, 'no rebound');
+    // ---- 16-20 decks, chunk 1 ----
+    t = t.replace(/^if (?:kalamax|.+?) is tapped, copy that spell\.?(?:\s*you may choose new targets for the copy\.?)?$/i, 'no rebound');
+    t = t.replace(/^exile the top card of each player's library and put a fetch counter on each of them\. put a \+1\/\+1 counter on (?:pako|this creature|.+?) for each noncreature card exiled this way\.?$/i, 'pako fetches');
+    t = t.replace(/^if you cast it, target opponent takes an extra turn after this one\. until your next turn, you and planeswalkers you control gain protection from that player\.?$/i, 'the opponent takes an extra turn if this was cast');
+    t = t.replace(/^target opponent reveals cards from the top of their library until they reveal a creature card\. this creature becomes a copy of that card until end of turn\. then that player puts all cards revealed this way on the bottom of their library in a random order\.?$/i, "this becomes the opponent's next creature card this turn");
+    t = t.replace(/^if it's not their turn, that player draws a card\.?$/i, 'an off-turn caster draws a card');
+    t = t.replace(/^it deals (?:x|\d+) damage divided as you choose among up to (?:x|\d+) target creatures, where x is its power\. each of those creatures deals damage equal to its power to this creature\.?$/i, "this creature fights the opponent's best creature");
+    t = t.replace(/^it deals (?:x|\d+) damage divided as you choose among up to (?:x|\d+) target creatures(?:, where x is its power)?\.?$/i, "this creature fights the opponent's best creature");
+    t = t.replace(/^each of those creatures deals damage equal to its power to this creature\.?$/i, 'no rebound');
+    t = t.replace(/^reveal the top card of your library\. you may cast it without paying its mana cost if it's a spell with lesser mana value\. if you don't cast it, put it into your hand\.?$/i, 'rashmi reveals');
+    t = t.replace(/^for each opponent, choose up to one target creature that player controls, then return that creature to its owner's hand unless its controller has you draw a card\.?$/i, 'the decoy gambit');
+    t = t.replace(/^choose target creature, then choose another target creature for each time this spell was kicked\. put (x|\d+) \+1\/\+1 counters on each of them\.?$/i, 'x counters on your best creature');
+    t = t.replace(/^as an additional cost to cast this spell, discard x cards\. target player draws x cards\. (.+?) deals x damage to up to one target creature or planeswalker\.?$/i, 'the channeled force');
+    t = t.replace(/^target creature you control gets \+1\/\+1 until end of turn\. it fights target creature you don't control\.?$/i, "your best creature grows and fights the opponent's");
+    t = t.replace(/^creatures with power (\d+) or less can't block this turn\.?$/i, "creatures with power $1 or less can't block");
+    t = t.replace(/^that player may put a doom counter on this artifact or remove a doom counter from it\. then if it has three or more doom counters on it, sacrifice this artifact\. when you do, it deals 6 damage to each creature\.?$/i, 'the floodgates count down');
+    t = t.replace(/^if (?:inalla|.+?) is in the command zone or on the battlefield, you may pay \{1\}\. if you do, create a token that's a copy of that wizard\. the token gains haste\. exile it at the beginning of the next end step\.?$/i, 'a hasty copy of the new wizard for {1}');
+    t = t.replace(/^(?:you may )?exile an artifact or creature card from your hand or graveyard and put a cage counter on it\.?$/i, 'cage your best artifact or creature card');
+    t = t.replace(/^shuffle your library, then exile the top x cards, where x is one plus the number of spells cast this turn\. until end of turn, you may play lands and cast spells from among cards exiled this way without paying their mana costs\.?$/i, 'the mind magus');
+    t = t.replace(/^each mode must target a different player\.?$/i, 'no rebound');
+    t = t.replace(/^target opponent discards (\w+) cards\.?$/i, 'the opponent discards $1 cards');
+    t = t.replace(/^target creature gets -x\/-x until end of turn\.?$/i, "the opponent's best creature shrinks by your exiled cards");
+    t = t.replace(/^return target creature card from your graveyard to the battlefield\. that creature gains haste\. at the beginning of the next end step, sacrifice it\.?$/i, 'your best creature card returns hasty until the end step');
+    t = t.replace(/^this creature deals damage to target creature equal to the discarded card's mana value\.?$/i, "the discarded card's mana value in damage to the opponent's creature");
+    t = t.replace(/^for each creature target player controls, create a token that's a copy of that creature\.?$/i, 'clone the stronger legion');
+    t = t.replace(/^exile target instant or sorcery card from your graveyard and target instant or sorcery card from an opponent's graveyard\. copy those cards\. cast the copies if able without paying their mana costs\.?/i, 'twin spells from both graveyards.');
+    t = t.replace(/^until end of turn, each creature target player controls loses all abilities and becomes a blue frog with base power and toughness 1\/1\.?$/i, "the opponent's creatures are frogs this turn");
+    t = t.replace(/^(?:you may )?cast target instant or sorcery card from an opponent's graveyard without paying its mana cost\.?$/i, "cast the opponent's best graveyard spell");
+    t = t.replace(/^return target creature card from your graveyard to the battlefield\. that creature gains haste\. return it to your hand at the beginning of the next end step\.\s*(?:you may )?put a creature card from your hand onto the battlefield\. that creature gains haste\. its controller sacrifices it at the beginning of the next end step\.?$/i, 'the cauldron dance');
+    t = t.replace(/^exile target attacking creature an opponent controls\. at the beginning of the next end step, return it to the battlefield tapped under its owner's control\.?$/i, "the opponent's best attacker leaves until the end step");
+    t = t.replace(/^target creature you control gains trample and gets \+x\/\+x until end of turn, where x is the number of different kinds of counters among permanents you control\.?$/i, 'your best creature grows by your counter kinds');
+    t = t.replace(/^choose a counter on a permanent you control\. put a counter of that kind on target permanent you control if it doesn't have a counter of that kind on it\.?$/i, 'share a counter kind');
+    t = t.replace(/^if you do, that creature has base power and toughness 3\/1 and has flying for as long as it has a feather counter on it\.?$/i, 'no rebound');
+    t = t.replace(/^for each kind of counter on permanents you control, (?:you may )?put your choice of a \+1\/\+1 counter or a counter of that kind on this creature\.?$/i, 'counters on this for your counter kinds');
+    t = t.replace(/^choose a kind of counter at random that this creature doesn't have on it from among flying, first strike, deathtouch, hexproof, lifelink, menace, reach, trample, vigilance, and \+1\/\+1\. put a counter of that kind on this creature\.?$/i, 'a random new counter on this');
+    t = t.replace(/^if (?:denry klin|.+?) has counters on it, put the same number of each kind of counter on that creature\.?$/i, "copy this creature's counters onto the newcomer");
+    t = t.replace(/^proliferate, then proliferate again\.?$/i, 'proliferate. proliferate');
+    t = t.replace(/^for each kind of counter on target permanent or player, give that permanent or player another counter of that kind\.?$/i, 'more of each counter on your best permanent');
+    t = t.replace(/^put a \+1\/\+1 counter on each creature you control with flying\.?$/i, 'a +1/+1 counter on each of your fliers');
+    t = t.replace(/^exile target creature and all other creatures its controller controls with the same name as that creature\. that player investigates for each nontoken creature exiled this way\.?$/i, 'the declaration in stone');
+    t = t.replace(/^destroy all creatures with no counters on them\.?$/i, 'destroy every creature without counters');
+    t = t.replace(/^(?:addendum — )?if you cast this spell during your main phase, put a shield counter on a creature you control\.\s*choose a kind of counter on a creature you control\. put a counter of that kind on each other creature you control\.?$/i, 'the contractual safeguard');
+    t = t.replace(/^choose a kind of counter on a creature you control\. put a counter of that kind on each other creature you control\.?$/i, 'the contractual safeguard');
+    t = t.replace(/^copy it for each kind of counter among permanents you control\.(?:\s*you may choose new targets for the copies\.?)?$/i, "more of the opponent's permanents return for your counter kinds");
+    t = t.replace(/^until end of turn, it gains "whenever this creature deals combat damage to a player, remove a shield counter from it\. if you do, draw a card\."\.?$/i, 'your shielded attackers draw on a hit this turn');
+    t = t.replace(/^(?:you may )?move a counter from this artifact onto that creature\.?$/i, "a counter from this onto the newcomer");
+    t = t.replace(/(^|\.\s+)activate only if there are three or more brick counters on this artifact\.?$/i, '$1');
+    t = t.replace(/^create a token that's a copy of target creature you control, except it enters with an additional \+1\/\+1 counter on it\.?$/i, 'a token copy of your best creature with a counter');
+    t = t.replace(/^each opponent who has three or more poison counters exiles the top card of their library face down\. you may look at and play those cards for as long as they remain exiled, and you may spend mana as though it were mana of any color to cast those spells\.?$/i, "steal the poisoned opponent's top card");
+    t = t.replace(/^return up to x target cards from your graveyard to your hand, where x is the number of opponents who have three or more poison counters\.?$/i, 'a card back if the opponent is poisoned');
+    t = t.replace(/^each player gets a poison counter\.?$/i, 'each player gets a poison counter each');
+    t = t.replace(/^target player draws three cards, loses 3 life, and gets three poison counters\.?$/i, 'the caress of phyrexia');
+    t = t.replace(/^look at the top six cards of your library\. put up to two land cards from among them onto the battlefield tapped and the rest on the bottom of your library in a random order\. if you put fewer than two lands onto the battlefield this way, proliferate a number of times equal to the difference\.?$/i, 'expand the sphere');
+    t = t.replace(/(^|\.\s+)(?:corrupted — )?each opponent who has three or more poison counters loses (\d+) life\.?$/i, '$1a poisoned opponent loses $2 life');
+    t = t.replace(/(^|\.\s+)(?:corrupted — )?for each opponent who has three or more poison counters as you cast this spell, put up to one target creature card from that player's graveyard onto the battlefield under your control\.?$/i, "$1the poisoned opponent's best creature card joins you");
+    t = t.replace(/(^|\.\s+)each opponent gets (a|\w+) poison counters?\.?$/i, '$1the opponent gets $2 poison');
+    t = t.replace(/(^|\.\s+)whenever a creature blocks this turn, its controller gets a poison counter\.?$/i, '$1blockers poison their controller this turn');
+    t = t.replace(/^each opponent gets a poison counter\. then each creature your opponents control gets -1\/-1 until end of turn for each poison counter its controller has\.?$/i, 'the phyresis outbreak');
+    t = t.replace(/(^|\.\s+)then for each opponent with three or more poison counters, you create another one of those tokens\.?/i, '$1another wurm if the opponent is poisoned.');
+    t = t.replace(/^put target card from a graveyard on top of its owner's library\.?$/i, 'your best graveyard card on top of your library');
+    t = t.replace(/^each opponent sacrifices a creature or planeswalker of their choice and gets a poison counter\.?$/i, 'the opponent sacrifices a creature. the opponent gets a poison');
+    t = t.replace(/^(?:you may )?exile any number of cards from your graveyard with four or more card types among them\. if you do, put a permanent card from among them onto the battlefield with a finality counter on it\.?$/i, "winter's delirium");
+    t = t.replace(/^create a 5\/5 black demon creature token with flying, then mill two cards\. if two cards that share all their card types were milled this way, sacrifice this enchantment\.?$/i, 'the demonic covenant');
+    t = t.replace(/^if two cards that share all their card types were milled this way, sacrifice this enchantment\.?$/i, 'the demonic covenant check');
+    t = t.replace(/^if there are four or more card types among cards in your graveyard, other attacking creatures get \+(\d+)\/\+(\d+) until end of turn\.?$/i, 'delirium: other attackers get +$1/+$2');
+    // ---- 16-17 decks, second half ----
+    t = t.replace(/^if its madness cost was paid, (?:you may )?return target creature card from a graveyard to its owner's hand\.?$/i, 'no rebound');
+    t = t.replace(/^exile up to five target creature cards from graveyards\. an opponent separates those cards into two piles\. put all cards from the pile of your choice onto the battlefield under your control and the rest into their owners' graveyards\.?$/i, 'the boneyard parley');
+    t = t.replace(/(^|\.\s+)if this spell's madness cost was paid, instead create x of those tokens and you gain x life\.?/i, '$1');
+    t = t.replace(/^destroy all creatures you don't control and all planeswalkers you don't control\.?$/i, "destroy the opponent's creatures and planeswalkers");
+    t = t.replace(/^return target commander you own from the battlefield to your hand\.?$/i, 'your commander returns to your hand');
+    t = t.replace(/^that player exiles a card from their hand\. you may play that card for as long as it remains exiled\.?$/i, "steal the best card from the opponent's hand");
+    t = t.replace(/^cast any number of cards exiled with this creature without paying their mana costs\.?$/i, 'cast what this creature exiled for free');
+    t = t.replace(/(^|\.\s+)if this spell was cast from a graveyard, you may play cards this way without paying their mana costs\.?/i, '$1the exiled cards are free if this came from a graveyard.');
+    t = t.replace(/^exile cards equal to its power from the top of its owner's library\. you may cast spells from among those cards for as long as they remain exiled, and mana of any type can be spent to cast them\.?$/i, "steal the top cards of the dead creature's library");
+    t = t.replace(/^return up to x cards from among cards exiled with this artifact to their owners' hands, where x is the result\.?$/i, 'what this exiled returns to hand');
+    t = t.replace(/^each player sacrifices a nontoken creature of their choice\. roll a d20 and add the toughness of the creature you sacrificed this way\.[\s\S]*$/i, 'the danse macabre');
+    t = t.replace(/^return (?:a creature card|up to two creature cards) put into (?:a graveyard|graveyards) this way to the battlefield under your control\.?$/i, 'no rebound');
+    t = t.replace(/^until end of turn, permanents your opponents control gain "when this permanent deals damage to the player who cast hellish rebuke, sacrifice this permanent\. you lose 2 life\."\.?$/i, 'hellish rebuke');
+    t = t.replace(/^exile the top card of each player's library\.?$/i, "exile each player's top card for the spoils");
+    t = t.replace(/^each opponent exiles cards from the top of their library until they exile a nonland card\. you may cast any number of spells from among those nonland cards without paying their mana costs\.?$/i, "cast the opponent's next spell for free");
+    t = t.replace(/^exile target creature\. until the end of your next turn, you may cast that card and you may spend mana as though it were mana of any color to cast that spell\.?$/i, "hurl the opponent's best creature to your side");
+    t = t.replace(/^exile the top three cards of target opponent's library\. choose one of them\. until the end of your next turn, you may play that card, and you may spend mana as though it were mana of any color to cast it\.?$/i, "one of the opponent's top three is yours to play");
+    t = t.replace(/^roll a d(\d+) and create a number of treasure tokens equal to the result\. the player to your right gains control of this artifact\.?$/i, 'treasures by a d$1 before passing this on');
+    t = t.replace(/^each player gains control of all nontoken permanents they own\.?$/i, 'each player gains control of all creatures they own');
+    t = t.replace(/^choose target nonland permanent you control and up to two target nonland permanents you don't control\. destroy one of them at random\.?$/i, 'the capricious destruction');
+    t = t.replace(/^return to your hand all creature cards that were put into your graveyard from the battlefield this turn\.?$/i, 'your creatures that died this turn return to your hand');
+    t = t.replace(/^each other player sacrifices an? (creature|artifact|enchantment)\.?$/i, 'the opponent sacrifices its worst $1');
+    t = t.replace(/^(?:you may )?have target creature gain fear until end of turn\.?$/i, 'your best creature gains fear this turn');
+    t = t.replace(/^search your library for a plains, island, swamp, mountain, or forest card and put that card onto the battlefield\. then shuffle\.?$/i, 'a land with a basic type onto the battlefield');
+    t = t.replace(/^choose a colou?r\. (?:sudden demise|.+?) deals (x|\d+) damage to each creature of the chosen colou?r\.?$/i, "$1 damage to the opponent's main color");
+    t = t.replace(/^choose target creature\. when that creature dies this turn, return a creature card from its owner's graveyard to the battlefield under the control of that creature's owner\.?$/i, 'your best creature reincarnates this turn');
+    t = t.replace(/^look at the top (x|\d+) cards of your library, where x is the number of eyeball counters removed this way\. put one of them into your hand and the rest on the bottom of your library in any order\.?$/i, 'the best of your top four into your hand');
+    t = t.replace(/^look at the top (\d+) cards of your library\. put one of them into your hand and the rest on the bottom of your library in any order\.?$/i, 'the best of your top four into your hand');
+    t = t.replace(/^put a plague counter on this artifact or remove a plague counter from it\.?$/i, 'tend the plague');
+    t = t.replace(/^that creature's controller may draw a card\.?$/i, "the dead creature's controller draws a card");
+    t = t.replace(/^reveal cards from the top of your library until you reveal a creature card\. put that card into your hand and the rest into your graveyard\.?$/i, 'your next creature card into your hand, the rest milled');
+    if (/verse counters on this enchantment/i.test(t)) t = t.replace(/(^|\.\s+)they can't be regenerated\.?$/i, '$1'); // Vile Requiem
+    t = t.replace(/^(?:you may )?put the cards in your hand on the bottom of your library in any order, then draw that many cards\.?$/i, 'cycle your whole hand');
+    t = t.replace(/^tap all creatures target player controls\. those creatures don't untap during that player's next untap step\.?$/i, "put the opponent's creatures to sleep");
+    t = t.replace(/^for each opponent, gain control of target permanent that player controls\.?$/i, "steal the opponent's best permanent");
+    t = t.replace(/(^|\.\s+)discard a card at random\.?$/i, '$1discard a random card');
+    t = t.replace(/^draw two cards, then discard a card at random\.?$/i, 'draw two cards. discard a random card'); // Desperate Ravings
+    t = t.replace(/^if you control no other creatures, look at the top four cards of your library\. put one of them into your hand and the rest on the bottom of your library in any order\.?$/i, 'the best of your top four into your hand when alone'); // Lone Revenant
+    t = t.replace(/^(.+?) deals 3 damage to any target\. if this spell was kicked, instead it deals 10 damage to that permanent or player and the damage can't be prevented\.?$/i, "urza's rage");
+    t = t.replace(/^reveal the top five cards of your library and separate them into two piles\. an opponent chooses one of those piles\. put that pile into your hand and the other into your graveyard\.?$/i, 'the steam augury');
+    t = t.replace(/^gain control of target spell\. you may choose new targets for it\.?$/i, 'no rebound');
+    t = t.replace(/^search your library for an instant card with mana value 3, reveal it, and put it into your hand\. then repeat this process for instant cards with mana values 2 and 1\. then shuffle\.?$/i, "firemind's foresight");
+    t = t.replace(/^that player mills a card for each 1 damage dealt to them\. if the player mills at least one creature card this way, you draw a card\.?$/i, 'no rebound');
+    t = t.replace(/^for each opponent, return up to one target nonland permanent that player controls to its owner's hand\.?$/i, "the opponent's best nonland permanent returns to its hand");
+    t = t.replace(/^this creature has base power and toughness (\d+)\/(\d+) until end of turn\.?$/i, 'this creature is $1/$2 this turn');
+    t = t.replace(/^that player mills a card\.?$/i, 'the opponent mills 1 cards');
+    t = t.replace(/(^|\.\s+)activate only if an opponent has eight or more cards in their graveyard\.?$/i, '$1');
+    t = t.replace(/^each opponent mills (\w+) cards\.?$/i, 'the opponent mills $1 cards');
+    t = t.replace(/^prowl (?:\{[^}]+\})+\s*/i, '');
+    t = t.replace(/(^|\.\s+)if this spell's prowl cost was paid, take an extra turn after this one\.?/i, '$1');
+    t = t.replace(/^(x|\d+) target creatures can't be blocked this turn\. until end of turn, those creatures gain "whenever this creature deals combat damage to a player, draw a card\."\.?$/i, 'your best $1 creatures are unblockable card-drawers this turn');
+    t = t.replace(/^put target creature card from a graveyard onto the battlefield under your control\. it gains indestructible\. if it's your turn, scry 2\.?$/i, 'the fated return');
+    t = t.replace(/^(?:you may )?cast a creature spell from that player's graveyard this turn, and you may spend mana as though it were mana of any color to cast that spell\.?$/i, "the opponent's best creature card is yours to cast this turn");
+    t = t.replace(/^this artifact becomes a (\d+)\/(\d+) blue and black (\w+) artifact creature until end of turn and can't be blocked this turn\.?$/i, 'this becomes an unblockable $1/$2 $3 this turn');
+    t = t.replace(/^this creature has base power and toughness x\/x\.?$/i, 'this creature is x/x this turn');
+    // ---- 16-17 decks, first half ----
+    t = t.replace(/^create a white aura enchantment token named mask attached to another target permanent\. the token has enchant permanent and umbra armor\.?$/i, 'a mask on your best creature');
+    t = t.replace(/^mill seven cards\. return all non-aura enchantment cards from your graveyard to the battlefield, then do the same for aura cards\.?$/i, 'mill seven before your enchantments return');
+    t = t.replace(/^(?:you may )?attach to it any number of auras on the battlefield and you may put onto the battlefield attached to it any number of aura cards that could enchant it from your graveyard and\/or hand\.?$/i, 'your auras gather on this creature');
+    t = t.replace(/^choose a permanent type\. return all cards of the chosen type from your graveyard to your hand\.?$/i, 'your most common permanent type from your graveyard to your hand');
+    t = t.replace(/^reveal the top six cards of your library\. put up to three enchantment cards from among them into your hand and the rest of the revealed cards into your graveyard\.?$/i, "kruphix's insight");
+    t = t.replace(/^(?:you may )?attach any number of auras and equipment you control to it\.?$/i, 'your auras and equipment gather on this creature');
+    t = t.replace(/^reveal cards from the top of your library until you reveal a nonland permanent card\. you may put that card onto the battlefield\. then put all cards revealed this way that weren't put onto the battlefield on the bottom of your library in a random order\.?$/i, 'the next nonland permanent of your library onto the battlefield');
+    t = t.replace(/^double target creature's power and toughness until end of turn\.?$/i, "double your best creature's power and toughness this turn");
+    t = t.replace(/^(?:you may )?remove a slumber counter from (?:arixmethes|this creature|.+?)\.?$/i, 'a slumber counter off this');
+    t = t.replace(/^if you control your commander, prevent all combat damage that would be dealt to creatures you control this turn\.?$/i, 'your creatures are shielded this turn if your commander is out');
+    t = t.replace(/^if (?:taigam|.+?) attacked this turn, that spell gains rebound\.?$/i, 'no rebound');
+    t = t.replace(/^that player sacrifices a creature of their choice\. if the player can't, you (create .+?)\.?$/i, 'the opponent sacrifices a creature, else you $1');
+    t = t.replace(/^(\w+) creatures get \+(\d+)\/\+(\d+) until end of turn\.?$/i, 'every $1 gets +$2/+$3 this turn');
+    t = t.replace(/^choose a colou?r, then that player reveals their hand and discards all cards of that colou?r\.?$/i, "the opponent discards its hand's main color");
+    t = t.replace(/^tap target nonland permanent an opponent controls\. that permanent doesn't untap during its controller's next untap step\.?$/i, "freeze the opponent's best permanent");
+    t = t.replace(/^search your library for an? (\w+) permanent card and put it into your graveyard\. if you do, (?:scion of the ur-dragon|this creature|.+?) becomes a copy of that card until end of turn\. then shuffle\.?$/i, 'this becomes your best $1 from your library this turn');
+    t = t.replace(/^creatures defending player controls get -(\d+)\/-(\d+) until end of turn\.?$/i, "the opponent's creatures get -$1/-$2 this turn");
+    t = t.replace(/^draw a card, then discard a card\. this creature gets \+x\/\+0 until end of turn, where x is the discarded card's mana value\.?$/i, 'loot for power');
+    t = t.replace(/^if you revealed an? (\w+) card or controlled an? \1 as you cast this spell, draw a card\.?$/i, 'draw a card with a $1 in hand or play');
+    t = t.replace(/^choose a nonland permanent you don't control, then each other player chooses a nonland permanent they don't control that hasn't been chosen this way\. destroy all other nonland permanents\.?$/i, 'the fortunate few');
+    t = t.replace(/^destroy all (?!other\b|non|attacking\b|blocking\b|tapped\b|untapped\b)(\w+) creatures\.?$/i, 'destroy every $1 creature'); // Crux of Fate
+    t = t.replace(/^until end of turn, this artifact becomes a copy of target creature you control of the chosen type, except it's an artifact in addition to its other types\.?$/i, 'this becomes a copy of your best creature of the chosen type this turn');
+    t = t.replace(/^they lose 1 life and you put a -1\/-1 counter on up to one target creature they control\.?$/i, 'the active player loses 1 life, a -1/-1 counter on its best creature');
+    t = t.replace(/^starting with the next opponent in turn order, each player chooses a creature you don't control\. destroy the chosen creatures\.?$/i, 'the shell game');
+    t = t.replace(/^this creature deals damage equal to its power to that player\.?$/i, 'its power in damage to the opponent');
+    t = t.replace(/^choose up to one target nonland permanent\. its controller may sacrifice it\. if they don't, this creature deals 5 damage to that player\.?$/i, 'the opponent gives up a permanent or takes 5');
+    t = t.replace(/^(?:mogis|.+?) deals (\d+) damage to that player unless they sacrifice a creature of their choice\.?$/i, 'the active player gives up a creature or takes $1');
+    t = t.replace(/^if you control a red permanent, (?:you may )?have this creature deal 1 damage to that player\.?$/i, 'the opponent takes 1 if you control a red permanent');
+    t = t.replace(/^(?:you may )?pay x life, where x is its power\. if you do, draw x cards\.?$/i, "pay its power in life for that many cards");
+    t = t.replace(/^this creature deals 1 damage to that creature's controller\.?$/i, "the newcomer's controller takes 1");
+    t = t.replace(/^choose an opponent at random\. (?:vial smasher|.+?) deals damage equal to that spell's mana value to that player or a planeswalker that player controls\.?$/i, "the cast spell's mana value in damage to the opponent");
+    t = t.replace(/^spectacle (?:\{[^}]+\})+\s*/i, '');
+    t = t.replace(/^until your next turn, whenever a creature deals combat damage to (?:vraska|.+?), destroy that creature\.?$/i, 'no rebound');
+    t = t.replace(/^until your next turn, (?:volrath|.+?) becomes a copy of target creature with a counter on it, except it's 7\/5 and it has this ability\.?$/i, 'this becomes a 7/5 copy of the best creature with a counter');
+    t = t.replace(/^counter all abilities your opponents control\.?$/i, 'no rebound');
+    t = t.replace(/^draw cards equal to (?:its power|\d+)\.?$/i, "draw cards for this creature's power");
+    t = t.replace(/^it fights up to one target creature you don't control\.?$/i, "this creature fights target creature you don't control");
+    t = t.replace(/^each player creates a (\d+)\/(\d+) (\w+) (\w+) creature token\.?$/i, 'each player makes a $1/$2 $3 $4');
+    t = t.replace(/^if that spell is countered this way, exile it instead of putting it into its owner's graveyard\.?$/i, 'no rebound');
+    t = t.replace(/^you may cast that card without paying its mana cost for as long as it remains exiled\.?$/i, 'no rebound');
+    t = t.replace(/^return all other tapped creatures to their owners' hands\.?$/i, 'every other tapped creature returns to its hand');
+    t = t.replace(/^exile all creature cards from target player's graveyard in a face-down pile, shuffle that pile, then manifest those cards\.?$/i, 'manifest the creature cards of the fuller graveyard');
+    t = t.replace(/^exchange control of target noncreature spell and target creature\. then the spell's controller may choose new targets for it\.?$/i, 'swap your worst creature for their best');
+    t = t.replace(/^remove all flood counters from this enchantment\. if no counters were removed this way, put a flood counter on this enchantment and draw a card\. otherwise, add \{c\}\{g\}\{u\}\.?$/i, 'the luxa bounty');
+    t = t.replace(/^you may cast a creature spell from your graveyard this turn\.?$/i, 'your best creature card is castable from your graveyard this turn');
+    t = t.replace(/^if you didn't cast it from your hand, it gains haste until your next turn\.?$/i, 'the newcomer gains haste unless cast from your hand');
+    t = t.replace(/^if that player has no cards in hand, you draw a card and you lose 1 life\.?$/i, 'a card for 1 life if the active player has no hand');
+    // ---- Symbiotic Swarm ----
+    t = t.replace(/^put a flying counter on any creature you control if a creature card in your graveyard has flying\. repeat this process for .+?\. then put a \+1\/\+1 counter on (?:kathril|.+?) for each counter put on a creature this way\.?$/i, 'keyword counters for your graveyard');
+    t = t.replace(/^reveal the top three cards of your library\. put all nonland permanent cards revealed this way into your hand and the rest on the bottom of your library in any order\.?$/i, 'your top three permanents into your hand');
+    t = t.replace(/^if it had one or more counters on it, you draw a card and you lose 1 life\.?$/i, 'a card for a creature that had counters');
+    t = t.replace(/^exile another creature you control until (?:yannik|.+?) leaves the battlefield\. when you do, distribute x \+1\/\+1 counters among any number of target creatures, where x is the exiled creature's power\.?$/i, 'yannik holds a creature for its power in counters');
+    t = t.replace(/^put a lifelink counter on each of up to x target creatures\.?$/i, 'lifelink counters on your best creatures');
+    t = t.replace(/(^|\.\s+)then move any number of counters from among creatures you control onto that creature\.?/i, '$1');
+    t = t.replace(/^this creature gains flying until end of turn if you control a creature with flying\. the same is true for .+\.?$/i, "this creature gains your creatures' keywords this turn");
+    t = t.replace(/^reveal the top seven cards of your library\. choose from among them a card with flying[\s\S]*$/i, 'the selective adaptation');
+    t = t.replace(/^return up to two target creature cards from your graveyard to the battlefield\. each of those creatures is a black zombie in addition to its other colors and types\./i, 'your two best creature cards return as zombies.');
+    t = t.replace(/^prevent all damage that would be dealt this turn by creatures your opponents control\.?$/i, 'prevent all damage that would be dealt to you this turn');
+    t = t.replace(/^then you lose 3 life for each soul counter on this artifact\.?$/i, 'you lose 3 life per soul counter');
+    // ---- Graveyard Overdrive, Spirit Squadron ----
+    t = t.replace(/^create a tarmogoyf token\.?$/i, 'create a goyf token named tarmogoyf');
+    t = t.replace(/^choose target instant or sorcery spell\. each opponent may copy that spell[\s\S]*$/i, 'copy target instant or sorcery spell you control');
+    t = t.replace(/^each player sacrifices x creatures\. this creature enters with two \+1\/\+1 counters on it for each creature sacrificed this way\.?$/i, 'the gluttonous feast');
+    t = t.replace(/^(?:you may )?mill that many cards\. if you do, you may put a creature card from among them into your hand\.?$/i, 'mill for its power, keeping a creature card');
+    t = t.replace(/^until end of turn, whenever a nontoken creature you control dies, create a number of 1\/1 green saproling creature tokens equal to that creature's power\.?$/i, 'your dying creatures leave saprolings this turn');
+    t = t.replace(/^mill ten cards\.?$/i, 'mill 10 cards');
+    t = t.replace(/^if you do, you may put a creature card from among them into your hand\.?$/i, 'your best milled creature card into your hand'); // Barrowgoyf (its sentences split)
+    t = t.replace(/^choose a card at random in your graveyard\. if it's a creature card, put it onto the battlefield\. otherwise, put it into your hand\.?$/i, 'a random card from your graveyard');
+    t = t.replace(/^target player discards a card\.?$/i, 'each opponent discards a card');
+    t = t.replace(/^create a 1\/1 black and green insect creature token, then mill a card\. if an insect card was milled this way, put a loyalty counter on (?:grist|.+?) and repeat this process\.?$/i, 'insects while insects are milled');
+    t = t.replace(/^each opponent loses life equal to the number of creature cards in your graveyard\.?$/i, 'the opponent loses life for your creature cards in your graveyard');
+    t = t.replace(/^(?:you may )?sacrifice another creature\. when you do, (?:ziatora|.+?) deals damage equal to that creature's power to any target and you create three treasure tokens\.?$/i, 'fling a spare creature for three treasures');
+    t = t.replace(/^you may sacrifice another creature to do "(?:ziatora|.+?) deals damage equal to that creature's power to any target and you create three treasure tokens\.?"$/i, 'fling a spare creature for three treasures');
+    t = t.replace(/^until end of turn, whenever a creature you control deals combat damage to a player, put a loyalty counter on (?:dovin|.+?)\.?$/i, 'your hits grow this planeswalker this turn');
+    t = t.replace(/^(?:you may )?cast an instant or sorcery spell with mana value less than or equal to the number of (\w+?)s you control from a graveyard without paying its mana cost\. if that spell would be put into a graveyard, exile it instead\.?$/i, 'cast a cheap instant or sorcery from a graveyard for your $1s');
+    t = t.replace(/^(?:you may )?cast an instant or sorcery spell with mana value less than or equal to the number of (\w+?)s you control from a graveyard without paying its mana cost\.?$/i, 'cast a cheap instant or sorcery from a graveyard for your $1s');
+    t = t.replace(/^create a 4\/4 white angel creature token with flying that's tapped and attacking\. exile that token at end of combat\.?$/i, 'an attacking angel until the end step');
+    t = t.replace(/^starting with you, each player votes for an artifact, creature, or enchantment card in your graveyard\. return each card with the most votes or tied for most votes to your hand\.?$/i, 'the council returns two of your cards');
+    t = t.replace(/^each player reveals the top card of their library\. for each creature card revealed this way, create a token that's a copy of that card, except it's 1\/1, it's a spirit in addition to its other types, and it has flying\.[\s\S]*$/i, 'haunting imitations');
+    t = t.replace(/^return all nonland permanents to their owners' hands\. if you return four or more nontoken permanents you control this way, you may put a permanent card from your hand onto the battlefield\.?$/i, 'the flood of tears');
+    t = t.replace(/^choose up to three target permanent cards in graveyards that were put there from the battlefield this turn\. return them to the battlefield tapped under their owners' control\. you draw a card for each opponent who controls one or more of those permanents\.?$/i, 'your permanents that died this turn return tapped');
+    // ---- Evasive Maneuvers, Peer Through Time ----
+    t = t.replace(/^put (?:derevi|this creature) onto the battlefield from the command zone\.?$/i, 'this comes out of the command zone');
+    t = t.replace(/^exchange control of two target nonlegendary creatures\.(?:\s*you can't activate this ability during combat\.?)?$/i, 'swap your worst creature for their best');
+    t = t.replace(/^exile another target creature\. return that card to the battlefield under its owner's control at the beginning of the next end step\.?$/i, "the opponent's best creature leaves until the end step");
+    t = t.replace(/^draw a card for each tapped creature target opponent controls\.?$/i, "draw for the opponent's tapped creatures");
+    t = t.replace(/^destroy all creatures\. they can't be regenerated\.\s*(?:threshold — )?if there are seven or more cards in your graveyard, instead destroy all creatures, then create two 1\/1 white spirit creature tokens with flying\. creatures destroyed this way can't be regenerated\.?$/i, "kirtar's wrath");
+    t = t.replace(/(^|\.\s+)each opponent may put a \+1\/\+1 counter on each creature they control\. for each opponent who does, put a \+1\/\+1 counter on each creature you control\.?/i, '$1the glorious offer.');
+    t = t.replace(/^return all permanents of the color of your choice to their owners' hands\.?$/i, "wash out the opponent's main color");
+    t = t.replace(/^reveal the top four cards of your library\. you may put a creature card from among them onto the battlefield\. it gains "at the beginning of your end step, return this creature to its owner's hand\." then put the rest of the cards revealed this way on the bottom of your library in any order\.?$/i, "aethermage's touch");
+    t = t.replace(/^it deals (\d+) damage to each attacking creature without flying\.?$/i, '$1 damage to each attacker without flying');
+    t = t.replace(/^search your library for up to x basic land cards, where x is the number of players who control at least two more lands than you\. put those cards onto the battlefield, then shuffle\.?$/i, 'a basic land if you are two lands behind');
+    t = t.replace(/^(?:you may )?tap or untap equipped creature\.?$/i, 'untap the equipped creature');
+    t = t.replace(/^exile enchanted creature and all auras attached to it\. at the beginning of the next end step, return that card to the battlefield under its owner's control\. if you do, return the other cards exiled this way to the battlefield under their owners' control attached to that creature\.?$/i, 'flicker the enchanted creature until the end step');
+    t = t.replace(/^untap up to four target permanents\.?$/i, 'untap four of your permanents');
+    t = t.replace(/^change the target of target spell or ability with a single target\.?$/i, 'no target changed');
+    t = t.replace(/^target creature attacks target opponent this turn if able\.?$/i, 'your best creature attacks this turn');
+    t = t.replace(/^target creature gets \+2\/-2 or -2\/\+2 until end of turn\.?$/i, 'shape the best creature to change');
+    t = t.replace(/^each opponent skips their next untap step\.?$/i, 'the opponent skips its next untap');
+    t = t.replace(/^counter that spell or ability unless its controller pays \{\d+\}\.?$/i, 'no target changed');
+    t = t.replace(/^tap target permanent\. it doesn't untap during its controller's next untap step\.?$/i, "freeze the opponent's best permanent");
+    t = t.replace(/^(?:you may )?pay \{(\d+)\}\. if you do, tap up to (\w+) target permanents\. those permanents don't untap during their controllers' next untap steps\.?$/i, "pay {$1} to freeze the opponent's best $2");
+    t = t.replace(/^if you cast it from your hand, tap all nonblue creatures\. those creatures don't untap during their controllers' next untap steps\.?$/i, 'freeze all nonblue creatures if cast from your hand');
+    t = t.replace(/^if this card is suspended, remove a time counter from it\.?$/i, 'a time counter off this suspended card');
+    t = t.replace(/^target player other than this artifact's owner gains control of it\.?$/i, 'an opponent gains control of it');
+    t = t.replace(/^draw two additional cards\.?$/i, 'draw two cards');
+    t = t.replace(/(^|\.\s+)activate only if an opponent controls four or more lands\.?$/i, '$1');
+    // ---- Mind Seize, Draconic Dissent, Phantom Premonition ----
+    t = t.replace(/^each player exiles the top x cards of their library, where x is the amount of mana spent to cast (?:jeleva|.+?)\.?$/i, 'each player exiles cards with this for its mana value');
+    t = t.replace(/^(?:you may )?cast an instant or sorcery spell from among cards exiled with (?:jeleva|this creature|.+?) without paying its mana cost\.?$/i, 'cast the best instant or sorcery exiled with this for free');
+    t = t.replace(/^copy target instant or sorcery spell twice\.(?:\s*you may choose new targets for the copies\.?)?$/i, 'copy target instant or sorcery spell you control twice');
+    t = t.replace(/^(?:nekusar|.+?) deals 1 damage to that player\.?$/i, 'the drawing opponent takes 1 damage');
+    t = t.replace(/^defending player sacrifices a creature of their choice\.?$/i, 'each opponent sacrifices a creature of their choice');
+    t = t.replace(/^this creature deals x damage to that player, where x is the number of cards in their hand minus (\d+)\.?$/i, "the opponent takes its hand size minus $1");
+    t = t.replace(/^target opponent sacrifices a creature of their choice, discards three cards, then loses 5 life\. you return a creature card from your graveyard to your hand, draw three cards, then gain 5 life\.?$/i, 'the cruel ultimatum');
+    t = t.replace(/^each player discards all the cards in their hand, then draws that many cards\.?$/i, 'every hand is traded for new cards');
+    t = t.replace(/^destroy target creature\. its controller loses life equal to its power plus its toughness\.?$/i, "destroy the opponent's best creature, its power and toughness lost as life");
+    t = t.replace(/^each player chooses a nonland permanent and puts a doom counter on it\.?$/i, 'doom counters on the best nonland permanents');
+    t = t.replace(/^destroy each permanent with a doom counter on it\.?$/i, 'destroy the doomed permanents');
+    t = t.replace(/^(?:this enchantment|.+?) deals damage to that player equal to the number of cards in that player's hand\.?$/i, 'the opponent takes its hand size minus 0');
+    t = t.replace(/^until your next turn, up to two target creatures each have base power and toughness (\d+)\/(\d+) and lose all abilities\.?$/i, "the opponent's two best creatures are $1/$2 without abilities this turn");
+    t = t.replace(/(^|\.\s+)until your next turn, instant, sorcery, and planeswalker spells that player casts cost \{(\d+)\} less to cast\.?/i, '$1your spells are cheaper this turn.');
+    t = t.replace(/^target player gets an emblem with "whenever you cast an instant or sorcery spell, copy it\. you may choose new targets for the copy\."\.?$/i, 'you get the spell-copying emblem');
+    t = t.replace(/^target player gets an emblem with "whenever you activate an ability that isn't a mana ability, copy it\. you may choose new targets for the copy\."\.?$/i, 'you get the ability-copying emblem');
+    t = t.replace(/^during target player's next turn, each creature that player controls attacks if able\.?$/i, "the opponent's creatures attack next combat if able");
+    t = t.replace(/^(?:rowan kenrith|.+?) deals (\d+) damage to each tapped creature target player controls\.?$/i, "$1 damage to each of the opponent's tapped creatures");
+    t = t.replace(/^that player creates a 1\/1 red goblin creature token with "creatures you control attack each combat if able\."\.?$/i, 'the active player gets a goblin that makes its creatures attack');
+    t = t.replace(/^it deals (\d+|that much) damage to the chosen player\.?$/i, (all, n) => `the opponent takes ${/\d/.test(n) ? n : 'the damage'}`);
+    t = t.replace(/^this creature deals 1 damage to itself\.?$/i, 'this creature hurts itself');
+    t = t.replace(/^target player gains control of up to three target nonattacking creatures until end of turn\. untap those creatures\. they block this turn if able\.?$/i, "borrow three of the opponent's idle creatures this turn");
+    t = t.replace(/^until your next turn, creatures your opponents control attack each combat if able\.?$/i, "the opponent's creatures attack next combat if able");
+    t = t.replace(/^each tapped creature deals damage to itself equal to its power\.?$/i, 'each tapped creature hurts itself');
+    t = t.replace(/^create two tokens that are copies of target noncreature permanent, except they're 3\/3 dragon creatures in addition to their other types, and they have flying\.?$/i, 'two dragon copies of the best noncreature permanent');
+    t = t.replace(/^goad up to x target creatures your opponents control\.?$/i, "goad the opponent's best creatures, one per counter");
+    t = t.replace(/^you take the initiative\.?$/i, 'take the initiative');
+    t = t.replace(/^target player draws a card, then exiles a card from their hand\. if a creature card is exiled this way, that player creates a token that's a copy of that card\.?$/i, 'the artisan makes a creature token from your hand');
+    t = t.replace(/^exile all tokens created with it at the beginning of the next end step\.?$/i, "exile the artisan's tokens at the next end step");
+    t = t.replace(/^exile any number of target nonland permanents you control, then return those cards to the battlefield under their owner's control\.?$/i, 'blink your creatures that do something when they enter');
+    t = t.replace(/^draw a card, then exile a card from your hand face down\. it becomes foretold\. its foretell cost is its mana cost reduced by \{2\}\.?$/i, 'draw a card. foretell your costliest card');
+    t = t.replace(/^create a number of 1\/1 white soldier creature tokens equal to your devotion to white\.?$/i, 'soldiers for your devotion to white');
+    t = t.replace(/^exile target creature\. return that card to the battlefield under its owner's control at the beginning of the next end step\.?$/i, "the opponent's best creature leaves until the end step");
+    t = t.replace(/^look at the top two cards of your library\. put one of them into your hand and the other on the bottom of your library\.?$/i, 'the best of your top two into your hand');
+    t = t.replace(/^search your library for a basic plains card and reveal it\. if an opponent controls more lands than you, put it onto the battlefield tapped\. otherwise, put it into your hand\. then shuffle\.?$/i, 'a plains, onto the battlefield if you are behind on lands');
+    t = t.replace(/^(?:you may )?cast an instant or sorcery spell from your hand without paying its mana cost\.?$/i, 'cast your best instant or sorcery from your hand for free');
+    t = t.replace(/^if a permanent you control would be put into a graveyard from the battlefield this turn, exile it instead\. return it to the battlefield under its owner's control at the beginning of the next end step\.?$/i, 'your permanents come back at the end step this turn');
+    t = t.replace(/^exile two target artifacts, creatures, and\/or lands you control, then return those cards to the battlefield under your control\.?$/i, 'blink your two best permanents');
+    t = t.replace(/^each player with fewer cards in hand than the player with the most cards in hand draws cards equal to the difference\.?$/i, 'everyone draws up to the biggest hand');
+    t = t.replace(/^you gain (\d+) life for each foretold card you own in exile\.?$/i, 'you gain $1 life for each foretold card of yours');
+    t = t.replace(/(^|\.\s+)spend this mana only to foretell cards or cast spells that have foretell\.?/i, '$1');
+    t = t.replace(/^return target card with foretell from your graveyard to your hand\.?$/i, 'your best foretell card from your graveyard to your hand');
+    // ---- Blame Game, Chaos Incarnate, Devour for Power, Eternal Bargain, First Flight, Legends' Legacy ----
+    t = t.replace(/^suspect target creature\. then goad all suspected creatures\.?$/i, "suspect the opponent's best creature, goading the suspects");
+    t = t.replace(/^return target creature card from an opponent's graveyard to the battlefield under their control with a duty counter on it\. for as long as that creature has a duty counter on it, it is goaded, can't attack you or a permanent you control, and can't block creatures you control\.?$/i, "the opponent's weakest creature card returns on duty");
+    t = t.replace(/^if it's not a spirit, return it to the battlefield under its owner's control with four charge counters on it\. it's a spirit detective\.?$/i, 'it returns as a spirit unless it is one');
+    t = t.replace(/^for each opponent, goad up to one target creature that opponent controls\. put x \+1\/\+1 counters on this creature, where x is the total power of creatures goaded this way\.?$/i, "goad the opponent's strongest creature, counters for its power");
+    t = t.replace(/^suspect target creature an opponent controls\. as long as this enchantment remains on the battlefield, that creature is also goaded\.?$/i, "suspect the opponent's best creature, goaded");
+    t = t.replace(/^if two or more players have lost the game, gain control of all goaded and\/or suspected creatures until end of turn\. untap them\. they gain haste until end of turn\.?$/i, 'nothing in a two-player game');
+    t = t.replace(/^each player secretly votes for another player, then those votes are revealed\. for each vote an opponent received, .+? deals 2 damage to that player and each creature that player controls\. for each vote you received, draw a card\.?$/i, 'the mob verdict');
+    t = t.replace(/^each opponent secretly chooses silence or snitch, then the choices are revealed\.[\s\S]*$/i, 'the opponent stays silent for 4');
+    t = t.replace(/^prevent all combat damage that would be dealt to you and planeswalkers you control this turn\. untap all attacking creatures and goad them\./i, 'prevent all damage that would be dealt to you this turn. the attackers untap goaded.');
+    t = t.replace(/^(?:this creature|.+?) fights another target creature\.?$/i, "this creature fights target creature you don't control");
+    t = t.replace(/(^|\.\s+)goad each creature that had a double-?strike counter put on it this way\.?/i, '$1');
+    t = t.replace(/^put a double strike counter on target creature, then goad each creature that had a double strike counter put on it this way\.?$/i, 'put a double strike counter on target creature');
+    t = t.replace(/^remove target attacking (?:or blocking )?creature from combat\.?$/i, "the opponent's best attacker leaves combat");
+    t = t.replace(/^choose a creature or planeswalker you control\. all damage that would be dealt this turn to you and permanents you control is dealt to the chosen permanent instead\s*(?:\(if it's still on the battlefield\))?\s*\.?$/i, 'prevent all damage that would be dealt to you this turn');
+    t = t.replace(/^until your next turn, creatures your opponents control attack each combat if able and attack a player other than you if able\.?$/i, "the opponent's creatures attack next combat if able");
+    t = t.replace(/^that player chooses up to two creatures they control, then sacrifices the rest\.?$/i, 'the active player keeps two creatures');
+    t = t.replace(/^put target creature card from defending player's graveyard onto the battlefield under your control\.?$/i, "the opponent's best creature card from its graveyard joins you");
+    t = t.replace(/^for each opponent, (?:you may )?put up to one target creature card from that player's graveyard onto the battlefield under your control\.?$/i, "the opponent's best creature card from its graveyard joins you");
+    t = t.replace(/^each opponent discards a card\. each player who discarded a card with the greatest mana value among cards discarded this way loses life equal to that mana value\.?$/i, 'the opponent discards, losing its mana value');
+    t = t.replace(/^each opponent sacrifices a creature or planeswalker with the greatest mana value among creatures and planeswalkers they control\.?$/i, 'the opponent sacrifices its costliest creature');
+    t = t.replace(/^exile the top two cards of your library\. choose one of them\. until the end of your next turn, you may play that card\.?$/i, 'exile your top two, one playable until your next turn ends');
+    t = t.replace(/^(?:kaervek|.+?) deals damage equal to that spell's mana value to any target\.?$/i, "the cast spell's mana value in damage");
+    t = t.replace(/^each player draws a card and loses 1 life\.?$/i, 'each player draws a card, losing 1 life');
+    t = t.replace(/^draw a card unless target opponent sacrifices a creature of their choice or pays 3 life\.?$/i, 'the opponent pays a creature or 3 life, else you draw');
+    t = t.replace(/^draw a card, then each other player may draw a card\. whenever a card is drawn this way, .+? deals 5 damage to target opponent chosen at random from among your opponents\.?$/i, 'draw a card. 5 damage to the opponent');
+    t = t.replace(/(^|\.\s+)if you control an artifact, (.+?) deals 3 damage to that creature's controller\.?/i, '$1the opponent takes 3 with your artifact.');
+    t = t.replace(/^if no cards are in that graveyard, flip this creature\.?$/i, "flip this if the opponent's graveyard is empty");
+    t = t.replace(/^that creature's controller mills (\w+) cards\.?$/i, 'the opponent mills $1 cards');
+    t = t.replace(/^that player mills (\w+) cards\.?$/i, 'the opponent mills $1 cards');
+    t = t.replace(/^that player mills x cards, where x is the number of cards in their hand\.?$/i, 'the active player mills its hand size');
+    t = t.replace(/^return to your hand the creature card in your graveyard with the greatest power\. if two or more cards are tied for greatest power, you choose one of them\.?$/i, 'your strongest creature card from your graveyard to your hand');
+    t = t.replace(/^if you have fewer than seven cards in hand, draw cards equal to the difference\.?$/i, 'draw up to seven');
+    t = t.replace(/^starting with you, each player may pay any amount of mana\. each player mills x cards, where x is the total amount of mana paid this way\.?$/i, 'join forces for mills');
+    t = t.replace(/^search your library for up to three creature cards, put them into your graveyard, then shuffle\.?$/i, 'your three best creature cards from your library into your graveyard');
+    t = t.replace(/^until end of turn, this land becomes a black and green (\w+) (\w+) creature with "this creature's power and toughness are each equal to the number of creature cards in your graveyard\." it's still a land\.?$/i, 'this land is a $1 $2 sized by your creature cards this turn');
+    t = t.replace(/^reveal the top card of your library and put that card into your hand\. you gain life equal to its mana value\.?$/i, 'your top card into your hand for its mana value in life');
+    t = t.replace(/^reveal the top card of your library and put that card into your hand\.(?=\s|$)/i, 'draw a card.'); // Augury Adept
+    t = t.replace(/^until end of turn, (?:gideon jura|.+?) becomes a (\d+)\/(\d+) (\w+) (\w+) creature that's still a planeswalker\.?$/i, 'this becomes a $1/$2 $3 $4 this turn');
+    t = t.replace(/^you gain life equal to the sacrificed creature's toughness\.?$/i, "you gain the sacrificed creature's toughness in life");
+    t = t.replace(/^exchange its power and the power of target creature it's blocking until end of combat\.?$/i, 'trade power with the strongest attacker');
+    t = t.replace(/^whenever you gain life this turn, each opponent loses that much life\.?$/i, 'your life gain drains this turn');
+    t = t.replace(/^choose left or right\. starting with you and proceeding in the chosen direction, each player chooses a creature controlled by the next player in that direction\. each player gains control of the creature they chose\.?$/i, 'swap best creatures');
+    t = t.replace(/(^|\.\s+)each opponent may return a creature card from their graveyard to the battlefield\. for each opponent who does, return a creature card from your graveyard to the battlefield\.?/i, '$1the tempting offer.');
+    t = t.replace(/^look at the top five cards of your library\. as many times as you choose, you may pay 1 life, put those cards on the bottom of your library in any order, then look at the top five cards of your library\. then shuffle and put the last cards you looked at this way on top in any order\.?$/i, "lim-dul's vault");
+    t = t.replace(/^untap target creature you don't control and gain control of it\. it gains haste until end of turn\. at the beginning of the next end step, sacrifice it\. if you do, you gain life equal to its toughness\.?$/i, 'the spinal embrace');
+    t = t.replace(/^(?:you may )?exile target artifact or enchantment\. if you do, its controller gains control of this enchantment\.?$/i, "exile the opponent's best artifact or enchantment, giving this away");
+    t = t.replace(/^put a \+1\/\+1 counter on target creature for each 1 life you gained\.?$/i, 'put a +1/+1 counter on target creature');
+    t = t.replace(/^gain life equal to that creature's power\.?$/i, "you gain the newcomer's power in life");
+    t = t.replace(/^during target opponent's next turn, creatures that player controls attack (?:gideon jura|.+?) if able\.?$/i, "the opponent's creatures attack next combat if able");
+    t = t.replace(/^until end of turn, (?:gideon jura|.+?) becomes a (\d+)\/(\d+) (\w+) (\w+) creature that's still a planeswalker\. prevent all damage that would be dealt to him this turn\.?$/i, 'this becomes a $1/$2 $3 $4 this turn');
+    t = t.replace(/^draw cards equal to the number of opponents you have\.?$/i, 'draw a card');
+    t = t.replace(/^you gain (\d+) life for each creature you control with flying\.?$/i, 'you gain $1 life for each of your fliers');
+    t = t.replace(/^up to one target legendary creature gains vigilance, lifelink, and indestructible until your next turn\.?$/i, 'your best legend is guarded until your next turn');
+    t = t.replace(/^reveal the top four cards of your library\. put any number of legendary cards from among them into your hand and the rest into your graveyard\. create a treasure token for each card put into your graveyard this way\.?$/i, 'legends from your top four, treasures for the rest');
+    t = t.replace(/^gain control of all nonland permanents until end of turn\. untap them\. they gain haste until end of turn\.?$/i, "borrow all the opponent's creatures this turn");
+    t = t.replace(/^if this is the third time this ability has resolved this turn, remove all \+1\/\+1 counters from (?:ashling|.+?), and it deals that much damage to each creature and each player\.?$/i, 'ashling erupts on the third time this turn');
+    t = t.replace(/^destroy all creatures\. you gain life equal to the number of creatures you controlled that were destroyed this way\.?$/i, "kaya's wrath");
+    t = t.replace(/(^|\.\s+)this ability costs \{1\} less to activate for each legendary creature and planeswalker you control\.?/i, '$1');
+    t = t.replace(/^target legendary creature becomes a god in addition to its other types\.?$/i, 'your best legend becomes a god');
+    t = t.replace(/^return to the battlefield tapped all artifact, creature, enchantment, and land cards in your graveyard that were put there from the battlefield this turn\.?$/i, 'your permanents that died this turn return tapped');
+    t = t.replace(/^return to the battlefield target creature card in your graveyard that was put there from the battlefield this turn\.?$/i, 'your best creature that died this turn returns');
+    t = t.replace(/^copy target activated or triggered ability you control from another legendary source that's not a commander\. you may choose new targets for the copy\.?$/i, 'nothing to copy');
+    t = t.replace(/^(other )?(attacking|blocking) creatures (?:you control )?with flying get \+(\d+)\/\+(\d+) until end of turn\.?$/i, (all, o, k, p, q) => `${o ? 'other ' : ''}${k} fliers get +${p}/+${q} this turn`);
+    // ---- Desert Bloom, Upgrades Unleashed ----
+    t = t.replace(/^mill two cards\. you gain 1 life for each land card milled this way\.?$/i, 'mill two cards for life per land');
+    t = t.replace(/(^|\.\s+)for each mana from a desert spent to cast this spell, create a tapped treasure token\.?/i, '$1tapped treasures for your deserts.');
+    t = t.replace(/^return up to three target land cards from your graveyard to the battlefield tapped\. create that many (.+?) tokens with reach\.?/i, 'three lands from your graveyard, a plant for each.');
+    t = t.replace(/^choose creature or land\. reveal the top four cards of your library\. put all cards of the chosen type revealed this way into your hand and the rest into your graveyard\.?$/i, 'the winding way');
+    t = t.replace(/^(.+?) deals 2 damage to target creature or planeswalker\. (?:delirium — )?.+? deals 6 damage instead if there are four or more card types among cards in your graveyard\.?$/i, 'unholy heat');
+    t = t.replace(/(^|\.\s+)then you may discard two cards\. if you do, draw three cards\.?$/i, '$1trade two cards for three');
+    t = t.replace(/^search your library for up to two basic land cards and\/or desert cards, put them onto the battlefield tapped, then shuffle\.?$/i, 'two basics or deserts onto the battlefield tapped');
+    t = t.replace(/^(?:you may )?discard any number of land cards\. put that many \+1\/\+1 counters on this creature and draw that many cards\.?$/i, 'trade your spare land cards for counters and cards');
+    t = t.replace(/^goad each creature your opponents control that's enchanted by an aura you control\. put a \+1\/\+1 counter on (?:kaima|this creature|.+?) for each creature goaded this way\.?$/i, 'goad what your auras enchant, a counter each');
+    t = t.replace(/^(?:you may )?have this creature deal damage equal to the number of \+1\/\+1 counters on it to target player or planeswalker\.?$/i, 'its +1/+1 counters in damage to the opponent');
+    t = t.replace(/^each player shuffles all creatures they own into their library\. each player who shuffled a nontoken creature into their library this way reveals cards[\s\S]*$/i, 'the collision of realms');
+    t = t.replace(/^for each of up to (x|\d+) target creatures, create a red aura enchantment token named smoke blessing attached to that creature\.[\s\S]*$/i, 'smoke blessings on $1 of the opponent\'s creatures');
+    t = t.replace(/^it deals damage equal to its power to the player or planeswalker it's attacking\.?$/i, 'it deals its power to the opponent');
+    t = t.replace(/^it deals x damage to defending player, where x is the number of cards in their hand\.?$/i, "it deals the opponent's hand size to the opponent");
+    t = t.replace(/^draw a card if you control an enchanted creature\.?$/i, 'draw a card with an enchanted creature');
+    t = t.replace(/^create a 1\/1 colorless spirit creature token if you control an equipped creature\.?$/i, 'a spirit with an equipped creature');
+    t = t.replace(/(^|\.\s+)activate only as a sorcery and only once each turn\.?$/i, '$1activate only as a sorcery');
+    t = t.replace(/^exile them at the beginning of the next end step\.?$/i, 'exile the new tokens at the next end step');
+    t = t.replace(/^destroy this creature\. reveal cards from the top of your library until you reveal a creature card\. put that card onto the battlefield and attach (.+?) to it, then put all other cards revealed this way on the bottom of your library in a random order\.?$/i, 'shift the shadow');
+    t = t.replace(/^put a \+1\/\+1 counter on it\. then if it has three or more \+1\/\+1 counters on it, sacrifice this aura\.?$/i, 'the ordeal grows this creature');
+    t = t.replace(/^return it to your hand\.?$/i, 'return this card to your hand');
     // ---- Cabaretti Cacophony, Mirror Mastery, Call for Backup, Obscura Operation ----
     t = t.replace(/^each player may put two \+1\/\+1 counters on a creature they control\. goad each creature that had counters put on it this way\.?$/i, 'each player grows a creature to be goaded');
     t = t.replace(/^each other creature you control with base power and toughness 1\/1 gets \+x\/\+x until end of turn, where x is the number of \+1\/\+1 counters on (?:bess|this creature|.+?)\.?$/i, "your other base 1/1 creatures get this creature's counters this turn");
@@ -18437,6 +21140,12 @@ const Bot = (() => {
   function opponentActed(game, s, event, n, defOf, ctx, spell) {
     if (!game.bot) return;
     const other = s === game ? game.bot.s : game;
+    // Curse of Fool's Wisdom (the other side's, on s): 2 life each card drawn
+    if (event === 'draw') permanents(other).filter(w => oracleLines(w, defOf).some(l => NEAR.FOOLS_WISDOM.test(l))).forEach(() => { addLife(game, s === game ? 'you' : 'opp', -2 * (n || 1)); addLife(game, s === game ? 'opp' : 'you', 2 * (n || 1)); });
+    // Spiteful Visions (anyone's): 1 damage to the player who drew, for each card
+    if (event === 'draw') [s, other].forEach(t => permanents(t).filter(w => oracleLines(w, defOf).some(l => NEAR.SPITEFUL.test(l))).forEach(w => damagePlayer(game, s === game ? 'you' : 'opp', n || 1, w.name, defOf)));
+    // Trouble in Pairs (the other side's): s drew its second card this turn
+    if (event === 'draw' && (s.drawnThisTurn || 0) >= 2 && (s.drawnThisTurn || 0) - (n || 1) < 2) permanents(other).filter(w => oracleLines(w, defOf).some(l => NEAR.TROUBLE.test(l))).forEach(() => G.drawCards(other, 1, other !== game));
     // Wedding Ring: the opponent with a Wedding Ring draws on its turn: you draw too
     if (event === 'draw' && !s.offTurn) for (const w of permanents(other)) { const wr = oracleLines(w, defOf).map(l => NEAR.WEDDING_DRAW.exec(l)).find(Boolean); if (wr && permanents(s).some(c => c.name === wr[1])) G.drawCards(other, n || 1, other !== game); }
     // Inquisitor Eisenhorn: the first card s draws each turn, revealed (the newest card in hand): an instant or sorcery makes Cherubael
@@ -18468,7 +21177,9 @@ const Bot = (() => {
       // marked (app.js's castCost), Opp casts its own right away.
       // A card's own "Miracle {1}{U}" (Devastation Tide): cast for that cost (c.miracleCost; Opp when it can pay).
       const first = before === 0 && s.cards[s.zones.hand[s.zones.hand.length - n]];
-      const ownMiracle = first && oracleLines(first, defOf).map(l => /^miracle ((?:\{[^}]+\})+)$/i.exec(l)).find(Boolean);
+      const aminatou = first && !G.isLand(first) && isA(first, 'enchantment') && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.AMINATOU.test(l)));
+      const lessFour = c => { const full = String((defOf(c.id) || {}).manaCost || '').split(' // ')[0]; const left = Math.max(0, Number((/\{(\d+)\}/.exec(full) || [0, 0])[1]) - 4); return `${left ? `{${left}}` : ''}${full.replace(/\{\d+\}/, '')}`; };
+      const ownMiracle = first && (oracleLines(first, defOf).map(l => /^miracle ((?:\{[^}]+\})+)$/i.exec(l)).find(Boolean) || (aminatou ? [null, lessFour(first)] : null));
       const molecule = before === 0 && permanents(s).some(w => oracleLines(w, defOf).some(l => /^nonland cards in your hand have miracle \{0\}\.?$/i.test(l)));
       if (ownMiracle && !molecule && !G.isLand(first)) {
         first.miracleTurn = s.turn;
@@ -18599,7 +21310,7 @@ const Bot = (() => {
     /^at the beginning of your next (?:first )?main phase, add (?:an amount of \{C\} equal to that spell's mana value|x mana in any combination of colors, where x is that spell's mana value)$/i, // Mana Drain (phaseTriggers), Plasm Capture
     /^its controller mills 1 to 3 cards at random and casts the next nonland card for free$/i, // Tibalt's Trickery (see counterExtraParts)
     /^its controller loses (\w+) life$/i, // Undermine
-    /^(?:surveil|scry) \w+$|^draw (?:a|\w+) cards?$|^investigate(?: twice| \w+ times)?$/i, // Sinister Sabotage; Confirm Suspicions: "Surveil 1." (the caster's)
+    /^(?:surveil|scry) \w+$|^draw (?:a|\w+) cards?$|^investigate(?: twice| \w+ times)?$|^you gain \w+ life$/i, // Sinister Sabotage; Confirm Suspicions; Absorb: "Surveil 1." (the caster's)
     /^create x treasure tokens, where x is that spell's mana value$/i, // Spell Swindle (the caster's)
     /^its controller loses life equal to the number of creatures you control$/i, // Deny the Witch
     /^you may cast a spell with equal or lesser mana value from your hand without paying its mana cost$/i, // Reinterpret (the caster's costliest that fits)
@@ -18607,6 +21318,10 @@ const Bot = (() => {
     /^put (.+?) on the bottom of its owner's library$/i, // Spell Crumple itself
     /^clash with an opponent$/i, // Scattering Stroke
     /^if you win, at the beginning of your next main phase, you may add an amount of \{C\} equal to that spell's mana value$/i,
+    /^you may cast a creature, instant, sorcery, or planeswalker spell from your graveyard with mana value less than or equal to that spell's mana value without paying its mana cost$/i, // Counterpoint
+    /^counter target spell or ability that targets a permanent you control$/i, // Not of This World (the spell countered as any counterspell)
+    /^you get an amount of \{e\}\s*equal to its mana value$/i, // Electrosiphon
+    /^untap up to (\w+) lands$/i, // Unwind, Rewind
   ];
   // Tibalt's Trickery: "Choose 1, 2, or 3 at random. Its controller mills that many cards, then exiles cards from the top of their library until
   // they exile a nonland card with a different name than that spell. They may cast that card without paying its mana cost. Then they put the
@@ -18615,12 +21330,20 @@ const Bot = (() => {
   // (Spell Stutter's "plus an additional {1} for each Faerie you control" is part of its tax: settleBatch29b counts it)
   const counterExtraParts = oracle => String(oracle || '').replace(/\([^)]*\)/g, '').replace(/ plus an additional \{\d+\} for each \w+ you control(?=\.)/i, '').replace(TIBALT, 'Its controller mills 1 to 3 cards at random and casts the next nonland card for free.')
     .split(/\n|(?<=\.)\s+/).map(x => x.trim().replace(/\.$/, ''))
-    .filter(x => x && !/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\}| with mana value \d+ or greater)?(?:, activated ability, or triggered ability)?$/i.test(x) && !/^if the gift was promised, instead counter target spell$/i.test(x)); // Disallow: spells only; Long River's Pull
+    .filter(x => x && !/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\}| with mana value \d+ or greater| you don't control)?(?:, activated ability, or triggered ability)?$/i.test(x) && !/^if the gift was promised, instead counter target spell$/i.test(x)); // Disallow: spells only; Long River's Pull
   // mv: the countered spell's mana value (Mana Drain).
   function counterExtras(game, by, hit, oracle, src, mv = 0) {
     const role = t => (t === game ? 'you' : 'opp');
     for (const part of counterExtraParts(oracle)) {
       let m;
+      if (/^you get an amount of \{e\}\s*equal to its mana value$/i.test(part)) { if (mv > 0) gainEnergy(by, mv, lastDefOf); continue; } // Electrosiphon
+      const ul = /^untap up to (\w+) lands$/i.exec(part); // Unwind, Rewind
+      if (ul) { permanents(by).filter(c => G.isLand(c) && c.tapped).slice(0, toNumber(ul[1]) || 0).forEach(c => { c.tapped = false; c.tappedFor = null; }); continue; }
+      if (/^you may cast a creature, instant, sorcery, or planeswalker spell from your graveyard with mana value less than or equal to that spell's mana value without paying its mana cost$/i.test(part)) { // Counterpoint: the best that fits
+        const c = by.zones.graveyard.map(iid => by.cards[iid]).filter(x => ['creature', 'instant', 'sorcery', 'planeswalker'].some(k => isA(x, k)) && cmcOfInst(x, lastDefOf) <= mv).sort((a, b) => cmcOfInst(b, lastDefOf) - cmcOfInst(a, lastDefOf))[0];
+        if (c) castFree(by, c, { other: by === game ? game.bot && game.bot.s : game }, lastDefOf);
+        continue;
+      }
       if ((m = COUNTER_EXTRAS[1].exec(part))) {
         if (hit) artifactTokens(hit, { name: src }, toNumber(m[1]), m[2]);
         else G.log(by, `${src}: its controller creates ${m[1]} ${m[2]} tokens (on their side).`);
@@ -18750,6 +21473,7 @@ const Bot = (() => {
     const t = inst.zone === 'graveyard' && lastTables.find(x => x && x.cards && x.cards[inst.iid] === inst);
     if (t && isA(inst, 'artifact') && G.isCreature(inst) && permanents(t).some(w => oracleLines(w, defOf).some(l => B29.WIRE_SURGEONS.test(l)))) return factsOf(inst, defOf).manaCost || factsOf(inst, defOf).cost || null;
     if (t && G.isCreature(inst) && isOutlaw(inst) && permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.FIXER.test(l)))) return `{${cmcOfInst(inst, defOf)}}`; // Graywater's Fixer
+    if (t && G.isCreature(inst) && isA(inst, 'sliver') && permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.SLIVER_ENCORE.test(l)))) return `{${cmcOfInst(inst, defOf)}}`; // Sliver Gravemother
     return null;
   };
   function encore(game, s, inst, defOf) {
@@ -18790,7 +21514,7 @@ const Bot = (() => {
   }
   // Unearth {7} (Tri-Sentinel): "{7}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning
   // of the next end step or if it would leave the battlefield. Unearth only as a sorcery." (game.js exiles it instead)
-  const unearthOf = (inst, defOf) => { const m = oracleLines(inst, defOf).map(l => /^unearth ((?:\{[^}]+\})+)/i.exec(l)).find(Boolean); return m ? m[1] : null; };
+  const unearthOf = (inst, defOf) => { const m = oracleLines(inst, defOf).map(l => /^unearth ((?:\{[^}]+\})+)/i.exec(l)).find(Boolean); if (m) return m[1]; const t = inst.arkUnearthTurn != null && lastTables.find(x => x && x.zones && x.cards[inst.iid] === inst); return t && inst.arkUnearthTurn === t.turn ? '{3}' : null; }; // Ghost Ark
   function unearth(game, s, inst) {
     if (!inst || inst.zone !== 'graveyard') return false;
     G.move(s, inst.iid, 'battlefield', { put: true });
@@ -18944,11 +21668,25 @@ const Bot = (() => {
   // Phantasms: "search your library for a card with the same mana value"). [{ kind, cost, label }].
   const HAND_DISCARD = /^((?:\{[^}]+\})+), discard this card: (.+)$/i;
   function handAbilities(inst, defOf) {
+    const out = handAbilityList(inst, defOf);
+    const home = lastTables.find(t => t && t.zones && t.cards[inst.iid] === inst);
+    const homeLines = home ? permanents(home).flatMap(w => oracleLines(w, defOf)) : [];
+    const free = home && ((homeLines.some(l => NEAR.FREE_CYCLE_FIRST.test(l)) && !(home.cycleTurn === home.turn && home.cycleCount > 0)) || (homeLines.some(l => NEAR.FREE_CYCLE_SEVEN.test(l)) && home.zones.hand.length >= 7));
+    if (free) out.filter(a => a.kind === 'cycling').forEach(a => { a.cost = ''; a.label = `${a.label}, free`; });
+    return out;
+  }
+  function handAbilityList(inst, defOf) {
     const out = [];
     if (inst.grantCycling && !oracleLines(inst, defOf).some(l => /^cycling\b/i.test(l))) out.push({ kind: 'cycling', cost: inst.grantCycling, label: `Cycling (${inst.grantCycling}, Rhet-Tomb Mystic)` });
     // Jo Grant: "Each historic card in your hand has cycling {2}{W}."
     const jo = isHistoric(inst) && lastTables.filter(t => t && t.zones && t.cards[inst.iid] === inst).flatMap(t => permanents(t)).flatMap(w => oracleLines(w, defOf).map(l => NEAR.JO_GRANT.exec(l))).find(Boolean);
     if (jo && !oracleLines(inst, defOf).some(l => /^cycling\b/i.test(l))) out.push({ kind: 'cycling', cost: jo[1], label: `Cycling (${jo[1]}, Jo Grant)` });
+    // Tectonic Reformation: "Each land card in your hand has cycling {R}."; Gavi (the first card cycled each turn) and New Perspectives (seven or more
+    // cards in hand): cycling for {0} (applied below)
+    const home = lastTables.find(t => t && t.zones && t.cards[inst.iid] === inst);
+    const homeLines = home ? permanents(home).flatMap(w => oracleLines(w, defOf)) : [];
+    const tr = G.isLand(inst) && homeLines.map(l => NEAR.LAND_CYCLING.exec(l)).find(Boolean);
+    if (tr && !oracleLines(inst, defOf).some(l => /^cycling\b/i.test(l))) out.push({ kind: 'cycling', cost: tr[1], label: `Cycling (${tr[1]}, Tectonic Reformation)` });
     for (const line of oracleLines(inst, defOf)) {
       // Sylvan Reclamation: "Basic landcycling {2}" (search for a basic land instead of drawing); Angel of the Ruins: "Plainscycling {2}".
       const m = /^(cycling|transmute|basic landcycling|(?:plains|island|swamp|mountain|forest)cycling) ((?:\{[^}]+\})+)/i.exec(line);
@@ -19018,6 +21756,12 @@ const Bot = (() => {
   function creatureDamaged(game, s, inst, n, defOf, ctx, src = null) {
     if (!(n > 0) || !inst) return;
     noteDamage(game, n); // Impact Resonance
+    // Wrathful Raptors: your Dinosaur dealt damage deals that much to the opponent
+    if (game && game.bot && s && n > 0) permanents(s).forEach(w => { const wr = oracleLines(w, defOf).map(l => NEAR.WRATHFUL_RAPTORS.exec(l)).find(Boolean); if (wr && isA(inst, wr[1])) damagePlayer(game, s === game ? 'opp' : 'you', n, w.name, defOf); });
+    // Fiendlash: the equipped creature dealt damage: its power to the opponent
+    if (game && game.bot && s && n > 0 && G.attachmentsOf(s, inst.iid).some(id => s.cards[id] && oracleLines(s.cards[id], defOf).some(l => NEAR.FIENDLASH.test(l)))) damagePlayer(game, s === game ? 'opp' : 'you', Math.max(0, stats(inst, factsOf(inst, defOf)).pow), 'Fiendlash', defOf);
+    // Archfiend of Spite: damaged (read as by the other side): that player loses that much life
+    if (game && game.bot && s && n > 0 && oracleLines(inst, defOf).some(l => NEAR.ARCHFIEND_SPITE.test(l))) addLife(game, s === game ? 'opp' : 'you', -n);
     // Donna Noble: she or her pair dealt damage: that much to the opponent
     if (game && game.bot && s) for (const w of permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.DONNA.test(l)))) { const mate = soulMate(s, w, defOf); if (inst === w || inst === mate) damagePlayer(game, s === game ? 'opp' : 'you', n, w.name, defOf); }
     // Bloatfly Swarm: the damage takes its +1/+1 counters instead, a rad counter for each player per counter
@@ -19099,6 +21843,10 @@ const Bot = (() => {
     // Level Up: its "put a +1/+1 counter on enchanted creature" waited for you to attach it.
     if (spell.onAttachCounter && pick.inst && pick.s && pick.inst.zone === 'battlefield') { G.counter(pick.s, pick.inst.iid, spell.onAttachCounter, 1, { effect: true }); delete spell.onAttachCounter; }
     const foe = s === game ? 'opp' : 'you';
+    // Myriad Construct: targeted by a spell, it's sacrificed for that many 1/1 Constructs
+    if (pick.inst && pick.s && pick.inst.zone === 'battlefield' && oracleLines(pick.inst, defOf).some(l => NEAR.MYRIAD_SPLIT.test(l))) { const n = Math.max(0, stats(pick.inst, factsOf(pick.inst, defOf)).pow); G.move(pick.s, pick.inst.iid, 'graveyard'); for (let i = 0; i < n; i++) { const tok = G.createToken(pick.s, { custom: true, name: 'Construct', typeLine: 'Token Artifact Creature — Construct', pt: '1/1', text: '' }, { quiet: true }); if (tok) tok.tokenColors = []; } }
+    // Parnesse, the Subtle Brush: a spell targeting the other side's permanents costs its caster 4 life (always paid)
+    if (pick.s && pick.s !== s) permanents(pick.s).forEach(w => { const pt = oracleLines(w, defOf).map(l => NEAR.PARNESSE_TAX.exec(l)).find(Boolean); if (pt) { addLife(game, s === game ? 'you' : 'opp', -Number(pt[1])); G.log(s, `${w.name}: paid ${pt[1]} life for targeting.`); } });
     // Mirrorwing Dragon: "Whenever a player casts an instant or sorcery spell that targets only this creature, that player copies that spell for
     // each other creature they control that the spell could target. Each copy targets a different one of those creatures." (eff done on each)
     // Zada, Hedron Grinder: "Whenever you cast an instant or sorcery spell that targets only Zada, copy that spell for each other creature you
@@ -19115,6 +21863,11 @@ const Bot = (() => {
         const m = /^whenever (.+?) (?:attacks or )?becomes the target of a spell, (?:you may )?(.+)$/i.exec(line);
         if (m && isSelf(m[1], pick.inst)) fireOn(game, pick.s, pick.inst, `targeted by ${spell.name}`, m[2], pick.s === game ? (ctx || { other: game.bot && game.bot.s, defOf }) : null, defOf);
       }
+      if (oracleLines(pick.inst, defOf).some(l => NEAR.SKITTERSPIKE.test(l))) damagePlayer(game, pick.s === game ? 'opp' : 'you', Math.max(0, stats(pick.inst, factsOf(pick.inst, defOf)).pow), pick.inst.name, defOf); // Giggling Skitterspike
+      // Bonecrusher Giant: targeted by a spell: 2 damage to that spell's controller
+      if (oracleLines(pick.inst, defOf).some(l => NEAR.BONECRUSHER.test(l))) damagePlayer(game, s === game ? 'you' : 'opp', 2, pick.inst.name, defOf);
+      // Tectonic Giant: targeted by an opponent's spell: 3 damage to each opponent
+      if (pick.s !== s && oracleLines(pick.inst, defOf).some(l => NEAR.TECTONIC.test(l))) damagePlayer(game, pick.s === game ? 'opp' : 'you', 3, pick.inst.name, defOf);
       // Silverfur Partisan: "Whenever a Wolf or Werewolf you control becomes the target of an instant or sorcery spell, …" (anyone's spell)
       if (/\b(instant|sorcery)\b/i.test(front(spell.typeLine || ''))) {
         for (const w of permanents(pick.s)) {
@@ -19185,7 +21938,19 @@ const Bot = (() => {
   // Feasting Hobbit: "Devour Food 3" eats Foods instead of creatures.
   const devourWhat = (inst, defOf) => (oracleLines(inst, defOf).some(l => /^devour food \d+$/i.test(l)) ? 'food' : 'creature');
   // Escape (Woe Strider): "Escape—{3}{B}{B}, Exile four other cards from your graveyard." { cost, exile } or null.
-  const escapeOf = (inst, defOf) => { const m = oracleLines(inst, defOf).map(l => /^escape\s*[—-]\s*((?:\{[^}]+\})+), exile (\w+) other cards from your graveyard\.?$/i.exec(l)).find(Boolean); return m ? { cost: m[1], exile: toNumber(m[2]) || 0 } : null; };
+  const escapeOf = (inst, defOf) => {
+    const m = oracleLines(inst, defOf).map(l => /^escape\s*[—-]\s*((?:\{[^}]+\})+), exile (\w+) other cards from your graveyard\.?$/i.exec(l)).find(Boolean);
+    if (m) return { cost: m[1], exile: toNumber(m[2]) || 0 };
+    // Desdemona: a creature card given escape this turn, for its mana cost and two other cards
+    const dt = inst.escapeTurn != null && inst.zone === 'graveyard' && lastTables.find(x => x && x.zones && x.cards[inst.iid] === inst);
+    if (dt && inst.escapeTurn === dt.turn) return { cost: String((defOf(inst.id) || {}).manaCost || '').split(' // ')[0], exile: 2 };
+    // The Master of Keys: each enchantment card in your graveyard escapes for its mana cost and three other cards
+    const t = isA(inst, 'enchantment') && inst.zone === 'graveyard' && lastTables.find(x => x && x.zones && x.cards[inst.iid] === inst);
+    if (t && permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.MASTER_ESCAPE.test(l)))) return { cost: String((defOf(inst.id) || {}).manaCost || '').split(' // ')[0].replace(/\{X\}/gi, ''), exile: 3 };
+    return null;
+  };
+  // A card with a cycling ability (Herald of the Forgotten, Spellpyre Phoenix, Zenith Flare, Abandoned Sarcophagus)
+  const hasCycling = (c, defOf) => !!c && oracleLines(c, defOf).some(l => /^(?:basic land|plains|island|swamp|mountain|forest|\w+)?cycling\b/i.test(l));
   const escapeOk = (s, inst, defOf) => { const e = inst && inst.zone === 'graveyard' && escapeOf(inst, defOf); return !!e && s.zones.graveyard.length - 1 >= e.exile; };
   // Mayhem {2}{U} (Chameleon): "You may cast this card from your graveyard for {2}{U} if you discarded it this turn."
   const mayhemOf = (inst, defOf) => { const m = oracleLines(inst, defOf).map(l => /^mayhem ((?:\{[^}]+\})+)/i.exec(l)).find(Boolean); return m ? m[1] : null; };
@@ -19246,11 +22011,20 @@ const Bot = (() => {
     if (!inst || inst.zone !== 'graveyard') return false;
     if (!noBrood && broodOk(s, inst, defOf) && !graveCast(s, inst, defOf, true)) return true;
     if (inst.graveOkTurn === s.turn) return true; // Conduit of Worlds picked it this turn
+    if (inst.graveOkUntil != null && inst.graveOkUntil >= s.turn) return true; // Hildibrand Manderville
+    if (oracleLines(inst, defOf).some(l => NEAR.HELBRUTE.test(l)) && s.zones.graveyard.some(iid => iid !== inst.iid && G.isCreature(s.cards[iid]))) return true; // Helbrute (spellCast exiles the other card)
+    if (!G.isLand(inst) && hasCycling(inst, defOf) && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.SARCOPHAGUS.test(l)))) return true; // Abandoned Sarcophagus
+    if (inst.surveiledTurn === s.turn && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.DUSKMANTLE.test(l)))) return true;
+    if (!s.offTurn && s.gannonTurn !== s.turn && (isA(inst, 'artifact') || isA(inst, 'human')) && !G.isLand(inst) && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.GANNON.test(l)) && cmcOfInst(inst, defOf) <= ((c.counters || {}).quest || 0))) return true; // Arcade Gannon (once a turn: spellCast) // Eye of Duskmantle (costChoices: for life)
     if (s.willTurn === s.turn) return true; // Magus of the Will
     if (isHistoric(inst) && PERM_TYPES.some(k => isA(inst, k)) && s.eighthTurn !== s.turn && !s.offTurn && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.EIGHTH_DOCTOR.test(l)))) return true; // The Eighth Doctor (once a turn: spellCast)
     if (oracleLines(inst, defOf).some(l => /^disturb (?:\{[^}]+\})+$/i.test(l))) return true; // disturb (cast for its mana cost, front face)
     if (!s.offTurn && /\b(instant|sorcery)\b/i.test(front(inst.typeLine || '')) && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.RETURN_PAST.test(l)))) return true; // Return the Past
     if (oracleLines(inst, defOf).some(l => NEAR.ME_GRAVE.test(l)) && s.zones.hand.length >= 2) return true; // Me, the Immortal
+    if (!s.offTurn && s.edgarTurn !== s.turn && isA(inst, 'artifact') && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.EDGAR.test(l)))) return true; // Edgar, Master Machinist
+    if (!s.offTurn && s.kessTurn !== s.turn && /\b(instant|sorcery)\b/i.test(front(inst.typeLine || '')) && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.KESS.test(l)))) return true; // Kess, Dissident Mage
+    const mr = oracleLines(inst, defOf).map(l => NEAR.MARANG.exec(l)).find(Boolean); // Marang River Prowler
+    if (mr && permanents(s).some(c => [mr[1], mr[2]].some(k => colorsOfInst(c, defOf).includes({ white: 'W', blue: 'U', black: 'B', red: 'R', green: 'G' }[k.toLowerCase()])))) return true;
     if (!G.isLand(inst) && inst.milledTurn === s.turn && s.raulTurn !== s.turn && !s.offTurn && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.RAUL.test(l)))) return true; // Raul
     const ind = oracleLines(inst, defOf).map(l => NEAR.INDOMITABLE.exec(l)).find(Boolean); // The Indomitable
     if (ind && permanents(s).filter(c => c.tapped && (isA(c, ind[2]) || isA(c, ind[3]))).length >= toNumber(ind[1])) return true;
@@ -19273,7 +22047,7 @@ const Bot = (() => {
   // A rules line without reminder text or an ability word ("Raid — When …", "Landfall — Whenever …"),
   // which only names the ability. Saga chapters ("I, II — …") keep theirs.
   // April O'Neil: "Whenever a Mutant, Ninja, or Turtle you control enters, …" reads as "a Mutant or Ninja or Turtle" (no commas before the effect).
-  const plainLine = l => l.replace(/\([^)]*\)/g, '').trim().replace(/^(?!(?:[IVX]+(?:, [IVX]+)*|Max speed|Boast) —)(?![^—]*villainous choice —)[A-Z][A-Za-z0-9'’.?! -]{1,40}? — (?=[A-Z{+−-])/, '')
+  const plainLine = l => l.replace(/\([^)]*\)/g, '').replace(/ and whenever you fully unlock a Room(?=,)/i, '').replace(/^Ultimate Magic: \w+ deals /, 'This spell deals ').trim().replace(/^(?!(?:[IVX]+(?:, [IVX]+)*|Max speed|Boast) —)(?![^—]*villainous choice —)[A-Z][A-Za-z0-9'’.?! -]{1,40}? — (?=[A-Z{+−-])/, '')
     .replace(/^(whenever an? )(\w+), (\w+),? or (\w+)( you control)? (enters|attacks|dies)\b/i, '$1$2 or $3 or $4$5 $6')
     .replace(/^whenever you attack with one or more (\w+(?: creatures)?), (?!.*\bthis card from your graveyard\b)/i, 'Whenever one or more $1 you control attack, ') // Celeborn the Wise (not Persistent Marshstalker's GRAVE_ATTACK), Amazing Alliance
     // Aether Sting: "Whenever an opponent casts a creature spell, this enchantment deals 1 damage to that player." (the one opponent)
@@ -19349,7 +22123,7 @@ const Bot = (() => {
   // it ('Commander creatures you own have "Whenever this creature attacks …"', inst.grantedLines).
   const lostAll = inst => Object.values(inst.boosts || {}).some(b => b && b.loseAll) || !!(inst.becomes && inst.becomes.loseAll); // Kenrith's Transformation; Sudden Spoiling (becomes)
   // (Exchange of Words: swapText, the other creature's text box)
-  const oracleLines = (inst, defOf) => (lostAll(inst) ? [] : chosenLines(byLevel((inst.swapText != null ? inst.swapText : oracleText(inst, defOf)).split('\n').map(plainLine), inst), inst)).concat((inst.pump && inst.pump.lines) || [], inst.grantedLines || [], inst.keepLines || [],
+  const oracleLines = (inst, defOf) => (lostAll(inst) ? [] : chosenLines(byLevel((inst.swapText != null ? inst.swapText : oracleText(inst, defOf)).split('\n').filter(l => inst.solved || !/^Solved —/.test(l)).map(plainLine), inst), inst)).concat((inst.pump && inst.pump.lines) || [], inst.grantedLines || [], inst.keepLines || [],
     Object.values(inst.boosts || {}).flatMap(b => (b && b.lines) || []), (inst.becomes && inst.becomes.lines) || [], (inst.retype && inst.retype.lines) || []); // abilities its equipment gives (Thornbite Staff); Kellan's
   // A Class (Barbarian Class): the lines after "{1}{R}: Level 2" count once it's that level
   // (inst.level), and only the next level's line can be activated.
@@ -19412,6 +22186,8 @@ const Bot = (() => {
   // You were dealt damage: "Whenever you're dealt damage, put that many charge counters on …".
   function dealtDamage(game, n, defOf) {
     if (!(n > 0)) return;
+    // Darien, King of Kjeldor: that many Soldiers
+    yourPermanents(game).forEach(w => { const d = oracleLines(w, defOf).map(l => NEAR.DARIEN.exec(l)).find(Boolean); if (d) runEffect(game, `create ${n} ${d[1].replace(/^1\/1 /, '1/1 ').replace(/ tokens?$/i, ' tokens')}`, { self: w, defOf }); });
     for (const inst of yourPermanents(game)) {
       for (const line of oracleLines(inst, defOf)) {
         const m = /^whenever you(?:'re| are) dealt damage, (?:you may )?put that many ([\w+/-]+) counters? on (.+?)\.?$/i.exec(line);
@@ -19502,6 +22278,14 @@ const Bot = (() => {
   const landEntered = (...a) => whileEntering(() => landEnteredNow(...a), a[1]); // Yarok
   function landEnteredNow(game, land, defOf, ctx, s = game) {
     s.lastLandIn = land.iid; // "untap that land" (Fabled Passage, Tiller Engine)
+    if (!s.offTurn) s.zones.graveyard.map(iid => s.cards[iid]).filter(c => oracleLines(c, defOf).some(l => NEAR.SKYCLAVE.test(l))).forEach(c => { c.graveOkTurn = s.turn; }); // Skyclave Shade
+    if (land.put) permanents(s).forEach(w => { const ld = oracleLines(w, defOf).map(l => NEAR.LOST_DAMNED.exec(l)).find(Boolean); if (ld) runEffect(s, ld[1], { self: w, defOf }); }); // The Lost and the Damned
+    // Deep Gnome Terramancer (the other side's): a land entering for this side without being played: a Plains (once a turn)
+    const tg = game.bot && (s === game ? game.bot.s : game);
+    if (tg && land.put) permanents(tg).filter(w => w.terraTurn !== tg.turn && oracleLines(w, defOf).some(l => NEAR.TERRAMANCER.test(l))).forEach(w => { w.terraTurn = tg.turn; runEffect(tg, 'search your library for a Plains card, put it onto the battlefield tapped, then shuffle', { self: w, defOf }); });
+    // Burgeoning (the other side's): a land from its hand too
+    const bo = game.bot && (s === game ? game.bot.s : game);
+    if (bo && !land.put) permanents(bo).filter(w => oracleLines(w, defOf).some(l => NEAR.BURGEONING.test(l))).forEach(() => { const c = bo.zones.hand.map(iid => bo.cards[iid]).find(x => G.isLand(x)); if (c) { c.put = true; G.move(bo, c.iid, 'battlefield', { put: true }); } });
     // Archaeomancer's Map (on the other table): "Whenever a land an opponent controls enters, if that player controls more lands than you,
     // you may put a land card from your hand onto the battlefield."
     const o = s === game ? game.bot && game.bot.s : game;
@@ -19523,7 +22307,8 @@ const Bot = (() => {
       }
       for (const line of oracleLines(inst, defOf)) {
         const m = /^(?:landfall\s*[—-]\s*)?whenever a land(?: you control)? enters(?: the battlefield)?(?: under your control)?, (?:you may )?(.+)$/i.exec(line);
-        if (m) fireOn(game, s, inst, `landfall (${land.name})`, landfallText(m[1], land), ctx, defOf);
+        const times = 1 + permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.GREENWARDEN.test(l))).length; // Ancient Greenwarden
+        if (m) for (let i = 0; i < times; i++) fireOn(game, s, inst, `landfall (${land.name})`, landfallText(m[1], land), ctx, defOf);
       }
     }
   }
@@ -19677,7 +22462,7 @@ const Bot = (() => {
     for (const inst of [...permanents(s), ...graveWatchers]) {
       // Evolve (Ray Fillet): "Whenever a creature you control enters, if that creature has greater power or toughness than this creature, put a
       // +1/+1 counter on this creature."
-      if (inst !== creature && inst.zone === 'battlefield' && G.isCreature(creature) && !creature.faceDown && oracleLines(inst, defOf).some(l => /^evolve$/i.test(l))) {
+      if (inst !== creature && inst.zone === 'battlefield' && G.isCreature(creature) && !creature.faceDown && (oracleLines(inst, defOf).some(l => /^evolve$/i.test(l)) || (G.isCreature(inst) && permanents(s).some(w => w !== inst && oracleLines(w, defOf).some(l => NEAR.TYRANID_PRIME.test(l)))))) {
         const a = stats(creature, factsOf(creature, defOf));
         const b = stats(inst, factsOf(inst, defOf));
         if (a.pow > b.pow || a.tou > b.tou) {
@@ -19774,6 +22559,21 @@ const Bot = (() => {
   function nearPhase(game, active, phase, defOf, ctx, dry) {
     let n = 0;
     const tables = [game, game.bot && game.bot.s].filter(Boolean);
+    // Old One Eye (in your graveyard): discard two at your first main to get it back
+    if (!dry && phase === 'main') active.zones.graveyard.map(iid => active.cards[iid]).filter(c => oracleLines(c, defOf).some(l => /^at the beginning of your first main phase, you may discard two cards\. if you do, return this card from your graveyard to your hand\.?$/i.test(l))).forEach(c => runEffect(active, 'old one eye returns for two discards', { self: c, defOf }));
+    if (!dry && phase === 'second main') permanents(active).filter(c => c.sacAfterCombat === active.turn).forEach(c => { delete c.sacAfterCombat; G.move(active, c.iid, c.commander ? 'command' : 'graveyard'); }); // Crumbling Colossus
+    // Rose, Cutthroat Raider: a Junk token after combat if you attacked
+    if (!dry && phase === 'second main' && active.attackedTurn === active.turn) permanents(active).filter(w => oracleLines(w, defOf).some(l => NEAR.RAID_JUNK.test(l))).forEach(w => artifactTokens(active, w, 1, 'junk'));
+    // Desert Warfare: the marked Deserts come back at your end step
+    if (!dry && phase === 'end step') active.zones.graveyard.map(iid => active.cards[iid]).filter(c => c.desertBack).forEach(c => { delete c.desertBack; G.move(active, c.iid, 'battlefield', { put: true }); });
+    // Cases: "To solve — …" checked at the beginning of your end step
+    if (!dry && phase === 'end step') permanents(active).filter(c => !c.solved).forEach(c => { const ts = String(oracleText(c, defOf)).split('\n').map(l => /^To solve — (.+?)\.?$/.exec(l.replace(/\([^)]*\)/g, '').trim())).find(Boolean); if (ts && condition(active, ts[1], { self: c, defOf })) { c.solved = true; G.log(active, `${c.name} is solved.`); } });
+    // Karplusan Minotaur: cumulative upkeep (an age counter, then a flip for each)
+    if (!dry && phase === 'upkeep') permanents(active).filter(c => oracleLines(c, defOf).some(l => NEAR.FLIP_UPKEEP.test(l))).forEach(c => { G.counter(active, c.iid, 'age', 1); for (let i = 0; i < (c.counters.age || 0); i++) coinFlip(active, { self: c, defOf }); });
+    // Master of Death (in your graveyard): pay 1 life at your upkeep to return it
+    if (!dry && phase === 'upkeep') active.zones.graveyard.map(iid => active.cards[iid]).filter(c => oracleLines(c, defOf).some(l => /^at the beginning of your upkeep, if this card is in your graveyard, you may pay 1 life\. if you do, return it to your hand\.?$/i.test(l))).forEach(c => runEffect(active, 'pay 1 life to return this card from your graveyard', { self: c, defOf }));
+    // Spellpyre Phoenix: back to your hand at an end step if you cycled two or more cards this turn
+    if (!dry && phase === 'end step') tables.filter(t => t.cycleTurn === t.turn && t.cycleCount >= 2).forEach(t => t.zones.graveyard.map(iid => t.cards[iid]).filter(c => oracleLines(c, defOf).some(l => NEAR.SPELLPYRE.test(l))).forEach(c => G.move(t, c.iid, 'hand')));
     const yours = ctx || { hitOpps: k => { game.oppLife -= k; }, other: game.bot ? game.bot.s : null };
     // Key to the City: "Whenever this artifact becomes untapped, you may pay {2}. If you do, draw a card." (seen tapped at a step, untapped at its controller's upkeep)
     if (!dry) for (const t of tables) for (const c of permanents(t)) if (c.tapped && oracleLines(c, defOf).some(l => NEAR.KEY_UNTAP.test(l) || NEAR.UNTAPPED.test(l) || NEAR.NINTH.test(l))) c.keyTapped = true;
@@ -19809,6 +22609,12 @@ const Bot = (() => {
         G.log(active, `${c.name}: added ${k} {${nh[1]}}.`);
       }
     }
+    // Righteous Authority: the enchanted creature's controller draws one more in its draw step
+    if (phase === 'draw step') for (const a of permanents(active).filter(c => c.attachedTo && oracleLines(c, defOf).some(l => NEAR.RIGHTEOUS_DRAW.test(l)))) { n++; if (!dry) G.drawCards(active, 1, active !== game); }
+    // Well of Ideas (the other side's): the active player draws one more in its draw step
+    if (phase === 'draw step') for (const t of tables.filter(t => t !== active)) for (const c of permanents(t).filter(c => oracleLines(c, defOf).some(l => NEAR.WELL_OTHERS.test(l)))) { n++; if (!dry) G.drawCards(active, 1, active !== game); }
+    // Kirri, Talented Sprout: "At the beginning of each of your postcombat main phases, …"
+    if (phase === 'second main') for (const c of permanents(active)) { const pc = oracleLines(c, defOf).map(l => NEAR.POSTCOMBAT.exec(l)).find(Boolean); if (!pc) continue; n++; if (!dry) fireOn(game, active, c, 'postcombat main phase', pc[1], active === game ? (ctx || { hitOpps: k => { game.oppLife -= k; }, other: game.bot && game.bot.s }) : null, defOf); }
     // Vivien's Stampede: at the next main phase, a card if the opponent was dealt combat damage
     if (phase === 'second main' && active.stampedeTurn === active.turn) { n++; if (!dry) { delete active.stampedeTurn; if (active.tymnaHit === active.turn) G.drawCards(active, 1, active !== game); } }
     // Tymna the Weaver: at your postcombat main, 1 life for a card if the opponent was dealt combat damage this turn
@@ -20000,6 +22806,16 @@ const Bot = (() => {
   // The 6–15-cards-left precons' attack triggers (NEAR), for the attackers (list) of table s.
   function nearAttack(game, s, defOf, ctx, list) {
     const mine = s === game ? ctx : null;
+    list.forEach(c => { const tv = oracleLines(c, defOf).map(l => NEAR.TITANS_VANGUARD.exec(l)).find(Boolean); if (tv) runEffect(s, tv[1], { self: c, defOf }); }); // Titans' Vanguard
+    const sdf = game && game.bot ? (s === game ? game.bot.s : game) : null;
+    // Enlist: an attacker taps a non-attacking creature of yours to add its power (the weakest that can help); Aradesh rewards it
+    list.filter(c => oracleLines(c, defOf).some(l => /^enlist$/i.test(l))).forEach(c => { const help = creatures(s, h => !h.tapped && !h.attacking && h !== c && !list.includes(h) && stats(h, factsOf(h, defOf)).pow > 0).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf))[0]; if (!help) return; help.tapped = true; pumpBy(c, stats(help, factsOf(help, defOf)).pow, 0); c.enlistedTurn = s.turn; G.log(s, `${c.name} enlisted ${help.name}.`); if (permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.ARADESH.test(l)))) { c.pump.kw = [...new Set([...(c.pump.kw || []), 'double strike'])]; if (stats(c, factsOf(c, defOf)).pow >= 4) G.drawCards(s, 1, s !== game); } });
+    permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.LOCUS_BUFF.test(l))).forEach(() => list.forEach(c => pumpBy(c, 0, 1))); // Genestealer Locus
+    if (game) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).forEach(w => { const cb = oracleLines(w, defOf).map(l => NEAR.CONTAMINATED.exec(l)).find(Boolean); if (cb && list.some(c => c.iid === w.attachedTo)) addLife(game, s === game ? 'you' : 'opp', -Number(cb[1])); })); // Contaminated Bond
+    if (permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.MAXSON.test(l)))) list.filter(c => c.token && list.some(a => a !== c && stats(a, factsOf(a, defOf)).pow > stats(c, factsOf(c, defOf)).pow)).forEach(c => G.counter(s, c.iid, '+1/+1', 1, { effect: true })); // Elder Arthur Maxson: tokens train
+    if (sdf) permanents(sdf).forEach(w => { const lu = oracleLines(w, defOf).map(l => NEAR.LULU.exec(l)).find(Boolean); if (!lu) return; const c = list.filter(a => a.zone === 'battlefield').sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.counter(s, c.iid, lu[1].toLowerCase(), 1); }); // Lulu
+    if (sdf) permanents(sdf).forEach(w => { const mc = oracleLines(w, defOf).map(l => NEAR.MACCREADY.exec(l)).find(Boolean); if (!mc) return; list.filter(a => stats(a, factsOf(a, defOf)).pow >= Number(mc[1])).forEach(() => { addLife(game, s === game ? 'you' : 'opp', -Number(mc[2])); addLife(game, sdf === game ? 'you' : 'opp', Number(mc[2])); }); }); // MacCready
+    if (sdf) permanents(sdf).forEach(w => { const sg = oracleLines(w, defOf).map(l => NEAR.SARKHAN_GUARD.exec(l)).find(Boolean); if (!sg) return; const n = creatures(sdf, d => isA(d, 'dragon')).length * Number(sg[1]); if (n) list.filter(c => c.zone === 'battlefield').forEach(c => applyTarget(game, s, c, { action: 'damage', n, what: 'creature' }, w.name, defOf, sdf)); }); // Sarkhan the Masterless
     // Mila (the defending side's): a loyalty counter on each of its planeswalkers when attacked
     if (dfdM(game, s)) permanents(dfdM(game, s)).filter(w => oracleLines(w, defOf).some(l => NEAR.MILA_ATTACK.test(l))).forEach(() => permanents(dfdM(game, s)).filter(isPlaneswalker).forEach(pw => G.counter(dfdM(game, s), pw.iid, 'loyalty', 1)));
     // Struggle for Project Purity (Enclave, the defending side's): twice that many rad counters for the attacker
@@ -20008,6 +22824,27 @@ const Bot = (() => {
     for (const w of permanents(s)) {
       for (const line of oracleLines(w, defOf)) {
         let m;
+        if (NEAR.KAALIA.test(line) && list.includes(w)) { const c = s.zones.hand.map(iid => s.cards[iid]).filter(x => G.isCreature(x) && ['angel', 'demon', 'dragon'].some(k => isA(x, k))).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (c) { G.move(s, c.iid, 'battlefield', { put: true }); c.tapped = true; c.attacking = true; } } // Kaalia
+        if (NEAR.SKITTERSPIKE.test(line) && list.includes(w)) damagePlayer(game, s === game ? 'opp' : 'you', Math.max(0, stats(w, factsOf(w, defOf)).pow), w.name, defOf); // Giggling Skitterspike
+        if (NEAR.NIHILOOR_ATTACK.test(line)) list.filter(a => a.owner && a.owner !== roleOf(s)).forEach(() => { addLife(game, s === game ? 'you' : 'opp', 2); addLife(game, s === game ? 'opp' : 'you', -2); }); // Nihiloor
+        const wo = NEAR.WAND_ORCUS.exec(line); // Wand of Orcus (the equipped creature attacking)
+        if (wo && w.attachedTo && list.some(a => a.iid === w.attachedTo)) creatures(s, c => c.iid === w.attachedTo || isA(c, wo[1])).forEach(c => { c.pump = { pow: 0, tou: 0, ...c.pump, kw: [...new Set([...((c.pump && c.pump.kw) || []), 'deathtouch'])] }; });
+        if (NEAR.GUILTFEEDER.test(line) && list.includes(w)) { const o = otherTable(s); if (o && o.zones.graveyard.length) addLife(game, o === game ? 'you' : 'opp', -o.zones.graveyard.length); } // Guiltfeeder (read as it attacks)
+        const mg = NEAR.MAGDA_TAP.exec(line); // Magda: attacking Dwarves become tapped
+        if (mg) list.filter(a => isA(a, mg[1]) && !stats(a, factsOf(a, defOf)).kw.has('vigilance')).forEach(() => artifactTokens(s, { name: w.name }, 1, 'treasure'));
+        if (NEAR.SKYBOON.test(line)) list.filter(a => Object.values(a.counters || {}).some(v => v > 0)).forEach(a => { a.pump = { pow: 0, tou: 0, ...a.pump, kw: [...new Set([...((a.pump && a.pump.kw) || []), 'flying'])] }; }); // Skyboon Evangelist
+        const dc = NEAR.DEMON_COVENANT_ATTACK.exec(line); // Demonic Covenant
+        if (dc && list.some(a => isA(a, dc[1])) && w.covenantTurn !== s.turn) { w.covenantTurn = s.turn; G.drawCards(s, 1, s !== game); addLife(game, s === game ? 'you' : 'opp', -1); }
+        // Stinkdrinker Bandit (read as it attacks): attacking Rogues get +2/+1
+        const sb = NEAR.STINKDRINKER.exec(line);
+        if (sb) list.filter(a => isA(a, sb[1])).forEach(a => pumpBy(a, Number(sb[2]), Number(sb[3])));
+        // Finest Hour: a creature attacking alone in the first combat untaps; one more combat
+        if (NEAR.FINEST_HOUR.test(line) && list.length === 1 && s.finestTurn !== s.turn) { s.finestTurn = s.turn; list[0].tapped = false; list[0].tappedFor = null; extraCombat(s); }
+        // Altar of the Goyf: a creature attacking alone gets +X/+X for the card types in all graveyards
+        if (NEAR.ALTAR_GOYF.test(line) && list.length === 1) { const n = new Set(lastTables.filter(t => t && t.zones).flatMap(t => t.zones.graveyard.flatMap(iid => CARD_TYPE_CHOICES.filter(k => isA(t.cards[iid], k))))).size; pumpBy(list[0], n, n); }
+        // Firkraag: Dragons attacking: goad the opponent's best creature
+        const fk = NEAR.FIRKRAAG_GOAD.exec(line);
+        if (fk && list.some(a => isA(a, fk[1]))) { const o = otherTable(s); const c = o && creatures(o).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) goad(s, c); }
         // Zurzoth: Devils attacking: both players draw, then discard at random
         const zz = NEAR.ZURZOTH_ATTACK.exec(line);
         if (zz && list.some(a => isA(a, zz[1])) && w.zurzothTurn !== s.turn) {
@@ -20069,6 +22906,18 @@ const Bot = (() => {
       G.log(s, 'Untapped each creature you control (All-Out Assault).');
     }
     if (list.length) nearAttack(game, s, defOf, ctx, list);
+    if (list.length) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).filter(w => oracleLines(w, defOf).some(l => NEAR.RIGHTEOUS_CAUSE.test(l))).forEach(() => addLife(game, t === game ? 'you' : 'opp', list.length))); // Righteous Cause
+    if (list.length) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.CALC_LICH.test(l))).forEach(() => addLife(game, s === game ? 'opp' : 'you', -list.length)); // Calculating Lich
+    // Norn's Decree (anyone's): attacking a poisoned player draws the attacker a card
+    if (list.length && (((s === game ? game.bot && game.bot.s : game) || {}).poison || 0) > 0 && [game, game.bot && game.bot.s].filter(Boolean).some(t => permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.NORN_DECREE_ATTACK.test(l))))) G.drawCards(s, 1, s !== game);
+    // The defending side's Trouble in Pairs (two or more attackers), Ever-Watching Threshold: a card
+    const dfSide = s === game ? game.bot && game.bot.s : game;
+    for (const w of list.length && dfSide ? permanents(dfSide) : []) for (const l of oracleLines(w, defOf)) { if ((NEAR.TROUBLE.test(l) && list.length >= 2) || NEAR.THRESHOLD.test(l)) G.drawCards(dfSide, 1, dfSide !== game); }
+    // Windreader Sphinx (anyone's): a card for each attacking flier
+    const fliers = list.filter(a => stats(a, factsOf(a, defOf)).kw.has('flying')).length;
+    if (fliers) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).filter(w => oracleLines(w, defOf).some(l => NEAR.WINDREADER.test(l))).forEach(() => G.drawCards(t, fliers, t !== game)));
+    // Tectonic Giant: attacking, 3 damage to each opponent
+    list.filter(a => oracleLines(a, defOf).some(l => NEAR.TECTONIC.test(l))).forEach(a => damagePlayer(game, s === game ? 'opp' : 'you', 3, a.name, defOf));
     // Indulge: each attacker brings a tapped and attacking Citizen
     if (list.length && s.indulgeTurn === s.turn) list.forEach(() => { const tok = G.createToken(s, { id: 'Citizen', name: 'Citizen', typeLine: 'Token Creature — Citizen', custom: true, pt: '1/1', text: '' }, { quiet: true }); if (tok) { tok.tokenColors = ['G', 'W']; tok.tapped = true; tok.attacking = true; } });
     // Kazuul, Tyrant of the Cliffs (the defending side's): an Ogre for each attacker unless its controller pays {3} (Opp pays when it can; you never do)
@@ -20086,6 +22935,8 @@ const Bot = (() => {
         if (each) list.forEach(a => fireOn(game, s, a, `attacked (${w.name})`, each[1].replace(/^put an? \+1\/\+1 counter on it$/i, 'put a +1/+1 counter on this creature').replace(/^its controller gains (\w+) life$/i, 'you gain $1 life'), s === game ? ctx : null, defOf));
         if (B29.CURSE_CHAOS.test(line) && s.zones.hand.length) fireOn(game, s, w, 'attacked', 'discard a card. draw a card', s === game ? ctx : null, defOf);
         if (NEAR.VERBOSITY.test(line)) G.drawCards(s, 2, s !== game); // you draw, and you're the opponent attacking too
+        if (NEAR.CURSE_INERTIA.test(line)) { const o = s === game ? game.bot && game.bot.s : game; const c = o && creatures(o, x => !x.tapped).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) { c.tapped = true; c.tappedFor = null; } }
+        if (NEAR.CURSE_GRAVES.test(line)) runEffect(s, 'create a tapped 2/2 black Zombie creature token', { self: w, defOf });
       }
     }
     // The defending player's watchers. Tomik, Mangara: "Whenever an opponent attacks with creatures, if two or more of those creatures are
@@ -20222,6 +23073,13 @@ const Bot = (() => {
   function blockWatch(game, s, defOf, ctx, blockers = []) {
     blockers.forEach(b => cadetsSwap(s, b, defOf, game));
     const list = [...new Set(blockers)].filter(b => b && b.zone === 'battlefield');
+    // Noxious Assault (the attacking side's, this turn): each blocker poisons its controller
+    const atk = s === game ? game.bot && game.bot.s : game;
+    if (atk && atk.noxiousTurn === atk.turn && list.length) addPoison(s, list.length);
+    // Ichorclaw Myr: blocked (read as any block this combat): +2/+2
+    if (atk && list.length) creatures(atk, x => x.attacking).forEach(x => { const ic = oracleLines(x, defOf).map(l => NEAR.ICHORCLAW.exec(l)).find(Boolean); if (ic) pumpBy(x, Number(ic[1]), Number(ic[2])); });
+    // Gorgon Recluse blocking: the best nonblack attacker it faces is destroyed
+    if (atk && list.some(b => oracleLines(b, defOf).some(l => NEAR.GORGON_RECLUSE.test(l)))) { const c = creatures(atk, x => x.attacking && !colorsOfInst(x, defOf).includes('B') && !stats(x, factsOf(x, defOf)).kw.has('indestructible')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.move(atk, c.iid, c.commander ? 'command' : 'graveyard'); }
     // Benefactor's Draught (the attacking side's): each block draws it a card
     const drSide = s === game ? game.bot && game.bot.s : game;
     if (drSide && drSide.draughtTurn === drSide.turn && list.length) G.drawCards(drSide, list.length, drSide !== game);
@@ -20309,13 +23167,63 @@ const Bot = (() => {
   const DRAW_CAP = /^each opponent can't draw more than one card each turn\.?$/i; // Narset (refreshGrants)
   const OPPS_ENTER_TAPPED = /^((?:artifacts|creatures|nonbasic lands)(?:(?:,\s*(?:and\s+)?|\s+and\s+)(?:artifacts|creatures|nonbasic lands))*) your opponents control enter tapped\.?$/i; // refreshGrants
   // Hope of Ghirapur: game.lockNoncreature (no noncreature spells until your next turn)
-  const oppMayCast = (game, defOf, zone, inst = null) => !game.bot.s.cantCast && !(game.lockNoncreature && inst && !G.isCreature(inst) && !G.isLand(inst)) && !(!game.offTurn && winnows(game, ABOLISHER, defOf)) && !(!game.offTurn && permanents(game).some(w => w.attachedTo && oracleLines(w, defOf).some(l => NEAR.FLAIL.test(l)))) && !(zone !== 'hand' && winnows(game, HAND_ONLY, defOf))
+  const oppMayCast = (game, defOf, zone, inst = null) => !game.bot.s.cantCast && !(game.lockNoncreature && inst && !G.isCreature(inst) && !G.isLand(inst)) && !(!game.offTurn && winnows(game, ABOLISHER, defOf)) && !(!game.offTurn && permanents(game).some(w => w.attachedTo && oracleLines(w, defOf).some(l => NEAR.FLAIL.test(l)))) && !(inst && [game, game.bot.s].some(t => permanents(t).some(w => w.chosenCardType && isA(inst, w.chosenCardType) && oracleLines(w, defOf).some(l => NEAR.ARCHON_BAN.test(l))))) && !(zone !== 'hand' && winnows(game, HAND_ONLY, defOf))
     && !(inst && !G.isLand(inst) && cmcOfInst(inst, defOf) <= briselaCap(game, defOf))
     && !(inst && game.lockCreatures != null && game.turn <= game.lockCreatures && (G.isCreature(inst) || isPlaneswalker(inst))); // Single Combat
   // Brisela, Voice of Nightmares (yours): "Your opponents can't cast spells with mana value 3 or less." (0: none)
   const briselaCap = (game, defOf) => Math.max(0, ...permanents(game).flatMap(c => oracleLines(c, defOf).map(l => NEAR.BRISELA.exec(l)).filter(Boolean).map(m => Number(m[1]))));
   // The 6–15-cards-left precons' deaths (NEAR): Diabolic Servitude's creature, Brisela's halves, Breathkeeper Seraph's pair.
   function nearDied(s, inst, defOf, info = {}) {
+    if (inst.cryptekTurn === s.turn && s.cards[inst.iid] && s.cards[inst.iid].zone === 'graveyard') { delete inst.cryptekTurn; G.move(s, inst.iid, 'battlefield', { put: true }); inst.tapped = true; } // Cryptek
+    // Yuna, Grand Summoner: another permanent of yours with counters died: that many +1/+1 counters on your best creature
+    const yc = Object.values(info.counters || {}).reduce((k, v) => k + Math.max(0, v || 0), 0);
+    if (yc) permanents(s).filter(w => w !== inst && oracleLines(w, defOf).some(l => /^whenever another permanent you control is put into a graveyard from the battlefield, if it had one or more counters on it, you may put that number of \+1\/\+1 counters on target creature\.?$/i.test(l))).forEach(() => { const c = creatures(s).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.counter(s, c.iid, '+1/+1', yc, { effect: true }); });
+    // Syrix: another Phoenix of yours died, so Syrix can be cast from your graveyard this turn
+    if (G.isCreature(inst) && isA(inst, 'phoenix')) s.zones.graveyard.map(iid => s.cards[iid]).filter(c => c !== inst && oracleLines(c, defOf).some(l => /^whenever another phoenix you control dies, you may cast this card from your graveyard\.?$/i.test(l))).forEach(c => { c.graveOkTurn = s.turn; });
+    // Athreos, Shroud-Veiled: a creature with a coin counter on it comes back under Athreos's controller
+    if (G.isCreature(inst) && !inst.token && ((info.counters || {}).coin || 0) > 0 && s.cards[inst.iid] && s.cards[inst.iid].zone === 'graveyard') {
+      const t = lastTables.find(x => x && x.zones && permanents(x).some(w => oracleLines(w, defOf).some(l => NEAR.ATHREOS_COIN.test(l))));
+      if (t === s) G.move(s, inst.iid, 'battlefield', { put: true });
+      else if (t) { const c = takeCard(s, inst.iid, t, 'exile', { quiet: true, defOf }); if (c) G.move(t, c.iid, 'battlefield', { put: true }); }
+    }
+    if (G.isCreature(inst) && !inst.token && s.cards[inst.iid] && s.cards[inst.iid].zone === 'graveyard' && isA(inst, 'warlock') && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.LORCAN_EXILE.test(l)))) G.move(s, inst.iid, 'exile'); // Lorcan's Warlocks
+    if (oracleLines(inst, defOf).some(l => NEAR.MAVERICK.test(l))) runEffect(s, 'proliferate', { defOf }); // Park Heights Maverick
+    if (inst.reincarnate === s.turn) { delete inst.reincarnate; const back = s.zones.graveyard.map(iid => s.cards[iid]).filter(c => G.isCreature(c)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (back) G.move(s, back.iid, 'battlefield', { put: true }); } // Reincarnation
+    if (G.isCreature(inst) && !inst.token && s.cards[inst.iid] && s.cards[inst.iid].zone === 'graveyard') {
+      const game = lastTables.find(t => t && t.bot);
+      const o = game && (s === game ? game.bot && game.bot.s : game);
+      // Ravenous Slime (the other side's): exiled instead, counters for its power
+      const slime = o && permanents(o).find(w => oracleLines(w, defOf).some(l => NEAR.RAVENOUS_SLIME.test(l)));
+      if (slime) { G.move(s, inst.iid, 'exile'); const p = Math.max(0, num(factsOf(inst, defOf).power)); if (p) G.counter(o, slime.iid, '+1/+1', p, { effect: true }); }
+      // Rayami (anyone's): exiled with a blood counter instead
+      else if ([s, o].filter(Boolean).some(t => permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.RAYAMI_EXILE.test(l))))) { G.move(s, inst.iid, 'exile'); G.counter(s, inst.iid, 'blood', 1); }
+      // Boneyard Scourge (in your graveyard): your Dragon died: back for {1}{B} if you can pay
+      for (const bs of s.zones.graveyard.map(iid => s.cards[iid]).filter(c => c !== inst)) {
+        const b = oracleLines(bs, defOf).map(l => NEAR.BONEYARD_SCOURGE.exec(l)).find(Boolean);
+        if (!b || !isA(inst, b[1]) || !game) continue;
+        const opp = s !== game;
+        if (!(opp ? affordable(s, b[2], 0) : G.autoPay(JSON.parse(JSON.stringify(s)), b[2]))) continue;
+        if (opp) onOpp(game, () => G.autoPay(s, b[2])); else G.autoPay(s, b[2]);
+        G.move(s, bs.iid, 'battlefield', { put: true });
+      }
+    }
+    if (G.isCreature(inst)) {
+      const ctxS = { defOf };
+      permanents(s).forEach(w => {
+        for (const l of oracleLines(w, defOf)) {
+          const mc = NEAR.MILLICENT.exec(l); // Millicent: a nontoken Spirit of yours died
+          if (mc && w !== inst && !inst.token && isA(inst, mc[1])) runEffect(s, mc[2], { ...ctxS, self: w });
+          const fs = NEAR.FIELD_SOULS.exec(l); // Field of Souls
+          if (fs && !inst.token) runEffect(s, fs[1], { ...ctxS, self: w });
+          const bu = NEAR.BUNREI.exec(l); // Promise of Bunrei: sacrificed for four Spirits
+          if (bu && w.zone === 'battlefield') { G.move(s, w.iid, 'graveyard'); runEffect(s, bu[1], { ...ctxS, self: w }); }
+        }
+      });
+      // Infested Thrinax: Saprolings for its power this turn
+      if (s.thrinaxTurn === s.turn && !inst.token) { const n = Math.max(0, num(factsOf(inst, defOf).power)); if (n) runEffect(s, `create ${n} 1/1 green Saproling creature tokens`, ctxS); }
+    }
+    // Smoke Blessing: 1 damage to its controller, a Treasure for the one who blessed it
+    if (inst.smokeBlessing) { const game = lastTables.find(t => t && t.bot); const by = lastTables.find(t => t && t.zones && roleOf(t) === inst.smokeBlessing); if (game) damagePlayer(game, s === game ? 'you' : 'opp', 1, 'Smoke Blessing', defOf); if (by) artifactTokens(by, { name: 'Smoke Blessing' }, 1, 'treasure'); delete inst.smokeBlessing; }
     // What was on it (Gunner Conscript's "if it was enchanted", Cass's returns)
     const on = Object.keys(info.boosts || {}).map(k => s.cards[k] || s.cards[k.replace(/^(?:you|opp):/, '')]).filter(Boolean);
     inst.diedCounters = { ...(info.counters || {}) }; // Jason Bright
@@ -20568,6 +23476,11 @@ const Bot = (() => {
   const COUNTER_ON_CREATURE = /^whenever (?:(one or more) ([\w+/-]+) counters are|an? ([\w+/-]+) counter is) put on a creature, (?:you may )?(.+)$/i;
   const MARVEL_COPY = /^whenever you put one or more counters on another creature, if it's not an? (\w+), you may put the same number and kind of counters on (.+?)\.?$/i;
   function countersPut(game, s, inst, kind, n, defOf, ctx) {
+    if (n > 0 && G.isCreature(inst)) { s.counterPutTurn = s.turn; inst.counterTurn = s.turn; } // Lord Jyscal Guado, Wakka (counters arriving on your creatures)
+    if (n > 0 && G.isCreature(inst) && permanents(s).includes(inst) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.RIKKU.test(l)))) inst.pump = { pow: 0, tou: 0, ...inst.pump, kw: [...new Set([...((inst.pump && inst.pump.kw) || []), 'unblockable'])] }; // Rikku
+    // Kros, Defense Contractor (the other side's, on its turn): tap it, goad it, trample
+    const krosSide = game && game.bot && (s === game ? game.bot.s : game);
+    if (n > 0 && krosSide && !krosSide.offTurn && G.isCreature(inst) && permanents(s).includes(inst) && permanents(krosSide).some(w => oracleLines(w, defOf).some(l => NEAR.KROS.test(l)))) { inst.tapped = true; goad(krosSide, inst); inst.untilNextKw = [...new Set([...(inst.untilNextKw || []), 'trample'])]; }
     // Danny Pink's gift: the first counters each turn on one of your creatures draw a card
     if (n > 0 && G.isCreature(inst) && inst.dannyTurn !== s.turn && permanents(s).some(w => oracleLines(w, defOf).some(l => /^creatures you control have "whenever one or more counters are put on this creature for the first time each turn, draw a card\."\.?$/i.test(l)))) { inst.dannyTurn = s.turn; G.drawCards(s, 1, !!(game && game.bot && s === game.bot.s)); }
     // Kate Stewart: time counters on a permanent of yours make a Soldier
@@ -20706,6 +23619,11 @@ const Bot = (() => {
   // Cards of table s were milled (ids): The Wise Mothman, Mirelurk Queen, Screeching Scorchbeast, Infesting Radroach, Glowing One; milledTurn (The Master, Tato Farmer, Raul).
   function milled(game, s, ids, defOf) {
     if (!game || !ids.length) return;
+    if (ids.some(iid => s.cards[iid] && G.isCreature(s.cards[iid]))) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.TAIL_WATCH.test(l))).forEach(w => fireOn(game, s, w, 'creature cards were milled', 'investigate', s === game ? { other: game.bot && game.bot.s, defOf } : null, defOf)); // Unshakable Tail
+    // Zellix (anyone's): creature cards milled make a Horror
+    if (ids.some(iid => s.cards[iid] && G.isCreature(s.cards[iid]))) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).forEach(w => { const z = oracleLines(w, defOf).map(l => NEAR.ZELLIX.exec(l)).find(Boolean); if (z) runEffect(t, z[1].replace(/black horror/i, 'black Horror'), { self: w, defOf }); }));
+    // Polluted Cistern: the other side loses 1 life for each card type among the cards milled
+    if (game.bot && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.CISTERN.test(l)))) { const n = new Set(ids.flatMap(iid => CARD_TYPE_CHOICES.filter(k => s.cards[iid] && isA(s.cards[iid], k)))).size; if (n) addLife(game, s === game ? 'opp' : 'you', -n); }
     ids.forEach(iid => { if (s.cards[iid]) s.cards[iid].milledTurn = s.turn; });
     const n = ids.filter(iid => s.cards[iid] && !G.isLand(s.cards[iid])).length;
     if (!n) return;
@@ -20726,11 +23644,56 @@ const Bot = (() => {
     }
   }
   function nearHits(game, a, d, hits, defOf, ctx) {
+    permanents(a).forEach(w => { const oL = oracleLines(w, defOf); if (oL.some(l => NEAR.RED_TERROR.test(l)) && hits.some(h => colorsOfInst(h.inst, defOf).includes('R'))) G.counter(a, w.iid, '+1/+1', 1, { effect: true }); const hr = oL.map(l => NEAR.HARRIDAN.exec(l)).find(Boolean); if (hr) hits.filter(h => h.inst === w || isA(h.inst, hr[1])).forEach(() => runEffect(a, hr[2], { self: w, defOf })); }); // The Red Terror, Tyranid Harridan
+    if (hits.some(h => isA(h.inst, 'dragon') || oracleLines(h.inst, defOf).some(l => /draw x cards and lose x life, where x is the number of your opponents who were dealt combat damage by .+? or a dragon this turn/i.test(l)))) a.estinienTurn = a.turn; // Estinien Varlineau
     if (!hits.length) return;
     const n = {};
     hits.forEach(h => typeWords(h.inst).forEach(w => { n[w] = (n[w] || 0) + 1; }));
     a.tymnaHit = a.turn; // Tymna: the opponent was dealt combat damage
     a.hitCount = { turn: a.turn, n: (a.hitCount && a.hitCount.turn === a.turn ? a.hitCount.n : 0) + hits.length }; // Excess
+    for (const h of hits) {
+      const dmg = Math.max(0, h.n != null ? h.n : stats(h.inst, factsOf(h.inst, defOf)).pow);
+      const lines = oracleLines(h.inst, defOf);
+      // Szadek: counters and a mill instead (the damage given back as life)
+      if (lines.some(l => NEAR.SZADEK.test(l))) { G.counter(a, h.inst.iid, '+1/+1', dmg, { effect: true }); G.mill(d, dmg); addLife(game, d === game ? 'you' : 'opp', dmg); }
+      // Cartographer's Hawk: back to hand, a Plains, if they control more lands
+      if (lines.some(l => NEAR.HAWK.test(l)) && permanents(d).filter(c => G.isLand(c)).length > permanents(a).filter(c => G.isLand(c)).length && h.inst.zone === 'battlefield') { G.move(a, h.inst.iid, 'hand'); runEffect(a, 'search your library for a Plains card, put it onto the battlefield tapped, then shuffle', { self: h.inst, defOf }); }
+      for (const l of lines) {
+        const cp = NEAR.COMBAT_HIT_PW.exec(l);
+        if (!cp) continue;
+        if (/^create that many treasure tokens\.?$/i.test(cp[1])) artifactTokens(a, h.inst, dmg, 'treasure'); // The Reaver Cleaver
+        else if (/^for each creature card in your graveyard, create (.+?)\.?$/i.test(cp[1])) { const k = a.zones.graveyard.filter(iid => G.isCreature(a.cards[iid])).length; if (k) runEffect(a, `create ${k} 2/2 black Zombie Knight creature tokens with menace`, { self: h.inst, defOf }); } // Bladewing
+        else if (/^you may discard any number of cards\./i.test(cp[1])) { // Neheb, Dreadhorde Champion: lands beyond the fifth and cards it can't cast soon
+          const lands = permanents(a).filter(c => G.isLand(c)).length;
+          const away = a.zones.hand.filter(iid => { const c = a.cards[iid]; return G.isLand(c) ? lands >= 5 : cmcOfInst(c, defOf) > lands + 2; });
+          away.forEach(iid => G.move(a, iid, 'graveyard'));
+          if (away.length) { G.drawCards(a, away.length, a !== game); a.mana.R = (a.mana.R || 0) + away.length; }
+        }
+      }
+    }
+    [a, d].forEach(t => permanents(t).forEach(w => { const sh = oracleLines(w, defOf).map(l => NEAR.SLIVER_HIT.exec(l)).find(Boolean); if (!sh) return; hits.filter(h => isA(h.inst, 'sliver')).forEach(() => { if (/^draw/i.test(sh[1])) G.drawCards(a, 1, a !== game); else runEffect(a, sh[1].replace(/colorless sliver/i, 'colorless Sliver'), { self: w, defOf }); }); })); // Synapse, Brood Sliver
+    hits.filter(h => oracleLines(h.inst, defOf).some(l => NEAR.MAVERICK.test(l))).forEach(() => runEffect(a, 'proliferate', { defOf, other: d })); // Park Heights Maverick
+    if (permanents(d).some(w => oracleLines(w, defOf).some(l => NEAR.NORN_DECREE_HIT.test(l)))) addPoison(a, 1); // Norn's Decree
+    hits.filter(h => h.inst.favorTurn === a.turn && (h.inst.counters || {}).shield > 0).forEach(h => { G.counter(a, h.inst.iid, 'shield', -1); G.drawCards(a, 1, a !== game); }); // Family's Favor
+    // Anowon: Rogues' damage mills that many; a creature card milled draws a card
+    permanents(a).forEach(w => { const an = oracleLines(w, defOf).map(l => NEAR.ANOWON.exec(l)).find(Boolean); if (!an) return; const dmg = hits.filter(h => isA(h.inst, an[1])).reduce((k, h) => k + Math.max(0, h.n != null ? h.n : stats(h.inst, factsOf(h.inst, defOf)).pow), 0); if (!dmg) return; G.mill(d, dmg); if ((d.lastMilled || []).some(iid => G.isCreature(d.cards[iid]))) G.drawCards(a, 1, a !== game); });
+    // Hellish Rebuke (the defending side's, this turn): each permanent that hit is sacrificed, its controller loses 2
+    if (d.rebukeKey && d.rebukeKey === turnKey(d, { other: a })) hits.forEach(h => { if (h.inst.zone === 'battlefield') { G.move(a, h.inst.iid, h.inst.commander ? 'command' : 'graveyard'); addLife(game, a === game ? 'you' : 'opp', -2); } });
+    // Awaken the Sky Tyrant (the defending side's): sacrificed for a 5/5 Dragon
+    permanents(d).forEach(w => { const st = oracleLines(w, defOf).map(l => NEAR.SKY_TYRANT.exec(l)).find(Boolean); if (st && w.zone === 'battlefield') { G.move(d, w.iid, 'graveyard'); runEffect(d, st[1].replace(/5\/5 red dragon/i, '5/5 red Dragon'), { self: w, defOf }); } });
+    // Millicent: a nontoken Spirit of yours (or Millicent) hit: a Spirit token
+    permanents(a).forEach(w => { const mc = oracleLines(w, defOf).map(l => NEAR.MILLICENT.exec(l)).find(Boolean); if (mc) hits.filter(h => h.inst === w || (!h.inst.token && isA(h.inst, mc[1]))).forEach(() => runEffect(a, mc[2], { self: w, defOf })); });
+    // Dovin, Grand Arbiter's +1: each hit this turn adds loyalty
+    if (a.dovinHits && a.dovinHits.turn === a.turn && a.cards[a.dovinHits.iid] && a.cards[a.dovinHits.iid].zone === 'battlefield') G.counter(a, a.dovinHits.iid, 'loyalty', hits.length);
+    // Derevi: each creature of yours that hit untaps one of your tapped lands
+    permanents(a).filter(w => oracleLines(w, defOf).some(l => NEAR.DEREVI.test(l))).forEach(() => hits.forEach(() => { const l = permanents(a).find(c => G.isLand(c) && c.tapped); if (l) { l.tapped = false; l.tappedFor = null; } }));
+    // Firkraag: a creature that had to attack (goaded, or made to) hit the opponent: a counter, a card
+    permanents(a).filter(w => oracleLines(w, defOf).some(l => NEAR.FIRKRAAG_HIT.test(l))).forEach(w => hits.filter(h => h.inst.goad || h.inst.mustAttackUntil >= a.turn).forEach(() => { G.counter(a, w.iid, '+1/+1', 1, { effect: true }); G.drawCards(a, 1, a !== game); }));
+    // Dissipation Field (the defending side's): each permanent that hit goes back to its owner's hand
+    if (permanents(d).some(w => oracleLines(w, defOf).some(l => NEAR.DISSIPATION.test(l)))) hits.forEach(h => { if (h.inst.zone === 'battlefield') G.move(a, h.inst.iid, h.inst.commander ? 'command' : 'hand'); });
+    // Kosei, Penitent Warlord: enchanted, equipped and with a counter: draws that many
+    hits.filter(h => oracleLines(h.inst, defOf).some(l => NEAR.KOSEI.test(l)) && Object.values(h.inst.counters || {}).some(v => v > 0) && G.attachmentsOf(a, h.inst.iid).some(id => G.isAura(a.cards[id])) && G.attachmentsOf(a, h.inst.iid).some(id => isA(a.cards[id], 'equipment')))
+      .forEach(h => G.drawCards(a, Math.max(0, h.n != null ? h.n : stats(h.inst, factsOf(h.inst, defOf)).pow), a !== game));
     // Saskia the Unyielding: the same damage again to the chosen player (the opponent)
     permanents(a).filter(w => oracleLines(w, defOf).some(l => NEAR.SASKIA.test(l))).forEach(w => hits.forEach(h => damagePlayer(game, a === game ? 'opp' : 'you', Math.max(0, h.n != null ? h.n : stats(h.inst, factsOf(h.inst, defOf)).pow), w.name, defOf)));
     // Mari, the Killing Quill: an Assassin, Mercenary or Rogue's hit takes a hit counter off one of the opponent's exiled cards: a card, two Treasures
@@ -20923,7 +23886,14 @@ const Bot = (() => {
         || /^remove an? [\w+/-]+ counter from (?:this \w+|it)$/i.test(m[1].trim()) // Pentad Prism, Crystalline Crawler
         || /^\{T\}, remove any number of [\w+/-]+ counters from (?:this \w+|it)$/i.test(m[1].trim()) // Mage-Ring Network (you say X)
         || /\btap x untapped tokens you control$/i.test(m[1].trim())
+        || /^\{T\}, sacrifice x \w+$/i.test(m[1].trim()) // Springjack Pasture (app.js asks X)
+        || /^remove (\w+) \+1\/\+1 counters from (?:ramos|this \w+|it)$/i.test(m[1].trim()) // Ramos, Dragon Engine
+        || /^add \{C\} for each card you've drawn this turn\.?$/i.test(m[2].trim()) // Kydele
         || /^pay \d+ life$/i.test(m[1].trim()) // Treasonous Ogre: "Pay 3 life: Add {R}."
+        || (/^\{\d+\}, \{T\}$/i.test(m[1].trim()) && /^add (?:\{[WUBRGC]\}){2,}\. spend this mana only to cast instant and\/or sorcery spells\.?$/i.test(m[2].trim())) // Cormela (the restriction isn't kept)
+        || (/^\{1\}, \{T\}$/i.test(m[1].trim()) && /^add two mana of different colors\. spend this mana only to cast planeswalker spells\.?$/i.test(m[2].trim())) // Interplanar Beacon
+        || (/^\{T\}$/i.test(m[1].trim()) && /^add two mana in any combination of colors\.?$/i.test(m[2].trim())) // Sage of the Maze
+        || /^\{1\}\{U\}, \{T\}, exile seven cards from your graveyard$/i.test(m[1].trim()) // Sunken Palace
         || /^\{T\}, sacrifice (?:an?|another) \w+$/i.test(m[1].trim()) // Orcish Lumberjack: "{T}, Sacrifice a Forest: Add three mana …"; Master of Dark Rites: "another creature"
         || /^exile an? \w+ you control$/i.test(m[1].trim()) // Food Chain: "Exile a creature you control: Add X mana …"
         || /^add an amount of \{[WUBRGC]\} equal to\b/i.test(m[2]) // Marwyn, the Nurturer
@@ -20950,6 +23920,8 @@ const Bot = (() => {
         else if ((c = /^sacrifice x (other )?(\w+?)s$/i.exec(part))) { ab.sacX = singular(c[2]); if (c[1]) ab.sacXOther = true; } // Chatterfang, Insatiable Frugivore (app.js asks X); Champion of Stray Souls: "X other creatures"
         else if ((c = /^tap x untapped (\w+?)s you control$/i.exec(part))) ab.tapX = c[1].toLowerCase(); // Hazel of the Rootbloom: 'token'; Aryel: 'knight'
         else if ((c = /^remove (\w+) counters from among other artifacts or creatures or planeswalkers you control$/i.exec(part))) ab.removeAmong = toNumber(c[1]); // Tekuthal (app.js takes them)
+        else if ((c = /^remove (\w+) counters from among creatures you control$/i.exec(part))) ab.removeAmong = toNumber(c[1]); // Tayam (read as Tekuthal's)
+        else if ((c = /^exile (\w+) creature cards from a single graveyard$/i.exec(part)) && toNumber(c[1])) ab.effect = `exile ${c[1]} creature cards from a single graveyard. ${ab.effect}`; // Night Soil (paid as it resolves)
         else if (/^remove x counters from an artifact or creature you control$/i.test(part)) ab.removeAnyX = true;
         else if (/^pay x \{E\}$/i.test(part)) ab.energyX = true; // Sphinx of the Revelation (app.js asks X)
         // Fain, Ghave, Hexavus, Scholar of New Horizons: "Remove a (+1/+1) counter from a creature (another creature, a permanent) you control" (app.js
@@ -20966,6 +23938,16 @@ const Bot = (() => {
         // Whirler Rogue, Cryptbreaker: "Tap two untapped artifacts you control"; Master Transmuter: "Return an artifact you control to its owner's hand"
         else if ((c = /^tap another untapped (.+?) you control$/i.exec(part))) ab.tapOthers = { n: 1, what: singular(c[1]) }; // Kumena
         else if (/^roll a d\d+$/i.test(part)) ab.rolls = true; // Clay Golem (the roll is its effect's)
+        else if (/^sacrifice an artifact, creature, or land$/i.test(part)) ab.sacOther = 'creature'; // Greater Gargadon (read as a creature)
+        else if (/^exile two creature cards from your graveyard$/i.test(part)) ab.effect = `exile two of your creature cards with this. ${ab.effect}`; // Coin of Fate (paid as it resolves)
+        else if (/^mill a card$/i.test(part)) ab.effect = `mill a card. ${ab.effect}`; // The Warring Triad
+        else if (/^exile two cards from your graveyard$/i.test(part)) ab.effect = `exile two cards from your graveyard. ${ab.effect}`; // Varina
+        else if (/^exile another nontoken artifact creature you control$/i.test(part)) ab.effect = 'curie copies an exiled artifact creature'; // Curie
+        else if (/^remove a counter from a nonland permanent you control$/i.test(part)) ab.effect = `remove a counter from your nonland permanent. ${ab.effect}`; // O'aka
+        else if (/^discard a card with mana value x$/i.test(part)) ab.effect = 'discard a match to counter the spell'; // Kozilek, the Great Distortion
+        else if (/^exile seven cards from your graveyard$/i.test(part)) ab.effect = `exile seven of your graveyard cards. ${ab.effect}`; // Sunken Palace (paid as it resolves)
+        else if (/^exile a face-down permanent you control face up$/i.test(part)) ab.effect = `exile your face-down permanent face up to play. ${ab.effect}`; // Primordial Mist (paid as it resolves)
+        else if ((c = /^return (\w+) lands you control to their owner's hand$/i.exec(part)) && toNumber(c[1])) ab.effect = `return ${c[1]} lands you control to their owner's hand. ${ab.effect}`; // Uyo (paid as it resolves)
         else if ((c = /^tap (\w+) untapped (.+?) you control$/i.exec(part)) && toNumber(c[1])) ab.tapOthers = { n: toNumber(c[1]), what: singular(c[2]) };
         // Halo Fountain: "Untap a tapped creature you control", "Untap fifteen tapped creatures you control" (app.js: you pick them)
         else if ((c = /^untap (\w+) tapped (.+?) you control$/i.exec(part)) && toNumber(c[1])) ab.untapOthers = { n: toNumber(c[1]), what: singular(c[2]) };
@@ -21084,6 +24066,14 @@ const Bot = (() => {
     const hc = inst && oracleLines(inst, lastDefOf || (() => null)).map(l => /^\{T\}, pay \w+ life: add \{\w\}\. put an? ([\w+/-]+) counter on this land\.?$/i.exec(l)).find(Boolean);
     if (hc) G.counter(s, inst.iid, hc[1].toLowerCase(), 1, { effect: true });
     if (inst && !G.isLand(inst) && /\bartifact\b/i.test(front(inst.typeLine || ''))) s.nabbed = [...(s.nabbed || []), inst.iid];
+    // Mana Reflection: a permanent tapped for mana makes twice as much (one more of what it makes)
+    if (inst && permanents(s).some(w => oracleLines(w, lastDefOf || (() => null)).some(l => NEAR.MANA_REFLECTION.test(l)))) { const k = G.producesOf(inst)[0] || neededColor(s); s.mana[k] = (s.mana[k] || 0) + permanents(s).filter(w => oracleLines(w, lastDefOf || (() => null)).some(l => NEAR.MANA_REFLECTION.test(l))).length; }
+    // Regal Behemoth: a land tapped for mana while you're the monarch makes one more
+    if (inst && G.isLand(inst) && permanents(s).some(w => oracleLines(w, lastDefOf || (() => null)).some(l => NEAR.REGAL_BEHEMOTH.test(l)))) { const game = lastTables.find(t => t && t.bot); if (game && monarchOf(game) === (s === game ? 'you' : 'opp')) { const k = neededColor(s); s.mana[k] = (s.mana[k] || 0) + 1; } }
+    // Barbflare Gremlin (anyone's, tapped): a land tapped for mana makes one more, and deals 1 damage to its controller
+    if (inst && G.isLand(inst) && lastTables.some(t => t && t.zones && permanents(t).some(w => w.tapped && oracleLines(w, lastDefOf || (() => null)).some(l => NEAR.BARBFLARE.test(l))))) { const k = (G.producesOf(inst) || [])[0]; if (k) s.mana[k] = (s.mana[k] || 0) + 1; const game = lastTables.find(t => t && t.bot); if (game) damagePlayer(game, s === game ? 'you' : 'opp', 1, inst.name, lastDefOf); }
+    // Orochi Merge-Keeper: modified, it adds {G}{G}
+    if (inst && (Object.values(inst.counters || {}).some(v => v > 0) || G.attachmentsOf(s, inst.iid).length) && oracleLines(inst, lastDefOf || (() => null)).some(l => NEAR.OROCHI.test(l))) s.mana.G = (s.mana.G || 0) + 1;
     // Zhur-Taa Druid: 1 damage to each opponent
     if (inst && oracleLines(inst, lastDefOf || (() => null)).some(l => NEAR.ZHUR.test(l))) { const game = lastTables.find(t => t && t.bot); if (game) damagePlayer(game, s === game ? 'opp' : 'you', 1, inst.name, lastDefOf); }
     // Forbidden Orchard: "Whenever you tap this land for mana, target opponent creates a 1/1 colorless Spirit creature token."
@@ -21096,6 +24086,8 @@ const Bot = (() => {
   const NOTION = /^if an opponent would draw a card except the first one they draw in each of their draw steps, instead that player skips that draw and you draw a card\.?$/i;
   let stealingDraw = false;
   function drawInstead(game, s, first, defOf) {
+    // Thought Reflection: two cards instead
+    if (!s.reflecting && s.zones.library.length && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.THOUGHT_REFLECTION.test(l)))) { s.reflecting = true; try { G.drawCards(s, 2, !!(game && game.bot && s === game.bot.s)); } finally { s.reflecting = false; } return true; }
     // River Song: draws come from the bottom of the library
     if (s.zones.library.length > 1 && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.RIVER_BOTTOM.test(l)))) { const iid = s.zones.library[s.zones.library.length - 1]; G.move(s, iid, 'hand'); return true; }
     // Shared Fate (anyone's): the top card of the other player's library, exiled face down for the drawer to play
@@ -21168,6 +24160,9 @@ const Bot = (() => {
     lastDefOf = defOf || lastDefOf; // for the few places that don't get one (oppSacrifices' watchers)
     const tables = [game, game.bot && game.bot.s].filter(Boolean);
     lastTables = tables;
+    tables.forEach(t => permanents(t).filter(c => oracleLines(c, defOf).some(l => NEAR.TRAXOS.test(l))).forEach(c => { c.skipUntap = true; })); // Traxos (its cast trigger still untaps it)
+    // Omo, Queen of Vesuva: a creature with an everything counter is every creature type
+    if (tables.some(t => permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.OMO_CREATURES.test(l))))) tables.forEach(t => creatures(t, c => ((c.counters || {}).everything || 0) > 0).forEach(c => { c.changeling = true; }));
     for (const t of tables) {
       t.plusSquirrels = permanents(t).filter(c => oracleLines(c, defOf).some(l => /^if one or more tokens would be created under your control, those tokens plus that many 1\/1 green squirrel creature tokens are created instead\.?$/i.test(l))).length;
       const swap = {};
@@ -21378,6 +24373,19 @@ const Bot = (() => {
     // Gonti, Canny Acquisitor (spells you don't own); Doc Aurlock (from your graveyard or exile); Grim Reaper's Sprint (morbid); Strong Back (every Aura of yours)
     const lines = permanents(s).flatMap(w => oracleLines(w, defOf));
     if (inst.owner) lines.forEach(l => { const g1 = NEAR.UNOWNED_DISCOUNT.exec(l); if (g1) total += Number(g1[1]); });
+    lines.forEach(l => { const cs = NEAR.CELLAR_DISCOUNT.exec(l); if (cs && [cs[1], cs[2], cs[3]].some(k => isA(inst, k))) total += Number(cs[4]); }); // Ancient Cellarspawn
+    if (s.sopranoTurn === s.turn && /\b(instant|sorcery)\b/i.test(front(inst.typeLine || ''))) total += s.sopranoN || 0; // Spellbinding Soprano
+    if (s.cultistNext && s.cultistNext.turn === s.turn) total += s.cultistNext.n; // Mutated Cultist
+    if (other && other.zones && oracleLines(inst, defOf).some(l => NEAR.SENTRY_DISCOUNT.test(l))) total += creatures(other, c => c.attacking).length; // Sentry Bot
+    if (s.spellTurn === s.turn && (s.castThisTurn || []).length === 1) lines.forEach(l => { const dc = NEAR.DUALCAST.exec(l); if (dc) total += Number(dc[1]); }); // Alisaie
+    if (inst.zone === 'graveyard') lines.forEach(l => { const gd = NEAR.GRAVE_DISCOUNT2.exec(l); if (gd) total += Number(gd[1]); }); // Emet-Selch
+    if (other && other.zones && other.zones.graveyard.length >= 7 && oracleLines(inst, defOf).some(l => NEAR.INTO_STORY.test(l))) total += 3; // Into the Story
+    if (inst.uriangerTurn === s.turn && inst.zone === 'exile') total += 2; // Urianger Augurelt
+    if (/\b(instant|sorcery)\b/i.test(front(inst.typeLine || ''))) lines.forEach(l => { if (NEAR.MAGNUS.test(l)) total += creatures(s, c => c.token).length; }); // Magnus the Red
+    if (s.offTurn) lines.forEach(l => { const nd = NEAR.NAIAD.exec(l); if (nd) total += Number(nd[1]); }); // Naiad of Hidden Coves
+    if (oracleLines(inst, defOf).some(l => /^this spell costs \{1\} less to cast if you control an artifact and \{1\} less to cast if you control an enchantment\.?$/i.test(l))) total += (permanents(s).some(c => isA(c, 'artifact')) ? 1 : 0) + (permanents(s).some(c => isA(c, 'enchantment')) ? 1 : 0); // Assassin's Ink
+    if (G.isCreature(inst) && !(s.spellTurn === s.turn && (s.castThisTurn || []).some(x => /\bcreature\b/i.test(x.typeLine || '')))) lines.forEach(l => { const sw = NEAR.SHADOW_WARP.exec(l); if (sw) total += Number(sw[1]); }); // Shadow in the Warp
+    if (oracleLines(inst, defOf).some(l => /^this spell costs \{7\} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater\.?$/i.test(l)) && creatures(s, c => stats(c, factsOf(c, defOf)).pow >= 7).length) total += 7; // Not of This World
     if (inst.zone === 'graveyard' || inst.zone === 'exile') lines.forEach(l => { const d1 = NEAR.ODD_ZONE_DISCOUNT.exec(l); if (d1) total += Number(d1[1]); });
     if (G.isAura(inst)) lines.forEach(l => { const sb = NEAR.STRONG_BACK_AURA.exec(l); if (sb) total += Number(sb[1]); });
     if (oracleLines(inst, defOf).some(l => NEAR.PRIMEVAL.test(l)) && other && other.zones) total += creatures(other).length; // Primeval Protector
@@ -21385,6 +24393,20 @@ const Bot = (() => {
     if (G.isCreature(inst)) permanents(s).forEach(w => oracleLines(w, defOf).forEach(l => { if (NEAR.ANIMAR.test(l)) total += (w.counters || {})['+1/+1'] || 0; if (NEAR.HAMZA.test(l)) total += withCounters; })); // Animar, Hamza
     if (oracleLines(inst, defOf).some(l => NEAR.HAMZA_SELF.test(l))) total += withCounters;
     if (oracleLines(inst, defOf).some(l => NEAR.OSKAR_SELF.test(l))) total += new Set(s.zones.graveyard.map(iid => cmcOfInst(s.cards[iid], defOf))).size;
+    if (/\b(instant|sorcery)\b/i.test(front(inst.typeLine || ''))) [s, other].filter(t => t && t.zones).forEach(t => permanents(t).forEach(w => oracleLines(w, defOf).forEach(l => { const am = NEAR.ARCANE_MELEE.exec(l); if (am) total += Number(am[1]); }))); // Arcane Melee (anyone's)
+    if (isA(inst, 'artifact') && !(s.spellTurn === s.turn && (s.castThisTurn || []).some(x => isA(x, 'artifact') && x.iid !== inst.iid))) permanents(s).forEach(w => oracleLines(w, defOf).forEach(l => { const ac = NEAR.ARTIFICER_FIRST.exec(l); if (ac) total += Number(ac[1]); })); // Artificer Class
+    if (/\b(instant|sorcery)\b/i.test(front(inst.typeLine || '')) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.MIZZIX_DISCOUNT.test(l)))) total += s.experience || 0; // Mizzix
+    permanents(s).filter(w => w.chosenType && isA(inst, w.chosenType) && oracleLines(w, defOf).some(l => NEAR.MOROPHON.test(l))).forEach(() => { total += WUBRG.filter(k => new RegExp(`\\{${k}\\}`).test(factsOf(inst, defOf).manaCost || '')).length; }); // Morophon (its colored pips read as generic)
+    if (oracleLines(inst, defOf).some(l => NEAR.TAZRI.test(l))) total += partyOf(s).length; // Tazri
+    if (oracleLines(inst, defOf).some(l => NEAR.VALIANT.test(l))) total += Math.min(5, new Set(creatures(s).flatMap(c => creatureTypes(c))).size); // Valiant Changeling
+    permanents(s).filter(w => (w.sealColors || []).length && oracleLines(w, defOf).some(l => NEAR.SEAL.test(l))).forEach(w => { total += w.sealColors.filter(k => colorsOfInst(inst, defOf).includes(k)).length; }); // Seal of the Guildpact
+    if (G.isCreature(inst) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.RAKDOS_DISCOUNT.test(l))) && other && other.zones) total += other.lostLife || 0; // Rakdos, Lord of Riots
+    if (s.kenrithTurn === s.turn && (/\b(instant|sorcery|planeswalker)\b/i.test(front(inst.typeLine || '')))) total += 2; // Will Kenrith's -2 (this turn)
+    const aw = oracleLines(inst, defOf).map(l => NEAR.AVATAR_WOE.exec(l)).find(Boolean); // Avatar of Woe
+    if (aw && [s, other].filter(t => t && t.zones).reduce((k, t) => k + t.zones.graveyard.filter(iid => G.isCreature(t.cards[iid])).length, 0) >= toNumber(aw[1])) total += Number(aw[2]);
+    if (G.isCreature(inst) && oracleLines(inst, defOf).some(l => /^flying\b/i.test(l))) permanents(s).forEach(w => oracleLines(w, defOf).forEach(l => { const e = NEAR.EVOS.exec(l); if (e) total += Number(e[1]); })); // Warden of Evos Isle
+    const ww = oracleLines(inst, defOf).map(l => NEAR.WINGED_WORDS.exec(l)).find(Boolean); // Winged Words
+    if (ww && creatures(s, c => stats(c, factsOf(c, defOf)).kw.has('flying')).length) total += Number(ww[1]);
     const af = oracleLines(inst, defOf).map(l => NEAR.AVATAR_FURY.exec(l)).find(Boolean);
     if (af && other && other.zones && permanents(other).filter(c => G.isLand(c)).length >= toNumber(af[1])) total += Number(af[2]);
     if (oracleLines(inst, defOf).some(l => NEAR.MEGASLOTH.test(l))) total += [s, other].filter(t => t && t.zones).reduce((k, t) => k + (t.rad || 0) + (t.poison || 0) + (t.energy || 0) + (t.experience || 0) + permanents(t).reduce((j, c) => j + Object.values(c.counters || {}).reduce((a, v) => a + Math.max(0, v), 0), 0), 0); // Lumbering Megasloth
@@ -21554,7 +24576,7 @@ const Bot = (() => {
         if (!w || w.zone !== 'battlefield' || (pandorica && !w.tapped)) { delete c.phasedOut; delete c.heldBy; delete c.heldSide; if (w && pandorica) delete w.noUntap; }
       }
       // Idris: the artifact exiled until it leaves comes back
-      for (const c of t.zones.exile.map(iid => t.cards[iid]).filter(c => c.returnWhenGone)) { const w = t.cards[c.exiledWith]; if (!w || w.zone !== 'battlefield') { delete c.returnWhenGone; delete c.exiledWith; G.move(t, c.iid, 'battlefield', { put: true }); } }
+      for (const c of t.zones.exile.map(iid => t.cards[iid]).filter(c => c.returnWhenGone)) { const w = t.cards[c.exiledWith]; if (!w || w.zone !== 'battlefield') { delete c.returnWhenGone; delete c.exiledWith; if (c.returnToHand) { delete c.returnToHand; G.move(t, c.iid, 'hand'); } else G.move(t, c.iid, 'battlefield', { put: true }); } }
       // Become the Pilot: you control the creature it enchants
       for (const a of permanents(t).filter(a => a.enchanting && a.enchanting.pid === 'bot' && oracleLines(a, defOf).some(l => NEAR.PILOT.test(l)))) {
         const o = tables.find(x => x !== t);
@@ -21571,6 +24593,25 @@ const Bot = (() => {
         if (ap) { c.armedProof = { typeLine: c.typeLine }; c.typeLine = `${c.typeLine} Equipment`; c.grantedText = `Equipped creature gets +${ap[1]}/+${ap[2]}.\nEquip {${ap[3]}}`; }
         else { c.typeLine = c.armedProof.typeLine; delete c.grantedText; delete c.armedProof; }
       }
+      // Endrek Sahr: sacrificed at seven Thrulls; Plague Boiler: at three plague counters, it wipes the board
+      permanents(t).forEach(w => {
+        const el = oracleLines(w, defOf).map(l => NEAR.ENDREK_LIMIT.exec(l)).find(Boolean);
+        if (el && creatures(t, c => isA(c, el[2])).length >= toNumber(el[1])) G.move(t, w.iid, w.commander ? 'command' : 'graveyard');
+        const pb = oracleLines(w, defOf).map(l => NEAR.PLAGUE_BOILER.exec(l)).find(Boolean);
+        if (pb && ((w.counters || {})[pb[2].toLowerCase()] || 0) >= toNumber(pb[1]) && w.zone === 'battlefield') { G.move(t, w.iid, 'graveyard'); tables.forEach(x => permanents(x).filter(c => !G.isLand(c) && !stats(c, factsOf(c, defOf)).kw.has('indestructible')).forEach(c => G.move(x, c.iid, c.commander ? 'command' : 'graveyard'))); }
+      });
+      // Infinite Reflection: your other nontoken creatures are copies of the creature it enchants
+      for (const a of permanents(t).filter(w => w.attachedTo && oracleLines(w, defOf).some(l => NEAR.REFLECTION.test(l)))) {
+        const host = t.cards[a.attachedTo];
+        if (!host || host.zone !== 'battlefield') continue;
+        creatures(t, c => c !== host && !c.token && c.id !== host.id).forEach(c => {
+          c.original = c.original || { id: c.id, name: c.name, typeLine: c.typeLine, bot: c.bot, copiedName: null };
+          c.id = host.id; c.name = host.name; c.typeLine = front(host.typeLine);
+          if (c.bot) c.bot = facts(defOf(host.id) || { typeLine: c.typeLine });
+        });
+      }
+      // Baeloth Barrityl: the opponent's creatures weaker than it are goaded
+      for (const b of permanents(t).filter(w => oracleLines(w, defOf).some(l => NEAR.BAELOTH.test(l)))) { const o = tables.find(x => x !== t); const p = stats(b, factsOf(b, defOf)).pow; if (o) creatures(o, c => stats(c, factsOf(c, defOf)).pow < p).forEach(c => goad(t, c)); }
       // Curse of the Nightly Hunt: the enchanted player's creatures attack each combat
       if (permanents(t).some(c => oracleLines(c, defOf).some(l => NEAR.NIGHTLY_HUNT.test(l)))) { const o = tables.find(x => x !== t); if (o) creatures(o).forEach(c => { c.mustAttackUntil = o.turn + (o.offTurn ? 1 : 0); }); }
     }
@@ -21851,6 +24892,13 @@ const Bot = (() => {
         // Harmonious Archon (the other side's): "Non-Archon creatures have base power and toughness 3/3."
         const archon = other && permanents(other).flatMap(w => oracleLines(w, defOf).map(l => NEAR.BASE_ALL.exec(l))).find(x => x && !isA(c, x[1]));
         if (archon) basePT = `${archon[2]}/${archon[3]}`;
+        if (tables.some(t => permanents(t).some(w => oracleLines(w, defOf).some(l => /^creatures controlled by players who chose war get/i.test(l))))) { if (s.strife === 'war') pow += 3; else if (s.strife === 'peace') tou += 3; } // Archangel of Strife
+        if ((c.counters || {}).slime > 0 && !isA(c, 'horror') && tables.some(t => permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.SLUDGE.test(l))))) basePT = '2/2'; // Sludge Monster
+        // Avatar of Slaughter (anyone's): double strike, attacks each combat; Goblin Spymaster's token: your creatures attack each combat
+        if (tables.some(t => permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.SLAUGHTER.test(l))))) { got.add('double strike'); c.mustAttackUntil = s.turn; }
+        if (permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.ALL_ATTACK.test(l)))) c.mustAttackUntil = s.turn;
+        // Gravitational Shift (anyone's): fliers +2/+0, the rest -2/-0
+        tables.forEach(t => permanents(t).forEach(w => oracleLines(w, defOf).forEach(l => { const gs = NEAR.GRAV_SHIFT.exec(l); if (gs && !!gs[1] !== oracleLines(c, defOf).some(x => /^flying\b/i.test(x))) { pow += Number(gs[2]); tou += Number(gs[3]); } })));
         for (const fx of extras) {
           const r = fx(c);
           if (!r) continue;
@@ -22311,6 +25359,7 @@ const Bot = (() => {
         effect = most[1];
       }
       m[3] = effect.replace(/^you may (?=draw )/i, ''); // Fallowsage (its "becomes tapped" read as attacking: plainLine)
+      if (/ creatures (?:you control )?with flying get |different kinds of counters among permanents you control|^if there are four or more card types among cards in your graveyard/i.test(m[3])) m[3] = settleIfYouDo(m[3], s); // Kangee, Steel-Plume Marshal, Perrie, Demolisher Spawn (runEffect)
       if (counterEach(s, inst, m[3], event)) continue;
       const t = triggerTokens(s, inst, m[3].trim(), event);
       if (t) { attacking.push(...t); continue; }
@@ -22533,6 +25582,16 @@ const Bot = (() => {
         if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine });
       }
     }
+    // Mocking Doppelganger: a copy of the opponent's best creature; the others with its name are goaded
+    if (has(NEAR.MOCKING) && other && other.zones) {
+      const pick = creatures(other).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0];
+      if (pick) {
+        inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null };
+        inst.id = pick.id; inst.name = pick.name; inst.typeLine = front(pick.typeLine);
+        if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine });
+        creatures(other, c => c.name === pick.name).forEach(c => { goad(s, c); if (c.goad) c.goad.forever = true; });
+      }
+    }
     // The Master, Formed Anew: a copy of a creature card in exile with a takeover counter
     if (has(NEAR.TAKEOVER)) {
       const pick = s.zones.exile.map(iid => s.cards[iid]).find(c => G.isCreature(c) && ((c.counters || {}).takeover || 0) > 0);
@@ -22541,6 +25600,66 @@ const Bot = (() => {
     // Crack in Time: "When this enchantment enters and at the beginning of your first main phase, …" (the main phase: nearPhase)
     const ck = has(NEAR.ENTER_MAIN);
     if (ck) { const game = lastTables.find(t => t && t.bot); if (game) fireOn(game, s, inst, 'entered', ck[1], s === game ? { other: game.bot.s, defOf, hitOpps: k => { game.oppLife -= k; }, target: (eff, part, from) => { autoTarget(game, game, from || inst, eff, defOf); } } : null, defOf); }
+    if (has(/^as this creature enters, each player chooses war or peace\.?$/i)) { s.strife = 'war'; if (other) other.strife = 'peace'; } // Archangel of Strife: you war, Opp peace
+    if (G.isCreature(inst) && !colorsOfInst(inst, defOf).length && permanents(s).some(w => w !== inst && oracleLines(w, defOf).some(l => NEAR.CURATOR.test(l)))) G.counter(s, inst.iid, '+1/+1', 2, { effect: true }); // Curator Beastie
+    if (has(NEAR.EXP_LAB)) { const c = manifestDread(s); if (c) { G.counter(s, c.iid, '+1/+1', 2, { effect: true }); G.counter(s, c.iid, 'trample', 1); } } // Experimental Lab
+    if (has(/^you may have this creature enter as a copy of any nonland permanent on the battlefield\.?$/i)) { const pick = [s, other].filter(t => t && t.zones).flatMap(t => permanents(t)).filter(c => c !== inst && !G.isLand(c)).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = front(pick.typeLine); if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine }); } } // Clever Impersonator
+    // Phantasmal Image: a copy of the best creature (an Illusion too)
+    if (has(NEAR.PHANTASMAL)) { const pick = [s, other].filter(t => t && t.zones).flatMap(t => creatures(t)).filter(c => c !== inst).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = `${front(pick.typeLine)} Illusion`; if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine }); } }
+    // Moritte of the Frost: a copy of your best other permanent, two more +1/+1 counters if a creature
+    if (has(NEAR.MORITTE)) { const pick = permanents(s).filter(c => c !== inst && !G.isLand(c)).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = `Legendary Snow ${front(pick.typeLine).replace(/\blegendary\s+/i, '')}`; if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine }); if (G.isCreature(pick)) G.counter(s, inst.iid, '+1/+1', 2, { effect: true }); } }
+    // Academy Elite: counters for the instants and sorceries in all graveyards
+    if (has(NEAR.ACADEMY_ELITE)) { const n = [s, other].filter(t => t && t.zones).reduce((k, t) => k + t.zones.graveyard.filter(iid => /\b(instant|sorcery)\b/i.test(front(t.cards[iid].typeLine || ''))).length, 0); if (n) G.counter(s, inst.iid, '+1/+1', n, { effect: true }); }
+    // Body Double: a copy of the best creature card in a graveyard
+    if (has(NEAR.BODY_DOUBLE)) { const pick = [s, other].filter(t => t && t.zones).flatMap(t => t.zones.graveyard.map(iid => t.cards[iid])).filter(c => G.isCreature(c)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = front(pick.typeLine); if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine }); } }
+    if (has(NEAR.DENRY_ENTERS)) G.counter(s, inst.iid, '+1/+1', 1, { effect: true }); // Denry Klin
+    if (has(NEAR.TOOLKIT_ENTERS)) ['+1/+1', 'flying', 'deathtouch', 'shield'].forEach(k => G.counter(s, inst.iid, k, 1)); // Agent's Toolkit
+    if (has(NEAR.RENDMAW)) rendmawBirds(s, inst, defOf); // Rendmaw
+    // Hedonist's Trove: the opponent's graveyard (and what it just exiled) is yours to play
+    if (has(NEAR.TROVE_SPELLS) && other && other.zones) { [...other.zones.graveyard, ...other.zones.exile.filter(iid => { const c = other.cards[iid]; return !c.faceDown && !c.suspended && !c.playable && !c.exiledWith && !c.foretold; })].forEach(iid => { const c = takeCard(other, iid, s, 'exile', { quiet: true, defOf }); c.playable = { forever: true }; }); }
+    // Share the Spoils: each player's top card exiled (yours playable)
+    if (has(NEAR.SHARE_SPOILS)) runEffect(s, "exile each player's top card for the spoils", { self: inst, defOf, other });
+    // Gigantoplasm: a copy of the best other creature, with "{X}: … X/X"
+    if (has(NEAR.GIGANTOPLASM)) { const pick = [s, other].filter(t => t && t.zones).flatMap(t => creatures(t)).filter(c => c !== inst).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = front(pick.typeLine); if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine }); inst.keepLines = ['{X}: This creature has base power and toughness X/X.']; } }
+    // Seal of the Guildpact: your two most common colors
+    if (has(NEAR.SEAL_CHOOSE)) { const cards = [...s.zones.library, ...s.zones.hand].map(iid => s.cards[iid]); inst.sealColors = WUBRG.map(k => ({ k, n: cards.filter(c => colorsOfInst(c, defOf).includes(k)).length })).sort((a, b) => b.n - a.n).slice(0, 2).map(x => x.k); }
+    // Estrid's Invocation: a copy of your best other enchantment
+    if (has(NEAR.INVOCATION)) { const pick = permanents(s).filter(c => c !== inst && isA(c, 'enchantment') && !G.isAura(c) && !c.token).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = front(pick.typeLine); } }
+    // Thought Sponge: counters for the most cards the opponent drew this turn
+    if (has(NEAR.SPONGE_ENTERS) && other && other.drawnThisTurn) G.counter(s, inst.iid, '+1/+1', other.drawnThisTurn, { effect: true });
+    // Vesuvan Shapeshifter: a copy of the best other creature
+    if (has(NEAR.VESUVAN)) { const pick = [s, other].filter(t => t && t.zones).flatMap(t => creatures(t)).filter(c => c !== inst).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = front(pick.typeLine); if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine }); } }
+    if (has(NEAR.DRACH_NYEN)) inst.drachPending = true; // Drach'Nyen (staticExtra reads the creature exiled as it entered)
+    if (has(NEAR.SWARMLORD)) { const n = 2 * Object.values(s.cards).filter(c => c.commander).reduce((k, c) => k + (c.castCount || 0), 0); if (n) G.counter(s, inst.iid, '+1/+1', n, { effect: true }); } // The Swarmlord
+    if (has(NEAR.BIO_TITAN) && inst.kickCount) { let left = inst.kickCount; creatures(s, c => c !== inst).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)).forEach(c => { const k = Math.min(left, (c.counters || {})['+1/+1'] || 0); if (k) { G.counter(s, c.iid, '+1/+1', -k); left -= k; } }); } // Hierophant Bio-Titan
+    if (has(NEAR.HRAESVELGR)) { const c = creatures(s).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) { pumpBy(c, 1, 0); c.pump.kw = [...new Set([...(c.pump.kw || []), 'unblockable'])]; } } // Hraesvelgr
+    if (has(NEAR.JOB_SELECT)) { const hero = G.createToken(s, { custom: true, name: 'Hero', typeLine: 'Token Creature — Hero', pt: '1/1', text: '' }, { quiet: true }); if (hero) { hero.tokenColors = []; G.attach(s, inst.iid, hero.iid, attachBonus(oracleText(inst, defOf))); } } // Job select
+    const ge = inst.enteredFrom === 'graveyard' && has(NEAR.GRAVE_ENTRY);
+    if (ge) runEffect(s, ge[1], { self: inst, defOf, other }); // Canoptek Tomb Sentinel, Triarch Praetorian
+    if (has(NEAR.SAUTEKH)) { const n = [s, other].filter(t => t && t.zones).reduce((k, t) => k + (t.myDeathsTurn === t.turn ? t.myDeaths || 0 : 0), 0); if (n) G.counter(s, inst.iid, '+1/+1', n, { effect: true }); } // Sautekh Immortal
+    if (has(NEAR.SIN_ENTERS)) { let n = 0; const bad = ['-1/-1', 'stun', 'time']; [s, other].filter(t => t && t.zones).forEach(t => permanents(t).filter(c => c !== inst && ['artifact', 'creature', 'enchantment'].some(k => isA(c, k))).forEach(c => { const take = t === s ? Object.keys(c.counters || {}).filter(k => bad.includes(k)) : Object.keys(c.counters || {}); take.forEach(k => { n += Math.max(0, c.counters[k] || 0); delete c.counters[k]; }); })); if (n) G.counter(s, inst.iid, '+1/+1', 2 * n, { effect: true }); } // Sin, Unending Cataclysm
+    if (inst.squadCount && has(NEAR.SQUAD_DISCARD)) for (let i = 0; i < inst.squadCount; i++) { const w = worstInHand(s); if (w) G.move(s, w, 'graveyard'); } // Thrill-Kill Disciple
+    if (has(NEAR.JOURNAL)) { const n = Math.max(...[s, other].filter(t => t && t.zones).map(t => creatures(t).length)); if (n > 0) G.counter(s, inst.iid, 'suspect', n, { effect: true }); } // Investigator's Journal
+    if (inst.kicked && has(NEAR.MYRIAD_KICK) && other && other.zones) { const n = permanents(other).filter(c => G.isLand(c) && !/\bbasic\b/i.test(c.typeLine || '')).length; if (n) G.counter(s, inst.iid, '+1/+1', n, { effect: true }); } // Myriad Construct
+    const bl = has(NEAR.BEACON_LOYALTY);
+    if (bl) G.counter(s, inst.iid, 'loyalty', toNumber(bl[1]) || 0, { effect: true }); // Gatewatch Beacon
+    if (has(NEAR.SAKASHIMA)) { const pick = [s, other].filter(t => t && t.zones).flatMap(t => creatures(t)).filter(c => c !== inst).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.typeLine = `Legendary ${front(pick.typeLine).replace(/^legendary /i, '')}`; if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine }); } } // Sakashima the Impostor
+    // Copy Land, Vesuva: a copy of the land making the most colors
+    if (has(NEAR.COPY_LAND)) { const pick = [s, other].filter(t => t && t.zones).flatMap(t => permanents(t)).filter(c => c !== inst && G.isLand(c) && !c.token).sort((a, b) => (G.producesOf(b).length - G.producesOf(a).length) || (/\bbasic\b/i.test(a.typeLine || '') - /\bbasic\b/i.test(b.typeLine || '')))[0]; if (pick) { const ench = isA(inst, 'enchantment'); inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = front(pick.typeLine); inst.produces = G.producesOf(pick); if (ench) inst.extraTypes = [...(inst.extraTypes || []), 'enchantment']; if (!ench) inst.tapped = true; } }
+    // Mirrormade: a copy of the best other artifact or enchantment on either battlefield
+    if (has(NEAR.MIRRORMADE)) { const pick = [s, other].filter(t => t && t.zones).flatMap(t => permanents(t)).filter(c => c !== inst && (isA(c, 'artifact') || isA(c, 'enchantment')) && !G.isAura(c)).sort((a, b) => cmcOfInst(b, defOf) - cmcOfInst(a, defOf))[0]; if (pick) { inst.original = { id: inst.id, name: inst.name, typeLine: inst.typeLine, bot: inst.bot, copiedName: null }; inst.id = pick.id; inst.name = pick.name; inst.typeLine = front(pick.typeLine); if (inst.bot) inst.bot = facts(defOf(pick.id) || { typeLine: inst.typeLine }); } }
+    // Skyclave Shade: "If this creature was kicked, it enters with two +1/+1 counters on it."
+    const kc = inst.kicked && has(NEAR.KICK_COUNTERS);
+    if (kc) G.counter(s, inst.iid, '+1/+1', toNumber(kc[1]) || 0, { effect: true });
+    // Spiked Corridor: "When you unlock this door, …" (as the Room enters)
+    const cor = has(NEAR.CORRIDOR);
+    if (cor) runEffect(s, cor[1].replace(/\.$/, ''), { self: inst, defOf });
+    // Archon of Valor's Reach: the opponent's most common noncreature spell type (in its hand and library)
+    if (has(NEAR.ARCHON_CHOOSE) && other && other.zones) { const cards = [...other.zones.hand, ...other.zones.library].map(iid => other.cards[iid]); inst.chosenCardType = ['instant', 'sorcery', 'artifact', 'enchantment', 'planeswalker'].map(k => ({ k, n: cards.filter(c => isA(c, k) && !G.isCreature(c)).length })).sort((a, b) => b.n - a.n)[0].k; }
+    // Derevi: entering, untap your best tapped land
+    if (has(NEAR.DEREVI)) { const l = permanents(s).find(c => G.isLand(c) && c.tapped); if (l) { l.tapped = false; l.tappedFor = null; } }
+    // Ixidron: every other nontoken creature turned face down
+    if (has(NEAR.IXIDRON)) [s, other].filter(t => t && t.zones).forEach(t => creatures(t, c => c !== inst && !c.token).forEach(c => { c.faceDown = true; c.manifested = true; }));
     // False Floor (anyone's): creatures enter tapped
     if (G.isCreature(inst) && lastTables.some(t => t && t.zones && permanents(t).some(w => oracleLines(w, defOf).some(l => NEAR.ENTER_TAPPED_ALL.test(l))))) inst.tapped = true;
     // Bess, Soul Nourisher: another base 1/1 creature of yours entered
@@ -22573,6 +25692,8 @@ const Bot = (() => {
   }
   function enterTrigger(s, inst, defOf) {
     if (!inst || inst.faceDown) return;
+    // Akim, the Soaring Wind: the first token each turn makes a Bird
+    if (inst.token && s.akimTurn !== s.turn) permanents(s).forEach(w => { const ak = oracleLines(w, defOf).map(l => NEAR.AKIM.exec(l)).find(Boolean); if (ak && s.akimTurn !== s.turn) { s.akimTurn = s.turn; runEffect(s, ak[1], { self: w, defOf }); } });
     const other = lastTables.find(t => t && t !== s && t.zones);
     // Callidus Assassin (a copy, tapped): "When this creature enters, destroy up to one other target creature with the same name as this creature."
     if (inst.original && /destroy up to one other target creature with the same name as this creature/i.test(String((defOf(inst.original.id) || {}).oracle || ''))) {
@@ -23195,6 +26316,11 @@ const Bot = (() => {
   const BRUSHRAZER = /^during your turn, as long as you've sacrificed a nontoken permanent this turn, you may play cards exiled with this creature\.?$/i;
   function sacrificed(game, t, inst, defOf, ctx = null) {
     if (!game || !inst) return;
+    // Legate Lanius (the other side's): a +1/+1 counter for each creature sacrificed
+    if (G.isCreature(inst)) [game, game.bot && game.bot.s].filter(w => w && w !== t).forEach(w => permanents(w).filter(c => oracleLines(c, defOf).some(l => NEAR.LANIUS.test(l))).forEach(c => G.counter(w, c.iid, '+1/+1', 1, { effect: true })));
+    // It That Betrays (the other side's): a nontoken permanent sacrificed comes over
+    const betrayer = !inst.token && [game, game.bot && game.bot.s].filter(w => w && w !== t).find(w => permanents(w).some(c => oracleLines(c, defOf).some(l => NEAR.IT_BETRAYS.test(l))));
+    if (betrayer && t.cards[inst.iid] === inst && inst.zone === 'graveyard') { const c = takeCard(t, inst.iid, betrayer, 'exile', { quiet: true, defOf }); if (c) { G.move(betrayer, c.iid, 'battlefield', { put: true }); G.log(betrayer, `It That Betrays: took ${c.name}.`); } }
     for (const w of [game, game.bot && game.bot.s].filter(Boolean)) {
       for (const c of permanents(w)) {
         for (const line of oracleLines(c, defOf)) {
@@ -23525,8 +26651,62 @@ const Bot = (() => {
   }
   function cardMoved(game, s, inst, from, to, defOf, ctx) {
     if (!inst || from === to || inst.faceDown) return;
+    if (from === 'graveyard' && s && G.isCreature(inst)) s.creatureLeftGraveTurn = s.turn; // Syrix
+    if (from === 'battlefield' && s && !G.isLand(inst)) s.nonlandLeftTurn = s.turn; // Chorale of the Void
+    if (from === 'battlefield' && s && inst.zenosOf && game && game.bot) { const o = s === game ? game.bot.s : game; const z = o.cards[inst.zenosOf]; delete inst.zenosOf; if (z && z.zone === 'battlefield' && !z.flipped) transformNow(o, z, defOf); } // Zenos yae Galvus
+    if (from === 'battlefield' && s && game && game.bot) { const o = s === game ? game.bot.s : game; permanents(s).filter(c => c.heresyBy === inst.iid && c.owner).forEach(c => { delete c.heresyBy; gainControl(s, c.iid, o, defOf); }); } // The Horus Heresy
+    if (from === 'battlefield' && s && inst.luciusOf && game && game.bot) { const o = s === game ? game.bot.s : game; const l = o.cards[inst.luciusOf]; delete inst.luciusOf; if (l && l.zone === 'exile') G.move(o, l.iid, 'battlefield', { put: true }); } // Lucius the Eternal
+    if (from === 'graveyard' && s && game && isA(inst, 'artifact')) permanents(s).forEach(w => { const im = oracleLines(w, defOf).map(l => NEAR.IMOTEKH.exec(l)).find(Boolean); if (im) runEffect(s, im[1], { self: w, defOf }); }); // Imotekh
+    if (from === 'battlefield' && (to === 'graveyard' || to === 'exile') && s && game && isA(inst, 'artifact')) {
+      [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).forEach(w => { const ma = oracleLines(w, defOf).map(l => NEAR.MATTER_ABSORPTION.exec(l)).find(Boolean); if (ma && w !== inst) G.counter(t, w.iid, '+1/+1', toNumber(ma[1]) || 0, { effect: true }); })); // Shard of the Void Dragon
+      if (!inst.token) [...permanents(s), inst].forEach(w => { const ps = oracleLines(w, defOf).map(l => NEAR.PSYCHOMANCER.exec(l)).find(Boolean); if (ps && (w === inst || permanents(s).includes(w))) { addLife(game, s === game ? 'opp' : 'you', -Number(ps[1])); addLife(game, s === game ? 'you' : 'opp', Number(ps[1])); } }); // Psychomancer
+    }
+    if (to === 'graveyard' && s && ['hand', 'library', 'battlefield'].includes(from) && !inst.token && isDesert(inst, s, defOf) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.DESERT_WARFARE.test(l)))) inst.desertBack = true; // Desert Warfare (a Desert leaving the battlefield read as sacrificed)
+    if (from === 'battlefield' && s && inst.uginCard && s.cards[inst.uginCard] && s.cards[inst.uginCard].zone === 'exile') { s.cards[inst.uginCard].faceDown = false; G.move(s, inst.uginCard, 'hand'); delete inst.uginCard; } // Ugin, the Ineffable
     if (to === 'graveyard' && s && PERM_TYPES.some(k => isA(inst, k)) && !inst.token) s.descendTurn = s.turn; // descend (Enterprising Scallywag)
     if (to === 'graveyard' && s && !inst.token) s.graveCount = { turn: s.turn, n: (s.graveCount && s.graveCount.turn === s.turn ? s.graveCount.n : 0) + 1 }; // Fraying Sanity
+    if (to === 'graveyard' && game && game.bot) { const o = s === game ? game.bot.s : game; o.zones.exile.map(iid => o.cards[iid]).filter(c => c.suspended && ((c.counters || {}).time || 0) > 0 && oracleLines(Object.assign({}, c, { faceDown: false }), defOf).some(l => NEAR.NIHILITH.test(l))).forEach(c => { G.counter(o, c.iid, 'time', -1); if (!c.counters.time) timeTravelCast(o, c, { defOf }); }); } // Nihilith
+    if (to === 'graveyard' && game && G.isLand(inst)) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.GROVEDANCER.test(l))).forEach(() => addLife(game, s === game ? 'you' : 'opp', 1)); // Skola Grovedancer
+    if (to === 'graveyard' && game && G.isCreature(inst) && s.sefrisTurn !== s.turn && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.SEFRIS.test(l)))) { s.sefrisTurn = s.turn; venture(s, { defOf }); } // Sefris
+    if (from === 'exile' && to === 'battlefield' && game && G.isLand(inst)) permanents(s).forEach(w => { const fd = oracleLines(w, defOf).map(l => NEAR.FALDORN.exec(l)).find(Boolean); if (fd) runEffect(s, fd[1].replace(/2\/2 green wolf/i, '2/2 green Wolf'), { self: w, defOf }); }); // Faldorn
+    // Flayer of the Hatebound: a creature entering from your graveyard deals its power to the opponent's best creature it kills, else the opponent
+    if (from === 'graveyard' && to === 'battlefield' && game && G.isCreature(inst) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.FLAYER.test(l)))) { const o = s === game ? game.bot && game.bot.s : game; const n = Math.max(0, num(factsOf(inst, defOf).power)); const c = o && creatures(o, x => stats(x, factsOf(x, defOf)).tou - (x.damageTaken || 0) <= n).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (n && c) applyTarget(game, o, c, { action: 'damage', n, what: 'creature' }, inst.name, defOf, s); else if (n) damagePlayer(game, s === game ? 'opp' : 'you', n, inst.name, defOf); }
+    // Lorcan (the other side's): a creature card into this side's graveyard: bought for its mana value in life, as a Warlock; Lazav: a copy of it
+    if (to === 'graveyard' && game && game.bot && G.isCreature(inst) && !inst.token) {
+      const o = s === game ? game.bot.s : game;
+      const mv = cmcOfInst(inst, defOf);
+      const lorcan = permanents(o).find(w => oracleLines(w, defOf).some(l => NEAR.LORCAN.test(l)));
+      if (lorcan && lifeOf(game, o === game ? 'you' : 'opp') > mv + 10 && s.cards[inst.iid] && s.cards[inst.iid].zone === 'graveyard') { addLife(game, o === game ? 'you' : 'opp', -mv); const mine = takeCard(s, inst.iid, o, 'graveyard', { quiet: true, defOf }); G.move(o, mine.iid, 'battlefield', { put: true }); mine.extraTypes = [...(mine.extraTypes || []), 'warlock']; }
+      const lazav = permanents(o).find(w => oracleLines(w, defOf).some(l => NEAR.LAZAV.test(l)));
+      if (lazav && num(factsOf(inst, defOf).power) > stats(lazav, factsOf(lazav, defOf)).pow) { const keep = oracleLines(lazav, defOf).filter(l => NEAR.LAZAV.test(l)); lazav.original = lazav.original || { id: lazav.id, name: lazav.name, typeLine: lazav.typeLine, bot: lazav.bot, copiedName: null }; lazav.id = inst.id; lazav.typeLine = `Legendary ${front(inst.typeLine).replace(/\blegendary\s+/i, '')}`; lazav.keepLines = keep; lazav.extraKw = [...new Set([...(lazav.extraKw || []), 'hexproof'])]; if (lazav.bot) lazav.bot = facts(defOf(inst.id) || { typeLine: lazav.typeLine }); }
+    }
+    // Izzet Chemister: an instant or sorcery exiled from your graveyard is one it exiled
+    if (from === 'graveyard' && to === 'exile' && game && /\b(instant|sorcery)\b/i.test(front(inst.typeLine || '')) && !inst.exiledWith) { const ch = permanents(s).find(w => oracleLines(w, defOf).some(l => /^\{\d+\}\{R\}, \{T\}, sacrifice this creature: cast any number of cards exiled with this creature without paying their mana costs\.?$/i.test(l))); if (ch) inst.exiledWith = ch.iid; }
+    // Myth Unbound: your commander into the command zone: draw
+    if (to === 'command' && inst.commander && game) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.MYTH_DRAW.test(l))).forEach(() => G.drawCards(s, 1, !!game.bot && s === game.bot.s));
+    // Disa the Restless: a Lhurgoyf permanent card into your graveyard from anywhere but the battlefield: onto the battlefield
+    if (to === 'graveyard' && from !== 'battlefield' && game) { const dz = permanents(s).map(w => oracleLines(w, defOf).map(l => NEAR.DISA.exec(l)).find(Boolean)).find(Boolean); if (dz && isA(inst, dz[1]) && (G.isLand(inst) || PERM_TYPES.some(k => isA(inst, k)))) G.move(s, inst.iid, 'battlefield', { put: true }); }
+    // Coram: on your turn, your cards milled this turn can be cast from the graveyard
+    if (from === 'library' && to === 'graveyard' && game && !s.offTurn && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.CORAM_PLAY.test(l)))) inst.graveOkTurn = s.turn;
+    if (from === 'graveyard' && game) { s.graveLeftTurn = s.turn; if (G.isCreature(inst)) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.CYAN.test(l))).forEach(w => G.counter(s, w.iid, '+1/+1', 1, { effect: true })); } // Gau, Cyan
+    // Ranar, Hero of Bretagard: a card exiled from your hand, or a permanent exiled from the battlefield on your turn
+    if (to === 'exile' && game && (from === 'hand' || from === 'battlefield')) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => { if (from === 'hand' ? t !== s : t.offTurn) return; permanents(t).forEach(w => { const ew = oracleLines(w, defOf).map(l => NEAR.EXILE_WATCH.exec(l)).find(Boolean); if (ew) runEffect(t, ew[1].replace(/^put that many \+1\/\+1 counters on this creature$/i, 'put a +1/+1 counter on this creature'), { self: w, defOf }); }); });
+    // Phyrexian Ingester: the creature exiled as it enters (this turn, none imprinted yet)
+    if (from === 'battlefield' && to === 'exile' && game && G.isCreature(inst) && !inst.token) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).filter(w => w.enteredTurn === t.turn && !w.ingested && oracleLines(w, defOf).some(l => NEAR.INGESTER.test(l))).slice(0, 1).forEach(w => { w.ingested = true; inst.exiledWith = w.iid; }));
+    // Soulherder (anyone's): a creature exiled from the battlefield
+    if (from === 'battlefield' && to === 'exile' && game && G.isCreature(inst)) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).filter(w => w !== inst && oracleLines(w, defOf).some(l => NEAR.SOULHERDER.test(l))).forEach(w => G.counter(t, w.iid, '+1/+1', 1, { effect: true })));
+    // Cosmic Intervention: your permanent going to the graveyard this turn is exiled, back at the end step
+    if (from === 'battlefield' && to === 'graveyard' && game && s.cosmicTurn === s.turn && !inst.token) { G.move(s, inst.iid, 'exile'); atNextEnd(game, s, { fromExile: inst.iid, why: 'Cosmic Intervention' }); }
+    // What went to a graveyard from the battlefield this turn (Gerrard's Hourglass Pendant, Moira)
+    if (from === 'battlefield' && to === 'graveyard') inst.diedTurn = s.turn;
+    // Patron of the Nezumi (the other side's): a permanent into this side's graveyard: 1 life
+    if (from === 'battlefield' && to === 'graveyard' && game && game.bot) { const o = s === game ? game.bot.s : game; if (permanents(o).some(w => oracleLines(w, defOf).some(l => NEAR.PATRON.test(l)))) addLife(game, s === game ? 'you' : 'opp', -1); }
+    // Theater of Horrors: cards exiled from your library on your turn can be played (read as any time)
+    if (from === 'library' && to === 'exile' && !s.offTurn && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.THEATER.test(l)))) inst.playable = { forever: true };
+    // Bell Borca (anyone's): note the mana value of each card put into exile
+    if (to === 'exile' && game) [game, game.bot && game.bot.s].filter(Boolean).forEach(t => permanents(t).filter(w => oracleLines(w, defOf).some(l => NEAR.BELL_NOTE.test(l))).forEach(w => { const k = cmcOfInst(inst, defOf); w.bellNote = { turn: t.turn, max: Math.max(k, w.bellNote && w.bellNote.turn === t.turn ? w.bellNote.max : 0) }; }));
+    // Yuma, Proud Protector: a Desert card put into your graveyard from anywhere
+    if (to === 'graveyard' && game && isDesert(inst, s, defOf)) permanents(s).forEach(w => { const y = oracleLines(w, defOf).map(l => NEAR.YUMA_DESERT.exec(l)).find(Boolean); if (y) runEffect(s, y[1], { self: w, defOf, other: s === game ? game.bot && game.bot.s : game }); });
     // Endless Sands: your creature exiled from the battlefield is one it exiled (its "{2}, {T}: Exile target creature you control")
     if (from === 'battlefield' && to === 'exile' && G.isCreature(inst) && !inst.exiledWith) { const sands = permanents(s).find(w => oracleLines(w, defOf).some(l => /^return each creature card exiled with this land to the battlefield under its owner's control\.?$/i.test(l.split(': ').pop()))); if (sands && sands.tapped) inst.exiledWith = sands.iid; }
     // Sally Sparrow: another creature of yours left the battlefield: investigate (once a turn)
@@ -23745,6 +26925,20 @@ const Bot = (() => {
   const UNBOUND_COPY = /^whenever you cast an instant or sorcery spell or activate an ability, if that spell's mana cost or that ability's activation cost contains \{x\}, copy that spell or ability\.(?: you may choose new targets for the copy\.?)?$/i;
   function spellCast(game, s, spell, defOf, ctx) {
     if (game && game.bot) norinWary(game, defOf, spell);
+    if (/\b(instant|sorcery)\b/i.test(front(spell.typeLine || ''))) s.anheloTurn = s.turn; // Anhelo: only the first one has casualty
+    delete s.cultistNext; // Mutated Cultist: only the next spell
+    if (spell.castFrom === 'graveyard' && (isA(spell, 'artifact') || isA(spell, 'human')) && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.GANNON.test(l)))) s.gannonTurn = s.turn; // Arcade Gannon
+    // Kozilek's Return (in your graveyard): an Eldrazi creature spell with mana value 7 or more
+    if (G.isCreature(spell) && isA(spell, 'eldrazi')) s.zones.graveyard.map(iid => s.cards[iid]).forEach(c => { const kr = oracleLines(c, defOf).map(l => NEAR.KOZ_RETURN.exec(l)).find(Boolean); if (!kr || cmcOfInst(spell, defOf) < Number(kr[1])) return; G.move(s, c.iid, 'exile'); runEffect(s, `this card deals ${kr[2]} damage to each creature`, { self: c, defOf, other: game && game.bot ? (s === game ? game.bot.s : game) : null }); });
+    // Titans' Vanguard: "When you cast this spell …"
+    const tv = oracleLines(spell, defOf).map(l => NEAR.TITANS_VANGUARD.exec(l)).find(Boolean);
+    if (tv) runEffect(s, tv[1], { self: spell, defOf });
+    // Ancient Cellarspawn: a spell cast for less than its mana value (free, or discounted) costs the opponent the difference
+    if (game && game.bot && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.CELLARSPAWN.test(l)))) {
+      const mv = cmcOfInst(spell, defOf);
+      const diff = Math.min(mv, spell.freeCast ? mv : selfDiscount(s, spell, defOf));
+      permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.CELLARSPAWN.test(l))).forEach(w => { if (diff > 0) { addLife(game, s === game ? 'opp' : 'you', -diff); G.log(s, `${w.name}: ${spell.name} cost ${diff} less than its mana value.`); } });
+    }
     delete s.affinityNext; // Saheeli, the Gifted: only the next spell
     // Kasla, Saint Traft and Rem Karolus, Joyful Stormsculptor: "Whenever you cast (another) spell that has convoke, …" (Wand of the Worldsoul's counts; then it's used up)
     if (hasConvoke(s, spell, defOf)) {
@@ -23756,6 +26950,25 @@ const Bot = (() => {
     delete s.nextConvoke;
     if (spell.faceDown) delete s.faceDownNext; // Panoptic Projektor's discount used
     if (s.nukaUntil != null && s.turn <= s.nukaUntil) giveRad(s, 2); // Nuka-Nuke Launcher
+    // Trouble in Pairs, Sewer Nemesis (the other side's)
+    const sideO = otherTable(s);
+    if (sideO) for (const w of permanents(sideO)) for (const l of oracleLines(w, defOf)) {
+      if (NEAR.TROUBLE.test(l) && s.spellTurn === s.turn && (s.castThisTurn || []).length === 2) G.drawCards(sideO, 1, !!sideO.bot === false && sideO !== lastTables.find(t => t && t.bot));
+      if (NEAR.SEWER_CAST.test(l)) G.mill(s, 1);
+    }
+    if (sideO) for (const k of sideO.zones.exile.map(iid => sideO.cards[iid]).filter(c => c.suspended && ((c.counters || {}).time || 0) > 0 && oracleLines(Object.assign({}, c, { faceDown: false }), defOf).some(l => NEAR.KRAKEN.test(l)))) { G.counter(sideO, k.iid, 'time', -1); if (!k.counters.time) timeTravelCast(sideO, k, { defOf }); } // Deep-Sea Kraken
+    // The Lord of Pain (anyone's): a player's first spell each turn: its mana value in damage to the other player
+    if (s.spellTurn === s.turn && (s.castThisTurn || []).length === 1) { const game = lastTables.find(t => t && t.bot); const n = cmcOfInst(spell, defOf); if (game && n) [s, sideO].filter(Boolean).forEach(t => permanents(t).filter(w => oracleLines(w, defOf).some(l => NEAR.LORD_OF_PAIN.test(l))).forEach(w => damagePlayer(game, s === game ? 'opp' : 'you', n, w.name, defOf))); }
+    // Skyfire Phoenix: casting your commander brings it back from your graveyard
+    if (spell.commander) s.zones.graveyard.map(iid => s.cards[iid]).filter(c => oracleLines(c, defOf).some(l => NEAR.SKYFIRE.test(l))).forEach(c => G.move(s, c.iid, 'battlefield', { put: true }));
+    // Donal, Herald of Wings: a nonlegendary creature spell with flying is copied as a 1/1 Spirit (once a turn)
+    if (G.isCreature(spell) && !/\blegendary\b/i.test(spell.typeLine || '') && oracleLines(spell, defOf).some(l => /^flying\b/i.test(l)) && s.donalTurn !== s.turn) permanents(s).forEach(w => { const dn = oracleLines(w, defOf).map(l => NEAR.DONAL.exec(l)).find(Boolean); if (!dn || s.donalTurn === s.turn) return; s.donalTurn = s.turn; const tok = G.createToken(s, { id: spell.id, name: spell.name, typeLine: spell.typeLine }, { quiet: true }); if (tok) tok.becomes = { pt: '1/1', types: [dn[1].toLowerCase()], kw: [], forever: true }; });
+    // Bygone Bishop: a cheap creature spell investigates
+    if (G.isCreature(spell)) permanents(s).forEach(w => { const bb = oracleLines(w, defOf).map(l => NEAR.BISHOP.exec(l)).find(Boolean); if (bb && cmcOfInst(spell, defOf) <= Number(bb[1])) runEffect(s, bb[2], { self: w, defOf }); });
+    // Shanid, Sleepers' Scourge: a legendary spell: draw, lose 1 life
+    if (/\blegendary\b/i.test(spell.typeLine || '')) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.SHANID.test(l))).forEach(() => { const game = lastTables.find(t => t && t.bot); G.drawCards(s, 1, !!game && s !== game); if (game) addLife(game, s === game ? 'you' : 'opp', -1); });
+    // Kami of Celebration: a spell cast from exile puts a +1/+1 counter on your best creature
+    if (spell.castFrom === 'exile') permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.KAMI_EXILE.test(l))).forEach(() => { const c = creatures(s).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) G.counter(s, c.iid, '+1/+1', 1, { effect: true }); });
     // Ride the Avalanche: the next spell this turn puts counters equal to its mana value on your best creature
     if (s.avalancheTurn === s.turn && !/^ride the avalanche$/i.test(spell.name || '')) { delete s.avalancheTurn; const c = creatures(s).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; const n = cmcOfInst(spell, defOf); if (c && n) G.counter(s, c.iid, '+1/+1', n, { effect: true }); }
     // River Song's Diary (anyone's): an instant or sorcery cast from a hand is exiled with it as it resolves
@@ -23773,6 +26986,20 @@ const Bot = (() => {
     }
     // TARDIS: the next spell this turn has cascade (any kind)
     if (s.cascadeNext && s.cascadeNext.turn === s.turn && s.cascadeNext.any) { delete s.cascadeNext; cascade(game, s, spell, defOf, ctx); }
+    if (!G.isCreature(spell) && !G.isLand(spell)) {
+      creatures(s, c => permanents(s).some(e => e.attachedTo === c.iid && oracleLines(e, defOf).some(l => /whenever you cast a noncreature spell and whenever you draw your third card each turn/i.test(l)))).forEach(c => G.counter(s, c.iid, '+1/+1', 1, { effect: true })); // Astrologian's Planisphere
+      if (permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.HRAESVELGR.test(l)))) { const c = creatures(s).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (c) { pumpBy(c, 1, 0); c.pump.kw = [...new Set([...(c.pump.kw || []), 'unblockable'])]; } } // Hraesvelgr
+      if (s.mogTurn === s.turn) { const tok = permanents(s).filter(c => c.token && !isA(c, 'saga')).sort((a, b) => worthOf(b, defOf) - worthOf(a, defOf))[0]; if (tok) G.copyAsToken(s, tok.iid); } // Good King Mog XII
+    }
+    if (spell.castFrom === 'exile') permanents(s).forEach(w => { const uw = oracleLines(w, defOf).map(l => NEAR.URIANGER_WATCH.exec(l)).find(Boolean); if (uw && game) addLife(game, s === game ? 'you' : 'opp', Number(uw[1])); }); // Urianger Augurelt
+    if (!s.offTurn && spell.castFrom === 'hand' && game && game.bot) { const o = s === game ? game.bot.s : game; if (cmcOfInst(spell, defOf) <= (o.lostLife || 0) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.ABADDON.test(l)))) cascade(game, s, spell, defOf, ctx); } // Abaddon the Despoiler
+    if (G.isCreature(spell) && s.cascadeNext && s.cascadeNext.turn === s.turn && s.cascadeNext.creature) { s.cascadeNext.creature = false; cascade(game, s, spell, defOf, ctx); } // Sloppity Bilepiper
+    if (!G.isCreature(spell) && s.cascadeNext && s.cascadeNext.turn === s.turn && s.cascadeNext.noncreature) { s.cascadeNext.noncreature = false; cascade(game, s, spell, defOf, ctx); } // Dark Apostle
+    if (spell.castFrom === 'graveyard' && oracleLines(spell, defOf).some(l => NEAR.HELBRUTE.test(l))) { const x = s.zones.graveyard.map(iid => s.cards[iid]).filter(c => c !== spell && G.isCreature(c)).sort((a, b) => cmcOfInst(a, defOf) - cmcOfInst(b, defOf))[0]; if (x) G.move(s, x.iid, 'exile'); } // Helbrute
+    if (spell.castFrom && spell.castFrom !== 'hand') permanents(s).forEach(w => { const ld = oracleLines(w, defOf).map(l => NEAR.LOST_DAMNED.exec(l)).find(Boolean); if (ld) runEffect(s, ld[1], { self: w, defOf }); }); // The Lost and the Damned
+    if (spell.ruinousLoss && game && game.bot) { delete spell.ruinousLoss; addLife(game, s === game ? 'opp' : 'you', -cmcOfInst(spell, defOf)); } // The Ruinous Powers
+    // Zhulodok: a colorless spell with mana value 7 or more from your hand cascades twice
+    if (spell.castFrom === 'hand' && !colorsOfInst(spell, defOf).length && !G.isLand(spell)) permanents(s).forEach(w => { const z = oracleLines(w, defOf).map(l => NEAR.ZHULODOK.exec(l)).find(Boolean); if (z && cmcOfInst(spell, defOf) >= Number(z[1])) { cascade(game, s, spell, defOf, ctx); cascade(game, s, spell, defOf, ctx); } });
     if (spell.castFrom === 'graveyard' && spell.milledTurn === s.turn) s.raulTurn = s.turn; // Raul's once a turn
     if (spell.castFrom === 'graveyard' && isHistoric(spell) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.EIGHTH_DOCTOR.test(l)))) { s.eighthTurn = s.turn; spell.exileIfDies = true; } // The Eighth Doctor
     // Don Andres: "Whenever you cast a noncreature spell you don't own, …"
@@ -23808,6 +27035,26 @@ const Bot = (() => {
     const aims = (spellText(spell, defOf).match(/\btarget\b/gi) || []).length; // Voracious Bibliophile: one for each "target"
     if (aims) permanents(s).filter(w => oracleLines(w, defOf).some(l => BIBLIOPHILE.test(l))).forEach(w => { G.drawCards(s, aims, isOpps(game, s)); G.log(s, `${w.name}: drew ${aims}.`); });
     // Galvanic Iteration: "When you next cast an instant or sorcery spell this turn, copy that spell." (spellResolve does it twice)
+    if (s.willEmblem && /\b(instant|sorcery)\b/i.test(front(spell.typeLine || '')) && s.copyNextTurn !== s.turn) { s.copyNextTurn = s.turn; s.copyNextN = 1; } // Will Kenrith's emblem
+    if (spell.castFrom === 'graveyard' && /\b(instant|sorcery)\b/i.test(front(spell.typeLine || '')) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.KESS.test(l)))) { s.kessTurn = s.turn; spell.castAftermath = true; } // Kess
+    if (spell.castFrom === 'graveyard' && isA(spell, 'artifact') && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.EDGAR.test(l)))) { s.edgarTurn = s.turn; spell.tapped = true; } // Edgar
+    if (spell.castFrom === 'graveyard') {
+      if (/\b(instant|sorcery)\b/i.test(front(spell.typeLine || '')) && s.sevinneTurn !== s.turn && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.SEVINNE_COPY.test(l)))) { s.sevinneTurn = s.turn; s.copyNextTurn = s.turn; s.copyNextN = 1; } // Sevinne
+      permanents(s).forEach(w => { const gw = oracleLines(w, defOf).map(l => NEAR.GRAVE_CAST_WATCH.exec(l)).find(Boolean); if (!gw) return; if (/deals 2 damage to any target/i.test(gw[1])) { const game = lastTables.find(t => t && t.bot); if (game) damagePlayer(game, s === game ? 'opp' : 'you', 2, w.name, defOf); } else runEffect(s, gw[1].replace(/white spirit/i, 'white Spirit'), { self: w, defOf }); }); // Thalia's Geistcaller, Secrets of the Dead, Burning Vengeance
+    }
+    // Rod of Absorption (anyone's): instants and sorceries are exiled with it as they resolve
+    if (/\b(instant|sorcery)\b/i.test(front(spell.typeLine || ''))) { const rod = lastTables.filter(t => t && t.zones).flatMap(t => permanents(t)).find(w => oracleLines(w, defOf).some(l => NEAR.ROD_ABSORB.test(l))); if (rod) { spell.castAftermath = true; spell.exiledWith = rod.iid; } }
+    if (s.yidrisTurn === s.turn && spell.castFrom === 'hand') s.cascadeNext = { turn: s.turn, any: true }; // Yidris
+    if (spell.castFrom === 'exile') permanents(s).forEach(w => { const fd = oracleLines(w, defOf).map(l => NEAR.FALDORN.exec(l)).find(Boolean); if (fd) runEffect(s, fd[1].replace(/2\/2 green wolf/i, '2/2 green Wolf'), { self: w, defOf }); }); // Faldorn
+    if (oracleLines(spell, defOf).some(l => /^cascade\b/i.test(l))) s.zones.graveyard.map(iid => s.cards[iid]).filter(c => oracleLines(c, defOf).some(l => NEAR.AURORA.test(l))).forEach(c => G.move(s, c.iid, 'hand')); // Aurora Phoenix
+    if (spell.castFrom === 'exile' && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.NALFESHNEE.test(l)))) { if (/\b(instant|sorcery)\b/i.test(front(spell.typeLine || ''))) { s.copyNextTurn = s.turn; s.copyNextN = 1; } else { const tok = G.createToken(s, { id: spell.id, name: spell.name, typeLine: spell.typeLine }, { quiet: true }); const game = lastTables.find(t => t && t.bot); if (tok) { tok.pump = { pow: 0, tou: 0, ...tok.pump, kw: [...new Set([...((tok.pump && tok.pump.kw) || []), 'haste'])] }; if (game) atNextEnd(game, s, { sacrifice: tok.iid }); } } } // Nalfeshnee
+    // Kalamax: the first instant each turn, while it's tapped, is copied; copying an instant grows it
+    if (isA(spell, 'instant') && !(s.castThisTurn || []).some(x => x !== spell && isA(x, 'instant') && s.spellTurn === s.turn)) permanents(s).filter(w => w.tapped && oracleLines(w, defOf).some(l => /^whenever you cast your first instant spell each turn, if (?:kalamax|this creature) is tapped, copy that spell/i.test(l))).forEach(() => { s.copyNextTurn = s.turn; s.copyNextN = 1; });
+    if (isA(spell, 'instant') && s.copyNextTurn === s.turn) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.KALAMAX_COPY.test(l))).forEach(w => G.counter(s, w.iid, '+1/+1', 1, { effect: true }));
+    if (CARD_TYPE_CHOICES.filter(k => isA(spell, k)).length >= 2) permanents(s).filter(w => oracleLines(w, defOf).some(l => NEAR.RENDMAW.test(l))).forEach(w => rendmawBirds(s, w, defOf)); // Rendmaw
+    if (spell.castFrom === 'library' && /\b(instant|sorcery)\b/i.test(front(spell.typeLine || '')) && s.copyNextTurn !== s.turn && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.MELEK_COPY.test(l)))) { s.copyNextTurn = s.turn; s.copyNextN = 1; } // Melek
+    if (/\b(instant|sorcery)\b/i.test(front(spell.typeLine || '')) && cmcOfInst(spell, defOf) > (s.experience || 0) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.MIZZIX_EXP.test(l)))) s.experience = (s.experience || 0) + 1; // Mizzix
+    if (spell.castFrom === 'exile' && s.wildMagicTurn !== s.turn && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.WILD_MAGIC.test(l)))) { s.wildMagicTurn = s.turn; s.cascadeNext = { turn: s.turn, any: true }; } // Wild-Magic Sorcerer
     if (s.copyNextTurn === s.turn && /\b(instant|sorcery)\b/i.test(front(spell.typeLine || '')) && !oracleLines(spell, defOf).some(l => /^when you next cast an instant or sorcery spell this turn\b/i.test(l))) {
       delete s.copyNextTurn;
       spell.extraCopies = (spell.extraCopies || 0) + (s.copyNextN || 1);
@@ -23850,7 +27097,7 @@ const Bot = (() => {
       const generic = Number((/\{(\d+)\}/.exec(cost) || [0, 0])[1]);
       const n = Math.max(0, generic - G.discount(s, spell, oracleOf(defOf)));
       const pile = s.zones.graveyard.filter(iid => iid !== spell.iid).sort((a, b) => (G.isLand(s.cards[b]) - G.isLand(s.cards[a])) || cmcOfInst(s.cards[a], defOf) - cmcOfInst(s.cards[b], defOf)).slice(0, n);
-      pile.forEach(iid => G.move(s, iid, 'exile'));
+      pile.forEach(iid => { G.move(s, iid, 'exile'); s.cards[iid].exiledWith = spell.iid; }); // (Ethereal Forager)
       if (pile.length) G.log(s, `${spell.name} (delve): exiled ${pile.length} card${pile.length === 1 ? '' : 's'} from the graveyard.`);
     }
     // Extort (Blind Obedience): "Whenever you cast a spell, you may pay {W/B}. If you do, each opponent loses 1 life and you gain 1 life."
@@ -24014,7 +27261,7 @@ const Bot = (() => {
   // Overload: "Destroy target artifact you don't control." reads "Destroy all artifacts you don't control."
   const overloaded = (spell, text) => (spell && spell.overloaded ? text.replace(/\btarget (\w+)( you don't control| an opponent controls)?\b/gi, (all, w, who) => `all ${w.endsWith('s') ? w : `${w}s`}${who ? ' your opponents control' : ''}`) : text);
   // Consumed by Greed: "Gift a card" (asked as you cast it, see costChoices); Blasphemous Act's discount (selfDiscount).
-  const CAST_ONLY = /^(?:rebound|convoke|delve|dredge \d+|demonstrate|gravestorm|devoid|fuse|whenever .+|(?:multi)?kicker\s*(?:\{[^}]+\})+|buyback\s*(?:\{[^}]+\})+|(?:flashback|harmonize|overload)\s*[—-]?\s*\{.*|escalate\s*[—-].*|when you cast this spell\b.*|if you control a commander, you may cast this spell without paying its mana cost|cast this spell only before combat or during combat before blockers are declared|gift an? \w+|plot\s*(?:\{[^}]+\})+|awaken \d+\s*[—-]\s*(?:\{[^}]+\})+|jump-start|cast this spell only during the declare blockers step on an opponent's turn|this spell costs (?:\{[^}]+\})+ more to cast for each target beyond the first|this spell costs \{x\} less to cast, where x is the total (?:power|toughness|mana value) of .+|this spell costs \{\d+\} less to cast (?:for each .+|if (?:a player attacked you during their last turn|a creature is attacking you|you gained life this turn|a player's life total is less than or equal to half their starting life total|it targets a creature that was dealt damage this turn|you control an? \w+|there are \w+ or more nonland permanents on the battlefield))|undaunted|you may cast this spell as though it had flash if you pay \{\d+\} more to cast it|cast this spell only before attackers are declared|cast this spell only if you control two or more \w+?s|if you control an? \w+, you may pay \d+ life rather than pay this spell's mana cost|if you control an? \w+, rather than pay this spell's mana cost, you may have an opponent gain \d+ life|escape\s*[—-]\s*(?:\{[^}]+\})+, exile \w+ other cards from your graveyard)\.?$/i;
+  const CAST_ONLY = /^(?:rebound|convoke|delve|dredge \d+|demonstrate|gravestorm|devoid|fuse|whenever .+|(?:multi)?kicker\s*(?:\{[^}]+\})+|buyback\s*(?:\{[^}]+\})+|(?:flashback|harmonize|overload)\s*[—-]?\s*\{.*|escalate\s*[—-].*|when you cast this spell\b.*|if you control a commander, you may cast this spell without paying its mana cost|cast this spell only before combat or during combat before blockers are declared|gift an? \w+|plot\s*(?:\{[^}]+\})+|awaken \d+\s*[—-]\s*(?:\{[^}]+\})+|jump-start|cast this spell only during the declare blockers step on an opponent's turn|this spell costs (?:\{[^}]+\})+ more to cast for each target beyond the first|this spell costs \{x\} less to cast, where x is the total (?:power|toughness|mana value) of .+|this spell costs \{\d+\} less to cast (?:for each .+|if (?:a player attacked you during their last turn|a creature is attacking you|you gained life this turn|a player's life total is less than or equal to half their starting life total|it targets a creature that was dealt damage this turn|you control an? \w+|there are \w+ or more nonland permanents on the battlefield))|undaunted|you may cast this spell as though it had flash if you pay \{\d+\} more to cast it|cast this spell only before attackers are declared|cast this spell only if you control two or more \w+?s|if you control an? \w+, you may pay \d+ life rather than pay this spell's mana cost|if you control an? \w+, rather than pay this spell's mana cost, you may have an opponent gain \d+ life|this spell costs \{\d+\} less to cast if you control a creature with flying|cast this spell only during combat(?: on an opponent's turn)?|if this spell was kicked, it has split second|spectacle (?:\{[^}]+\})+|replicate\s*[—-]\s*tap an untapped \w+ you control|this spell costs \{2\} less to cast if it targets a dinosaur you control|this spell costs \{2\} less to cast if it targets an attacking creature|this spell costs \{1\} less to cast if you control an artifact and \{1\} less to cast if you control an enchantment|this spell costs \{3\} less to cast if an opponent has seven or more cards in their graveyard|this spell costs \{7\} less to cast if it targets a spell or ability that targets a creature you control with power 7 or greater|as an additional cost to cast this spell, reveal a dinosaur card from your hand or pay \{1\}|prowl (?:\{[^}]+\})+|if an opponent had two or more creatures enter the battlefield under their control this turn, you may pay \{u\} rather than pay this spell's mana cost|this spell costs \{\d+\} less to cast if it targets a legendary creature|escape\s*[—-]\s*(?:\{[^}]+\})+, exile \w+ other cards from your graveyard)\.?$/i;
   const hasX = (inst, defOf) => /\{X\}/i.test(String(factsOf(inst, defOf).manaCost || factsOf(inst, defOf).cost || ''));
   const fillX = (text, inst, defOf) => (inst && inst.xValue != null && hasX(inst, defOf) ? String(text).replace(/\bX\b/g, String(inst.xValue)) : text);
 
@@ -24077,7 +27324,7 @@ const Bot = (() => {
   // n, the life gained or lost, filled in: "that much life", "that many". Field-Tested Frying Pan: "this creature gets +X/+X until end of
   // turn, where X is the amount of life you gained"; Well of Lost Dreams: "you may pay {X}, where X is less than or equal to the amount of
   // life you gained. If you do, draw X cards."
-  const gainFill = (text, n) => text.replace(/\bthat much life\b/gi, `${n} life`).replace(/\bthat many\b/gi, String(n))
+  const gainFill = (text, n) => text.replace(/put a \+1\/\+1 counter on target creature for each 1 life you gained/i, `put ${n} +1/+1 counters on target creature`).replace(/\bthat much life\b/gi, `${n} life`).replace(/\bthat many\b/gi, String(n))
     .replace(/\+x\/\+x until end of turn, where x is the amount of life you gained\b/i, `+${n}/+${n} until end of turn`)
     .replace(/^pay \{x\}, where x is less than or equal to the amount of life you gained\. if you do, draw x cards\.?$/i, `pay up to {${n}} to draw that many cards`);
   const LOSS_WATCH = /^whenever an opponent loses life( during your turn)?, (?:you may )?(.+)$/i;
@@ -24086,7 +27333,8 @@ const Bot = (() => {
     const tables = [{ t: game, key: 'life', was: before.you }];
     if (game.bot && before.opp != null) tables.push({ t: game.bot.s, key: 'oppLife', was: before.opp });
     const rules = tables.map(x => tableRules(x.t, defOf)).concat(friends.map(r => ({ noGain: r.noGain || {} })));
-    // Teferi's Protection: "your life total can't change" until your next turn.
+    // Teferi's Protection: "your life total can't change" until your next turn. Platinum Emperion: always.
+    tables.forEach(x => { if (game[x.key] !== x.was && permanents(x.t).some(w => oracleLines(w, defOf).some(l => NEAR.PLATINUM.test(l)))) { G.log(x.t, `Platinum Emperion: the life total stays ${x.was}.`); game[x.key] = x.was; } });
     tables.forEach(x => {
       if (x.t.untilNextTurn && x.t.untilNextTurn.lifeLock && game[x.key] !== x.was) {
         G.log(x.t, `${x.t === game ? 'Your' : "Opp's"} life total can't change, so it stays ${x.was}.`);
@@ -24104,11 +27352,22 @@ const Bot = (() => {
         }
       });
       tables.forEach((x, i) => {
+        // Plague Drone (the other side's): life gained is lost instead
+        const pg = game[x.key] - x.was;
+        if (pg > 0 && tables.length > 1 && permanents(tables[1 - i].t).some(w => oracleLines(w, defOf).some(l => NEAR.PLAGUE_DRONE.test(l)))) { game[x.key] = x.was - pg; G.log(x.t, `Plague Drone: ${pg} life lost instead.`); }
+        // Emet-Selch (the other side's): this side lost life, so an instant or sorcery in its graveyard can be cast (once a turn)
+        if (game[x.key] < x.was && tables.length > 1) { const o = tables[1 - i].t; if (o.emetTurn !== o.turn && permanents(o).some(w => oracleLines(w, defOf).some(l => NEAR.EMET_SELCH.test(l)))) { const c = o.zones.graveyard.map(iid => o.cards[iid]).filter(y => /\b(instant|sorcery)\b/i.test(front(y.typeLine || ''))).sort((p1, p2) => cmcOfInst(p2, defOf) - cmcOfInst(p1, defOf))[0]; if (c) { o.emetTurn = o.turn; c.graveOkTurn = o.turn; c.castAftermath = true; } } }
+      });
+      tables.forEach((x, i) => {
         // Bloodletter of Aclazotz (the other side's, on its turn): "If an opponent would lose life during your turn, they lose twice that much life instead."
         if (game[x.key] < x.was && tables.length > 1 && !tables[1 - i].t.offTurn) {
           const twice = permanents(tables[1 - i].t).filter(w => oracleLines(w, defOf).some(l => VAMP.BLOODLETTER.test(l))).length;
           if (twice) { const more = (x.was - game[x.key]) * (2 ** twice - 1); game[x.key] -= more; G.log(x.t, `${more} more life lost (they lose twice that much).`); }
         }
+        // Valgavoth (the other side's): this side lost life for the first time on its own turn
+        if (game[x.key] < x.was && tables.length > 1 && !x.t.offTurn && x.t.valgaTurn !== x.t.turn) { const o = tables[1 - i].t; const vs = permanents(o).filter(w => oracleLines(w, defOf).some(l => NEAR.VALGAVOTH.test(l))); if (vs.length) { x.t.valgaTurn = x.t.turn; vs.forEach(w => { G.counter(o, w.iid, '+1/+1', 1, { effect: true }); G.drawCards(o, 1, o !== game); }); } }
+        // Vizkopa Guildmage: this side gained life this turn: the other side loses that much
+        if (game[x.key] > x.was && tables.length > 1 && x.t.vizkopaTurn === x.t.turn) game[tables[1 - i].key] -= game[x.key] - x.was;
         // Wedding Ring (the other side's): this side, holding a Wedding Ring, gained life on its turn: they gain that much
         if (game[x.key] > x.was && tables.length > 1 && !x.t.offTurn) { const o = tables[1 - i]; for (const w of permanents(o.t)) { const wr = oracleLines(w, defOf).map(l => NEAR.WEDDING_LIFE.exec(l)).find(Boolean); if (wr && permanents(x.t).some(c => c.name === wr[1]) && w.ringTurn !== x.t.turn) { w.ringTurn = x.t.turn; game[o.key] += game[x.key] - x.was; } } }
         // Punishing Fire (the other side's graveyard): back to hand for {R} when this side gains life
@@ -24466,6 +27725,7 @@ const Bot = (() => {
     if (NO_ENCHANTED_ATTACK.test(l)) return permanents(game).some(a => a.enchanting && a.enchanting.iid === inst.iid);
     if (B29.NO_FLIER_ATTACK.test(l)) return stats(inst, factsOf(inst, defOf)).kw.has('flying'); // Sandwurm Convergence
     if (NEAR.SPHERE.test(l)) return permanents(game).some(c => isA(c, 'enchantment')); // Sphere of Safety
+    if (NEAR.NORN_ANNEX.test(l)) return true; // Norn's Annex (Opp never pays)
     const rb = NEAR.RAGER_BAR.exec(l);
     if (rb) return inst.name.toLowerCase() === rb[1].toLowerCase(); // Rite of the Raging Storm
     return NO_COUNTERED_ATTACK.test(l) && Object.values(inst.counters || {}).some(v => v > 0);
@@ -24823,6 +28083,8 @@ const Bot = (() => {
     const cost = card.manaCost || '';
     const out = [{ key: 'normal', label: `Cast it (${cost || 'free'})`, cost }];
     // As Foretold: {0} for a spell with mana value up to its time counters (its once a turn isn't kept)
+    if (inst.zone === 'exile' && G.isCreature(inst) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.TLINCALLI.test(l)))) out.push({ key: 'tlincalli', label: 'Cast it for {0} (Tlincalli Hunter)', cost: '' });
+    if (!G.isLand(inst) && permanents(s).some(w => oracleLines(w, defOf).some(l => NEAR.FIST_OF_SUNS.test(l)))) out.push({ key: 'fistOfSuns', label: 'Cast it for {W}{U}{B}{R}{G} (Fist of Suns)', cost: '{W}{U}{B}{R}{G}' });
     const af = permanents(s).find(w => oracleLines(w, defOf).some(l => NEAR.AS_FORETOLD.test(l)));
     if (af && !G.isLand(inst) && cmcOfInst(inst, defOf) <= ((af.counters || {}).time || 0)) out.push({ key: 'asForetold', label: `Cast it for {0} (As Foretold)`, cost: '' });
     // Ashling, the Limitless: "Elemental permanent spells you cast from your hand gain evoke {4} as you cast them."
@@ -24835,6 +28097,8 @@ const Bot = (() => {
     const prowl = prowled && (inst.zone === 'hand' || inst.zone === 'command') && permanents(s).map(c => oracleLines(c, defOf).map(l => /^(\w+) spells you cast have prowl ((?:\{[^}]+\})+)\.?$/i.exec(l)).find(Boolean))
       .find(m => m && isA(inst, singular(m[1])) && prowled.some(w => inst.changeling || typeWords(inst).includes(w)));
     if (prowl) out.push({ key: 'prowl', label: `Prowl (${prowl[2]})`, cost: prowl[2] });
+    const ownProwl = !prowl && prowled && inst.zone === 'hand' && oracleLines(inst, defOf).map(l => /^prowl ((?:\{[^}]+\})+)$/i.exec(l)).find(Boolean); // Latchkey Faerie, Enigma Thief
+    if (ownProwl && prowled.some(w => inst.changeling || typeWords(inst).includes(w))) out.push({ key: 'prowl', label: `Prowl (${ownProwl[1]})`, cost: ownProwl[1] });
     const zinnia = G.isCreature(inst) && !oracleLines(inst, defOf).some(l => /^offspring\b/i.test(l)) && permanents(s).map(c => oracleLines(c, defOf).map(l => /^creature spells you cast gain offspring ((?:\{[^}]+\})+) as you cast them\.?$/i.exec(l)).find(Boolean)).find(Boolean);
     if (zinnia) out.push({ key: 'offspring', label: `With offspring (${cost}${zinnia[1]}): also a 1/1 token copy (Zinnia)`, cost: cost + zinnia[1] });
     const nissa = !/\b(instant|sorcery)\b/i.test(front(inst.typeLine || '')) && permanents(s).map(c => oracleLines(c, defOf).map(l => NISSA.exec(l)).find(Boolean)).find(Boolean);
@@ -24845,6 +28109,23 @@ const Bot = (() => {
     // Demon of Fate's Design: once each of your turns, an enchantment spell for life equal to its mana value (app.js pays it: s.lifeCastTurn)
     const lifeCast = s.lifeCastTurn !== s.turn && permanents(s).map(c => oracleLines(c, defOf).map(l => B29.LIFE_CAST.exec(l)).find(Boolean)).find(m => m && isA(inst, m[1]));
     if (lifeCast && !s.offTurn) out.push({ key: 'life', label: `For ${cmcOfInst(inst, defOf)} life instead (once a turn)`, cost: '', life: cmcOfInst(inst, defOf) });
+    // Eye of Duskmantle: a card surveiled into your graveyard this turn, for life equal to its mana value
+    if (inst.zone === 'graveyard' && inst.surveiledTurn === s.turn && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.DUSKMANTLE.test(l)))) out.push({ key: 'life', label: `For ${cmcOfInst(inst, defOf)} life instead (Eye of Duskmantle)`, cost: '', life: cmcOfInst(inst, defOf) });
+    // Access Maze: once each of your turns, a spell from your hand for life equal to its mana value
+    if (!out.some(o => o.key === 'life') && s.lifeCastTurn !== s.turn && !s.offTurn && inst.zone === 'hand' && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.ACCESS_MAZE.test(l)))) out.push({ key: 'life', label: `For ${cmcOfInst(inst, defOf)} life instead (once a turn)`, cost: '', life: cmcOfInst(inst, defOf) });
+    if (oracleLines(inst, defOf).some(l => NEAR.BIO_TITAN.test(l))) { const have = creatures(s).reduce((k, c) => k + ((c.counters || {})['+1/+1'] || 0), 0); const generic = Number((/\{(\d+)\}/.exec(cost) || [0, 0])[1]); for (const k of [2, 3, 4, 5].filter(n => n <= have)) out.push({ key: 'bioTitan', label: `Remove ${k} +1/+1 counters for {${2 * k}} less`, cost: `${Math.max(0, generic - 2 * k) ? `{${Math.max(0, generic - 2 * k)}}` : ''}${cost.replace(/\{\d+\}/, '')}`, kicks: k }); } // Hierophant Bio-Titan (nearEnters removes them)
+    const sqd = oracleLines(inst, defOf).map(l => NEAR.SQUAD_DISCARD.exec(l)).find(Boolean); // Thrill-Kill Disciple: {1} and a discard for each copy
+    if (sqd) [1, 2, 3].filter(n => n < s.zones.hand.length).forEach(n => out.push({ key: 'squad', label: `With squad ×${n} (${cost}${`{${sqd[1]}}`.repeat(n)}, discarding ${n}): ${n} token cop${n === 1 ? 'y' : 'ies'}`, cost: cost + `{${sqd[1]}}`.repeat(n), kicks: n }));
+    // Darksteel Monolith: once each turn, a colorless spell from your hand for {0} (app.js: monolithTurn)
+    if (s.monolithTurn !== s.turn && inst.zone === 'hand' && !G.isLand(inst) && !colorsOfInst(inst, defOf).length && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.MONOLITH.test(l)))) out.push({ key: 'monolith', label: 'For {0} (Darksteel Monolith, once a turn)', cost: '' });
+    // One with the Multiverse: once each of your turns, a spell from your hand or the top of your library for free (app.js: multiverseTurn)
+    if (s.multiverseTurn !== s.turn && !s.offTurn && !G.isLand(inst) && (inst.zone === 'hand' || (inst.zone === 'library' && s.zones.library[0] === inst.iid)) && permanents(s).some(c => oracleLines(c, defOf).some(l => NEAR.MULTIVERSE_FREE.test(l)))) out.push({ key: 'multiverse', label: 'For free (One with the Multiverse, once a turn)', cost: '' });
+    // Casualty N (Flawless Forgery), Anhelo's first instant or sorcery each turn: sacrifice a creature with power N or more as it's cast for a copy
+    // (app.js sacrifices it: sacIid; the copy is replicate's)
+    const casualty = oracleLines(inst, defOf).map(l => /^casualty (\d+)$/i.exec(l)).find(Boolean)
+      || (/\b(instant|sorcery)\b/i.test(front(inst.typeLine || '')) && s.anheloTurn !== s.turn && permanents(s).map(c => oracleLines(c, defOf).map(l => NEAR.ANHELO.exec(l)).find(Boolean)).find(Boolean));
+    if (casualty) creatures(s, c => !c.commander && stats(c, factsOf(c, defOf)).pow >= Number(casualty[1])).sort((a, b) => worthOf(a, defOf) - worthOf(b, defOf)).slice(0, 3)
+      .forEach(c => out.push({ key: 'replicate1', label: `Casualty ${casualty[1]}: sacrifice ${c.name} for a copy`, cost, kicks: 1, sacIid: c.iid }));
     // Henzie: creature spells with mana value 4 or greater have blitz for their mana cost, {1} less for each time you've cast your commander
     const henzie = inst.zone === 'hand' && G.isCreature(inst) && !oracleLines(inst, defOf).some(l => /^blitz\b/i.test(l))
       && permanents(s).map(c => oracleLines(c, defOf).map(l => B29.HENZIE.exec(l)).find(Boolean)).find(m => m && cmcOfInst(inst, defOf) >= Number(m[1]));
@@ -24991,6 +28272,18 @@ const Bot = (() => {
   const TOP_TYPE = /^you may cast (\w+) spells( of the chosen type)? from the top of your library\.?$/i;
   function topCastable(s, inst, defOf) {
     if (!inst || inst.zone !== 'library' || s.zones.library[0] !== inst.iid || G.isLand(inst)) return null;
+    const materia = G.isCreature(inst) && permanents(s).find(w => w.attachedTo && oracleLines(w, defOf).some(l => NEAR.SUMMONING_MATERIA.test(l))); // Summoning Materia
+    if (materia) return materia;
+    const forge = (isA(inst, 'artifact') || !colorsOfInst(inst, defOf).length) && permanents(s).find(w => oracleLines(w, defOf).some(l => NEAR.MYSTIC_FORGE.test(l))); // Mystic Forge
+    if (forge) return forge;
+    const multi = permanents(s).find(w => oracleLines(w, defOf).some(l => NEAR.MULTIVERSE_TOP.test(l))); // One with the Multiverse
+    if (multi) return multi;
+    const elsha = !G.isCreature(inst) && permanents(s).find(w => oracleLines(w, defOf).some(l => NEAR.ELSHA.test(l))); // Elsha
+    if (elsha) return elsha;
+    const nalia = PARTY.some(k => isA(inst, k)) && permanents(s).find(w => oracleLines(w, defOf).some(l => NEAR.NALIA_TOP.test(l))); // Nalia de'Arnise
+    if (nalia) return nalia;
+    const melek = /\b(instant|sorcery)\b/i.test(front(inst.typeLine || '')) && permanents(s).find(w => oracleLines(w, defOf).some(l => NEAR.MELEK_TOP.test(l))); // Melek
+    if (melek) return melek;
     const galea = (G.isAura(inst) || isA(inst, 'equipment')) && permanents(s).find(w => oracleLines(w, defOf).some(l => NEAR.GALEA.test(l))); // Galea
     if (galea) return galea;
     const fourth = isHistoric(inst) && s.fourthTurn !== s.turn && permanents(s).find(w => oracleLines(w, defOf).some(l => NEAR.FOURTH_DOCTOR.test(l))); // The Fourth Doctor
@@ -25324,6 +28617,8 @@ const Bot = (() => {
   }
   // "Whenever Kilo becomes tapped, …" (station, and your abilities' tap costs: app.js). Attacking reads it as an attack (plainLine).
   function tappedWatch(game, s, inst, defOf, ctx) {
+    const watcher = game && game.bot ? (s === game ? game.bot.s : game) : null;
+    if (watcher && G.isCreature(inst) && !inst.attacking) permanents(watcher).forEach(w => { const tf = oracleLines(w, defOf).map(l => NEAR.TAPPED_FOE.exec(l)).find(Boolean); if (tf) runFor(game, watcher, w, tf[1], `${inst.name} became tapped`, watcher === game ? ctx : null, defOf); });
     for (const line of oracleLines(inst, defOf)) {
       const m = /^whenever (.+?) becomes tapped, (?:you may )?(.+)$/i.exec(line);
       if (m && isSelf(m[1], inst)) runFor(game, s, inst, m[2], 'became tapped', s === game ? ctx : null, defOf);
@@ -25539,9 +28834,9 @@ const Bot = (() => {
   const BLOCKED_PUMP = /^whenever an? (.+?) you control becomes blocked, it gets ([+-]\d+)\/([+-]\d+) until end of turn\.?$/i;
   function afflictOf(s, inst, defOf) {
     let k = 0;
-    for (const l of oracleLines(inst, defOf)) { const m = /^afflict (\d+)$/i.exec(l); if (m) k += Number(m[1]); const cp = NEAR.CYBER_AFFLICT.exec(l); if (cp && isA(inst, 'artifact')) k += Number(cp[1]); }
+    for (const l of oracleLines(inst, defOf)) { const m = /^afflict (\d+)$/i.exec(l); if (m) k += Number(m[1]); const cp = NEAR.CYBER_AFFLICT.exec(l); if (cp && isA(inst, 'artifact')) k += Number(cp[1]); const ls = /^sliver creatures you control have afflict (\d+)\.?$/i.exec(l); if (ls && isA(inst, 'sliver')) k += Number(ls[1]); }
     for (const w of permanents(s).filter(w => w !== inst)) {
-      for (const l of oracleLines(w, defOf)) { const m = /^other (\w+?)s you control have afflict (\d+)\.?$/i.exec(l); if (m && isA(inst, m[1])) k += Number(m[2]); const cp = NEAR.CYBER_AFFLICT.exec(l); if (cp && isA(inst, 'artifact')) k += Number(cp[1]); }
+      for (const l of oracleLines(w, defOf)) { const m = /^other (\w+?)s you control have afflict (\d+)\.?$/i.exec(l); if (m && isA(inst, m[1])) k += Number(m[2]); const cp = NEAR.CYBER_AFFLICT.exec(l); if (cp && isA(inst, 'artifact')) k += Number(cp[1]); const ls = /^sliver creatures you control have afflict (\d+)\.?$/i.exec(l); if (ls && isA(inst, 'sliver')) k += Number(ls[1]); }
     }
     return k;
   }
@@ -25710,6 +29005,7 @@ const Bot = (() => {
     hasConvoke, convokeTap, hasImprovise, improviseTap, revealUntil, damageEach, forcedBlocks, countersPut, attackedBy, fightOn, castTooEarly, condition, topCastable, topHaste, sagaChapters, loreUp, becameBlocked, encoreOf, encore, unearthOf, unearth, preparedSpell, castPrepared, flashbackLife, payEscalate, graveDiscards, mayhemOf, mayhemOk, escapeOf, escapeOk, devourOf, devourWhat, activationDiscount, landsFromTop, monarchExtra, manaTapped, returnLent, drawInstead, graveInstead, kotisOk, payKotis, tooWeakToAttack, graveAbilities, graveCost, useGraveAbility, landsFromGrave, cmcOfInst, nabCost, nab,
     // For coverage.js, which reads card text the same way the rest of this file does.
     crewedNow, milled,
+    cycled, loyaltyTwice,
     parts: { B29, NEAR, VAMP, oppCtx, ZABAZ, ALL_BASICS, SELF_DEALT, NORIN, NORIN_SWIFT, ORDINAL_DRAW, GRIST, ANY_TARGETED,HEX_FROM, STONE_IDOL, BLACK_ROSE, TARGET_TAX, GRAVE_KIND, GRAVE_ONCE, FIGHT_GROW, BOAST_DISCOUNT, CHAMPION_BLOCK, SPREAD_COPY, GIADA, LEGEND_TWICE, MARVEL_COPY, SELF_TARGETED, BLOCK_TAX, NO_ENCHANTED_ATTACK, EXPEND, TOKEN_SWAP, BELLO, OPP_SAC_POISON, settleBloom, SAC_WATCH, BRUSHRAZER, LANDS_FROM_TOP, AUGUR, BROOD, VINECRASHER, ENTER_EQUAL, STATION_ROW, CRIME, DEFENSE, CONVERGE_ENTER, settleSpace, tappedWatch, WINGS, MASKWOOD, RHET_TOMB, VIZIER, MENTOR, DISCARD_PAY, settleZombies, PLUS_THOPTER, MARVEL, NISSA, settleEnergy, BLOCKED_PUMP, PACKLEADER, SOULBOND, LONE_WOLF, SILVERFUR, PROWLER, CLONE_POWER, KELPIE_CAST, STEWARD, KOTIS, LAND_TO_GRAVE, LEAVE_GRAVE, KELPIE, REAVER, DAUTHI, AINOK, DIED_COUNTERS, LIER, BIBLIOPHILE, GRAVE_CDA, SIDAR, URN, HOARD, THREE_BLOCKERS, NOTION, NO_UNTAP, NABBER, FORTH, HARSH, MONARCH_DRAW, VERGE, PREVENT_GROW, CHAMPIONS, NO_SAC, ABILITY_DISCOUNT, gainFill, TOKEN_WATCH, ARWEN, DEARLY, REALM, SCRY_GROW, ERESTOR, UNITY, MIRKWOOD, WARMONGER, BATTALION, NOT_ATTACKING_YOU, CHAPTER, ABOLETH, WINNOW_CAST, WINNOW_BLOCK, ABOLISHER, HAND_ONLY, DOVESCAPE, KW_LOST, GRAVE_TYPES_DISCOUNT, PRO_FROM_OPPS, ALL_ISLANDS, ALL_FORESTS, GROUNDED, OPPS_ENTER_TAPPED, DRAW_CAP, GRAVE_LOCK, NO_GRAVE_CAST, SEARCH_TOP, SEARCH_WATCH, COIN_MASTERY, KRANG, SHUFFLE_BACK, PLUS_MUTAGEN, GRAVE_ALT, SELF_LOSS_WATCH, CLONE_OWN, CLONE_X, UNBOUND_DOUBLE, UNBOUND_COPY, NO_KIND_ATTACK, NO_COUNTERED_ATTACK, CAP_UNTAP, BLOCKED_GROW, SHARES_TYPE, moreLifeAttack, ROLL_ROW, SIEGE, DICE_PLUS, ROLL_WATCH, ATTACK_TWICE, DESERT, CAST_ONLY, CLONE_EOT, condition, OTHER_KEYWORDS, GRAVE_CAST3,
       // Would grantsOnce's staticExtra read this line of inst? (tried on an empty table)
       staticKnown: (line, inst) => { const s = { zones: { battlefield: [], hand: [], graveyard: [], exile: [], library: [] }, cards: {}, life: 0 }; return !!staticExtra(s, null, inst, line, () => null, [s]); }, isKeyword, protectionKw, effectParts, canRunAll, TOKEN_TEXT, DIES_WATCH, CAST_WATCH, COMBAT_TAP, PHASE_TRIGGER, CANT,

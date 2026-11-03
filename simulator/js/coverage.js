@@ -43,12 +43,12 @@ const Coverage = (() => {
     'replicate', // replicate: costChoices, then spellCast's copies (an Aura's: enterTrigger's token copies)
     'emerge', // emerge: costChoices (app.js sacrifices the creature)
     'outlast', // outlast: bot.js's activatedAbilities
-    'disguise']; // disguise: costChoices (face down with ward {2}; turned up for its cost)
+    'disguise', 'prowl', 'casualty']; // prowl: costChoices (a creature sharing a type dealt combat damage this turn) // disguise: costChoices (face down with ward {2}; turned up for its cost)
   // Done on every table (bot.js).
   const DONE_KEYWORDS = ['modular', 'extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
     'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace', 'ravenous', 'umbra armor', // umbra armor: bot.js's regenerates
     'graft', 'for mirrodin!', // for mirrodin!: bot.js's nearEnters
-    'renown', 'bloodthirst', 'cipher', 'unleash', 'daybound', 'nightbound', 'disturb', 'training', 'vanishing', // training: bot.js's nearAttack // daybound/nightbound: day and night aren't tracked (front faces stay); disturb: castable from the graveyard (bot.js's graveCast) // unleash: bot.js's nearEnters // cipher: Arcane Heist's (not encoded here) // renown: bot.js's renownHits; bloodthirst: nearEnters
+    'renown', 'bloodthirst', 'cipher', 'unleash', 'daybound', 'nightbound', 'disturb', 'training', 'vanishing', 'desertwalk', 'enlist', // training: bot.js's nearAttack // daybound/nightbound: day and night aren't tracked (front faces stay); disturb: castable from the graveyard (bot.js's graveCast) // unleash: bot.js's nearEnters // cipher: Arcane Heist's (not encoded here) // renown: bot.js's renownHits; bloodthirst: nearEnters
     'space sculptor']; // space sculptor: each player's creatures are a sector of their own (bot.js's sector lines) // graft: game.js's entersWithCounters (its counters aren't moved) // modular: game.js entersWithCounters, afterDeath // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
@@ -120,10 +120,12 @@ const Coverage = (() => {
     if (COUNTER_EACH.test(first)) return rest.every(s => THOSE_GAIN.test(s) && allKw(THOSE_GAIN.exec(s)[1]));
     if (P.TOKEN_TEXT.test(e)) return true;
     if (/^you may pay (?:\{[^}]+\})+\. if you do, /i.test(e) && runs(e, inst)) return true;
-    if (/, then create /i.test(e) && runs(e, inst)) return true; // Krenko, Tin Street Kingpin (a whole effect bot.js runs)
+    if (/, then create /i.test(e) && runs(e, inst)) return true;
+    if (/ creatures (?:you control )?with flying get |different kinds of counters among permanents you control|^if there are four or more card types among cards in your graveyard/i.test(e) && runs(e, inst)) return true; // Kangee, Steel-Plume Marshal, Perrie, Demolisher Spawn (combatTrigger runs it) // Krenko, Tin Street Kingpin (a whole effect bot.js runs)
+    if (/^if [^,]+, it gets /i.test(e) && runs(e, inst)) return true; // Nerd Rage (bot.js's settle reads the condition)
     const p = COMBAT_PUMP.exec(e);
     if (!p || (/x/i.test(p[2] + p[3]) && !p[4])) return runs(e, inst);
-    return P.isSelf(p[1], inst) || /^(other )?(.+?) you control$/i.test(p[1]) || /^(other )?attacking (modified )?creatures$/i.test(p[1]); // Namor, Firebird
+    return P.isSelf(p[1], inst) || /^(other )?(.+?) you control$/i.test(p[1]) || /^(other )?attacking (modified )?creatures$/i.test(p[1]) || /^each creature you control named .+$/i.test(p[1]); // Namor, Firebird; Gary Clone
   }
 
   // Splits "Whenever …, effect" into its head and effect; strips an ability word ("Landfall — ").
@@ -355,7 +357,8 @@ const Coverage = (() => {
     if (/^whenever another creature enters, its controller may draw a card if its power is greater than each other creature's power\.?$/i.test(line)) return out;
     if (/^whenever enchanted land is tapped for mana, its controller adds an additional one mana of any colou?r\.?$/i.test(line)) return out;
     // Wild Growth, Utopia Sprawl (game.js's auraMana)
-    if (/^whenever enchanted (?:land|forest) is tapped for mana, its controller adds an additional (?:\{[WUBRGC]\}|one mana of the chosen colou?r)\.?$/i.test(line)) return out;
+    if (/^enchanted permanent is a treasure artifact with "\{T\}, sacrifice this artifact: add one mana of any color," and it loses all other abilities\.?$/i.test(line)) return out; // Minimus Containment (attachBonus)
+    if (/^whenever enchanted (?:land|forest) is tapped for mana, its controller adds an additional (?:(?:\{[WUBRGC]\})+|one mana of the chosen colou?r|two mana in any combination of colou?rs)\.?$/i.test(line)) return out;
     // Mirrorwing Dragon (spellTargeted: the spell's effect on each of the caster's other creatures)
     if (P.SPREAD_COPY.test(line)) return out; // Zada too
     if (/^whenever you discard one or more nonland cards, you may exile one of them from your graveyard\. if you do, you may cast it this turn\.?$/i.test(line)) return out; // Conspiracy Theorist
@@ -510,6 +513,7 @@ const Coverage = (() => {
     // (Arashi's channel: you say X)
     if (hd) { notRun(/\{X\}/i.test(hd.cost) ? hd.effect.replace(/\bx\b/gi, '1') : hd.effect, inst).forEach(p => gap(out, 'you', 'activated', p)); gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
     const ab = B.activatedAbilities(inst, () => ({ oracle: line }))[0];
+    if (!ab && /^sacrifice an artifact, creature, or land$/i.test(m[1].trim()) && /activate only if this card is suspended/i.test(line)) { gap(out, 'opp', 'activated', 'abilities of suspended cards (not offered)'); return out; } // Greater Gargadon
     if (!ab) { gap(out, 'both', 'cost', m[1]); return out; }
     const left = notRun(/\{X\}/i.test(ab.mana) || ab.removeAnyX || ab.sacX || ab.tapX || ab.energyX || ab.removeX ?ab.effect.replace(/\bx\b/gi, '1') : ab.effect, inst); // Crypt Rats, Moxite Refinery: you pick X
     left.forEach(p => gap(out, 'you', 'activated', p));
