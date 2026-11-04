@@ -43,12 +43,12 @@ const Coverage = (() => {
     'replicate', // replicate: costChoices, then spellCast's copies (an Aura's: enterTrigger's token copies)
     'emerge', // emerge: costChoices (app.js sacrifices the creature)
     'outlast', // outlast: bot.js's activatedAbilities
-    'disguise', 'prowl', 'casualty']; // prowl: costChoices (a creature sharing a type dealt combat damage this turn) // disguise: costChoices (face down with ward {2}; turned up for its cost)
+    'disguise', 'prowl', 'casualty', 'wizardcycling', 'slivercycling']; // prowl: costChoices (a creature sharing a type dealt combat damage this turn) // disguise: costChoices (face down with ward {2}; turned up for its cost)
   // Done on every table (bot.js).
-  const DONE_KEYWORDS = ['modular', 'extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
+  const DONE_KEYWORDS = ['fading', 'more than meets the eye', 'living metal', 'modular', 'extort', 'vanishing', 'hideaway', 'affinity', 'living weapon', 'read ahead', 'rebound', 'encore', 'unearth', 'ascend', 'echo', 'compleated', 'backup', 'delve', 'demonstrate', 'eternalize', 'evolve', 'riot',
     'miracle', 'undaunted', 'soulbond', 'embalm', 'afflict', 'station', 'sunburst', 'retrace', 'ravenous', 'umbra armor', // umbra armor: bot.js's regenerates
     'graft', 'for mirrodin!', // for mirrodin!: bot.js's nearEnters
-    'renown', 'bloodthirst', 'cipher', 'unleash', 'daybound', 'nightbound', 'disturb', 'training', 'vanishing', 'desertwalk', 'enlist', // training: bot.js's nearAttack // daybound/nightbound: day and night aren't tracked (front faces stay); disturb: castable from the graveyard (bot.js's graveCast) // unleash: bot.js's nearEnters // cipher: Arcane Heist's (not encoded here) // renown: bot.js's renownHits; bloodthirst: nearEnters
+    'renown', 'bloodthirst', 'cipher', 'unleash', 'daybound', 'nightbound', 'disturb', 'training', 'vanishing', 'desertwalk', 'enlist', 'increment', // training: bot.js's nearAttack // daybound/nightbound: day and night aren't tracked (front faces stay); disturb: castable from the graveyard (bot.js's graveCast) // unleash: bot.js's nearEnters // cipher: Arcane Heist's (not encoded here) // renown: bot.js's renownHits; bloodthirst: nearEnters
     'space sculptor']; // space sculptor: each player's creatures are a sector of their own (bot.js's sector lines) // graft: game.js's entersWithCounters (its counters aren't moved) // modular: game.js entersWithCounters, afterDeath // ravenous: enterTrigger // retrace: graveDiscards // station: activatedAbilities, byLevel; sunburst: enterTrigger // embalm: graveAbilities; afflict: becameBlocked's afflictOf // soulbond: staticExtra's soulMate (paired for you) // miracle: opponentActed's draw, app.js's castCost; undaunted: selfDiscount
 
   // ---------- one keyword line ----------
@@ -125,7 +125,7 @@ const Coverage = (() => {
     if (/^if [^,]+, it gets /i.test(e) && runs(e, inst)) return true; // Nerd Rage (bot.js's settle reads the condition)
     const p = COMBAT_PUMP.exec(e);
     if (!p || (/x/i.test(p[2] + p[3]) && !p[4])) return runs(e, inst);
-    return P.isSelf(p[1], inst) || /^(other )?(.+?) you control$/i.test(p[1]) || /^(other )?attacking (modified )?creatures$/i.test(p[1]) || /^each creature you control named .+$/i.test(p[1]); // Namor, Firebird; Gary Clone
+    return P.isSelf(p[1], inst) || /^(other )?(.+?) you control$/i.test(p[1]) || /^(other )?attacking (modified )?creatures$/i.test(p[1]) || /^each creature you control named .+$/i.test(p[1]) || (/\btarget\b/i.test(p[1]) && runs(e, inst)); // Namor, Firebird; Gary Clone; Spring Splasher (a target's pump runs as an effect)
   }
 
   // Splits "Whenever …, effect" into its head and effect; strips an ability word ("Landfall — ").
@@ -492,6 +492,8 @@ const Coverage = (() => {
     if (P.DESERT.test(line)) return out;
     if (/^add\b/i.test(m[2]) && !/\bremove x\b/i.test(m[1])) {
       // A land's plain "{T}: Add {B}." (Scryfall's produced_mana); others need manaAbility (Cabal Coffers).
+      if (/^\{1\},\s*\{T\}$/i.test(m[1].trim()) && /^add \{[WUBRG]\}\.?$/i.test(m[2].trim()) && /^\{T\}:\s*add \{C\}\.?$/im.test(card.oracle || '')) return out;
+      if (/^\{1\}$/.test(m[1].trim()) && /^add (?:\{[WUBRG]\}, )+or \{[WUBRG]\}\. activate only once each turn\.?$/i.test(m[2].trim())) return out; // Temur Devotee: a once-a-turn color filter (not tapped automatically) // Sea Scryer: a one-for-one color filter (its {T}: Add {C} is what gets tapped)
       if ((is(card, 'land') && /^\{T\}$/i.test(m[1].trim()) && !/for each|chosen|equal to|\bx\b/i.test(m[2])) || G.manaAbility(card.name, line)) return out;
       if (/^tap an untapped legendary creature you control$/i.test(m[1].trim()) && /^add one mana of any colou?r\.?$/i.test(m[2].trim())) return out; // Relic of Legends (game.js manaUnits)
       // Elvish Spirit Guide (Bot.handAbilities; app.js's hand menu)
@@ -824,7 +826,7 @@ const Coverage = (() => {
     } else if (/\binstant\b/i.test(front(card.typeLine)) && G.isCounterspell(card.oracle)) {
       // Its other sentences: ones counterExtras does (An Offer You Can't Refuse, Arcane Denial, Dovin's Veto).
       const extras = P.counterExtraParts(text).filter(x => !P.COUNTER_EXTRAS.some(re => re.test(x)));
-      if (!/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\})?\b/im.test(text.replace(/^this spell can't be countered\.\s*/i, '')) || extras.length) gap(out, 'you', 'spell', `counterspell: ${text}`);
+      if (!/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\}| with power or toughness \d+ or less| unless its controller pays \{x\}, where x is the greatest power among creatures you control| that targets an? (?:creature|permanent|player)| unless its controller pays \{1\} for each creature you control| if its controller is poisoned)?\b/im.test(text.replace(/^this spell can't be countered\.\s*/i, '')) || extras.length) gap(out, 'you', 'spell', `counterspell: ${text}`);
     } else if (!text.split(/(?<=\.)\s+/).every(s => PUMP_SENTENCE.test(s.trim()) && !/\btarget\b/i.test(s)) && !runs(text, inst)) {
       notRun(text, inst).forEach(p => gap(out, 'you', 'spell', p));
       if (!out.gaps.length) gap(out, 'you', 'spell', text);

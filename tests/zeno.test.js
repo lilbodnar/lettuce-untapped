@@ -56,6 +56,22 @@ test('Zenos shrinks every other creature but its chosen one, and transforms when
   assert.ok(zenos.flipped);
 });
 
+test("Zenos asks you which opponent's creature to choose, and spares the one you pick", () => {
+  const game = vsOpp();
+  const zenos = put(game, ZENOS);
+  const bear = put(game.bot.s, 'Bear');
+  const giant = put(game.bot.s, 'Giant');
+  let asked = null;
+  const c = ctx(game, { self: zenos, choose: spec => { asked = spec; } });
+  Bot.runEffect(game, 'Choose a creature an opponent controls. Until end of turn, creatures other than Zenos yae Galvus and the chosen creature get -2/-2.', c);
+  assert.ok(asked, 'you are asked');
+  assert.equal(st(giant).pow, 4); // nothing happens until you pick
+  Bot.applyChoice(game, asked, [giant.iid], c);
+  assert.equal(giant.zenosOf, zenos.iid);
+  assert.equal(st(giant).pow, 4);
+  assert.equal(st(bear).pow, 0);
+});
+
 test('Death Is Irrelevant assimilates the best creature card in a graveyard as an artifact', () => {
   const game = vsOpp();
   Game.move(game.bot.s, find(game.bot.s, 'Giant'), 'graveyard');

@@ -2389,6 +2389,11 @@
     if (opts.choice === 'kicked') inst.kicked = true; // Josu Vess: "if he was kicked"
     if (opts.choice === 'multiverse') game.multiverseTurn = game.turn; // One with the Multiverse: once a turn
     if (opts.choice === 'monolith') game.monolithTurn = game.turn; // Darksteel Monolith: once a turn
+    if (opts.choice === 'vision') game.visionTurn = game.turn; // Vision, Spectral Synthezoid: once each of your turns
+    if (opts.choice === 'thwart') game.zones.battlefield.map(i => game.cards[i]).filter(c => /\bisland\b/i.test(c.typeLine || '')).sort((a, b) => (b.tapped ? 1 : 0) - (a.tapped ? 1 : 0)).slice(0, 3).forEach(c => Game.move(game, c.iid, 'hand')); // Thwart
+    if (opts.choice === 'gush') game.zones.battlefield.map(i => game.cards[i]).filter(c => /\bisland\b/i.test(c.typeLine || '')).sort((a, b) => (b.tapped ? 1 : 0) - (a.tapped ? 1 : 0)).slice(0, 2).forEach(c => Game.move(game, c.iid, 'hand')); // Gush: two Islands back to your hand
+    if (opts.choice === 'foil') { const hand = game.zones.hand.map(i => game.cards[i]).filter(c => c.iid !== inst.iid); const isl = hand.find(c => /\bisland\b/i.test(c.typeLine || '')); const other = hand.filter(c => c !== isl).sort((a, b) => (a.cmc || 0) - (b.cmc || 0))[0]; [isl, other].filter(Boolean).forEach(c => Game.move(game, c.iid, 'graveyard')); } // Foil: an Island and another card discarded
+    if (opts.choice === 'daze') { const isl = game.zones.battlefield.map(i => game.cards[i]).filter(c => /\bisland\b/i.test(c.typeLine || '')).sort((a, b) => (b.tapped ? 1 : 0) - (a.tapped ? 1 : 0))[0]; if (isl) Game.move(game, isl.iid, 'hand'); } // Daze: an Island back to your hand
     if (opts.choice === 'awaken') inst.awakenN = opts.awaken; // Ruinous Path (Bot.spellCast)
     if (opts.extraCounters) inst.enterCounters = opts.extraCounters; // Chorus of the Conclave (Bot.enterTrigger)
     if (opts.choice === 'buyback') inst.boughtBack = true; // Capsize: back to your hand as it resolves (Game.move)
@@ -3904,6 +3909,7 @@
   // Exemplar of Light: "Whenever you put one or more +1/+1 counters on this creature, …"
   Game.hooks.milled = (s, ids) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.milled(game, s, ids, def); }; // The Wise Mothman, Glowing One
   Game.hooks.graveInstead = (s, inst) => !!(game && hasBot() && (s === game || s === game.bot.s) && Bot.graveInstead(game, s, inst, def)); // Dauthi Voidwalker
+  Game.hooks.shuffled = s => { if (game && hasBot() && (s === game || s === game.bot.s)) Bot.shuffled(game, s, def); }; // Cosi's Trickster
   Game.hooks.drawInstead = (s, first) => !!(game && (s === game || (hasBot() && s === game.bot.s)) && Bot.drawInstead(game, s, first, def)); // Notion Thief, dredge
   Game.hooks.manaTapped = (s, inst) => { if (game && (s === game || (hasBot() && s === game.bot.s))) Bot.manaTapped(s, inst); }; // Treasure Nabber
   Game.hooks.spent = (s, before, after) => { if (game && hasBot() && (s === game || s === game.bot.s)) Bot.manaSpent(game, s, before, after, def, s === game ? effectCtx() : null); }; // expend
@@ -3950,7 +3956,7 @@
       // Serra's Emissary: "As this creature enters, choose a card type."
       if (!inst.chosenCardType && Bot.choosesCardType(inst, def)) later('mustModes', { modes: Bot.cardTypeModes(), pick: 1, src: inst.name, self: inst.iid });
       // Maddening Hex (enchant player): it goes on an opponent.
-      if (/^enchant player\b/im.test(oracleOf(inst))) { inst.enchantPlayer = 'opp'; Game.log(game, `${inst.name} enchants ${hasBot() ? 'Opp' : 'an opponent'}.`); }
+      if (/^enchant (?:player|opponent)\b/im.test(oracleOf(inst))) { inst.enchantPlayer = 'opp'; Game.log(game, `${inst.name} enchants ${hasBot() ? 'Opp' : 'an opponent'}.`); }
     }
     // Offspring paid: "when this creature enters, create a 1/1 token copy of it".
     if (s === game && inst.offspringPaid) { delete inst.offspringPaid; Bot.offspringCopy(game, inst); }
@@ -4084,6 +4090,7 @@
       inst.loyaltyTurn = game.turn;
       game.loyaltyActTurn = game.turn; // The Chain Veil
       const left = Bot.runEffect(game, effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx()));
+      Bot.loyaltyPaid(game, delta, def); // Way of the Mind Sculptor
       // Repeated Reverberation: the next loyalty ability this turn is copied twice (unless a spell used it first)
       if (game.reverbTurn === game.turn && game.copyNextTurn === game.turn) { delete game.reverbTurn; delete game.copyNextTurn; for (let i = 0; i < 2; i++) Bot.runEffect(game, effect, Object.assign({ self: inst, other: hasBot() ? game.bot.s : null }, effectCtx())); }
       Game.log(game, `${inst.name} ${delta >= 0 ? '+' : ''}${delta}: ${effect}${left.length ? ` Do by hand: ${left.join('; ')}.` : ''}`);

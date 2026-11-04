@@ -31,7 +31,7 @@ const Game = (() => {
   // hooks.counters(s, inst, kind, n) runs after counters are put on a permanent (Exemplar of Light).
   // hooks.manaTapped(s, inst) after a permanent is tapped for mana (Treasure Nabber); hooks.drawInstead(s, first) can take a draw away (Notion Thief).
   // hooks.graveInstead(s, inst) true sends a card on its way to a graveyard to exile instead (Dauthi Voidwalker).
-  const hooks = { milled: null, entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null, graveInstead: null, spent: null };
+  const hooks = { milled: null, entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null, graveInstead: null, spent: null, shuffled: null };
 
   function randomInt(n) {
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
@@ -155,7 +155,7 @@ const Game = (() => {
       // Orb of Dragonkind: "… Spend this mana only to cast Dragon spells or activate abilities of Dragons." (onlyFor: autoPay's spell)
       // Study Hall: "… When you spend this mana to cast your commander, scry X, …" (the scry isn't done; the mana is).
       // Opal Palace: "… any color in your commander's color identity. If you spend this mana to cast your commander, …" (the counters aren't added)
-      const anyF = line.trim().replace(/\s+(?:when|if) you spend this mana to cast your commander, .+$/i, '').match(/^\{(\d+)\},\s*\{T\}:\s*add (one mana of any colou?r(?: in your commander's colou?r identity)?|(\w+) mana in any combination of colou?rs)\.?(?: spend this mana only to cast (\w+) spells(?: or activate abilities of \w+)?\.?)?$/i);
+      const anyF = line.trim().replace(/\s+(?:when|if) you spend this mana to cast your commander, .+$/i, '').replace(/ spend this mana only to cast an instant or sorcery spell\.?$/i, ' spend this mana only to cast instant|sorcery spells.').match(/^\{(\d+)\},\s*\{T\}:\s*add (one mana of any colou?r(?: in your commander's colou?r identity)?|(\w+) mana in any combination of colou?rs)\.?(?: spend this mana only to cast ([\w|]+) spells(?: or activate abilities of \w+)?\.?)?$/i);
       if (anyF && Number(anyF[1]) > 0) {
         const k = anyF[3] ? toNumber(anyF[3]) : 1;
         if (k) return { colors: [...MANA.slice(0, 5)], amount: k, sacrifice: false, filter: Number(anyF[1]), makes: Array(k).fill(MANA.slice(0, 5)), ...(anyF[4] ? { onlyFor: anyF[4].toLowerCase() } : {}) };
@@ -1012,6 +1012,7 @@ const Game = (() => {
   function shuffle(s) {
     shuffleArray(s.zones.library);
     log(s, 'Shuffled library.');
+    if (hooks.shuffled) hooks.shuffled(s); // Cosi's Trickster
   }
 
   function cellFree(s, col, row, ignore) {
