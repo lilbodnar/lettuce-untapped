@@ -1,0 +1,1005 @@
+{
+ "Aquatic Incursion": {
+  "id": "Aquatic Incursion",
+  "name": "Aquatic Incursion",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "When this enchantment enters, create two 1/1 blue Merfolk creature tokens with hexproof. (They can't be the targets of spells or abilities your opponents control.)\n{3}{U}: Target Merfolk can't be blocked this turn."
+ },
+ "Aquitect's Will": {
+  "id": "Aquitect's Will",
+  "name": "Aquitect's Will",
+  "typeLine": "Kindred Sorcery — Merfolk",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Put a flood counter on target land. That land is an Island in addition to its other types for as long as it has a flood counter on it. If you control a Merfolk, draw a card."
+ },
+ "Attuma, Atlantean Warlord": {
+  "id": "Attuma, Atlantean Warlord",
+  "name": "Attuma, Atlantean Warlord",
+  "typeLine": "Legendary Creature — Merfolk Warrior Villain",
+  "manaCost": "{2}{U}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Other Merfolk you control get +1/+1.\nWhenever one or more Merfolk you control attack a player, draw a card.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Benthicore": {
+  "id": "Benthicore",
+  "name": "Benthicore",
+  "typeLine": "Creature — Elemental",
+  "manaCost": "{6}{U}",
+  "cmc": 7,
+  "colors": [
+   "U"
+  ],
+  "oracle": "When this creature enters, create two 1/1 blue Merfolk Wizard creature tokens.\nTap two untapped Merfolk you control: Untap this creature. It gains shroud until end of turn. (It can't be the target of spells or abilities.)",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Deeproot Pilgrimage": {
+  "id": "Deeproot Pilgrimage",
+  "name": "Deeproot Pilgrimage",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever one or more nontoken Merfolk you control become tapped, create a 1/1 blue Merfolk creature token with hexproof."
+ },
+ "Svyelun of Sea and Sky": {
+  "id": "Svyelun of Sea and Sky",
+  "name": "Svyelun of Sea and Sky",
+  "typeLine": "Legendary Creature — Merfolk God",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Svyelun has indestructible as long as you control at least two other Merfolk.\nWhenever Svyelun attacks, draw a card.\nOther Merfolk you control have ward {1}. (Whenever another Merfolk you control becomes the target of a spell or ability an opponent controls, counter it unless that player pays {1}.)",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Champions of the Shoal": {
+  "id": "Champions of the Shoal",
+  "name": "Champions of the Shoal",
+  "typeLine": "Creature — Merfolk Soldier",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "As an additional cost to cast this spell, behold a Merfolk and exile it. (Exile a Merfolk you control or a Merfolk card from your hand.)\nWhenever this creature enters or becomes tapped, tap up to one target creature and put a stun counter on it.\nWhen this creature leaves the battlefield, return the exiled card to its owner's hand.",
+  "power": "4",
+  "toughness": "6"
+ },
+ "Coralhelm Commander": {
+  "id": "Coralhelm Commander",
+  "name": "Coralhelm Commander",
+  "typeLine": "Creature — Merfolk Soldier",
+  "manaCost": "{U}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Level up {1} ({1}: Put a level counter on this. Level up only as a sorcery.)\nLEVEL 2-3\n3/3\nFlying\nLEVEL 4+\n4/4\nFlying\nOther Merfolk creatures you control get +1/+1.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Crashing Tide": {
+  "id": "Crashing Tide",
+  "name": "Crashing Tide",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "This spell has flash as long as you control a Merfolk.\nReturn target creature to its owner's hand.\nDraw a card."
+ },
+ "Eclipsed Realms": {
+  "id": "Eclipsed Realms",
+  "name": "Eclipsed Realms",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "As this land enters, choose Elemental, Elf, Faerie, Giant, Goblin, Kithkin, Merfolk, or Treefolk.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a spell of the chosen type or activate an ability of a source of the chosen type.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Kopala, Warden of Waves": {
+  "id": "Kopala, Warden of Waves",
+  "name": "Kopala, Warden of Waves",
+  "typeLine": "Legendary Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Spells your opponents cast that target a Merfolk you control cost {2} more to cast.\nAbilities your opponents activate that target a Merfolk you control cost {2} more to activate.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Daughter of the Deep": {
+  "id": "Daughter of the Deep",
+  "name": "Daughter of the Deep",
+  "typeLine": "Creature — Merfolk Noble",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever you draw your second card each turn, create a 1/1 blue Merfolk creature token.\n{U}, {T}: Target Merfolk can't be blocked this turn.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Dawn-Blessed Pennant": {
+  "id": "Dawn-Blessed Pennant",
+  "name": "Dawn-Blessed Pennant",
+  "typeLine": "Artifact",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "As this artifact enters, choose Elemental, Elf, Faerie, Giant, Goblin, Kithkin, Merfolk, or Treefolk.\nWhenever a permanent you control of the chosen type enters, you gain 1 life.\n{2}, {T}, Sacrifice this artifact: Return target card of the chosen type from your graveyard to your hand."
+ },
+ "Deeproot Waters": {
+  "id": "Deeproot Waters",
+  "name": "Deeproot Waters",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever you cast a Merfolk spell, create a 1/1 blue Merfolk creature token with hexproof. (A creature with hexproof can't be the target of spells or abilities your opponents control.)"
+ },
+ "Drowner of Secrets": {
+  "id": "Drowner of Secrets",
+  "name": "Drowner of Secrets",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Tap an untapped Merfolk you control: Target player mills a card.",
+  "power": "1",
+  "toughness": "3"
+ },
+ "Lullmage Mentor": {
+  "id": "Lullmage Mentor",
+  "name": "Lullmage Mentor",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever a spell or ability you control counters a spell, you may create a 1/1 blue Merfolk creature token.\nTap seven untapped Merfolk you control: Counter target spell.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Emperor Mihail II": {
+  "id": "Emperor Mihail II",
+  "name": "Emperor Mihail II",
+  "typeLine": "Legendary Creature — Merfolk Noble",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "You may look at the top card of your library any time.\nYou may cast Merfolk spells from the top of your library.\nWhenever you cast a Merfolk spell, you may pay {1}. If you do, create a 1/1 blue Merfolk creature token.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Lord of Atlantis": {
+  "id": "Lord of Atlantis",
+  "name": "Lord of Atlantis",
+  "typeLine": "Creature — Merfolk",
+  "manaCost": "{U}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Other Merfolk get +1/+1 and have islandwalk. (They can't be blocked as long as defending player controls an Island.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Master of the Pearl Trident": {
+  "id": "Master of the Pearl Trident",
+  "name": "Master of the Pearl Trident",
+  "typeLine": "Creature — Merfolk",
+  "manaCost": "{U}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Other Merfolk creatures you control get +1/+1 and have islandwalk. (They can't be blocked as long as defending player controls an Island.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Merfolk Sovereign": {
+  "id": "Merfolk Sovereign",
+  "name": "Merfolk Sovereign",
+  "typeLine": "Creature — Merfolk Noble",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Other Merfolk creatures you control get +1/+1.\n{T}: Target Merfolk creature can't be blocked this turn.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Merrow Commerce": {
+  "id": "Merrow Commerce",
+  "name": "Merrow Commerce",
+  "typeLine": "Kindred Enchantment — Merfolk",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "At the beginning of your end step, untap all Merfolk you control."
+ },
+ "Merrow Harbinger": {
+  "id": "Merrow Harbinger",
+  "name": "Merrow Harbinger",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nWhen this creature enters, you may search your library for a Merfolk card, reveal it, then shuffle and put that card on top.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Merrow Reejerey": {
+  "id": "Merrow Reejerey",
+  "name": "Merrow Reejerey",
+  "typeLine": "Creature — Merfolk Soldier",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Other Merfolk creatures you control get +1/+1.\nWhenever you cast a Merfolk spell, you may tap or untap target permanent.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Mindspring Merfolk": {
+  "id": "Mindspring Merfolk",
+  "name": "Mindspring Merfolk",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Exhaust — {X}{U}{U}, {T}: Draw X cards. Put a +1/+1 counter on each Merfolk creature you control. (Activate each exhaust ability only once.)",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Silvergill Adept": {
+  "id": "Silvergill Adept",
+  "name": "Silvergill Adept",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "As an additional cost to cast this spell, reveal a Merfolk card from your hand or pay {3}.\nWhen this creature enters, draw a card.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Mist Dancer": {
+  "id": "Mist Dancer",
+  "name": "Mist Dancer",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{4}{U}",
+  "cmc": 5,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flying\nOther Merfolk you control get +1/+0 and have flying.\nEncore {5}{U}{U} ({5}{U}{U}, Exile this card from your graveyard: For each opponent, create a token copy that attacks that opponent this turn if able. They gain haste. Sacrifice them at the beginning of the next end step. Activate only as a sorcery.)",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Namora, the Sea Queen": {
+  "id": "Namora, the Sea Queen",
+  "name": "Namora, the Sea Queen",
+  "typeLine": "Legendary Creature — Mutant Merfolk Hero",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flying\nPower-up — {5}{U}: Put a +1/+1 counter on Namora. Create two 1/1 blue Merfolk creature tokens. (Activate each power-up ability only once. Reduce the cost by her mana cost if she entered this turn.)",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Namor, Scourge of the Seas": {
+  "id": "Namor, Scourge of the Seas",
+  "name": "Namor, Scourge of the Seas",
+  "typeLine": "Legendary Creature — Mutant Merfolk Villain",
+  "manaCost": "{3}{U}{U}",
+  "cmc": 5,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flying\nEach other Merfolk you control with a +1/+1 counter on it has flying.\nAt the beginning of combat on your turn, target creature you control connives. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on that creature.)",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Namor the Sub-Mariner": {
+  "id": "Namor the Sub-Mariner",
+  "name": "Namor the Sub-Mariner",
+  "typeLine": "Legendary Creature — Mutant Merfolk Villain",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flying\nNamor's power is equal to the number of Merfolk you control.\nWhenever you cast a noncreature spell with one or more blue mana symbols in its mana cost, create that many 1/1 blue Merfolk creature tokens.",
+  "power": "*",
+  "toughness": "4"
+ },
+ "River Sneak": {
+  "id": "River Sneak",
+  "name": "River Sneak",
+  "typeLine": "Creature — Merfolk Warrior",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "This creature can't be blocked.\nWhenever another Merfolk you control enters, this creature gets +1/+1 until end of turn.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Seafloor Oracle": {
+  "id": "Seafloor Oracle",
+  "name": "Seafloor Oracle",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{2}{U}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever a Merfolk you control deals combat damage to a player, draw a card.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Seahunter": {
+  "id": "Seahunter",
+  "name": "Seahunter",
+  "typeLine": "Creature — Human Mercenary",
+  "manaCost": "{2}{U}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "{3}, {T}: Search your library for a Merfolk permanent card, put it onto the battlefield, then shuffle.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Shaper Apprentice": {
+  "id": "Shaper Apprentice",
+  "name": "Shaper Apprentice",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "This creature has flying as long as you control another Merfolk.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Silvergill Douser": {
+  "id": "Silvergill Douser",
+  "name": "Silvergill Douser",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "{T}: Target creature gets -X/-0 until end of turn, where X is the number of Merfolk and/or Faeries you control.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Silvergill Mentor": {
+  "id": "Silvergill Mentor",
+  "name": "Silvergill Mentor",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "As an additional cost to cast this spell, behold a Merfolk or pay {2}. (To behold a Merfolk, choose a Merfolk you control or reveal a Merfolk card from your hand.)\nWhen this creature enters, create a 1/1 white and blue Merfolk creature token.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Slinn Voda, the Rising Deep": {
+  "id": "Slinn Voda, the Rising Deep",
+  "name": "Slinn Voda, the Rising Deep",
+  "typeLine": "Legendary Creature — Leviathan",
+  "manaCost": "{6}{U}{U}",
+  "cmc": 8,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nWhen Slinn Voda enters, if it was kicked, return all creatures to their owners' hands except for Merfolk, Krakens, Leviathans, Octopuses, and Serpents.",
+  "power": "8",
+  "toughness": "8"
+ },
+ "Tidal Courier": {
+  "id": "Tidal Courier",
+  "name": "Tidal Courier",
+  "typeLine": "Creature — Merfolk",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "When this creature enters, reveal the top four cards of your library. Put all Merfolk cards revealed this way into your hand and the rest on the bottom of your library in any order.\n{3}{U}: This creature gains flying until end of turn.",
+  "power": "1",
+  "toughness": "2"
+ },
+ "Stonybrook Banneret": {
+  "id": "Stonybrook Banneret",
+  "name": "Stonybrook Banneret",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nMerfolk spells and Wizard spells you cast cost {1} less to cast.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Wanderwine Farewell": {
+  "id": "Wanderwine Farewell",
+  "name": "Wanderwine Farewell",
+  "typeLine": "Kindred Sorcery — Merfolk",
+  "manaCost": "{5}{U}{U}",
+  "cmc": 7,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nReturn one or two target nonland permanents to their owners' hands. Then if you control a Merfolk, create a 1/1 white and blue Merfolk creature token for each permanent returned to its owner's hand this way."
+ },
+ "Streambed Aquitects": {
+  "id": "Streambed Aquitects",
+  "name": "Streambed Aquitects",
+  "typeLine": "Creature — Merfolk Scout",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "{T}: Target Merfolk creature gets +1/+1 and gains islandwalk until end of turn. (It can't be blocked as long as defending player controls an Island.)\n{T}: Target land becomes an Island until end of turn.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Wanderwine Prophets": {
+  "id": "Wanderwine Prophets",
+  "name": "Wanderwine Prophets",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{4}{U}{U}",
+  "cmc": 6,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Champion a Merfolk (When this enters, sacrifice it unless you exile another Merfolk you control. When this leaves the battlefield, that card returns to the battlefield.)\nWhenever this creature deals combat damage to a player, you may sacrifice a Merfolk. If you do, take an extra turn after this one.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Summon: Leviathan": {
+  "id": "Summon: Leviathan",
+  "name": "Summon: Leviathan",
+  "typeLine": "Enchantment Creature — Saga Leviathan",
+  "manaCost": "{4}{U}{U}",
+  "cmc": 6,
+  "colors": [
+   "U"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Return each creature that isn't a Kraken, Leviathan, Merfolk, Octopus, or Serpent to its owner's hand.\nII, III — Until end of turn, whenever a Kraken, Leviathan, Merfolk, Octopus, or Serpent attacks, draw a card.\nWard {2}",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Vodalian Hexcatcher": {
+  "id": "Vodalian Hexcatcher",
+  "name": "Vodalian Hexcatcher",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flash\nOther Merfolk you control get +1/+1.\nSacrifice a Merfolk: Counter target noncreature spell unless its controller pays {1}.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Deepchannel Mentor": {
+  "id": "Deepchannel Mentor",
+  "name": "Deepchannel Mentor",
+  "typeLine": "Creature — Merfolk Rogue",
+  "manaCost": "{5}{U}",
+  "cmc": 6,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Blue creatures you control can't be blocked.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Merfolk Trickster": {
+  "id": "Merfolk Trickster",
+  "name": "Merfolk Trickster",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{U}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Flash\nWhen this creature enters, tap target creature an opponent controls. It loses all abilities until end of turn.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Bident of Thassa": {
+  "id": "Bident of Thassa",
+  "name": "Bident of Thassa",
+  "typeLine": "Legendary Enchantment Artifact",
+  "manaCost": "{2}{U}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever a creature you control deals combat damage to a player, you may draw a card.\n{1}{U}, {T}: Creatures your opponents control attack this turn if able."
+ },
+ "Harbinger of the Seas": {
+  "id": "Harbinger of the Seas",
+  "name": "Harbinger of the Seas",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Nonbasic lands are Islands.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Tempest Caller": {
+  "id": "Tempest Caller",
+  "name": "Tempest Caller",
+  "typeLine": "Creature — Merfolk Wizard",
+  "manaCost": "{2}{U}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "When this creature enters, tap all creatures target opponent controls.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Distant Melody": {
+  "id": "Distant Melody",
+  "name": "Distant Melody",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Choose a creature type. Draw a card for each permanent you control of that type."
+ },
+ "Sol Ring": {
+  "id": "Sol Ring",
+  "name": "Sol Ring",
+  "typeLine": "Artifact",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "{T}: Add {C}{C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Counterspell": {
+  "id": "Counterspell",
+  "name": "Counterspell",
+  "typeLine": "Instant",
+  "manaCost": "{U}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target spell."
+ },
+ "Kindred Discovery": {
+  "id": "Kindred Discovery",
+  "name": "Kindred Discovery",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{U}{U}",
+  "cmc": 5,
+  "colors": [
+   "U"
+  ],
+  "oracle": "As this enchantment enters, choose a creature type.\nWhenever a creature you control of the chosen type enters or attacks, draw a card."
+ },
+ "Sapphire Medallion": {
+  "id": "Sapphire Medallion",
+  "name": "Sapphire Medallion",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Blue spells you cast cost {1} less to cast."
+ },
+ "Mist-Cloaked Herald": {
+  "id": "Mist-Cloaked Herald",
+  "name": "Mist-Cloaked Herald",
+  "typeLine": "Creature — Merfolk Warrior",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "This creature can't be blocked.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Mystic Sanctuary": {
+  "id": "Mystic Sanctuary",
+  "name": "Mystic Sanctuary",
+  "typeLine": "Land — Island",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {U}.)\nThis land enters tapped unless you control three or more other Islands.\nWhen this land enters untapped, you may put target instant or sorcery card from your graveyard on top of your library.",
+  "producedMana": [
+   "U"
+  ]
+ },
+ "Arcane Signet": {
+  "id": "Arcane Signet",
+  "name": "Arcane Signet",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{T}: Add one mana of any color in your commander's color identity.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Thada Adel, Acquisitor": {
+  "id": "Thada Adel, Acquisitor",
+  "name": "Thada Adel, Acquisitor",
+  "typeLine": "Legendary Creature — Merfolk Rogue",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nWhenever Thada Adel deals combat damage to a player, search that player's library for an artifact card and exile it. Then that player shuffles. Until end of turn, you may play that card.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Raise the Palisade": {
+  "id": "Raise the Palisade",
+  "name": "Raise the Palisade",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{U}",
+  "cmc": 5,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Choose a creature type. Return all creatures that aren't of the chosen type to their owners' hands."
+ },
+ "Negate": {
+  "id": "Negate",
+  "name": "Negate",
+  "typeLine": "Instant",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target noncreature spell."
+ },
+ "Three Tree City": {
+  "id": "Three Tree City",
+  "name": "Three Tree City",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "As Three Tree City enters, choose a creature type.\n{T}: Add {C}.\n{2}, {T}: Choose a color. Add an amount of mana of that color equal to the number of creatures you control of the chosen type.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Kefnet's Monument": {
+  "id": "Kefnet's Monument",
+  "name": "Kefnet's Monument",
+  "typeLine": "Legendary Artifact",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Blue creature spells you cast cost {1} less to cast.\nWhenever you cast a creature spell, target creature an opponent controls doesn't untap during its controller's next untap step."
+ },
+ "Thought Vessel": {
+  "id": "Thought Vessel",
+  "name": "Thought Vessel",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "You have no maximum hand size.\n{T}: Add {C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Cavern of Souls": {
+  "id": "Cavern of Souls",
+  "name": "Cavern of Souls",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "As this land enters, choose a creature type.\n{T}: Add {C}.\n{T}: Add one mana of any color. Spend this mana only to cast a creature spell of the chosen type, and that spell can't be countered.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Inundate": {
+  "id": "Inundate",
+  "name": "Inundate",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{U}{U}{U}",
+  "cmc": 6,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Return all nonblue creatures to their owners' hands."
+ },
+ "Gray Harbor Merfolk": {
+  "id": "Gray Harbor Merfolk",
+  "name": "Gray Harbor Merfolk",
+  "typeLine": "Creature — Merfolk Rogue",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "This creature can't be blocked.\nThis creature gets +2/+0 as long as you control a commander that's a creature or planeswalker.",
+  "power": "0",
+  "toughness": "3"
+ },
+ "Rhystic Study": {
+  "id": "Rhystic Study",
+  "name": "Rhystic Study",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever an opponent casts a spell, you may draw a card unless that player pays {1}."
+ },
+ "Flare of Denial": {
+  "id": "Flare of Denial",
+  "name": "Flare of Denial",
+  "typeLine": "Instant",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "You may sacrifice a nontoken blue creature rather than pay this spell's mana cost.\nCounter target spell."
+ },
+ "Door of Destinies": {
+  "id": "Door of Destinies",
+  "name": "Door of Destinies",
+  "typeLine": "Artifact",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "As this artifact enters, choose a creature type.\nWhenever you cast a spell of the chosen type, put a charge counter on this artifact.\nCreatures you control of the chosen type get +1/+1 for each charge counter on this artifact."
+ },
+ "Cryptic Command": {
+  "id": "Cryptic Command",
+  "name": "Cryptic Command",
+  "typeLine": "Instant",
+  "manaCost": "{1}{U}{U}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Choose two —\n• Counter target spell.\n• Return target permanent to its owner's hand.\n• Tap all creatures your opponents control.\n• Draw a card."
+ },
+ "Metallic Mimic": {
+  "id": "Metallic Mimic",
+  "name": "Metallic Mimic",
+  "typeLine": "Artifact Creature — Shapeshifter",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "As this creature enters, choose a creature type.\nThis creature is the chosen type in addition to its other types.\nEach other creature you control of the chosen type enters with an additional +1/+1 counter on it.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Lonely Sandbar": {
+  "id": "Lonely Sandbar",
+  "name": "Lonely Sandbar",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add {U}.\nCycling {U} ({U}, Discard this card: Draw a card.)",
+  "producedMana": [
+   "U"
+  ]
+ },
+ "Talrand, Sky Summoner": {
+  "id": "Talrand, Sky Summoner",
+  "name": "Talrand, Sky Summoner",
+  "typeLine": "Legendary Creature — Merfolk Wizard",
+  "manaCost": "{2}{U}{U}",
+  "cmc": 4,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Whenever you cast an instant or sorcery spell, create a 2/2 blue Drake creature token with flying.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Propaganda": {
+  "id": "Propaganda",
+  "name": "Propaganda",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you."
+ },
+ "Wizard Class": {
+  "id": "Wizard Class",
+  "name": "Wizard Class",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "(Gain the next level as a sorcery to add its ability.)\nYou have no maximum hand size.\n{2}{U}: Level 2\nWhen this Class becomes level 2, draw two cards.\n{4}{U}: Level 3\nWhenever you draw a card, put a +1/+1 counter on target creature you control."
+ },
+ "Sky Diamond": {
+  "id": "Sky Diamond",
+  "name": "Sky Diamond",
+  "typeLine": "Artifact",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "This artifact enters tapped.\n{T}: Add {U}.",
+  "producedMana": [
+   "U"
+  ]
+ },
+ "Myriad Landscape": {
+  "id": "Myriad Landscape",
+  "name": "Myriad Landscape",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add {C}.\n{2}, {T}, Sacrifice this land: Search your library for up to two basic land cards that share a land type, put them onto the battlefield tapped, then shuffle.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Mana Drain": {
+  "id": "Mana Drain",
+  "name": "Mana Drain",
+  "typeLine": "Instant",
+  "manaCost": "{U}{U}",
+  "cmc": 2,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target spell. At the beginning of your next main phase, add an amount of {C} equal to that spell's mana value.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Reliquary Tower": {
+  "id": "Reliquary Tower",
+  "name": "Reliquary Tower",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "You have no maximum hand size.\n{T}: Add {C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Island": {
+  "id": "Island",
+  "name": "Island",
+  "typeLine": "Basic Land — Island",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "({T}: Add {U}.)",
+  "producedMana": [
+   "U"
+  ]
+ },
+ "Vodalian War Machine": {
+  "id": "Vodalian War Machine",
+  "name": "Vodalian War Machine",
+  "typeLine": "Creature — Wall",
+  "manaCost": "{1}{U}{U}",
+  "cmc": 3,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Defender (This creature can't attack.)\nTap an untapped Merfolk you control: This creature can attack this turn as though it didn't have defender.\nTap an untapped Merfolk you control: This creature gets +2/+1 until end of turn.\nWhen this creature dies, destroy all Merfolk tapped this turn to pay for its abilities.",
+  "power": "0",
+  "toughness": "4"
+ },
+ "Swan Song": {
+  "id": "Swan Song",
+  "name": "Swan Song",
+  "typeLine": "Instant",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [
+   "U"
+  ],
+  "oracle": "Counter target enchantment, instant, or sorcery spell. Its controller creates a 2/2 blue Bird creature token with flying."
+ }
+}

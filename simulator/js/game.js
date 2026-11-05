@@ -490,7 +490,15 @@ const Game = (() => {
   }
 
   // "As this enters, choose a creature type" (Urza's Incubator, Herald's Horn, Vanquisher's Banner).
-  const choosesType = oracle => /\bchoose a creature type\b/i.test(oracle || '');
+  // Eclipsed Realms, Dawn-Blessed Pennant: "choose Elemental, Elf, Faerie, Giant, Goblin, Kithkin, Merfolk, or Treefolk" (only those).
+  const LORWYN_TYPES = ['Elemental', 'Elf', 'Faerie', 'Giant', 'Goblin', 'Kithkin', 'Merfolk', 'Treefolk'];
+  const TYPE_LIST = /\bas (?:this|.+?) enters, choose ((?:[a-z]+, ){2,}or [a-z]+)\.?$/im;
+  const typeChoices = oracle => {
+    const m = TYPE_LIST.exec(oracle || '');
+    const list = m ? m[1].replace(/\bor /i, '').split(/,\s*/).map(t => t[0].toUpperCase() + t.slice(1).toLowerCase()) : null;
+    return list && list.every(t => LORWYN_TYPES.includes(t)) ? list : null; // (not Cloud Key's card types or Ignacio's)
+  };
+  const choosesType = oracle => /\bchoose a creature type\b/i.test(oracle || '') || !!typeChoices(oracle);
   // "As this artifact enters, choose a color." (Heraldic Banner)
   const choosesColor = oracle => /\bas (?:this|.+?) enters, choose a colou?r\b/i.test(oracle || '');
 
@@ -1855,7 +1863,7 @@ const Game = (() => {
 
   return {
     ZONES, ZONE_NAMES, CELL_W, CELL_H, MANA, layout, hooks, producesOf, available, enterLife, enterDraw, entersTapped, tapsOnEntry, parseCost, autoPay, manaAbility, isCreature,
-    choosesType, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TARGET_DISCOUNT, GRAVE_DISCOUNT, FIRST_FLIER, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
+    choosesType, typeChoices, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TARGET_DISCOUNT, GRAVE_DISCOUNT, FIRST_FLIER, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
     beginLeylines, takeBackLeylines, LEYLINE, attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,

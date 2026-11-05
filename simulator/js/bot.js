@@ -842,11 +842,13 @@ const Bot = (() => {
   const oracleOf = defOf => inst => oracleText(inst, defOf);
 
   // Opp's most common creature type, for "choose a creature type".
-  function commonType(s) {
+  // choices: the only types it may name (Eclipsed Realms' eight), else any.
+  function commonType(s, choices = null) {
     const counts = {};
+    if (choices) choices.forEach(t => { counts[t] = 0; });
     for (const inst of Object.values(s.cards)) {
       if (!G.isCreature(inst)) continue;
-      (front(inst.typeLine).split('—')[1] || '').split(/\s+/).filter(Boolean).forEach(t => { counts[t] = (counts[t] || 0) + 1; });
+      (front(inst.typeLine).split('—')[1] || '').split(/\s+/).filter(t => t && (!choices || choices.includes(t))).forEach(t => { counts[t] = (counts[t] || 0) + 1; });
     }
     return Object.keys(counts).sort((a, b) => counts[b] - counts[a])[0] || null;
   }
@@ -1104,7 +1106,7 @@ const Bot = (() => {
       onOpp(game, () => G.move(s, iid, 'battlefield', inst.zone === 'graveyard' ? { cast: true } : {}));
       spellCast(game, s, inst, defOf, null); // prowess, "whenever you cast", cascade
       if (G.choosesType(oracleOf(defOf)(inst))) {
-        inst.chosenType = commonType(s);
+        inst.chosenType = commonType(s, G.typeChoices(oracleOf(defOf)(inst)));
         if (inst.chosenType) G.log(s, `Chose ${inst.chosenType} for ${inst.name}.`);
       }
       // "When this enters, each player discards a card": Opp drops its worst; you're asked to pick yours.
@@ -15470,6 +15472,12 @@ const Bot = (() => {
     }],
     // Kindred Dominance: "Choose a creature type. Destroy all creatures that aren't of the chosen type."
     // The type picked is the one that's best for whoever cast it (their own most valuable type).
+    // Dawn-Blessed Pennant: "Return target card of the chosen type from your graveyard to your hand." (you pick; Opp takes the priciest)
+    [/^return target card of the chosen type from your graveyard to your hand$/i, (g, m, ctx) => {
+      const type = ctx.self && ctx.self.chosenType;
+      const ids = g.zones.graveyard.filter(iid => !!type && isA(g.cards[iid], type));
+      return youPick(g, ctx, { from: 'graveyard', ids, action: 'hand', title: `Return a ${type || 'chosen-type'} card to your hand` });
+    }],
     [/^choose a creature type$/i, (g, m, ctx) => {
       if (!ctx.self) return;
       ctx.self.chosenType = bestOwnType(creatures(g), ctx.defOf || (() => null));
@@ -27505,7 +27513,8 @@ const Bot = (() => {
     if (m[3] && creature.token) return false;
     if (creature.faceDown) return /^creatures?$/i.test(m[4]) && !m[5] && !m[7];
     // Kappa Cannoneer: "… or another artifact you control enters" (not only creatures).
-    if (!isA(creature, m[4]) || (!G.isCreature(creature) && (/\bcreatures?\b/i.test(m[4]) || !CARD_TYPES.includes(singular(m[4].split(/\s+/).pop()))))) return false;
+    // Dawn-Blessed Pennant: "Whenever a permanent you control of the chosen type enters" (any permanent).
+    if ((!/^permanents?$/i.test(m[4].trim()) && !isA(creature, m[4])) || (!G.isCreature(creature) && (/\bcreatures?\b/i.test(m[4]) || !CARD_TYPES.includes(singular(m[4].split(/\s+/).pop()))))) return false;
     if (m[7] && !(inst.chosenType && isA(creature, inst.chosenType))) return false;
     if (m[5]) {
       const st = stats(creature, creature.bot || defOf(creature.id));

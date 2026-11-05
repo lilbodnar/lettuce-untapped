@@ -3706,15 +3706,18 @@
   function chooseTypePrompt(iid) {
     const inst = game.cards[iid];
     if (!inst || inst.zone !== 'battlefield') return;
-    const types = deckCreatureTypes().slice(0, 16);
+    // Eclipsed Realms, Dawn-Blessed Pennant: only the eight types they name (your deck's most common first).
+    const only = Game.typeChoices(oracleOf(inst));
+    const inDeck = deckCreatureTypes();
+    const types = only ? [...only].sort((a, b) => (inDeck.includes(a) ? inDeck.indexOf(a) : 99) - (inDeck.includes(b) ? inDeck.indexOf(b) : 99)) : inDeck.slice(0, 16);
     openModal(`<form class="ask" id="typeForm"><h3>Choose a creature type for ${esc(inst.name)}</h3>
-      ${types.length ? `<label class="small muted">In your deck</label>
+      ${types.length ? `<label class="small muted">${only ? 'Choose one' : 'In your deck'}</label>
       <div class="chips">${types.map(t => `<button type="button" class="pill chip" data-type-pick="${esc(t)}">${esc(t)}</button>`).join('')}</div>` : ''}
-      <label class="small muted">Creature type</label>
-      <input name="t" type="text" value="${esc(inst.chosenType || '')}" placeholder="e.g. Elf, Goblin, Dragon" maxlength="30" autocomplete="off">
+      ${only ? '' : `<label class="small muted">Creature type</label>
+      <input name="t" type="text" value="${esc(inst.chosenType || '')}" placeholder="e.g. Elf, Goblin, Dragon" maxlength="30" autocomplete="off">`}
       <div class="toolbar end"><button type="button" class="btn ghost" data-ask="cancel">Cancel</button><button class="btn">Choose</button></div></form>`);
     const form = $('#typeForm');
-    form.t.focus();
+    if (form.t) form.t.focus();
     const done = () => { modal.hidden = true; modalBox.innerHTML = ''; };
     const pick = raw => {
       const t = raw.trim().replace(/^\w/, ch => ch.toUpperCase());
@@ -3727,7 +3730,7 @@
     };
     form.querySelectorAll('[data-type-pick]').forEach(b => { b.onclick = () => pick(b.dataset.typePick); });
     form.querySelector('[data-ask=cancel]').onclick = done;
-    form.onsubmit = e => { e.preventDefault(); pick(form.t.value); };
+    form.onsubmit = e => { e.preventDefault(); if (form.t) pick(form.t.value); };
   }
 
   // How many copies to make, and whether they get the original's counters.
