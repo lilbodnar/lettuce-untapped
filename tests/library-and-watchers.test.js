@@ -186,7 +186,7 @@ test('coverage: what the Simulator does with a card, yours and Opp\'s', () => {
   const fetch = Coverage.check(defs.wooded);
   assert.deepEqual([fetch.you, fetch.opp], ['all', 'all']);
   const delver = Coverage.check(defs.dfc);
-  assert.equal(delver.you, 'some'); // flying yes, "look at the top card" no
+  assert.equal(delver.you, 'all'); // flying, and "look at the top card" (it logs the card for you)
   const aura = Coverage.check(c('x', 'Pacifism', 'Enchantment — Aura', '{1}{W}', 2, null, "Enchant creature\nEnchanted creature can't attack or block."));
   assert.deepEqual([aura.you, aura.opp], ['all', 'never']);
 });

@@ -150,6 +150,9 @@ const Game = (() => {
       // Relic of Sauron: "{T}: Add two mana in any combination of {U}, {B}, and/or {R}."
       const combo = line.trim().match(/^\{T\}:\s*add (\w+) mana in any combination of ((?:\{[WUBRG]\},? )+(?:and\/or|or) \{[WUBRG]\})\.?$/i);
       if (combo && toNumber(combo[1])) { const cols = combo[2].toUpperCase().match(/\{[WUBRG]\}/g).map(k => k[1]); return { colors: cols, amount: toNumber(combo[1]), sacrifice: false, makes: Array(toNumber(combo[1])).fill(cols) }; }
+      // Loot, the Pathfinder: "Exhaust — {G}, {T}: Add three mana of any one color." (its {G} paid like a {1}; the exhaust limit isn't kept)
+      const lootM = line.trim().match(/^(?:exhaust\s*[—–-]\s*)?\{[WUBRG]\},\s*\{T\}:\s*add (\w+) mana of any one colou?r\.?$/i);
+      if (lootM && toNumber(lootM[1])) return { colors: [...MANA.slice(0, 5)], amount: toNumber(lootM[1]), sacrifice: false, filter: 1, makes: Array(toNumber(lootM[1])).fill(MANA.slice(0, 5)) };
       // Prophetic Prism: "{1}, {T}: Add one mana of any color."; Cascading Cataracts: "{5}, {T}: Add five
       // mana in any combination of colors." (each mana any color)
       // Orb of Dragonkind: "… Spend this mana only to cast Dragon spells or activate abilities of Dragons." (onlyFor: autoPay's spell)
@@ -170,10 +173,29 @@ const Game = (() => {
       // mana costs." (spendable)
       const big = line.trim().match(/^\{T\}:\s*add ((?:\{[WUBRGC]\})+)\. spend this mana only to cast spells with mana value (\d+) or greater or spells with \{X\} in their mana costs\.?$/i);
       if (big) { const makes = big[1].toUpperCase().match(/[WUBRGC]/g); return { colors: [...new Set(makes)], amount: makes.length, sacrifice: false, makes, bigOrX: Number(big[2]) }; }
+      // Paradigm Shifter: "{T}: Add two mana in any combination of colors. Spend this mana only to cast instant and sorcery spells." (spent on anything here)
+      if (/^\{T\}:\s*add two mana in any combination of colou?rs\. spend this mana only to cast instant (?:and|or) sorcery spells\.?$/i.test(line.trim())) return { colors: [...MANA.slice(0, 5)], amount: 2, sacrifice: false };
+      // Rasputin: "{T}, Remove one or more dream counters from Rasputin: Add that much {C}." / "Remove a dream counter from Rasputin: Add {C}." (one at a time)
+      const dream = line.trim().match(/^(?:\{T\},\s*)?remove (?:an?|one or more) ([\w-]+) counters? from [^:]+: add (?:that much )?\{C\}\.?$/i);
+      if (dream) return { colors: ['C'], amount: 1, sacrifice: false, remove: { kind: dream[1].toLowerCase(), n: 1 } };
       // Mana Bloom: "Remove a charge counter from this enchantment: Add one mana of any color. Activate only once each turn." (it's tapped
       // once used, so it's ready again next turn)
       const bloom = line.trim().match(/^remove an? ([\w-]+) counter from this \w+: add one mana of any colou?r\. activate only once each turn\.?$/i);
       if (bloom) return { colors: [...MANA.slice(0, 5)], amount: 1, sacrifice: false, remove: { kind: bloom[1].toLowerCase(), n: 1 } };
+      // White cards: Adarkar Unicorn: "{T}: Add {U} or {C}{U}. Spend this mana only to pay cumulative upkeep costs." (taps for {U}; the spending limit isn't kept)
+      const unicorn = line.trim().match(/^\{T\}:\s*add \{([WUBRG])\} or \{C\}\{\1\}\. spend this mana only to pay cumulative upkeep costs\.?$/i);
+      if (unicorn) return { colors: [unicorn[1].toUpperCase()], amount: 1, sacrifice: false };
+      // Farrelite Priest: "{1}: Add {W}. If this ability has been activated four or more times this turn, sacrifice this creature at the beginning
+      // of the next end step." (a {1} filter used once a turn, like Sungrass Prairie, so it's never sacrificed)
+      const priest = line.trim().match(/^\{1\}:\s*add \{([WUBRG])\}\. if this ability has been activated four or more times this turn, sacrifice this creature at the beginning of the next end step\.?$/i);
+      if (priest) return { colors: [priest[1].toUpperCase()], amount: 1, sacrifice: false, filter: 1, makes: [priest[1].toUpperCase()] };
+      // Brigid, Doun's Mind: "{T}: Add X {G} or X {W}, where X is the number of other creatures you control." (countOthers, baseSource)
+      const brigid = line.trim().match(/^\{T\}:\s*add x \{([WUBRG])\} or x \{([WUBRG])\}, where x is the number of other creatures you control\.?$/i);
+      if (brigid) return { colors: [brigid[1].toUpperCase(), brigid[2].toUpperCase()], amount: 1, sacrifice: false, countOthers: true };
+      // Chea, Friend to Maybe Too Many: "{T}: Add X {G} and each opponent loses X life, where X is the number of Familiars you control."
+      // (countType, baseSource; the life loss is bot.js's manaTapped)
+      const chea = line.trim().match(/^\{T\}:\s*add x \{([WUBRGC])\} and each opponent loses x life, where x is the number of (\w+?)s? you control\.?$/i);
+      if (chea) return { colors: [chea[1].toUpperCase()], amount: 1, sacrifice: false, countType: chea[2].toLowerCase(), drain: true };
       // Jegantha, the Wellspring: "{T}: Add {W}{U}{B}{R}{G}. This mana can't be spent to pay generic mana costs."
       const five = line.trim().match(/^\{T\}:\s*add ((?:\{[WUBRG]\}){2,})\. this mana can't be spent to pay generic mana costs\.?$/i);
       if (five) { const makes = five[1].toUpperCase().match(/[WUBRG]/g); return { colors: [...new Set(makes)], amount: makes.length, sacrifice: false, makes, noGeneric: true }; }
@@ -286,6 +308,13 @@ const Game = (() => {
       const cols = [...new Set([inst.mana.base, inst.chosenColor].filter(Boolean))]; // Thriving lands: their own color too
       return cols.length ? { ...inst.mana, colors: cols } : null;
     }
+    // Brigid ("other creatures you control"), Chea ("Familiars you control"): X mana
+    if (inst.mana && (inst.mana.countOthers || inst.mana.countType)) {
+      if (isCreature(inst) && inst.enteredTurn === s.turn) return null;
+      const kind = inst.mana.countType && new RegExp(`\\b${inst.mana.countType}s?\\b`, 'i');
+      const n = s.zones.battlefield.map(id => s.cards[id]).filter(c => !c.phasedOut && (kind ? kind.test(String(c.typeLine || '').split('//')[0]) || (c.changeling && isCreature(c)) : c !== inst && isCreature(c))).length;
+      return n ? { ...inst.mana, amount: n } : null;
+    }
     if (inst.mana && inst.mana.countKw) {
       if (isCreature(inst) && inst.enteredTurn === s.turn) return null;
       const n = (s.kwCount || {})[inst.mana.countKw] || 0;
@@ -345,6 +374,11 @@ const Game = (() => {
         const c = s.cards[iid];
         if (!c.tapped && !c.faceDown && !c.phasedOut && isCreature(c) && /\blegendary\b/i.test(c.typeLine || '') && !units.some(u => u.inst === c)) units.push({ inst: c, colors: [...MANA.slice(0, 5)], rank: 4, kind: '4L' });
       }
+    }
+    // Baylen, the Haymaker: "Tap two untapped tokens you control: Add one mana of any color." (each pair of tokens not used for mana; the pair is tapped too, autoPay)
+    if (s.zones.battlefield.some(iid => s.cards[iid].tapTokens && !s.cards[iid].faceDown && !s.cards[iid].phasedOut)) {
+      const toks = s.zones.battlefield.map(iid => s.cards[iid]).filter(c => c.token && !c.tapped && !c.faceDown && !c.phasedOut && !c.attacking && !units.some(u => u.inst === c));
+      for (let i = 0; i + 1 < toks.length; i += 2) units.push({ inst: toks[i], pair: toks[i + 1], colors: [...MANA.slice(0, 5)], rank: 4, kind: '4T' });
     }
     return units.sort((a, b) => a.rank - b.rank || a.colors.length - b.colors.length);
   }
@@ -570,6 +604,7 @@ const Game = (() => {
       if (!used.has(u) && tapping.has(unit.inst) && unit.colors.length === 1) pool[unit.colors[0]]++;
     });
     s.mana = pool;
+    [...used].forEach(u => { const p = units[u] && units[u].pair; if (p) { p.tapped = true; p.tappedFor = null; } }); // Baylen's second token
     const sources = [...tapping];
     s.life -= life;
     for (const inst of sources) {
@@ -848,9 +883,10 @@ const Game = (() => {
       x: 0,
       y: 0,
     }, extra);
-    if (/^changeling\b/im.test(String(def.oracle || ''))) inst.changeling = true; // every creature type (bot.js)
+    if (/^(?:changeling\b|(?:this creature|mistform ultimus) is every creature type(?: \([^)]*\))?\.?$)/im.test(String(def.oracle || ''))) inst.changeling = true; // every creature type (bot.js)
     if (Array.isArray(def.colors) && def.colors.length && !def.custom) inst.cardColors = def.colors; // "multicolored card" (bot.js)
     if (/^.+? is all colors\b/im.test(String(def.oracle || ''))) inst.allColors = true; // Transguild Courier
+    if (/^tap two untapped tokens you control: add one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.tapTokens = true; // Baylen, the Haymaker (manaUnits)
     if (/^tap an untapped legendary creature you control: add one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.tapLegend = true; // Relic of Legends (manaUnits)
     if (/^rebound\b/im.test(String(def.oracle || ''))) inst.hasRebound = true; // Terramorph (move)
     if (/^you may play an additional land on each of your turns\.?$/im.test(String(def.oracle || ''))) inst.extraLandDrop = true; // Exploration (move)
@@ -1578,7 +1614,7 @@ const Game = (() => {
     if (!next && inst.filterPaid) return untapFilter(s, inst);
     inst.tapped = next;
     if (next) {
-      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && (inst.mana.countKw || inst.mana.perCounter || inst.mana.chosenColor || inst.mana.imprint) ? sourceOf(s, inst) : inst.mana;
+      const src = isLand(inst) ? { colors: producesOf(inst), amount: 1 } : inst.mana && (inst.mana.countKw || inst.mana.countOthers || inst.mana.countType || inst.mana.perCounter || inst.mana.chosenColor || inst.mana.imprint) ? sourceOf(s, inst) : inst.mana;
       if (!src || inst.faceDown) return;
       let c = color;
       if (c === undefined) c = src.colors.length === 1 && !(isCreature(inst) && !isLand(inst)) ? src.colors[0] : null;
@@ -1683,7 +1719,7 @@ const Game = (() => {
       delete c.filterPaid;
     });
     log(s, `— Turn ${s.turn} — untapped.${stunned.length ? ` ${stunned.join(', ')} stayed tapped (a stun counter came off).` : ''}`);
-    drawCards(s, 1);
+    if (s.skipDraws > 0) { s.skipDraws--; log(s, 'Skipped the draw step (Fatigue).'); } else drawCards(s, 1);
   }
 
   function mulligan(s) {

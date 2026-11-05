@@ -495,6 +495,7 @@ const Coverage = (() => {
       if (/^\{1\},\s*\{T\}$/i.test(m[1].trim()) && /^add \{[WUBRG]\}\.?$/i.test(m[2].trim()) && /^\{T\}:\s*add \{C\}\.?$/im.test(card.oracle || '')) return out;
       if (/^\{1\}$/.test(m[1].trim()) && /^add (?:\{[WUBRG]\}, )+or \{[WUBRG]\}\. activate only once each turn\.?$/i.test(m[2].trim())) return out; // Temur Devotee: a once-a-turn color filter (not tapped automatically) // Sea Scryer: a one-for-one color filter (its {T}: Add {C} is what gets tapped)
       if ((is(card, 'land') && /^\{T\}$/i.test(m[1].trim()) && !/for each|chosen|equal to|\bx\b/i.test(m[2])) || G.manaAbility(card.name, line)) return out;
+      if (/^tap two untapped tokens you control$/i.test(m[1].trim()) && /^add one mana of any colou?r\.?$/i.test(m[2].trim())) return out; // Baylen (game.js manaUnits)
       if (/^tap an untapped legendary creature you control$/i.test(m[1].trim()) && /^add one mana of any colou?r\.?$/i.test(m[2].trim())) return out; // Relic of Legends (game.js manaUnits)
       // Elvish Spirit Guide (Bot.handAbilities; app.js's hand menu)
       if (B.handAbilities(inst, () => ({ oracle: line })).some(a => a.kind === 'handMana')) { gap(out, 'opp', 'activated', 'abilities from the hand (Opp never uses them)'); return out; }
@@ -682,6 +683,7 @@ const Coverage = (() => {
     if (/^as long as there are \w+ or more cards in your graveyard, (.+?) gets [+-]\d+\/[+-]\d+(?: and (?:can't block|can't attack|has .+?))?\.?$/i.test(line)
       || /^each creature gets \+1\/\+1 for each other creature on the battlefield that shares at least one creature type with it\.?$/i.test(line)
       || G.choosesColor(line) || /^a deck can have any number of cards named /i.test(line)) return out;
+    if (P.OWN_COLORS_MANA.test(line)) return out; // Katilda, Tazri (grantedMana)
     // 'Commander creatures you own have "Whenever this creature attacks a player, …"': the ability it gives.
     if ((m = /^(?:other )?(.+?) you (?:control|own) have "(.+)"\.?$/i.exec(line)) && !m[1].includes(':')) {
       const given = { id: 'given', name: 'this creature', typeLine: 'Creature' };
