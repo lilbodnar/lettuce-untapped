@@ -145,5 +145,11 @@ const Scryfall = (() => {
     return list;
   }
 
-  return { collection, named, autocomplete, fromDrop, byId, searchTokens, prints };
+  // One random card matching a Scryfall search (null when nothing matches).
+  async function random(q) {
+    const data = await request(`/cards/random?q=${encodeURIComponent(q)}`);
+    return data ? simplify(data) : null;
+  }
+
+  return { collection, named, autocomplete, fromDrop, byId, searchTokens, prints, random };
 })();

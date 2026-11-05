@@ -177,6 +177,15 @@ textarea { width: 100%; font-family: Consolas, monospace; font-size: .85rem; }
 .seg.colors button.active { opacity: 1; }
 .seg.colors .mana { width: 20px; height: 20px; vertical-align: middle; }
 
+/* random commander */
+.head-btns { display: flex; gap: .5rem; flex-wrap: wrap; }
+.rc-form { margin-bottom: 1rem; }
+.rc-colors label { padding: .35rem .5rem; opacity: .45; cursor: pointer; position: relative; }
+.rc-colors label:has(input:checked) { opacity: 1; background: var(--panel-2); }
+.rc-colors label:has(input:focus-visible) { outline: 2px solid var(--accent, currentColor); }
+.rc-colors input { position: absolute; opacity: 0; width: 1px; height: 1px; }
+.rc-price { width: 6rem; }
+
 /* deck check */
 .deck-check { padding: .7rem 1.2rem; }
 .deck-check.ok { border-left: 4px solid var(--ok); }

@@ -28,6 +28,7 @@
     deckView: 'grid', deckSel: new Set(), lastDeckPick: null, deckOrder: [], ownFilter: 'all',
     wishView: 'grid',
     filters: { colors: [], type: '', cmc: '', rarity: '' },
+    rc: { colors: [], mode: 'exact', maxPrice: '', source: 'any', card: null, busy: false, msg: '' }, // random commander
   };
 
   // ---------- helpers ----------
@@ -1344,7 +1345,8 @@
     const prof = profile();
     const decks = prof.decks.slice().sort((a, b) => a.name.localeCompare(b.name));
     const head = `<div class="page-head"><h1>My decks</h1>
-      <button class="btn" data-action="tab" data-tab="import">+ Import a deck</button></div>`;
+      <div class="head-btns"><button class="btn ghost" data-action="randomCommander" title="Pick a random commander to build a deck around">🎲 Random commander</button>
+      <button class="btn" data-action="tab" data-tab="import">+ Import a deck</button></div></div>`;
     if (!decks.length) return head + `<div class="empty">No decks yet. Export a deck from Archidekt, then use <a href="#" data-action="tab" data-tab="import">Import</a> and choose "A new deck".</div>`;
     return head + `<div class="deck-grid">${decks.map(d => {
       const st = deckStatus(d, prof);
@@ -1871,6 +1873,153 @@
     $('#modal').hidden = false;
   }
 
+  // ---------- random commander ----------
+  // Rolls a random commander from Scryfall (or from your own collection), filtered by color identity and price.
+  // colors: picked from W U B R G and C (colorless); mode: 'exact' (that identity), 'within' (no colors outside it),
+  // 'includes' (at least those colors). No colors picked means any.
+
+  const rcName = c => String(c.name || '').split(' // ')[0];
+  // EDHREC's commander page: "Atraxa, Praetors' Voice" -> atraxa-praetors-voice
+  const edhrecUrl = c => `https://edhrec.com/commanders/${rcName(c).normalize('NFD').replace(/[̀-ͯ]/g, '').toLowerCase()
+    .replace(/[^a-z0-9\s-]/g, '').trim().replace(/\s+/g, '-')}`;
+  const canLead = c => !!c && (c.legalities || {}).commander === 'legal'
+    && ((/\blegendary\b/i.test(String(c.typeLine).split('//')[0]) && /\bcreature\b/i.test(String(c.typeLine).split('//')[0])) || /can be your commander/i.test(c.oracle || ''));
+
+  function rcIdentityOk(c, colors, mode) {
+    const id = c.colorIdentity || [];
+    const want = colors.filter(k => k !== 'C');
+    if (!colors.length) return true;
+    if (colors.includes('C') && !want.length) return mode === 'includes' ? true : !id.length; // colorless (within: only colorless too)
+    if (mode === 'exact') return id.length === want.length && want.every(k => id.includes(k));
+    if (mode === 'within') return id.every(k => want.includes(k));
+    return want.every(k => id.includes(k));
+  }
+
+  function rcQuery() {
+    const r = ui.rc;
+    const want = r.colors.filter(k => k !== 'C').join('').toLowerCase();
+    let id = '';
+    if (r.colors.length && !(r.colors.includes('C') && !want && r.mode === 'includes')) {
+      const op = { exact: '=', within: '<=', includes: '>=' }[r.mode];
+      id = ` id${want ? op : '='}${want || 'c'}`;
+    }
+    const price = r.maxPrice !== '' && Number(r.maxPrice) >= 0 ? ` usd<=${Number(r.maxPrice)}` : '';
+    return `is:commander legal:commander game:paper -t:background${id}${price}`;
+  }
+
+  function readRcForm() {
+    const form = document.querySelector('[data-form="randomCommander"]');
+    if (!form) return;
+    const f = form.elements;
+    ui.rc.colors = [...form.querySelectorAll('input[name="color"]:checked')].map(i => i.value);
+    ui.rc.mode = f.mode.value;
+    ui.rc.maxPrice = f.maxPrice.value.trim();
+    ui.rc.source = f.source.value;
+  }
+
+  function randomCommanderHtml() {
+    const r = ui.rc;
+    const c = r.card;
+    const opt = (value, label, current) => `<option value="${value}" ${current === value ? 'selected' : ''}>${label}</option>`;
+    const owned = c && profile().collection.some(x => x.qty > 0 && cards[x.scryfallId] && rcName(cards[x.scryfallId]) === rcName(c));
+    let result = '';
+    if (r.busy) result = '<p class="muted">Rolling…</p>';
+    else if (r.msg) result = `<div class="panel bad">${esc(r.msg)}</div>`;
+    else if (c) {
+      result = `<div class="card-detail rc-result">
+        <div class="card-imgs">
+          ${c.imageLarge ? `<img src="${esc(c.imageLarge)}" alt="${esc(c.name)}">` : ''}
+          ${c.backImage ? `<img src="${esc(c.backImage)}" alt="Back face">` : ''}
+        </div>
+        <div class="card-meta">
+          <h2>${esc(c.name)}</h2>
+          <div class="muted">${esc(c.typeLine)} ${c.manaCost ? '· ' + manaHtml(c.manaCost) : ''}</div>
+          <p>Color identity: ${(c.colorIdentity || []).length ? manaHtml(c.colorIdentity.map(k => `{${k}}`).join('')) : manaHtml('{C}')}</p>
+          <p>Price: ${money(c.prices.usd)}${owned ? ' · <span class="ok">You own it</span>' : ''}</p>
+          <p class="head-btns">
+            <button class="btn" data-action="rcRoll">🎲 Roll again</button>
+            <button class="btn" data-action="rcDeck">+ Start a deck with it</button>
+            ${owned ? '' : '<button class="btn ghost" data-action="rcWish">♥ Add to wishlist</button>'}
+          </p>
+          <p><a href="${esc(edhrecUrl(c))}" target="_blank" rel="noopener">Deck ideas on EDHREC ↗</a> · <a href="${esc(c.uri)}" target="_blank" rel="noopener">View on Scryfall ↗</a></p>
+        </div>
+      </div>`;
+    }
+    return `
+      <button class="close" data-action="closeModal" aria-label="Close">×</button>
+      <h2>Random commander</h2>
+      <form data-form="randomCommander" class="toolbar rc-form">
+        <div class="seg colors rc-colors" title="Color identity. Pick none for any colors.">
+          ${['W', 'U', 'B', 'R', 'G', 'C'].map(k => `<label><input type="checkbox" name="color" value="${k}" ${r.colors.includes(k) ? 'checked' : ''} aria-label="${k === 'C' ? 'Colorless' : k}">${manaHtml(`{${k}}`)}</label>`).join('')}
+        </div>
+        <label>Colors <select name="mode">${opt('exact', 'Exactly these', r.mode)}${opt('within', 'Only these (or fewer)', r.mode)}${opt('includes', 'At least these', r.mode)}</select></label>
+        <label>Max price $<input type="number" name="maxPrice" min="0" step="0.01" placeholder="Any" value="${esc(r.maxPrice)}" class="rc-price"></label>
+        <label>From <select name="source">${opt('any', 'Every commander', r.source)}${opt('mine', 'My collection', r.source)}</select></label>
+        <button class="btn" ${r.busy ? 'disabled' : ''}>🎲 Roll</button>
+      </form>
+      ${result}`;
+  }
+
+  function showRandomCommander() {
+    readRcForm();
+    ui.modalId = null;
+    $('#modalBox').innerHTML = randomCommanderHtml();
+    $('#modal').hidden = false;
+  }
+
+  async function rollCommander() {
+    readRcForm();
+    const r = ui.rc;
+    if (r.busy) return;
+    r.busy = true;
+    r.msg = '';
+    showRandomCommander();
+    try {
+      let c = null;
+      if (r.source === 'mine') {
+        const seen = new Set();
+        const pool = profile().collection.filter(x => x.qty > 0).map(x => cards[x.scryfallId])
+          .filter(k => canLead(k) && rcIdentityOk(k, r.colors, r.mode) && (r.maxPrice === '' || (k.prices.usd != null && k.prices.usd <= Number(r.maxPrice))))
+          .filter(k => !seen.has(rcName(k)) && seen.add(rcName(k)));
+        const fresh = pool.length > 1 && r.card ? pool.filter(k => rcName(k) !== rcName(r.card)) : pool;
+        c = fresh.length ? fresh[Math.floor(Math.random() * fresh.length)] : null;
+        if (!c) r.msg = "No commander in your collection matches. Try other colors or a higher price, or roll from every commander.";
+      } else {
+        c = await Scryfall.random(rcQuery());
+        if (!c) r.msg = 'No commander matches those colors and price.';
+      }
+      r.card = c;
+    } catch (e) {
+      r.msg = `Couldn't reach Scryfall (${e.message}). Check your internet connection and try again.`;
+    }
+    r.busy = false;
+    if (!$('#modal').hidden) showRandomCommander();
+  }
+
+  function rcStartDeck() {
+    const c = ui.rc.card;
+    if (!c) return;
+    const prof = profile();
+    let name = rcName(c);
+    for (let n = 2; deckNameTaken(prof, name); n++) name = `${rcName(c)} (${n})`;
+    rememberCards([c]);
+    const deck = { id: uid(), name, createdAt: Date.now(), updatedAt: Date.now(), format: 'commander',
+      cards: [{ scryfallId: c.id, name: c.name, qty: 1, finish: 'nonfoil', categories: ['Commander'], inDeck: true, tags: [] }] };
+    giveDefaultShare(deck);
+    prof.decks.push(deck);
+    save();
+    $('#modal').hidden = true;
+    ui.tab = 'decks';
+    ui.deckId = deck.id;
+    ui.compareId = state.activeProfileId;
+    ui.deckSel.clear();
+    ui.lastDeckPick = null;
+    render();
+    window.scrollTo(0, 0);
+    setStatus(`Started the deck "${name}" with ${c.name} as its commander.`, 'ok');
+    setTimeout(() => setStatus(''), 4000);
+  }
+
   // ---------- actions ----------
 
   async function doImport(form) {
@@ -2222,6 +2371,18 @@
       save();
       render();
       setStatus(`Moved ${w.qty}× ${cardName(w)} into your collection.`, 'ok');
+      setTimeout(() => setStatus(''), 3000);
+    },
+    randomCommander: () => { showRandomCommander(); if (!ui.rc.card && !ui.rc.busy) rollCommander(); },
+    rcRoll: () => rollCommander(),
+    rcDeck: () => rcStartDeck(),
+    rcWish: () => {
+      const c = ui.rc.card;
+      if (!c) return;
+      rememberCards([c]);
+      addToWishlist(profile(), [{ scryfallId: c.id, name: c.name, finish: 'nonfoil', qty: 1 }]);
+      save();
+      setStatus(`Added ${c.name} to your wishlist.`, 'ok');
       setTimeout(() => setStatus(''), 3000);
     },
     wishAddCard: el => {
@@ -2635,6 +2796,7 @@
       else if (kind === 'addCard') addCardByName(e.target);
       else if (kind === 'addDeckCard') addDeckCardByName(e.target);
       else if (kind === 'addWish') addWishByName(e.target);
+      else if (kind === 'randomCommander') rollCommander();
       else if (kind === 'login' || kind === 'register') logIn(e.target, kind === 'register');
       else if (kind === 'changePassword') changePassword(e.target);
     });
