@@ -1800,12 +1800,19 @@
     if (!v || n == null) return;
     if (v.crewed) return status(`${v.name} is already crewed this turn.`);
     const crew = Bot.yourCreatures(game, def).filter(c => !c.inst.tapped && c.inst.iid !== iid);
+    // Reckoner Bankbuster's Pilot: "This token crews Vehicles as though its power were 2 greater."
+    const NEAR = Bot.parts.NEAR;
+    const lines = inst => String((inst.custom && inst.custom.text) || oracleOf(inst) || '').split('\n');
+    const crewPow = c => c.st.pow + lines(c.inst).map(l => NEAR.PILOT_CREW.exec(l)).filter(Boolean).reduce((k, m) => k + Number(m[1]), 0);
+    // Heart of Kiran: a loyalty counter from one of your planeswalkers instead
+    const kiran = lines(v).some(l => NEAR.HEART_KIRAN.test(l)) ? game.zones.battlefield.map(id => game.cards[id]).filter(c => /\bplaneswalker\b/i.test(c.typeLine || '') && ((c.counters || {}).loyalty || 0) > 0) : [];
     openModal(`
       <div class="page-head"><h3>Crew ${esc(v.name)}</h3><button class="btn ghost sm" data-act="${back === 'attack' ? 'attack' : 'close-modal'}">Back</button></div>
       <p class="muted small">Crew ${n}: tap any of your untapped creatures with total power ${n} or more. Creatures that just arrived can crew. Crewing creatures can't attack this turn, since they're tapped.</p>
-      ${crew.length ? `<div class="attack-list">${crew.map(c => `<label class="check"><input type="checkbox" data-crew="${esc(c.inst.iid)}" data-pow="${c.st.pow}"> <b>${esc(c.inst.name)}</b> <span class="muted">power ${c.st.pow}</span></label>`).join('')}</div>`
+      ${crew.length ? `<div class="attack-list">${crew.map(c => `<label class="check"><input type="checkbox" data-crew="${esc(c.inst.iid)}" data-pow="${crewPow(c)}"> <b>${esc(c.inst.name)}</b> <span class="muted">power ${crewPow(c)}</span></label>`).join('')}</div>`
         : '<p class="muted">You have no untapped creatures to crew it with.</p>'}
-      <div class="toolbar"><button class="btn" data-act="crew-go" data-iid="${esc(iid)}" data-back="${esc(back || '')}" ${crew.length ? '' : 'disabled'}>Crew</button></div>`);
+      ${kiran.length ? `<p class="muted small">Or remove a loyalty counter instead:</p><div class="attack-list">${kiran.map(c => `<label class="check"><input type="checkbox" data-kiran="${esc(c.iid)}"> <b>${esc(c.name)}</b> <span class="muted">loyalty ${c.counters.loyalty}</span></label>`).join('')}</div>` : ''}
+      <div class="toolbar"><button class="btn" data-act="crew-go" data-iid="${esc(iid)}" data-back="${esc(back || '')}" ${crew.length || kiran.length ? '' : 'disabled'}>Crew</button></div>`);
   }
 
   function crewGo(iid, back) {
@@ -1814,6 +1821,20 @@
     const n = Bot.crewOf(v, def);
     const picks = [...modalBox.querySelectorAll('[data-crew]:checked')];
     const power = picks.reduce((sum, x) => sum + Number(x.dataset.pow), 0);
+    const pw = modalBox.querySelector('[data-kiran]:checked'); // Heart of Kiran: a loyalty counter instead of tapping creatures
+    if (pw) {
+      closeModal();
+      act(() => {
+        const w = game.cards[pw.dataset.kiran];
+        if (w) Game.counter(game, w.iid, 'loyalty', -1);
+        v.crewed = true;
+        v.crewedBy = [];
+        Game.log(game, `Crewed ${v.name} with a loyalty counter from ${w ? w.name : 'a planeswalker'}. It's a creature until the turn ends.`);
+        Bot.crewedNow(game, game, v, def);
+      });
+      if (back === 'attack') openAttack();
+      return;
+    }
     if (power < n) return status(`Not enough power: ${power} of the ${n} needed to crew ${v.name}.`, 'warn');
     closeModal();
     act(() => {

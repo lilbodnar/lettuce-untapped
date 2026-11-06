@@ -1,0 +1,239 @@
+{
+ "Karn, the Great Creator": {
+  "id": "Karn, the Great Creator",
+  "name": "Karn, the Great Creator",
+  "typeLine": "Legendary Planeswalker — Karn",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Activated abilities of artifacts your opponents control can't be activated.\n+1: Until your next turn, up to one target noncreature artifact becomes an artifact creature with power and toughness each equal to its mana value.\n−2: You may reveal an artifact card you own from outside the game or choose a face-up artifact card you own in exile. Put that card into your hand.",
+  "loyalty": "5"
+ },
+ "Nautiloid Ship": {
+  "id": "Nautiloid Ship",
+  "name": "Nautiloid Ship",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Flying\nWhen this Vehicle enters, exile target player's graveyard.\nWhenever this Vehicle deals combat damage to a player, you may put a creature card exiled with this Vehicle onto the battlefield under your control.\nCrew 3",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Reckoner Bankbuster": {
+  "id": "Reckoner Bankbuster",
+  "name": "Reckoner Bankbuster",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "This Vehicle enters with three charge counters on it.\n{2}, {T}, Remove a charge counter from this Vehicle: Draw a card. Then if there are no charge counters on this Vehicle, create a Treasure token and a 1/1 colorless Pilot creature token with \"This token crews Vehicles as though its power were 2 greater.\"\nCrew 3",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Unlicensed Hearse": {
+  "id": "Unlicensed Hearse",
+  "name": "Unlicensed Hearse",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{T}: Exile up to two target cards from a single graveyard.\nUnlicensed Hearse's power and toughness are each equal to the number of cards exiled with it.\nCrew 2",
+  "power": "*",
+  "toughness": "*"
+ },
+ "Mechtitan Core": {
+  "id": "Mechtitan Core",
+  "name": "Mechtitan Core",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{5}, Exile this Vehicle and four other artifact creatures and/or Vehicles you control: Create Mechtitan, a legendary 10/10 Construct artifact creature token with flying, vigilance, trample, lifelink, and haste that's all colors. When that token leaves the battlefield, return all cards exiled with this Vehicle except this card to the battlefield tapped under their owners' control.\nCrew 2",
+  "power": "2",
+  "toughness": "4"
+ },
+ "Karn, Scion of Urza": {
+  "id": "Karn, Scion of Urza",
+  "name": "Karn, Scion of Urza",
+  "typeLine": "Legendary Planeswalker — Karn",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "+1: Reveal the top two cards of your library. An opponent chooses one of them. Put that card into your hand and exile the other with a silver counter on it.\n−1: Put a card you own with a silver counter on it from exile into your hand.\n−2: Create a 0/0 colorless Construct artifact creature token with \"This token gets +1/+1 for each artifact you control.\"",
+  "loyalty": "5"
+ },
+ "Karn, Living Legacy": {
+  "id": "Karn, Living Legacy",
+  "name": "Karn, Living Legacy",
+  "typeLine": "Legendary Planeswalker — Karn",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "+1: Create a tapped Powerstone token. (It's an artifact with \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")\n−1: Pay any amount of mana. Look at that many cards from the top of your library, then put one of those cards into your hand and the rest on the bottom of your library in a random order.\n−7: You get an emblem with \"Tap an untapped artifact you control: This emblem deals 1 damage to any target.\"",
+  "loyalty": "4",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Lifecraft Engine": {
+  "id": "Lifecraft Engine",
+  "name": "Lifecraft Engine",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "As this Vehicle enters, choose a creature type.\nVehicle creatures you control are the chosen creature type in addition to their other types.\nEach creature you control of the chosen type other than this Vehicle gets +1/+1.\nCrew 3",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Golden Argosy": {
+  "id": "Golden Argosy",
+  "name": "Golden Argosy",
+  "typeLine": "Legendary Artifact — Vehicle",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Whenever Golden Argosy attacks, exile each creature that crewed it this turn. Return them to the battlefield tapped under their owner's control at the beginning of the next end step.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "3",
+  "toughness": "6"
+ },
+ "Karn Liberated": {
+  "id": "Karn Liberated",
+  "name": "Karn Liberated",
+  "typeLine": "Legendary Planeswalker — Karn",
+  "manaCost": "{7}",
+  "cmc": 7,
+  "colors": [],
+  "oracle": "+4: Target player exiles a card from their hand.\n−3: Exile target permanent.\n−14: Restart the game, leaving in exile all non-Aura permanent cards exiled with Karn. Then put those cards onto the battlefield under your control.",
+  "loyalty": "6"
+ },
+ "Luxurious Locomotive": {
+  "id": "Luxurious Locomotive",
+  "name": "Luxurious Locomotive",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Whenever this Vehicle attacks, create a Treasure token for each creature that crewed it this turn. (They're artifacts with \"{T}, Sacrifice this token: Add one mana of any color.\")\nCrew 1. Activate only once each turn. (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "6",
+  "toughness": "5",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Adrestia": {
+  "id": "Adrestia",
+  "name": "Adrestia",
+  "typeLine": "Legendary Artifact — Vehicle",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Islandwalk (This creature can't be blocked as long as defending player controls an Island.)\nWhenever Adrestia attacks, if an Assassin crewed it this turn, draw a card. Adrestia becomes an Assassin in addition to its other types until end of turn.\nCrew 1",
+  "power": "4",
+  "toughness": "3"
+ },
+ "Weatherlight Compleated": {
+  "id": "Weatherlight Compleated",
+  "name": "Weatherlight Compleated",
+  "typeLine": "Legendary Artifact — Vehicle",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Flying\nAs long as Weatherlight Compleated has four or more phyresis counters on it, it's a Phyrexian creature in addition to its other types.\nWhenever a creature you control dies, put a phyresis counter on Weatherlight Compleated. Then draw a card if it has seven or more phyresis counters on it. If it doesn't, scry 1.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Mobile Garrison": {
+  "id": "Mobile Garrison",
+  "name": "Mobile Garrison",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Whenever this Vehicle attacks, untap another target artifact or creature you control.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Dermotaxi": {
+  "id": "Dermotaxi",
+  "name": "Dermotaxi",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Imprint — As this Vehicle enters, exile a creature card from a graveyard.\nTap two untapped creatures you control: Until end of turn, this Vehicle becomes a copy of the exiled card, except it's a Vehicle artifact in addition to its other types.",
+  "power": "0",
+  "toughness": "0"
+ },
+ "The Thanos-Copter": {
+  "id": "The Thanos-Copter",
+  "name": "The Thanos-Copter",
+  "typeLine": "Legendary Artifact — Vehicle",
+  "manaCost": "{6}",
+  "cmc": 6,
+  "colors": [],
+  "oracle": "Flying, haste\nWhen The Thanos-Copter enters, Vehicles you control become artifact creatures until end of turn.\nWhenever a Vehicle you control deals combat damage to a player, draw a card.\nCrew 2",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Heart of Kiran": {
+  "id": "Heart of Kiran",
+  "name": "Heart of Kiran",
+  "typeLine": "Legendary Artifact — Vehicle",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Flying, vigilance\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)\nYou may remove a loyalty counter from a planeswalker you control rather than pay Heart of Kiran's crew cost.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Turtle Van": {
+  "id": "Turtle Van",
+  "name": "Turtle Van",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Whenever this Vehicle attacks, put a +1/+1 counter on target creature that crewed it this turn. Then if that creature is a Mutant, Ninja, or Turtle, double the number of +1/+1 counters on it.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Daredevil Dragster": {
+  "id": "Daredevil Dragster",
+  "name": "Daredevil Dragster",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "At end of combat, if this Vehicle attacked or blocked this combat, put a velocity counter on it. Then if it has two or more velocity counters on it, sacrifice it and draw two cards.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Shadowed Caravel": {
+  "id": "Shadowed Caravel",
+  "name": "Shadowed Caravel",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Whenever a creature you control explores, put a +1/+1 counter on this Vehicle.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Soul Shredder": {
+  "id": "Soul Shredder",
+  "name": "Soul Shredder",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Haste\nWhenever one or more other creatures die, Soul Shredder perpetually gets +1/+1. This ability also triggers if Soul Shredder is in your graveyard.\nCrew 1\n{1}, Sacrifice two creatures: Return Soul Shredder from your graveyard to the battlefield. Activate only as a sorcery.",
+  "power": "2",
+  "toughness": "2"
+ }
+}
