@@ -1,0 +1,28 @@
+{
+ "Prismatic Dragon": {
+  "id": "Prismatic Dragon",
+  "name": "Prismatic Dragon",
+  "typeLine": "Creature — Dragon",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nDuring your upkeep, Prismatic Dragon becomes a random color permanently.\n{2}: Prismatic Dragon becomes a random color permanently.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Rainbow Knights": {
+  "id": "Rainbow Knights",
+  "name": "Rainbow Knights",
+  "typeLine": "Creature — Knights",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When Rainbow Knights comes into play, it gains protection from a random color permanently.\n{1}: First strike until end of turn.\n{W}{W}: +0/+0, +1/+0 or +2/+0 until end of turn chosen at random.",
+  "power": "2",
+  "toughness": "1"
+ }
+}

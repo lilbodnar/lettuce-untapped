@@ -47,7 +47,7 @@ const Scryfall = (() => {
       setName: c.set_name,
       cn: c.collector_number,
       rarity: c.rarity,
-      typeLine: c.type_line || face.type_line || '',
+      typeLine: String(c.type_line || face.type_line || '').replace(/^Summon(?: —)? (.+)$/, 'Creature — $1'), // old digital cards (Astral): "Summon Dragon" is a creature
       manaCost: c.mana_cost || face.mana_cost || '',
       cmc: c.cmc || 0,
       colorIdentity: c.color_identity || [],
