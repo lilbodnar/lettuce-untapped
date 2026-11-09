@@ -1,0 +1,478 @@
+{
+ "Urborg, Tomb of Yawgmoth": {
+  "id": "Urborg, Tomb of Yawgmoth",
+  "name": "Urborg, Tomb of Yawgmoth",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Each land is a Swamp in addition to its other land types.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Boseiju, Who Endures": {
+  "id": "Boseiju, Who Endures",
+  "name": "Boseiju, Who Endures",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add {G}.\nChannel — {1}{G}, Discard this card: Destroy target artifact, enchantment, or nonbasic land an opponent controls. That player may search their library for a land card with a basic land type, put it onto the battlefield, then shuffle. This ability costs {1} less to activate for each legendary creature you control.",
+  "producedMana": [
+   "G"
+  ]
+ },
+ "Urza's Saga": {
+  "id": "Urza's Saga",
+  "name": "Urza's Saga",
+  "typeLine": "Enchantment Land — Urza's Saga",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — This Saga gains \"{T}: Add {C}.\"\nII — This Saga gains \"{2}, {T}: Create a 0/0 colorless Construct artifact creature token with 'This token gets +1/+1 for each artifact you control.'\"\nIII — Search your library for an artifact card with mana cost {0} or {1}, put it onto the battlefield, then shuffle.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Gemstone Caverns": {
+  "id": "Gemstone Caverns",
+  "name": "Gemstone Caverns",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the battlefield with a luck counter on it. If you do, exile a card from your hand.\n{T}: Add {C}. If Gemstone Caverns has a luck counter on it, instead add one mana of any color.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Starting Town": {
+  "id": "Starting Town",
+  "name": "Starting Town",
+  "typeLine": "Land — Town",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless it's your first, second, or third turn of the game.\n{T}: Add {C}.\n{T}, Pay 1 life: Add one mana of any color.",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Castle Garenbrig": {
+  "id": "Castle Garenbrig",
+  "name": "Castle Garenbrig",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a Forest.\n{T}: Add {G}.\n{2}{G}{G}, {T}: Add six {G}. Spend this mana only to cast creature spells or activate abilities of creatures.",
+  "producedMana": [
+   "G"
+  ]
+ },
+ "Archway of Innovation": {
+  "id": "Archway of Innovation",
+  "name": "Archway of Innovation",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control an Island.\n{T}: Add {U}.\n{U}, {T}: The next spell you cast this turn has improvise. (Your artifacts can help cast that spell. Each artifact you tap after you're done activating mana abilities pays for {1}.)",
+  "producedMana": [
+   "U"
+  ]
+ },
+ "Mines of Moria": {
+  "id": "Mines of Moria",
+  "name": "Mines of Moria",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Mines of Moria enters tapped unless you control a legendary creature.\n{T}: Add {R}.\n{3}{R}, {T}, Exile three cards from your graveyard: Create two Treasure tokens.",
+  "producedMana": [
+   "R"
+  ]
+ },
+ "Rivendell": {
+  "id": "Rivendell",
+  "name": "Rivendell",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Rivendell enters tapped unless you control a legendary creature.\n{T}: Add {U}.\n{1}{U}, {T}: Scry 2. Activate only if you control a legendary creature.",
+  "producedMana": [
+   "U"
+  ]
+ },
+ "Abandoned Air Temple": {
+  "id": "Abandoned Air Temple",
+  "name": "Abandoned Air Temple",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a basic land.\n{T}: Add {W}.\n{3}{W}, {T}: Put a +1/+1 counter on each creature you control.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "City of Traitors": {
+  "id": "City of Traitors",
+  "name": "City of Traitors",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "When you play another land, sacrifice this land.\n{T}: Add {C}{C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Spymaster's Vault": {
+  "id": "Spymaster's Vault",
+  "name": "Spymaster's Vault",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a Swamp.\n{T}: Add {B}.\n{B}, {T}: Target creature you control connives X, where X is the number of creatures that died this turn. (Draw X cards, then discard X cards. Put a +1/+1 counter on that creature for each nonland card discarded this way.)",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Midgar, City of Mako // Reactor Raid": {
+  "id": "Midgar, City of Mako // Reactor Raid",
+  "name": "Midgar, City of Mako // Reactor Raid",
+  "typeLine": "Land — Town // Sorcery — Adventure",
+  "manaCost": "{2}{B}",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Midgar, City of Mako: This land enters tapped.\n{T}: Add {B}.\n\nReactor Raid: You may sacrifice an artifact or creature. If you do, draw two cards. (Then exile this card. You may play the land later from exile.)",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Mount Doom": {
+  "id": "Mount Doom",
+  "name": "Mount Doom",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}, Pay 1 life: Add {B} or {R}.\n{1}{B}{R}, {T}: Mount Doom deals 1 damage to each opponent.\n{5}{B}{R}, {T}, Sacrifice Mount Doom and a legendary artifact: Choose up to two creatures, then destroy the rest. Activate only as a sorcery.",
+  "producedMana": [
+   "B",
+   "R"
+  ]
+ },
+ "Secret Tunnel": {
+  "id": "Secret Tunnel",
+  "name": "Secret Tunnel",
+  "typeLine": "Land — Cave",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land can't be blocked.\n{T}: Add {C}.\n{4}, {T}: Two target creatures you control that share a creature type can't be blocked this turn.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Valakut, the Molten Pinnacle": {
+  "id": "Valakut, the Molten Pinnacle",
+  "name": "Valakut, the Molten Pinnacle",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\nWhenever a Mountain you control enters, if you control at least five other Mountains, you may have this land deal 3 damage to any target.\n{T}: Add {R}.",
+  "producedMana": [
+   "R"
+  ]
+ },
+ "Arid Archway": {
+  "id": "Arid Archway",
+  "name": "Arid Archway",
+  "typeLine": "Land — Desert",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\nWhen this land enters, return a land you control to its owner's hand. If another Desert was returned this way, surveil 1. (Look at the top card of your library. You may put it into your graveyard.)\n{T}: Add {C}{C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Adagia, Windswept Bastion": {
+  "id": "Adagia, Windswept Bastion",
+  "name": "Adagia, Windswept Bastion",
+  "typeLine": "Land — Planet",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add {W}.\nStation (Tap another creature you control: Put charge counters equal to its power on this Planet. Station only as a sorcery.)\n12+ | {3}{W}, {T}: Create a token that's a copy of target artifact or enchantment you control, except it's legendary. Activate only as a sorcery.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Fomori Vault": {
+  "id": "Fomori Vault",
+  "name": "Fomori Vault",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add {C}.\n{3}, {T}, Discard a card: Look at the top X cards of your library, where X is the number of artifacts you control. Put one of those cards into your hand and the rest on the bottom of your library in a random order.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Ba Sing Se": {
+  "id": "Ba Sing Se",
+  "name": "Ba Sing Se",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a basic land.\n{T}: Add {G}.\n{2}{G}, {T}: Earthbend 2. Activate only as a sorcery. (Target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.)",
+  "producedMana": [
+   "G"
+  ]
+ },
+ "Fire Nation Palace": {
+  "id": "Fire Nation Palace",
+  "name": "Fire Nation Palace",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a basic land.\n{T}: Add {R}.\n{1}{R}, {T}: Target creature you control gains firebending 4 until end of turn. (Whenever it attacks, add {R}{R}{R}{R}. This mana lasts until end of combat.)",
+  "producedMana": [
+   "R"
+  ]
+ },
+ "Multiversal Passage": {
+  "id": "Multiversal Passage",
+  "name": "Multiversal Passage",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "As this land enters, choose a basic land type. Then you may pay 2 life. If you don't, it enters tapped.\nThis land is the chosen type."
+ },
+ "Minas Morgul, Dark Fortress": {
+  "id": "Minas Morgul, Dark Fortress",
+  "name": "Minas Morgul, Dark Fortress",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Minas Morgul enters tapped.\n{T}: Add {B}.\n{3}{B}, {T}: Put a shadow counter on target creature. For as long as that creature has a shadow counter on it, it's a Wraith in addition to its other types. (A creature with shadow can block or be blocked by only creatures with shadow.)",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Jidoor, Aristocratic Capital // Overture": {
+  "id": "Jidoor, Aristocratic Capital // Overture",
+  "name": "Jidoor, Aristocratic Capital // Overture",
+  "typeLine": "Land — Town // Sorcery — Adventure",
+  "manaCost": "{4}{U}{U}",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Jidoor, Aristocratic Capital: This land enters tapped.\n{T}: Add {U}.\n\nOverture: Target opponent mills half their library, rounded down. (Then exile this card. You may play the land later from exile.)",
+  "producedMana": [
+   "U"
+  ]
+ },
+ "Primal Amulet // Primal Wellspring": {
+  "id": "Primal Amulet // Primal Wellspring",
+  "name": "Primal Amulet // Primal Wellspring",
+  "typeLine": "Artifact // Land",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Primal Amulet: Instant and sorcery spells you cast cost {1} less to cast.\nWhenever you cast an instant or sorcery spell, put a charge counter on this artifact. Then if there are four or more charge counters on it, you may remove those counters and transform it.\n\nPrimal Wellspring: (Transforms from Primal Amulet.)\n{T}: Add one mana of any color. When that mana is spent to cast an instant or sorcery spell, copy that spell and you may choose new targets for the copy.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Glacial Chasm": {
+  "id": "Glacial Chasm",
+  "name": "Glacial Chasm",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Cumulative upkeep—Pay 2 life. (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nWhen this land enters, sacrifice a land.\nCreatures you control can't attack.\nPrevent all damage that would be dealt to you."
+ },
+ "Agna Qel'a": {
+  "id": "Agna Qel'a",
+  "name": "Agna Qel'a",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a basic land.\n{T}: Add {U}.\n{2}{U}, {T}: Draw a card, then discard a card.",
+  "producedMana": [
+   "U"
+  ]
+ },
+ "Echoing Deeps": {
+  "id": "Echoing Deeps",
+  "name": "Echoing Deeps",
+  "typeLine": "Land — Cave",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "You may have this land enter tapped as a copy of any land card in a graveyard, except it's a Cave in addition to its other types.\n{T}: Add {C}.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Ugin's Labyrinth": {
+  "id": "Ugin's Labyrinth",
+  "name": "Ugin's Labyrinth",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Imprint — When this land enters, you may exile a colorless card with mana value 7 or greater from your hand.\n{T}: Add {C}. If a card is exiled with this land, add {C}{C} instead.\n{T}: Return the exiled card to its owner's hand.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Oakhollow Village": {
+  "id": "Oakhollow Village",
+  "name": "Oakhollow Village",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add {C}.\n{T}: Add {G}. Spend this mana only to cast a creature spell.\n{G}, {T}: Put a +1/+1 counter on each Frog, Rabbit, Raccoon, or Squirrel you control that entered the battlefield this turn.",
+  "producedMana": [
+   "C",
+   "G"
+  ]
+ },
+ "Hall of the Bandit Lord": {
+  "id": "Hall of the Bandit Lord",
+  "name": "Hall of the Bandit Lord",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Hall of the Bandit Lord enters tapped.\n{T}, Pay 3 life: Add {C}. If that mana is spent on a creature spell, it gains haste.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Eiganjo Castle": {
+  "id": "Eiganjo Castle",
+  "name": "Eiganjo Castle",
+  "typeLine": "Legendary Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add {W}.\n{W}, {T}: Prevent the next 2 damage that would be dealt to target legendary creature this turn.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "The Gold Saucer": {
+  "id": "The Gold Saucer",
+  "name": "The Gold Saucer",
+  "typeLine": "Land — Town",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "{T}: Add {C}.\n{2}, {T}: Flip a coin. If you win the flip, create a Treasure token.\n{3}, {T}, Sacrifice two artifacts: Draw a card.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Gemstone Mine": {
+  "id": "Gemstone Mine",
+  "name": "Gemstone Mine",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters with three mining counters on it.\n{T}, Remove a mining counter from this land: Add one mana of any color. If there are no mining counters on this land, sacrifice it.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Dalkovan Encampment": {
+  "id": "Dalkovan Encampment",
+  "name": "Dalkovan Encampment",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped unless you control a Swamp or a Mountain.\n{T}: Add {W}.\n{2}{W}, {T}: Whenever you attack this turn, create two 1/1 red Warrior creature tokens that are tapped and attacking. Sacrifice them at the beginning of the next end step.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Command Bridge": {
+  "id": "Command Bridge",
+  "name": "Command Bridge",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\nWhen this land enters, sacrifice it unless you tap an untapped permanent you control.\n{T}: Add one mana of any color.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Axgard Armory": {
+  "id": "Axgard Armory",
+  "name": "Axgard Armory",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\n{T}: Add {W}.\n{1}{R}{R}{W}, {T}, Sacrifice this land: Search your library for an Aura card and/or an Equipment card, reveal them, put them into your hand, then shuffle.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Oscorp Industries": {
+  "id": "Oscorp Industries",
+  "name": "Oscorp Industries",
+  "typeLine": "Land",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This land enters tapped.\nWhen this land enters from a graveyard, you lose 2 life.\n{T}: Add {U}, {B}, or {R}.\nMayhem (You may play this card from your graveyard if you discarded it this turn. Timing rules still apply.)",
+  "producedMana": [
+   "B",
+   "R",
+   "U"
+  ]
+ }
+}

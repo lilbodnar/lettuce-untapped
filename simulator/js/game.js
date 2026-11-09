@@ -336,7 +336,8 @@ const Game = (() => {
       const made = given ? MANA.slice(0, 5) : producesOf(inst);
       // Yavimaya, Cradle of Growth: every land is a Forest too, so it can tap for {G} (s.allForests, bot.js's refreshGrants)
       // Prismatic Omen: every basic land type, so any color (s.allBasics)
-      const colors = s.allBasics ? MANA.slice(0, 5) : s.allForests && !made.includes('G') ? MANA.filter(k => made.includes(k) || k === 'G') : made;
+      let colors = s.allBasics ? MANA.slice(0, 5) : s.allForests && !made.includes('G') ? MANA.filter(k => made.includes(k) || k === 'G') : made;
+      if (s.allSwamps && !colors.includes('B')) colors = MANA.filter(k => colors.includes(k) || k === 'B'); // Urborg, Tomb of Yawgmoth
       return colors.length ? { colors, amount: 1, sacrifice: false } : null;
     }
     if (!inst.mana) return null;
@@ -753,7 +754,7 @@ const Game = (() => {
     if (!oracle) return false;
     const front = (name || '').split(' // ')[0].toLowerCase();
     // "As this land enters, you may pay 3 life. If you don't, it enters tapped." (Boggart Bog, shock lands)
-    const shock = /\bas (?:this land|[^.,]+?) enters, you may pay (\w+) life\. if you don't, it enters tapped\b/i.exec(oracle); // The Black Gate: by its name
+    const shock = /\bas (?:this land|[^.,]+?) enters, (?:choose a basic land type\. then )?you may pay (\w+) life\. if you don't, it enters tapped\b/i.exec(oracle); // (Multiversal Passage too) // The Black Gate: by its name
     if (shock && toNumber(shock[1])) return { payLife: toNumber(shock[1]) };
     // Game Trail, Murmuring Bosk: "As this land enters, you may reveal a Mountain or Forest card from
     // your hand. If you don't, this land enters tapped." (revealed for you when you have one)
@@ -766,6 +767,13 @@ const Game = (() => {
     // Den of the Bugbear: "If you control two or more other lands, this land enters tapped." (a fast land with one fewer)
     const many = /\bif you control (one|two|three|four) or more other lands, (?:this land|it) enters tapped\b/i.exec(oracle);
     if (many) return { maxOther: COUNT_WORDS[many[1].toLowerCase()] - 1 };
+    // "If you were the starting player, this land enters tapped." (Desert Cenote); Captivating Crossroads: only in your first three turns.
+    if (/\bif you were the starting player, this land enters tapped\b/i.test(oracle)) return { starter: true };
+    if (/\bduring your first three turns of the game, .+? enters tapped if you were the starting player\b/i.test(oracle)) return { starter: true, earlyOnly: 3 };
+    if (/\benters the battlefield tapped if it was played from your hand\b/i.test(oracle)) return true; // Fetching Garden
+    // Theorist's Sanctum: "As this land enters, you may behold a Jace. If you don't, this land enters tapped." (one in hand or on the battlefield)
+    const behold = /\bas this land enters, you may behold an? (\w+)\. if you don't, this land enters tapped\b/i.exec(oracle);
+    if (behold) return { revealHand: [behold[1].toLowerCase()], orControl: behold[1].toLowerCase() };
     let out = false;
     oracle.split(/\n+|(?<=\.)\s+(?=[A-Z])/).forEach(line => {
       const m = line.match(/^(.+?) enters(?: the battlefield)? tapped(?: unless (.+?)| and doesn't untap during your untap step)?\.$/i); // Traxos (bot.js's noUntap)
@@ -779,6 +787,11 @@ const Game = (() => {
       else if ((c = cond.match(/^you have (one|two|three|four) or more opponents$/))) out = { opponents: COUNT_WORDS[c[1]] };
       else if ((c = cond.match(/^you control (one|two|three|four) or (fewer|more) other lands$/))) out = c[2] === 'fewer' ? { maxOther: COUNT_WORDS[c[1]] } : { minOther: COUNT_WORDS[c[1]] };
       else if ((c = cond.match(/^you control (one|two|three|four) or more basic lands$/))) out = { minBasics: COUNT_WORDS[c[1]] }; // battle lands
+      else if (/^you control a basic land$/.test(cond)) out = { minBasics: 1 }; // Abandoned Air Temple, Ba Sing Se
+      else if (/^it's your first, second, or third turn of the game$/.test(cond)) out = { earlyTurns: 3 }; // Starting Town
+      else if (/^a player has 13 or less life$/.test(cond)) out = { lifeAtMost: 13 }; // the Duskmourn lands
+      else if (/^you control a legendary green creature$/.test(cond)) out = { controlKind: ['legendary', 'creature'] }; // Argoth (any color here)
+      else if ((c = cond.match(/^you control an? ([a-z]+)(?: or (?:an? )?([a-z]+))?$/))) out = { control: [c[1], c[2]].filter(Boolean) }; // The Lonely Mountain, the Roads, Temple of Khonshu
       else if ((c = cond.match(new RegExp(`^you control an? ${BASICS}(?:,? or an? ${BASICS})?$`)))) out = { control: [c[1], c[2]].filter(Boolean) };
       else if ((c = cond.match(/^your opponents control (\w+) or more lands$/))) out = { oppLands: toNumber(c[1]) }; // Turbulent lands
       else if ((c = cond.match(/^you control (\w+) or more other (\w+?)s$/))) out = { minOtherType: { n: toNumber(c[1]), type: c[2] } }; // Witch's Cottage: "three or more other Swamps"
@@ -812,6 +825,9 @@ const Game = (() => {
     if (et.opponents) return s.opponents != null && s.opponents < et.opponents;
     if (et.maxOther != null) return otherLands > et.maxOther;
     if (et.minOther != null) return otherLands < et.minOther;
+    if (et.earlyTurns) return (s.turn || 1) > et.earlyTurns; // Starting Town
+    if (et.starter) return !s.onDraw && (!et.earlyOnly || (s.turn || 1) <= et.earlyOnly); // Desert Cenote, Captivating Crossroads
+    if (et.lifeAtMost) return !((s.life != null && s.life <= et.lifeAtMost) || (s.oppLife != null && s.oppLife <= et.lifeAtMost)); // (Opp's life: game.oppLife)
     if (et.minBasics != null) return others.filter(c => isLand(c) && /\bbasic\b/i.test(c.typeLine || '')).length < et.minBasics;
     if (et.control) return !others.some(c => et.control.some(t => new RegExp(`\\b${t}\\b`, 'i').test(c.typeLine || '')));
     if (et.minOtherType) return others.filter(c => new RegExp(`\\b${et.minOtherType.type}\\b`, 'i').test(c.typeLine || '')).length < et.minOtherType.n;
@@ -943,6 +959,7 @@ const Game = (() => {
       for (let i = 0; i < (row.qty || 1); i++) {
         const inst = makeInstance(s, def, { commander: !!row.commander, castCount: 0, cmc: def.cmc || 0, cost: def.manaCost || '', produces: def.producedMana || null, enterLife: enterLife(def.name, def.oracle), enterDraw: enterDraw(def.name, def.oracle), mana: manaAbility(def.name, def.oracle), entersTapped: entersTapped(def.name, def.oracle), loyalty: def.loyalty == null ? null : def.loyalty, doubles: doublesOf(def.oracle) });
         if (LEYLINE.test(def.oracle || '')) inst.leyline = true;
+        if (GEMSTONE_CAVERNS.test(def.oracle || '') && opts.onDraw) { inst.leyline = true; inst.gemstone = true; } // Gemstone Caverns (not the starting player)
         inst.zone = row.commander ? 'command' : 'library';
         s.zones[inst.zone].push(inst.iid);
       }
@@ -959,8 +976,16 @@ const Game = (() => {
   // Leyline of the Guildpact, Quicksilver: "If this card is in your opening hand, you may begin the game with it on the battlefield."
   // (always; a mulligan takes them back first: inst.leylineStart)
   const LEYLINE = /^if (?:this card|.+?) is in your opening hand, you may begin the game with (?:it|him|her|them) on the battlefield\.?$/im;
+  // Gemstone Caverns: "If this card is in your opening hand and you're not the starting player, you may begin the game with Gemstone Caverns on the
+  // battlefield with a luck counter on it. If you do, exile a card from your hand." (always; the costliest other card is exiled)
+  const GEMSTONE_CAVERNS = /^if this card is in your opening hand and you're not the starting player, you may begin the game with .+? on the battlefield with a luck counter on it\. if you do, exile a card from your hand\.?$/im;
   function beginLeylines(s) {
     for (const iid of s.zones.hand.filter(i => s.cards[i].leyline)) {
+      if (s.cards[iid].gemstone) {
+        s.cards[iid].counters = { ...(s.cards[iid].counters || {}), luck: 1 };
+        const pay = s.zones.hand.filter(i => i !== iid && !s.cards[i].leyline).sort((a, b) => (s.cards[b].cmc || 0) - (s.cards[a].cmc || 0))[0];
+        if (pay) move(s, pay, 'exile');
+      }
       move(s, iid, 'battlefield', { put: true });
       s.cards[iid].leylineStart = true;
       s.cards[iid].enteredTurn = 0;

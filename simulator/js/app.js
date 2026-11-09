@@ -4361,6 +4361,26 @@
 
   let attaching = null; // iid of the equipment or aura waiting for you to pick a creature
 
+  // Equip costs that aren't mana (Bot.equipAlt): what's missing to pay one, or null. The creature sacrificed is your weakest other one; the
+  // card discarded is your cheapest.
+  const altFodder = (inst, hostIid, kind) => game.zones.battlefield.map(id => game.cards[id]).filter(c => c.iid !== inst.iid && c.iid !== hostIid && (kind === 'creature' ? Game.isCreature(c) : /\bartifact\b/i.test(c.typeLine || ''))).sort((a, b) => (b.token ? 1 : 0) - (a.token ? 1 : 0) || (a.cmc || 0) - (b.cmc || 0))[0];
+  function equipAltProblem(inst, hostIid, alt) {
+    if (alt.mana && !Game.autoPay(JSON.parse(JSON.stringify({ zones: game.zones, cards: game.cards, mana: game.mana, turn: game.turn, log: [] })), alt.mana)) return `not enough mana for ${alt.mana}`;
+    if (alt.sacrifice && !altFodder(inst, hostIid, alt.sacrifice)) return `no other ${alt.sacrifice} to sacrifice`;
+    if (alt.discard && !game.zones.hand.length) return 'no card to discard';
+    if (alt.counter && !((inst.counters || {})[alt.counter] > 0)) return `no ${alt.counter} counter on it`;
+    return null;
+  }
+  function payEquipAlt(inst, hostIid, alt) {
+    const paid = [];
+    if (alt.mana) { Game.autoPay(game, alt.mana); paid.push(alt.mana); }
+    const life = (alt.life || 0) + (alt.perHand ? game.zones.hand.length : 0);
+    if (life) { game.life -= life; paid.push(`${life} life`); }
+    if (alt.sacrifice) { const c = altFodder(inst, hostIid, alt.sacrifice); Game.move(game, c.iid, c.commander ? 'command' : 'graveyard'); paid.push(`sacrificed ${c.name}`); }
+    if (alt.discard) { const c = game.zones.hand.map(id => game.cards[id]).sort((a, b) => (a.cmc || 0) - (b.cmc || 0))[0]; Game.move(game, c.iid, 'graveyard'); paid.push(`discarded ${c.name}`); }
+    if (alt.counter) { Game.counter(game, inst.iid, alt.counter, -1); paid.push(`removed a ${alt.counter} counter`); }
+    Game.log(game, `Equipped ${inst.name}: ${paid.join(', ')}.`);
+  }
   const equipCostOf = inst => (Game.isAura(inst) ? null : Bot.equipCost(`${(def(inst.id) || {}).oracle || ''}${inst.grantedText ? `\n${inst.grantedText}` : ''}`));
 
   // Other players' creatures an aura can go on: [{ pid, card }].
@@ -4474,6 +4494,10 @@
     const casting = Game.isAura(inst) && !inst.attachedTo && !inst.enchanting && inst.enteredTurn === game.turn && !inst.auraPlaced;
     if (inst.attachedTo === hostIid) return status(`${inst.name} is already on ${host.name}.`);
     const cost = equipCostOf(inst);
+    // Equip costs that aren't mana (Nightmare Lash, Dissection Tools, Murderer's Axe, Sigil of Distinction, Hand of Vecna, My Precious)
+    const alt = !cost && !Game.isAura(inst) ? Bot.equipAlt(`${(def(inst.id) || {}).oracle || ''}`) : null;
+    const altProblem = alt && equipAltProblem(inst, hostIid, alt);
+    if (altProblem) return status(`Can't equip ${inst.name}: ${altProblem}.`, 'warn', 8000);
     if (cost && !Game.autoPay(JSON.parse(JSON.stringify({ zones: game.zones, cards: game.cards, mana: game.mana, turn: game.turn, log: [] })), cost)) {
       return status(`Not enough untapped mana to equip ${inst.name} (${cost}), so it wasn't attached.`, 'warn', 8000);
     }
@@ -4484,6 +4508,8 @@
         if (paid.pool) spent.unshift(`${paid.pool} floating mana`);
         if (paid.life) spent.push(`${paid.life} life`);
         Game.log(game, `Paid ${cost} to equip ${inst.name}${spent.length ? `: ${spent.join(', ')}` : ''}.`);
+      } else if (!Game.isAura(inst) && alt) {
+        payEquipAlt(inst, hostIid, alt);
       } else if (!Game.isAura(inst)) {
         Game.log(game, `${inst.name}'s equip cost isn't mana, so pay it yourself.`);
       }

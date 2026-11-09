@@ -71,7 +71,7 @@ const Coverage = (() => {
         continue;
       }
       if (B.KEYWORDS.some(k => p === k || p.startsWith(k + ' ') || p.startsWith(k + '—'))) continue;
-      if (name === 'equip') { if (!B.equipCost(p)) gap(out, 'you', 'keyword', 'equip (cost that isn\'t mana)'); gap(out, 'opp', 'keyword', 'equip (Opp never equips)'); continue; }
+      if (name === 'equip') { if (!B.equipCost(p) && !B.equipAlt(p)) gap(out, 'you', 'keyword', 'equip (cost that isn\'t mana)'); gap(out, 'opp', 'keyword', 'equip (Opp never equips)'); continue; }
       if (name === 'crew') { gap(out, 'opp', 'keyword', 'crew (Opp never crews)'); continue; }
       // Reconfigure: attached like an Equipment for its mana cost (it's no creature then: game.js's isCreature)
       if (name === 'reconfigure' || name === 'reconfigure—pay') { if (!B.equipCost(p)) gap(out, 'you', 'keyword', 'reconfigure (cost that isn\'t mana)'); gap(out, 'opp', 'keyword', 'reconfigure (Opp never attaches it)'); continue; }
@@ -673,6 +673,7 @@ const Coverage = (() => {
   ];
 
   function staticLine(card, line, inst) {
+    if (B.equipText) line = B.equipText(line); // Equipment lines read as simpler ones (bot.js)
     const out = { you: true, opp: true, gaps: [] };
     let m;
     if (STATIC_DONE.some(re => re.test(line)) || P.staticKnown(line, inst)) return out;
@@ -828,7 +829,7 @@ const Coverage = (() => {
     } else if (/\binstant\b/i.test(front(card.typeLine)) && G.isCounterspell(card.oracle)) {
       // Its other sentences: ones counterExtras does (An Offer You Can't Refuse, Arcane Denial, Dovin's Veto).
       const extras = P.counterExtraParts(text).filter(x => !P.COUNTER_EXTRAS.some(re => re.test(x)));
-      if (!/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\}| with power or toughness \d+ or less| unless its controller pays \{x\}, where x is the greatest power among creatures you control| that targets an? (?:creature|permanent|player)| unless its controller pays \{1\} for each creature you control| if its controller is poisoned)?\b/im.test(text.replace(/^this spell can't be countered\.\s*/i, '')) || extras.length) gap(out, 'you', 'spell', `counterspell: ${text}`);
+      if (!/^counter target (?:[a-z ,-]+ )?spell(?: unless its controller pays \{\d+\}| with power or toughness \d+ or less| unless its controller pays \{x\}, where x is the greatest power among creatures you control| that targets an? (?:creature|permanent|player)| unless its controller pays \{1\} for each creature you control| with mana value \d+ or less| if its controller is poisoned)?\b/im.test(text.replace(/^this spell can't be countered\.\s*/i, '')) || extras.length) gap(out, 'you', 'spell', `counterspell: ${text}`);
     } else if (!text.split(/(?<=\.)\s+/).every(s => PUMP_SENTENCE.test(s.trim()) && !/\btarget\b/i.test(s)) && !runs(text, inst)) {
       notRun(text, inst).forEach(p => gap(out, 'you', 'spell', p));
       if (!out.gaps.length) gap(out, 'you', 'spell', text);

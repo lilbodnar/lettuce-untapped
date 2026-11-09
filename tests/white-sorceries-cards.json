@@ -1,0 +1,1886 @@
+{
+ "Ravnica at War": {
+  "id": "Ravnica at War",
+  "name": "Ravnica at War",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile all multicolored permanents."
+ },
+ "Bond of Discipline": {
+  "id": "Bond of Discipline",
+  "name": "Bond of Discipline",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Tap all creatures your opponents control. Creatures you control gain lifelink until end of turn."
+ },
+ "Ondu Rising": {
+  "id": "Ondu Rising",
+  "name": "Ondu Rising",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature attacks this turn, it gains lifelink until end of turn.\nAwaken 4—{4}{W} (If you cast this spell for {4}{W}, also put four +1/+1 counters on target land you control and it becomes a 0/0 Elemental creature with haste. It's still a land.)"
+ },
+ "Misfortune's Gain": {
+  "id": "Misfortune's Gain",
+  "name": "Misfortune's Gain",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy target creature. Its owner gains 4 life."
+ },
+ "No Witnesses": {
+  "id": "No Witnesses",
+  "name": "No Witnesses",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player who controls the most creatures investigates. Then destroy all creatures. (To investigate, create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")"
+ },
+ "Dewdrop Cure": {
+  "id": "Dewdrop Cure",
+  "name": "Dewdrop Cure",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nReturn up to two target creature cards each with mana value 2 or less from your graveyard to the battlefield. If the gift was promised, instead return up to three target creature cards each with mana value 2 or less from your graveyard to the battlefield."
+ },
+ "Devastating Mastery": {
+  "id": "Devastating Mastery",
+  "name": "Devastating Mastery",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You may pay {2}{W}{W} rather than pay this spell's mana cost.\nIf the {2}{W}{W} cost was paid, an opponent chooses up to two nonland permanents they control and returns them to their owner's hand.\nDestroy all nonland permanents."
+ },
+ "Gaze of Justice": {
+  "id": "Gaze of Justice",
+  "name": "Gaze of Justice",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As an additional cost to cast this spell, tap three untapped white creatures you control.\nExile target creature.\nFlashback {5}{W} (You may cast this card from your graveyard for its flashback cost and any additional costs. Then exile it.)"
+ },
+ "Daydream": {
+  "id": "Daydream",
+  "name": "Daydream",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature you control, then return that card to the battlefield under its owner's control with a +1/+1 counter on it.\nFlashback {2}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Leeches": {
+  "id": "Leeches",
+  "name": "Leeches",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Target player loses all poison counters. Leeches deals that much damage to that player."
+ },
+ "Identity Crisis": {
+  "id": "Identity Crisis",
+  "name": "Identity Crisis",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Exile all cards from target player's hand and graveyard."
+ },
+ "Titanic Ultimatum": {
+  "id": "Titanic Ultimatum",
+  "name": "Titanic Ultimatum",
+  "typeLine": "Sorcery",
+  "manaCost": "{R}{R}{G}{G}{G}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "G",
+   "R",
+   "W"
+  ],
+  "oracle": "Until end of turn, creatures you control get +5/+5 and gain first strike, trample, and lifelink."
+ },
+ "Borrowed Knowledge": {
+  "id": "Borrowed Knowledge",
+  "name": "Borrowed Knowledge",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{R}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Choose one —\n• Discard your hand, then draw cards equal to the number of cards in target opponent's hand.\n• Discard your hand, then draw cards equal to the number of cards discarded this way."
+ },
+ "Friarball": {
+  "id": "Friarball",
+  "name": "Friarball",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Create a 2/2 white Monk creature token.\nCoststorm (When you cast this spell, copy it for each different mana value among other spells and lands you've played this turn.)"
+ },
+ "Aerith Rescue Mission": {
+  "id": "Aerith Rescue Mission",
+  "name": "Aerith Rescue Mission",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose one —\n• Take the Elevator — Create three 1/1 colorless Hero creature tokens.\n• Take 59 Flights of Stairs — Tap up to three target creatures. Put a stun counter on one of them. (If a permanent with a stun counter would become untapped, remove one from it instead.)"
+ },
+ "Sunscour": {
+  "id": "Sunscour",
+  "name": "Sunscour",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You may exile two white cards from your hand rather than pay this spell's mana cost.\nDestroy all creatures."
+ },
+ "Pegasus Stampede": {
+  "id": "Pegasus Stampede",
+  "name": "Pegasus Stampede",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Buyback—Sacrifice a land. (You may sacrifice a land in addition to any other costs as you cast this spell. If you do, put this card into your hand as it resolves.)\nCreate a 1/1 white Pegasus creature token with flying."
+ },
+ "Wrath of the Skies": {
+  "id": "Wrath of the Skies",
+  "name": "Wrath of the Skies",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You get X {E} (energy counters), then you may pay any amount of {E}. Destroy each artifact, creature, and enchantment with mana value less than or equal to the amount of {E} paid this way."
+ },
+ "Evangelize": {
+  "id": "Evangelize",
+  "name": "Evangelize",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Buyback {2}{W}{W} (You may pay an additional {2}{W}{W} as you cast this spell. If you do, put this card into your hand as it resolves.)\nGain control of target creature of an opponent's choice they control."
+ },
+ "Don't Move": {
+  "id": "Don't Move",
+  "name": "Don't Move",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all tapped creatures. Until your next turn, whenever a creature becomes tapped, destroy it."
+ },
+ "Divine Gambit": {
+  "id": "Divine Gambit",
+  "name": "Divine Gambit",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target artifact, creature, or enchantment an opponent controls. That player may put a permanent card from their hand onto the battlefield."
+ },
+ "Ravages of War": {
+  "id": "Ravages of War",
+  "name": "Ravages of War",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all lands."
+ },
+ "Banishing Slash": {
+  "id": "Banishing Slash",
+  "name": "Banishing Slash",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy up to one target artifact, enchantment, or tapped creature. Then if you control an artifact and an enchantment, create a 2/2 white Samurai creature token with vigilance."
+ },
+ "Refute Destiny": {
+  "id": "Refute Destiny",
+  "name": "Refute Destiny",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature or planeswalker that's green or blue. Surveil 1. (Look at the top card of your library. You may put it into your graveyard.)"
+ },
+ "Ajani's Influence": {
+  "id": "Ajani's Influence",
+  "name": "Ajani's Influence",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put two +1/+1 counters on target creature.\nLook at the top five cards of your library. You may reveal a white card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+ },
+ "Abuelo's Awakening": {
+  "id": "Abuelo's Awakening",
+  "name": "Abuelo's Awakening",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return target artifact or non-Aura enchantment card from your graveyard to the battlefield with X additional +1/+1 counters on it. It's a 1/1 Spirit creature with flying in addition to its other types."
+ },
+ "Prismatic Ending": {
+  "id": "Prismatic Ending",
+  "name": "Prismatic Ending",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Converge — Exile target nonland permanent if its mana value is less than or equal to the number of colors of mana spent to cast this spell."
+ },
+ "Split Up": {
+  "id": "Split Up",
+  "name": "Split Up",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose one —\n• Destroy all tapped creatures.\n• Destroy all untapped creatures."
+ },
+ "Patch Up": {
+  "id": "Patch Up",
+  "name": "Patch Up",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return up to three target creature cards with total mana value 3 or less from your graveyard to the battlefield."
+ },
+ "Moment of Glory": {
+  "id": "Moment of Glory",
+  "name": "Moment of Glory",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put a +1/+1 counter on target creature you control. If this spell was cast from a graveyard, also put a +1/+1 counter on each other creature you control.\nFlashback {4}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Kayla's Command": {
+  "id": "Kayla's Command",
+  "name": "Kayla's Command",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose two —\n• Create a 2/2 colorless Construct artifact creature token.\n• Put a +1/+1 counter on a creature you control. It gains double strike until end of turn.\n• Search your library for a basic Plains card, reveal it, put it into your hand, then shuffle.\n• You gain 2 life and scry 2."
+ },
+ "Invoke Justice": {
+  "id": "Invoke Justice",
+  "name": "Invoke Justice",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return target permanent card from your graveyard to the battlefield, then distribute four +1/+1 counters among any number of creatures and/or Vehicles target player controls."
+ },
+ "Benediction of Moons": {
+  "id": "Benediction of Moons",
+  "name": "Benediction of Moons",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You gain 1 life for each player.\nHaunt (When this spell card is put into a graveyard after resolving, exile it haunting target creature.)\nWhen the creature this card haunts dies, you gain 1 life for each player."
+ },
+ "Academic Probation": {
+  "id": "Academic Probation",
+  "name": "Academic Probation",
+  "typeLine": "Sorcery — Lesson",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose one —\n• Choose a nonland card name. Opponents can't cast spells with the chosen name until your next turn.\n• Choose target nonland permanent. Until your next turn, it can't attack or block, and its activated abilities can't be activated."
+ },
+ "Providence": {
+  "id": "Providence",
+  "name": "Providence",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You may reveal this card from your opening hand. If you do, at the beginning of the first upkeep, your life total becomes 26.\nYour life total becomes 26."
+ },
+ "Kayla's Reconstruction": {
+  "id": "Kayla's Reconstruction",
+  "name": "Kayla's Reconstruction",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{W}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Look at the top seven cards of your library. Put up to X artifact and/or creature cards with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order."
+ },
+ "Honor the Past": {
+  "id": "Honor the Past",
+  "name": "Honor the Past",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return target creature card with mana value 6 or less from your graveyard to the battlefield. It's an artifact. (It's no longer a creature.)"
+ },
+ "Visions": {
+  "id": "Visions",
+  "name": "Visions",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Look at the top five cards of target player's library. You may then have that player shuffle that library."
+ },
+ "Glittering Wish": {
+  "id": "Glittering Wish",
+  "name": "Glittering Wish",
+  "typeLine": "Sorcery",
+  "manaCost": "{G}{W}",
+  "cmc": 2,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "You may reveal a multicolored card you own from outside the game and put it into your hand. Exile Glittering Wish."
+ },
+ "Cleansing": {
+  "id": "Cleansing",
+  "name": "Cleansing",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "For each land, destroy that land unless any player pays 1 life."
+ },
+ "Go Ninja Go": {
+  "id": "Go Ninja Go",
+  "name": "Go Ninja Go",
+  "typeLine": "Sorcery",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Choose one or both —\n• Exile target creature you control, then return it to the battlefield under its owner's control.\n• Go Ninja Go deals damage equal to the greatest power among creatures you control to target creature an opponent controls."
+ },
+ "Starnheim Unleashed": {
+  "id": "Starnheim Unleashed",
+  "name": "Starnheim Unleashed",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Create a 4/4 white Angel Warrior creature token with flying and vigilance. If this spell was foretold, create X of those tokens instead.\nForetell {X}{X}{W} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)"
+ },
+ "Winds of Abandon": {
+  "id": "Winds of Abandon",
+  "name": "Winds of Abandon",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature you don't control. For each creature exiled this way, its controller searches their library for a basic land card. Those players put those cards onto the battlefield tapped, then shuffle.\nOverload {4}{W}{W} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")"
+ },
+ "Collision Course": {
+  "id": "Collision Course",
+  "name": "Collision Course",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose one —\n• Collision Course deals X damage to target creature, where X is the number of permanents you control that are creatures and/or Vehicles.\n• Destroy target artifact."
+ },
+ "Global Ruin": {
+  "id": "Global Ruin",
+  "name": "Global Ruin",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player chooses from the lands they control a land of each basic land type, then sacrifices the rest."
+ },
+ "Depopulate": {
+  "id": "Depopulate",
+  "name": "Depopulate",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player who controls a multicolored creature draws a card. Then destroy all creatures."
+ },
+ "Expel the Unworthy": {
+  "id": "Expel the Unworthy",
+  "name": "Expel the Unworthy",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Kicker {2}{W} (You may pay an additional {2}{W} as you cast this spell.)\nChoose target creature with mana value 3 or less. If this spell was kicked, instead choose target creature. Exile the chosen creature, then its controller gains life equal to its mana value."
+ },
+ "Mythos of Snapdax": {
+  "id": "Mythos of Snapdax",
+  "name": "Mythos of Snapdax",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player chooses an artifact, a creature, an enchantment, and a planeswalker from among the nonland permanents they control, then sacrifices the rest. If {B}{R} was spent to cast this spell, you choose the permanents for each player instead."
+ },
+ "Balancing Act": {
+  "id": "Balancing Act",
+  "name": "Balancing Act",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player chooses a number of permanents they control equal to the number of permanents controlled by the player who controls the fewest, then sacrifices the rest. Each player discards cards the same way."
+ },
+ "Dawnglow Infusion": {
+  "id": "Dawnglow Infusion",
+  "name": "Dawnglow Infusion",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{G/W}",
+  "cmc": 1,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "You gain X life if {G} was spent to cast this spell and X life if {W} was spent to cast this spell. (Do both if {G}{W} was spent.)"
+ },
+ "Shoulder to Shoulder": {
+  "id": "Shoulder to Shoulder",
+  "name": "Shoulder to Shoulder",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Support 2. (Put a +1/+1 counter on each of up to two target creatures.)\nDraw a card."
+ },
+ "Flourishing Forces": {
+  "id": "Flourishing Forces",
+  "name": "Flourishing Forces",
+  "typeLine": "Sorcery",
+  "manaCost": "{G}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Create a 2/2 colorless Wizard Soldier creature token named Cadet. For every 3 life you gained this game, create an additional one of those tokens."
+ },
+ "Swallow Whole": {
+  "id": "Swallow Whole",
+  "name": "Swallow Whole",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As an additional cost to cast this spell, tap an untapped creature you control.\nExile target tapped creature. Put a +1/+1 counter on the creature tapped to pay this spell's additional cost."
+ },
+ "Renewing Dawn": {
+  "id": "Renewing Dawn",
+  "name": "Renewing Dawn",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You gain 2 life for each Mountain target opponent controls."
+ },
+ "One Last Job": {
+  "id": "One Last Job",
+  "name": "One Last Job",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Spree (Choose one or more additional costs.)\n+ {2} — Return target creature card from your graveyard to the battlefield.\n+ {1} — Return target Mount or Vehicle card from your graveyard to the battlefield.\n+ {1} — Return target Aura or Equipment card from your graveyard to the battlefield attached to a creature you control."
+ },
+ "Soul Search": {
+  "id": "Soul Search",
+  "name": "Soul Search",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonland card from it. Exile that card. If the card's mana value is 1 or less, create a 1/1 white and black Spirit creature token with flying."
+ },
+ "Graceful Restoration": {
+  "id": "Graceful Restoration",
+  "name": "Graceful Restoration",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Choose one —\n• Return target creature card from your graveyard to the battlefield with an additional +1/+1 counter on it.\n• Return up to two target creature cards with power 2 or less from your graveyard to the battlefield."
+ },
+ "Scout for Survivors": {
+  "id": "Scout for Survivors",
+  "name": "Scout for Survivors",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return up to three target creature cards with total mana value 3 or less from your graveyard to the battlefield. Put a +1/+1 counter on each of them."
+ },
+ "Conjurer's Ban": {
+  "id": "Conjurer's Ban",
+  "name": "Conjurer's Ban",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Choose a card name. Until your next turn, spells with the chosen name can't be cast and lands with the chosen name can't be played.\nDraw a card."
+ },
+ "Razia's Purification": {
+  "id": "Razia's Purification",
+  "name": "Razia's Purification",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{R}{W}",
+  "cmc": 6,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Each player chooses three permanents they control, then sacrifices the rest."
+ },
+ "Fated Clash": {
+  "id": "Fated Clash",
+  "name": "Fated Clash",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You may cast this spell as though it had flash if a creature is attacking and a creature is blocking.\nTarget creature you control and target creature an opponent controls each gain indestructible until end of turn. Then destroy all creatures."
+ },
+ "Debt to the Deathless": {
+  "id": "Debt to the Deathless",
+  "name": "Debt to the Deathless",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{W}{W}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Each opponent loses two times X life. You gain life equal to the life lost this way."
+ },
+ "Retribution of the Meek": {
+  "id": "Retribution of the Meek",
+  "name": "Retribution of the Meek",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all creatures with power 4 or greater. They can't be regenerated."
+ },
+ "Starlight": {
+  "id": "Starlight",
+  "name": "Starlight",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You gain 3 life for each black creature target opponent controls."
+ },
+ "Chronomantic Escape": {
+  "id": "Chronomantic Escape",
+  "name": "Chronomantic Escape",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Until your next turn, creatures can't attack you. Exile Chronomantic Escape with three time counters on it.\nSuspend 3—{2}{W} (Rather than cast this card from your hand, you may pay {2}{W} and exile it with three time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)"
+ },
+ "Brightflame": {
+  "id": "Brightflame",
+  "name": "Brightflame",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{R}{R}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Radiance — Brightflame deals X damage to target creature and each other creature that shares a color with it. You gain life equal to the damage dealt this way."
+ },
+ "Timely Reinforcements": {
+  "id": "Timely Reinforcements",
+  "name": "Timely Reinforcements",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If you have less life than an opponent, you gain 6 life. If you control fewer creatures than an opponent, create three 1/1 white Soldier creature tokens."
+ },
+ "Cleansing Meditation": {
+  "id": "Cleansing Meditation",
+  "name": "Cleansing Meditation",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all enchantments.\nThreshold — If there are seven or more cards in your graveyard, instead destroy all enchantments, then return all cards in your graveyard destroyed this way to the battlefield."
+ },
+ "Gerrard's Verdict": {
+  "id": "Gerrard's Verdict",
+  "name": "Gerrard's Verdict",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Target player discards two cards. You gain 3 life for each land card discarded this way."
+ },
+ "Can't Stay Away": {
+  "id": "Can't Stay Away",
+  "name": "Can't Stay Away",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Return target creature card with mana value 3 or less from your graveyard to the battlefield. It gains \"If this creature would die, exile it instead.\"\nFlashback {3}{W}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Blinding Light": {
+  "id": "Blinding Light",
+  "name": "Blinding Light",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Tap all nonwhite creatures."
+ },
+ "Emeria's Call // Emeria, Shattered Skyclave": {
+  "id": "Emeria's Call // Emeria, Shattered Skyclave",
+  "name": "Emeria's Call // Emeria, Shattered Skyclave",
+  "typeLine": "Sorcery // Land",
+  "manaCost": "{4}{W}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Emeria's Call: Create two 4/4 white Angel Warrior creature tokens with flying. Non-Angel creatures you control gain indestructible until your next turn.\n\nEmeria, Shattered Skyclave: As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {W}.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Starfall Invocation": {
+  "id": "Starfall Invocation",
+  "name": "Starfall Invocation",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nDestroy all creatures. If the gift was promised, return a creature card put into your graveyard this way to the battlefield under your control."
+ },
+ "Dimensional Breach": {
+  "id": "Dimensional Breach",
+  "name": "Dimensional Breach",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile all permanents. For as long as any of those cards remain exiled, at the beginning of each player's upkeep, that player returns one of the exiled cards they own to the battlefield."
+ },
+ "Tale of Momo": {
+  "id": "Tale of Momo",
+  "name": "Tale of Momo",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This spell costs {2} less to cast if a creature left the battlefield under your control this turn.\nSearch your library and/or graveyard for an Ally creature card, reveal it, and put it into your hand. If you search your library this way, shuffle."
+ },
+ "False Peace": {
+  "id": "False Peace",
+  "name": "False Peace",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Target player skips all combat phases of their next turn."
+ },
+ "Planar Birth": {
+  "id": "Planar Birth",
+  "name": "Planar Birth",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return all basic land cards from all graveyards to the battlefield tapped under their owners' control."
+ },
+ "End Hostilities": {
+  "id": "End Hostilities",
+  "name": "End Hostilities",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all creatures and all permanents attached to creatures."
+ },
+ "Push // Pull": {
+  "id": "Push // Pull",
+  "name": "Push // Pull",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{1}{W/B} // {4}{B/R}{B/R}",
+  "cmc": 8,
+  "colors": [
+   "B",
+   "R",
+   "W"
+  ],
+  "oracle": "Push: Destroy target tapped creature.\n\nPull: Put up to two target creature cards from a single graveyard onto the battlefield under your control. They gain haste until end of turn. Sacrifice them at the beginning of the next end step."
+ },
+ "Fix What's Broken": {
+  "id": "Fix What's Broken",
+  "name": "Fix What's Broken",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "As an additional cost to cast this spell, pay X life.\nReturn each artifact and creature card with mana value X from your graveyard to the battlefield."
+ },
+ "Another Round": {
+  "id": "Another Round",
+  "name": "Another Round",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{X}{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile any number of creatures you control, then return them to the battlefield under their owner's control. Then repeat this process X more times."
+ },
+ "Rise of Extus": {
+  "id": "Rise of Extus",
+  "name": "Rise of Extus",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W/B}{W/B}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Exile target creature. Exile up to one target instant or sorcery card from a graveyard.\nLearn. (You may reveal a Lesson card you own from outside the game and put it into your hand, or discard a card to draw a card.)"
+ },
+ "Now for Wrath, Now for Ruin!": {
+  "id": "Now for Wrath, Now for Ruin!",
+  "name": "Now for Wrath, Now for Ruin!",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put a +1/+1 counter on each creature you control. They gain vigilance until end of turn. The Ring tempts you."
+ },
+ "Swift Reckoning": {
+  "id": "Swift Reckoning",
+  "name": "Swift Reckoning",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Spell mastery — If there are two or more instant and/or sorcery cards in your graveyard, you may cast this spell as though it had flash. (You may cast it any time you could cast an instant.)\nDestroy target tapped creature."
+ },
+ "Revival // Revenge": {
+  "id": "Revival // Revenge",
+  "name": "Revival // Revenge",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{W/B}{W/B} // {4}{W}{B}",
+  "cmc": 8,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Revival: Return target creature card with mana value 3 or less from your graveyard to the battlefield.\n\nRevenge: Double your life total. Target opponent loses half their life, rounded up."
+ },
+ "From Father to Son": {
+  "id": "From Father to Son",
+  "name": "From Father to Son",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Search your library for a Vehicle card, reveal it, and put it into your hand. If this spell was cast from a graveyard, put that card onto the battlefield instead. Then shuffle.\nFlashback {4}{W}{W}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Sunder the Gateway": {
+  "id": "Sunder the Gateway",
+  "name": "Sunder the Gateway",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose one —\n• Destroy target nontoken artifact or enchantment an opponent controls. Incubate 2. (Create an Incubator token with two +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)\n• Incubate 2, then transform an Incubator token you control."
+ },
+ "United Battlefront": {
+  "id": "United Battlefront",
+  "name": "United Battlefront",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Look at the top seven cards of your library. Put up to two noncreature, nonland permanent cards with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order."
+ },
+ "Winnowing": {
+  "id": "Winnowing",
+  "name": "Winnowing",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nFor each player, you choose a creature that player controls. Then each player sacrifices all other creatures they control that don't share a creature type with the chosen creature they control."
+ },
+ "Molten Note": {
+  "id": "Molten Note",
+  "name": "Molten Note",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Molten Note deals damage to target creature equal to the amount of mana spent to cast this spell. Untap all creatures you control.\nFlashback {6}{R}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Thoughtweft's Call": {
+  "id": "Thoughtweft's Call",
+  "name": "Thoughtweft's Call",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose one —\n• Seek a Kithkin card. At the beginning of the next end step, if that card is in your hand, exile it.\n• Creature cards in your hand perpetually get +1/+1."
+ },
+ "Prophecy": {
+  "id": "Prophecy",
+  "name": "Prophecy",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Reveal the top card of target opponent's library. If it's a land, you gain 1 life. Then that player shuffles.\nDraw a card at the beginning of the next turn's upkeep."
+ },
+ "Moment of Reckoning": {
+  "id": "Moment of Reckoning",
+  "name": "Moment of Reckoning",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Choose up to four. You may choose the same mode more than once.\n• Destroy target nonland permanent.\n• Return target nonland permanent card from your graveyard to the battlefield."
+ },
+ "Kytheon's Tactics": {
+  "id": "Kytheon's Tactics",
+  "name": "Kytheon's Tactics",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control get +2/+1 until end of turn.\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, those creatures also gain vigilance until end of turn. (Attacking doesn't cause them to tap.)"
+ },
+ "Spectacular Pileup": {
+  "id": "Spectacular Pileup",
+  "name": "Spectacular Pileup",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "All creatures and Vehicles lose indestructible until end of turn, then destroy all creatures and Vehicles.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Divine Light": {
+  "id": "Divine Light",
+  "name": "Divine Light",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Prevent all damage that would be dealt this turn to creatures you control."
+ },
+ "Legion's Chant": {
+  "id": "Legion's Chant",
+  "name": "Legion's Chant",
+  "typeLine": "Sorcery — Chorus",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Starting intensity 3\nReturn any number of creature cards with total mana value X or less from your graveyard to the battlefield, where X is Legion's Chant's intensity.\nAll Chorus cards you own intensify by 1."
+ },
+ "Devout Decree": {
+  "id": "Devout Decree",
+  "name": "Devout Decree",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature or planeswalker that's black or red. Scry 1. (Look at the top card of your library. You may put that card on the bottom.)"
+ },
+ "70,000 Light-Years from Home": {
+  "id": "70,000 Light-Years from Home",
+  "name": "70,000 Light-Years from Home",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature or Spacecraft. Its controller may search their library for a basic land card, reveal it, put it into their hand, then shuffle."
+ },
+ "Practiced Offense": {
+  "id": "Practiced Offense",
+  "name": "Practiced Offense",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put a +1/+1 counter on each creature target player controls. Target creature gains your choice of double strike or lifelink until end of turn.\nFlashback {1}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Repentance": {
+  "id": "Repentance",
+  "name": "Repentance",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Target creature deals damage to itself equal to its power."
+ },
+ "Antiquities on the Loose": {
+  "id": "Antiquities on the Loose",
+  "name": "Antiquities on the Loose",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Create two 2/2 red and white Spirit creature tokens. Then if this spell was cast from anywhere other than your hand, put a +1/+1 counter on each Spirit you control.\nFlashback {4}{W}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "March from the Tomb": {
+  "id": "March from the Tomb",
+  "name": "March from the Tomb",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Return any number of target Ally creature cards with total mana value 8 or less from your graveyard to the battlefield."
+ },
+ "Purge the Profane": {
+  "id": "Purge the Profane",
+  "name": "Purge the Profane",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Target opponent discards two cards and you gain 2 life."
+ },
+ "Morningtide's Light": {
+  "id": "Morningtide's Light",
+  "name": "Morningtide's Light",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile any number of target creatures. At the beginning of the next end step, return those cards to the battlefield tapped under their owners' control.\nUntil your next turn, prevent all damage that would be dealt to you.\nExile Morningtide's Light."
+ },
+ "Divine Congregation": {
+  "id": "Divine Congregation",
+  "name": "Divine Congregation",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You gain 2 life for each creature target player controls.\nSuspend 5—{1}{W} (Rather than cast this card from your hand, you may pay {1}{W} and exile it with five time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)"
+ },
+ "Roar of Reclamation": {
+  "id": "Roar of Reclamation",
+  "name": "Roar of Reclamation",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player returns all artifact cards from their graveyard to the battlefield."
+ },
+ "Return Triumphant": {
+  "id": "Return Triumphant",
+  "name": "Return Triumphant",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return target creature card with mana value 3 or less from your graveyard to the battlefield. Create a Young Hero Role token attached to it. (Enchanted creature has \"Whenever this creature attacks, if its toughness is 3 or less, put a +1/+1 counter on it.\" If you put another Role on the creature later, put this one into the graveyard.)"
+ },
+ "Aerial Assault": {
+  "id": "Aerial Assault",
+  "name": "Aerial Assault",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy target tapped creature. You gain 1 life for each creature you control with flying."
+ },
+ "Lay Down Arms": {
+  "id": "Lay Down Arms",
+  "name": "Lay Down Arms",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile target creature with mana value less than or equal to the number of Plains you control. Its controller gains 3 life."
+ },
+ "Tune Up": {
+  "id": "Tune Up",
+  "name": "Tune Up",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return target artifact card from your graveyard to the battlefield. If it's a Vehicle, it becomes an artifact creature."
+ },
+ "Grind // Dust": {
+  "id": "Grind // Dust",
+  "name": "Grind // Dust",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{1}{B} // {3}{W}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Grind: Put a -1/-1 counter on each of up to two target creatures.\n\nDust: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nExile any number of target creatures that have -1/-1 counters on them."
+ },
+ "Lyev Decree": {
+  "id": "Lyev Decree",
+  "name": "Lyev Decree",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Detain up to two target creatures your opponents control. (Until your next turn, those creatures can't attack or block and their activated abilities can't be activated.)"
+ },
+ "Sculpted Sunburst": {
+  "id": "Sculpted Sunburst",
+  "name": "Sculpted Sunburst",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose a creature you control, then each opponent chooses a creature they control with equal or lesser power. If you chose a creature this way, exile each creature not chosen by any player this way."
+ },
+ "Empty City Ruse": {
+  "id": "Empty City Ruse",
+  "name": "Empty City Ruse",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Target opponent skips all combat phases of their next turn."
+ },
+ "Cataclysm": {
+  "id": "Cataclysm",
+  "name": "Cataclysm",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player chooses from among the permanents they control an artifact, a creature, an enchantment, and a land, then sacrifices the rest."
+ },
+ "Peace Talks": {
+  "id": "Peace Talks",
+  "name": "Peace Talks",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This turn and next turn, creatures can't attack, and players and permanents can't be the targets of spells or activated abilities."
+ },
+ "Social Snub": {
+  "id": "Social Snub",
+  "name": "Social Snub",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "When you cast this spell while you control a creature, you may copy this spell.\nEach player sacrifices a creature of their choice. Each opponent loses 1 life and you gain 1 life."
+ },
+ "Death or Glory": {
+  "id": "Death or Glory",
+  "name": "Death or Glory",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Separate all creature cards in your graveyard into two piles. Exile the pile of an opponent's choice and return the other to the battlefield."
+ },
+ "Windborne Charge": {
+  "id": "Windborne Charge",
+  "name": "Windborne Charge",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Two target creatures you control each get +2/+2 and gain flying until end of turn."
+ },
+ "Three Dreams": {
+  "id": "Three Dreams",
+  "name": "Three Dreams",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Search your library for up to three Aura cards with different names, reveal them, put them into your hand, then shuffle."
+ },
+ "Regna's Sanction": {
+  "id": "Regna's Sanction",
+  "name": "Regna's Sanction",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "For each player, choose friend or foe. Each friend puts a +1/+1 counter on each creature they control. Each foe chooses one untapped creature they control, then taps the rest."
+ },
+ "Oketra's Last Mercy": {
+  "id": "Oketra's Last Mercy",
+  "name": "Oketra's Last Mercy",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Your life total becomes equal to your starting life total. Lands you control don't untap during your next untap step."
+ },
+ "Martyr's Cry": {
+  "id": "Martyr's Cry",
+  "name": "Martyr's Cry",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile all white creatures. For each creature exiled this way, its controller draws a card."
+ },
+ "Path of Peace": {
+  "id": "Path of Peace",
+  "name": "Path of Peace",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy target creature. Its owner gains 4 life."
+ },
+ "Slash the Ranks": {
+  "id": "Slash the Ranks",
+  "name": "Slash the Ranks",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all creatures and planeswalkers except for commanders."
+ },
+ "March of Souls": {
+  "id": "March of Souls",
+  "name": "March of Souls",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all creatures. They can't be regenerated. For each creature destroyed this way, its controller creates a 1/1 white Spirit creature token with flying."
+ },
+ "What Must Be Done": {
+  "id": "What Must Be Done",
+  "name": "What Must Be Done",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose one —\n• Let the World Burn — Destroy all artifacts and creatures.\n• Release Juno — Return target historic permanent card from your graveyard to the battlefield. It enters with two additional +1/+1 counters on it if it's a creature. (Artifacts, legendaries, and Sagas are historic.)"
+ },
+ "Perennation": {
+  "id": "Perennation",
+  "name": "Perennation",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{B}{G}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "G",
+   "W"
+  ],
+  "oracle": "Return target permanent card from your graveyard to the battlefield with a hexproof counter and an indestructible counter on it."
+ },
+ "Crime // Punishment": {
+  "id": "Crime // Punishment",
+  "name": "Crime // Punishment",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{3}{W}{B} // {X}{B}{G}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "G",
+   "W"
+  ],
+  "oracle": "Crime: Put target creature or enchantment card from an opponent's graveyard onto the battlefield under your control.\n\nPunishment: Destroy each artifact, creature, and enchantment with mana value X."
+ },
+ "Arm the Cathars": {
+  "id": "Arm the Cathars",
+  "name": "Arm the Cathars",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Until end of turn, target creature gets +3/+3, up to one other target creature gets +2/+2, and up to one other target creature gets +1/+1. Those creatures gain vigilance until end of turn."
+ },
+ "Explosive Getaway": {
+  "id": "Explosive Getaway",
+  "name": "Explosive Getaway",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{R}{W}",
+  "cmc": 5,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Exile up to one target artifact or creature. Return it to the battlefield under its owner's control at the beginning of the next end step.\nExplosive Getaway deals 4 damage to each creature."
+ },
+ "Beyond the Quiet": {
+  "id": "Beyond the Quiet",
+  "name": "Beyond the Quiet",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile all creatures and Spacecraft."
+ },
+ "Armageddon": {
+  "id": "Armageddon",
+  "name": "Armageddon",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all lands."
+ },
+ "Restore Balance": {
+  "id": "Restore Balance",
+  "name": "Restore Balance",
+  "typeLine": "Sorcery",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Suspend 6—{W}\nEach player chooses a number of lands they control equal to the number of lands controlled by the player who controls the fewest, then sacrifices the rest. Players sacrifice creatures and discard cards the same way."
+ },
+ "Humiliate": {
+  "id": "Humiliate",
+  "name": "Humiliate",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonland card from it. That player discards that card. Put a +1/+1 counter on a creature you control."
+ },
+ "Incandescent Aria": {
+  "id": "Incandescent Aria",
+  "name": "Incandescent Aria",
+  "typeLine": "Sorcery",
+  "manaCost": "{R}{G}{W}",
+  "cmc": 3,
+  "colors": [
+   "G",
+   "R",
+   "W"
+  ],
+  "oracle": "Incandescent Aria deals 3 damage to each nontoken creature."
+ },
+ "Predictive Preparations": {
+  "id": "Predictive Preparations",
+  "name": "Predictive Preparations",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put a +1/+1 counter on each of one or two target creatures.\nFlashback {3}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Enduring Ideal": {
+  "id": "Enduring Ideal",
+  "name": "Enduring Ideal",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Search your library for an enchantment card, put it onto the battlefield, then shuffle.\nEpic (For the rest of the game, you can't cast spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability.)"
+ },
+ "By Invitation Only": {
+  "id": "By Invitation Only",
+  "name": "By Invitation Only",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose a number between 0 and 13. Each player sacrifices that many creatures of their choice."
+ },
+ "Proposal": {
+  "id": "Proposal",
+  "name": "Proposal",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{W}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Allows Richard to propose marriage to Lily. If the proposal is accepted both players win; mix the cards in play, both libraries, and both graveyards as a shared deck."
+ },
+ "Soulscour": {
+  "id": "Soulscour",
+  "name": "Soulscour",
+  "typeLine": "Sorcery",
+  "manaCost": "{7}{W}{W}{W}",
+  "cmc": 10,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all nonartifact permanents."
+ },
+ "Sudden Disappearance": {
+  "id": "Sudden Disappearance",
+  "name": "Sudden Disappearance",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Exile all nonland permanents target player controls. Return the exiled cards to the battlefield under their owner's control at the beginning of the next end step."
+ },
+ "Relive the Past": {
+  "id": "Relive the Past",
+  "name": "Relive the Past",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{G}{W}",
+  "cmc": 7,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Return up to one target artifact card, up to one target land card, and up to one target non-Aura enchantment card from your graveyard to the battlefield. They are 5/5 Elemental creatures in addition to their other types."
+ },
+ "Conqueror's Pledge": {
+  "id": "Conqueror's Pledge",
+  "name": "Conqueror's Pledge",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Kicker {6} (You may pay an additional {6} as you cast this spell.)\nCreate six 1/1 white Kor Soldier creature tokens. If this spell was kicked, create twelve of those tokens instead."
+ },
+ "Covetous Elegy": {
+  "id": "Covetous Elegy",
+  "name": "Covetous Elegy",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}{B}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Each player chooses up to two creatures they control, then sacrifices the rest. Then you create a tapped Treasure token for each creature your opponents control."
+ },
+ "Blot Out the Sky": {
+  "id": "Blot Out the Sky",
+  "name": "Blot Out the Sky",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Create X tapped 2/1 white and black Inkling creature tokens with flying. If X is 6 or more, destroy all noncreature, nonland permanents."
+ },
+ "Not Forgotten": {
+  "id": "Not Forgotten",
+  "name": "Not Forgotten",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put target card from a graveyard on your choice of the top or bottom of its owner's library. Create a 1/1 white Spirit creature token with flying."
+ },
+ "Pure // Simple": {
+  "id": "Pure // Simple",
+  "name": "Pure // Simple",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{1}{R}{G} // {1}{G}{W}",
+  "cmc": 6,
+  "colors": [
+   "G",
+   "R",
+   "W"
+  ],
+  "oracle": "Pure: Destroy target multicolored permanent.\n\nSimple: Destroy all Auras and Equipment."
+ },
+ "Paraselene": {
+  "id": "Paraselene",
+  "name": "Paraselene",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all enchantments. You gain 1 life for each enchantment destroyed this way."
+ },
+ "Avatar's Wrath": {
+  "id": "Avatar's Wrath",
+  "name": "Avatar's Wrath",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Choose up to one target creature, then airbend all other creatures. (Exile them. While each one is exiled, its owner may cast it for {2} rather than its mana cost.)\nUntil your next turn, your opponents can't cast spells from anywhere other than their hands.\nExile Avatar's Wrath."
+ },
+ "Rousing of Souls": {
+  "id": "Rousing of Souls",
+  "name": "Rousing of Souls",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Parley — Each player reveals the top card of their library. For each nonland card revealed this way, you create a 1/1 white Spirit creature token with flying. Then each player draws a card."
+ },
+ "Golden Wish": {
+  "id": "Golden Wish",
+  "name": "Golden Wish",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You may reveal an artifact or enchantment card you own from outside the game and put it into your hand. Exile Golden Wish."
+ },
+ "Pyrrhic Revival": {
+  "id": "Pyrrhic Revival",
+  "name": "Pyrrhic Revival",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W/B}{W/B}{W/B}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Each player returns each creature card from their graveyard to the battlefield with an additional -1/-1 counter on it."
+ },
+ "Tariff": {
+  "id": "Tariff",
+  "name": "Tariff",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player sacrifices the creature they control with the greatest mana value unless they pay that creature's mana cost. If two or more creatures a player controls are tied for greatest, that player chooses one."
+ },
+ "Leonardo's Technique": {
+  "id": "Leonardo's Technique",
+  "name": "Leonardo's Technique",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Sneak {1}{W} (You may cast this spell for {1}{W} if you also return an unblocked attacker you control to hand during the declare blockers step.)\nReturn one or two target creature cards each with mana value 3 or less from your graveyard to the battlefield."
+ },
+ "Catastrophe": {
+  "id": "Catastrophe",
+  "name": "Catastrophe",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Destroy all lands or all creatures. Creatures destroyed this way can't be regenerated."
+ },
+ "Oust": {
+  "id": "Oust",
+  "name": "Oust",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put target creature into its owner's library second from the top. Its controller gains 3 life."
+ },
+ "False Dawn": {
+  "id": "False Dawn",
+  "name": "False Dawn",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Until end of turn, spells and abilities you control that would add colored mana instead add that much white mana. Until end of turn, you may spend white mana as though it were mana of any color.\nDraw a card."
+ },
+ "Desperate Stand": {
+  "id": "Desperate Stand",
+  "name": "Desperate Stand",
+  "typeLine": "Sorcery",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Strive — This spell costs {R}{W} more to cast for each target beyond the first.\nAny number of target creatures each get +2/+0 and gain first strike and vigilance until end of turn."
+ },
+ "Generous Revival": {
+  "id": "Generous Revival",
+  "name": "Generous Revival",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return target creature card with mana value 3 or less from your graveyard to the battlefield with an additional +1/+1 counter on it.\nFlashback {4}{W} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Devout Invocation": {
+  "id": "Devout Invocation",
+  "name": "Devout Invocation",
+  "typeLine": "Sorcery",
+  "manaCost": "{6}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Tap any number of untapped creatures you control. Create a 4/4 white Angel creature token with flying for each creature tapped this way."
+ },
+ "Shahrazad": {
+  "id": "Shahrazad",
+  "name": "Shahrazad",
+  "typeLine": "Sorcery",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Players play a Magic subgame, using their libraries as their decks. Each player who doesn't win the subgame loses half their life, rounded up."
+ },
+ "Eiganjo Uprising": {
+  "id": "Eiganjo Uprising",
+  "name": "Eiganjo Uprising",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Create X 2/2 white Samurai creature tokens with vigilance. They gain menace and haste until end of turn.\nEach opponent creates X minus one 2/2 white Samurai creature tokens with vigilance."
+ },
+ "Invasion of Kylem // Valor's Reach Tag Team": {
+  "id": "Invasion of Kylem // Valor's Reach Tag Team",
+  "name": "Invasion of Kylem // Valor's Reach Tag Team",
+  "typeLine": "Battle — Siege // Sorcery",
+  "manaCost": "{2}{R}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Invasion of Kylem: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, up to two target creatures each get +2/+0 and gain vigilance and haste until end of turn.\n\nValor's Reach Tag Team: Create two 3/2 red and white Warrior creature tokens with \"Whenever this token and at least one other creature token attack, put a +1/+1 counter on this token.\""
+ },
+ "Gather the Townsfolk": {
+  "id": "Gather the Townsfolk",
+  "name": "Gather the Townsfolk",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Create two 1/1 white Human creature tokens.\nFateful hour — If you have 5 or less life, create five of those tokens instead."
+ },
+ "Temporary Truce": {
+  "id": "Temporary Truce",
+  "name": "Temporary Truce",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player may draw up to two cards. For each card less than two a player draws this way, that player gains 2 life."
+ }
+}

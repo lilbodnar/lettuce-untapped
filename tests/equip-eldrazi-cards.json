@@ -1,0 +1,2080 @@
+{
+ "Sword of Feast and Famine": {
+  "id": "Sword of Feast and Famine",
+  "name": "Sword of Feast and Famine",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from black and from green.\nWhenever equipped creature deals combat damage to a player, that player discards a card and you untap all lands you control.\nEquip {2}"
+ },
+ "Brotherhood Regalia": {
+  "id": "Brotherhood Regalia",
+  "name": "Brotherhood Regalia",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature has ward {2}, is an Assassin in addition to its other types, and can't be blocked.\nEquip legendary creature {1}\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Buster Sword": {
+  "id": "Buster Sword",
+  "name": "Buster Sword",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +3/+2.\nWhenever equipped creature deals combat damage to a player, draw a card, then you may cast a spell from your hand with mana value less than or equal to that damage without paying its mana cost.\nEquip {2}"
+ },
+ "Sword of Hearth and Home": {
+  "id": "Sword of Hearth and Home",
+  "name": "Sword of Hearth and Home",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from green and from white.\nWhenever equipped creature deals combat damage to a player, exile up to one target creature you own, then search your library for a basic land card. Put both cards onto the battlefield under your control, then shuffle.\nEquip {2}"
+ },
+ "Excalibur, Sword of Eden": {
+  "id": "Excalibur, Sword of Eden",
+  "name": "Excalibur, Sword of Eden",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{12}",
+  "cmc": 12,
+  "colors": [],
+  "oracle": "This spell costs {X} less to cast, where X is the total mana value of historic permanents you control. (Artifacts, legendaries, and Sagas are historic.)\nEquipped creature gets +10/+0 and has vigilance.\nEquip legendary creature {2}"
+ },
+ "Kozilek, Butcher of Truth": {
+  "id": "Kozilek, Butcher of Truth",
+  "name": "Kozilek, Butcher of Truth",
+  "typeLine": "Legendary Creature — Eldrazi",
+  "manaCost": "{10}",
+  "cmc": 10,
+  "colors": [],
+  "oracle": "When you cast this spell, draw four cards.\nAnnihilator 4 (Whenever this creature attacks, defending player sacrifices four permanents of their choice.)\nWhen Kozilek is put into a graveyard from anywhere, its owner shuffles their graveyard into their library.",
+  "power": "12",
+  "toughness": "12"
+ },
+ "Tarrian's Soulcleaver": {
+  "id": "Tarrian's Soulcleaver",
+  "name": "Tarrian's Soulcleaver",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has vigilance.\nWhenever another artifact or creature is put into a graveyard from the battlefield, put a +1/+1 counter on equipped creature.\nEquip {2}"
+ },
+ "Summon: Bahamut": {
+  "id": "Summon: Bahamut",
+  "name": "Summon: Bahamut",
+  "typeLine": "Enchantment Creature — Saga Dragon",
+  "manaCost": "{9}",
+  "cmc": 9,
+  "colors": [],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II — Destroy up to one target nonland permanent.\nIII — Draw two cards.\nIV — Mega Flare — This creature deals damage equal to the total mana value of other permanents you control to each opponent.\nFlying",
+  "power": "9",
+  "toughness": "9"
+ },
+ "Wandering Archaic // Explore the Vastlands": {
+  "id": "Wandering Archaic // Explore the Vastlands",
+  "name": "Wandering Archaic // Explore the Vastlands",
+  "typeLine": "Creature — Avatar // Sorcery",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Wandering Archaic: Whenever an opponent casts an instant or sorcery spell, they may pay {2}. If they don't, you may copy that spell. You may choose new targets for the copy.\n\nExplore the Vastlands: Each player looks at the top five cards of their library and may reveal a land card and/or an instant or sorcery card from among them. Each player puts the cards they revealed this way into their hand and the rest on the bottom of their library in a random order. Each player gains 3 life.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Ulamog, the Ceaseless Hunger": {
+  "id": "Ulamog, the Ceaseless Hunger",
+  "name": "Ulamog, the Ceaseless Hunger",
+  "typeLine": "Legendary Creature — Eldrazi",
+  "manaCost": "{10}",
+  "cmc": 10,
+  "colors": [],
+  "oracle": "When you cast this spell, exile two target permanents.\nIndestructible\nWhenever Ulamog attacks, defending player exiles the top twenty cards of their library.",
+  "power": "10",
+  "toughness": "10"
+ },
+ "Sword of Fire and Ice": {
+  "id": "Sword of Fire and Ice",
+  "name": "Sword of Fire and Ice",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from red and from blue.\nWhenever equipped creature deals combat damage to a player, this Equipment deals 2 damage to any target and you draw a card.\nEquip {2}"
+ },
+ "Ulamog, the Infinite Gyre": {
+  "id": "Ulamog, the Infinite Gyre",
+  "name": "Ulamog, the Infinite Gyre",
+  "typeLine": "Legendary Creature — Eldrazi",
+  "manaCost": "{11}",
+  "cmc": 11,
+  "colors": [],
+  "oracle": "When you cast this spell, destroy target permanent.\nIndestructible\nAnnihilator 4 (Whenever this creature attacks, defending player sacrifices four permanents of their choice.)\nWhen Ulamog is put into a graveyard from anywhere, its owner shuffles their graveyard into their library.",
+  "power": "10",
+  "toughness": "10"
+ },
+ "Ulamog, the Defiler": {
+  "id": "Ulamog, the Defiler",
+  "name": "Ulamog, the Defiler",
+  "typeLine": "Legendary Creature — Eldrazi",
+  "manaCost": "{10}",
+  "cmc": 10,
+  "colors": [],
+  "oracle": "When you cast this spell, target opponent exiles the top half of their library, rounded up.\nWard—Sacrifice two permanents.\nUlamog enters with a number of +1/+1 counters on it equal to the greatest mana value among cards in exile.\nUlamog has annihilator X, where X is the number of +1/+1 counters on it.",
+  "power": "7",
+  "toughness": "7"
+ },
+ "Sting, the Glinting Dagger": {
+  "id": "Sting, the Glinting Dagger",
+  "name": "Sting, the Glinting Dagger",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1 and has haste.\nAt the beginning of each combat, untap equipped creature.\nEquipped creature has first strike as long as it's blocking or blocked by a Goblin or Orc.\nEquip {2}"
+ },
+ "Illusionist's Bracers": {
+  "id": "Illusionist's Bracers",
+  "name": "Illusionist's Bracers",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Whenever an ability of equipped creature is activated, if it isn't a mana ability, copy that ability. You may choose new targets for the copy.\nEquip {3}"
+ },
+ "Sword of Truth and Justice": {
+  "id": "Sword of Truth and Justice",
+  "name": "Sword of Truth and Justice",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from white and from blue.\nWhenever equipped creature deals combat damage to a player, put a +1/+1 counter on a creature you control, then proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)\nEquip {2}"
+ },
+ "The Aetherspark": {
+  "id": "The Aetherspark",
+  "name": "The Aetherspark",
+  "typeLine": "Legendary Artifact Planeswalker — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "As long as The Aetherspark is attached to a creature, The Aetherspark can't be attacked and has \"Whenever equipped creature deals combat damage during your turn, put that many loyalty counters on The Aetherspark.\"\n+1: Attach The Aetherspark to up to one target creature you control. Put a +1/+1 counter on that creature.\n−5: Draw two cards.\n−10: Add ten mana of any one color.",
+  "loyalty": "4",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Sword of Forge and Frontier": {
+  "id": "Sword of Forge and Frontier",
+  "name": "Sword of Forge and Frontier",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from red and from green.\nWhenever equipped creature deals combat damage to a player, exile the top two cards of your library. You may play those cards this turn. You may play an additional land this turn.\nEquip {2}"
+ },
+ "Anticausal Vestige": {
+  "id": "Anticausal Vestige",
+  "name": "Anticausal Vestige",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{6}",
+  "cmc": 6,
+  "colors": [],
+  "oracle": "When this creature leaves the battlefield, draw a card, then you may put a permanent card with mana value less than or equal to the number of lands you control from your hand onto the battlefield tapped.\nWarp {4} (You may cast this card from your hand for its warp cost. Exile this creature at the beginning of the next end step, then you may cast it from exile on a later turn.)",
+  "power": "7",
+  "toughness": "5"
+ },
+ "Dragonfire Blade": {
+  "id": "Dragonfire Blade",
+  "name": "Dragonfire Blade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has hexproof from monocolored.\nEquip {4}. This ability costs {1} less to activate for each color of the creature it targets."
+ },
+ "Sword of Wealth and Power": {
+  "id": "Sword of Wealth and Power",
+  "name": "Sword of Wealth and Power",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from instants and from sorceries.\nWhenever equipped creature deals combat damage to a player, create a Treasure token. When you next cast an instant or sorcery spell this turn, copy that spell. You may choose new targets for the copy.\nEquip {2}"
+ },
+ "Sword of Light and Shadow": {
+  "id": "Sword of Light and Shadow",
+  "name": "Sword of Light and Shadow",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from white and from black.\nWhenever equipped creature deals combat damage to a player, you gain 3 life and you may return up to one target creature card from your graveyard to your hand.\nEquip {2}"
+ },
+ "It That Heralds the End": {
+  "id": "It That Heralds the End",
+  "name": "It That Heralds the End",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{1}{C}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Colorless spells you cast with mana value 7 or greater cost {1} less to cast.\nOther colorless creatures you control get +1/+1.",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Conduit of Ruin": {
+  "id": "Conduit of Ruin",
+  "name": "Conduit of Ruin",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{6}",
+  "cmc": 6,
+  "colors": [],
+  "oracle": "When you cast this spell, you may search your library for a colorless creature card with mana value 7 or greater, reveal it, then shuffle and put that card on top.\nThe first creature spell you cast each turn costs {2} less to cast.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Emrakul, the World Anew": {
+  "id": "Emrakul, the World Anew",
+  "name": "Emrakul, the World Anew",
+  "typeLine": "Legendary Creature — Eldrazi",
+  "manaCost": "{12}",
+  "cmc": 12,
+  "colors": [],
+  "oracle": "When you cast this spell, gain control of all creatures target player controls.\nFlying, protection from spells and from permanents that were cast this turn\nWhen Emrakul leaves the battlefield, sacrifice all creatures you control.\nMadness—Pay six {C}.",
+  "power": "12",
+  "toughness": "12"
+ },
+ "Kozilek, the Broken Reality": {
+  "id": "Kozilek, the Broken Reality",
+  "name": "Kozilek, the Broken Reality",
+  "typeLine": "Legendary Creature — Eldrazi",
+  "manaCost": "{9}",
+  "cmc": 9,
+  "colors": [],
+  "oracle": "When you cast this spell, up to two target players each manifest two cards from their hands. For each card manifested this way, you draw a card. (To manifest a card, put it onto the battlefield face down as a 2/2 creature. Turn it face up any time for its mana cost if it's a creature card.)\nOther colorless creatures you control get +3/+2.",
+  "power": "9",
+  "toughness": "9"
+ },
+ "Andúril, Narsil Reforged": {
+  "id": "Andúril, Narsil Reforged",
+  "name": "Andúril, Narsil Reforged",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nWhenever equipped creature attacks, put a +1/+1 counter on each creature you control. If you have the city's blessing, put two +1/+1 counters on each creature you control instead.\nEquip {3}"
+ },
+ "Aettir and Priwen": {
+  "id": "Aettir and Priwen",
+  "name": "Aettir and Priwen",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{6}",
+  "cmc": 6,
+  "colors": [],
+  "oracle": "Equipped creature has base power and toughness X/X, where X is your life total.\nEquip {5}"
+ },
+ "Sword of War and Peace": {
+  "id": "Sword of War and Peace",
+  "name": "Sword of War and Peace",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from red and from white.\nWhenever equipped creature deals combat damage to a player, this Equipment deals damage to that player equal to the number of cards in their hand and you gain 1 life for each card in your hand.\nEquip {2}"
+ },
+ "Ultima, Origin of Oblivion": {
+  "id": "Ultima, Origin of Oblivion",
+  "name": "Ultima, Origin of Oblivion",
+  "typeLine": "Legendary Creature — God",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Flying\nWhenever Ultima attacks, put a blight counter on target land. For as long as that land has a blight counter on it, it loses all land types and abilities and has \"{T}: Add {C}.\"\nWhenever you tap a land for {C}, add an additional {C}.",
+  "power": "4",
+  "toughness": "4",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Umezawa's Jitte": {
+  "id": "Umezawa's Jitte",
+  "name": "Umezawa's Jitte",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Whenever equipped creature deals combat damage, put two charge counters on Umezawa's Jitte.\nRemove a charge counter from Umezawa's Jitte: Choose one —\n• Equipped creature gets +2/+2 until end of turn.\n• Target creature gets -1/-1 until end of turn.\n• You gain 2 life.\nEquip {2}"
+ },
+ "Mjölnir, Storm Hammer": {
+  "id": "Mjölnir, Storm Hammer",
+  "name": "Mjölnir, Storm Hammer",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "When Mjölnir enters, attach it to target legendary creature you control.\nWhenever equipped creature attacks, tap target creature defending player controls and put a stun counter on it. Then Mjölnir deals damage to each opponent equal to the number of tapped creatures that opponent controls.\nEquip {4}"
+ },
+ "Andúril, Flame of the West": {
+  "id": "Andúril, Flame of the West",
+  "name": "Andúril, Flame of the West",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +3/+1.\nWhenever equipped creature attacks, create two tapped 1/1 white Spirit creature tokens with flying. If that creature is legendary, instead create two of those tokens that are tapped and attacking.\nEquip {2}"
+ },
+ "Nim Deathmantle": {
+  "id": "Nim Deathmantle",
+  "name": "Nim Deathmantle",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2, has intimidate, and is a black Zombie. (A creature with intimidate can't be blocked except by artifact creatures and/or creatures that share a color with it.)\nWhenever a nontoken creature is put into your graveyard from the battlefield, you may pay {4}. If you do, return that card to the battlefield and attach this Equipment to it.\nEquip {4}"
+ },
+ "The Masamune": {
+  "id": "The Masamune",
+  "name": "The Masamune",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "As long as equipped creature is attacking, it has first strike and must be blocked if able.\nEquipped creature has \"If a creature dying causes a triggered ability of this creature or an emblem you own to trigger, that ability triggers an additional time.\"\nEquip {2}"
+ },
+ "Infiltration Lens": {
+  "id": "Infiltration Lens",
+  "name": "Infiltration Lens",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Whenever equipped creature becomes blocked by a creature, you may draw two cards.\nEquip {1}"
+ },
+ "Pariah's Shield": {
+  "id": "Pariah's Shield",
+  "name": "Pariah's Shield",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "All damage that would be dealt to you is dealt to equipped creature instead.\nEquip {3}"
+ },
+ "Nazgûl Battle-Mace": {
+  "id": "Nazgûl Battle-Mace",
+  "name": "Nazgûl Battle-Mace",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Equipped creature has menace, deathtouch, annihilator 1, and \"Whenever an opponent sacrifices a nontoken permanent, put that card onto the battlefield under your control unless that player pays 3 life.\" (Whenever a creature with annihilator 1 attacks, defending player sacrifices a permanent of their choice.)\nEquip {3}"
+ },
+ "Inquisitor's Flail": {
+  "id": "Inquisitor's Flail",
+  "name": "Inquisitor's Flail",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "If equipped creature would deal combat damage, it deals double that damage instead.\nIf another creature would deal combat damage to equipped creature, it deals double that damage to equipped creature instead.\nEquip {2}"
+ },
+ "Sword of Sinew and Steel": {
+  "id": "Sword of Sinew and Steel",
+  "name": "Sword of Sinew and Steel",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from black and from red.\nWhenever equipped creature deals combat damage to a player, destroy up to one target planeswalker and up to one target artifact.\nEquip {2}"
+ },
+ "Staff of Titania": {
+  "id": "Staff of Titania",
+  "name": "Staff of Titania",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +X/+X, where X is the number of Forests you control.\nWhenever equipped creature attacks, create a 1/1 green Forest Dryad land creature token. (It's affected by summoning sickness.)\nEquip {3}"
+ },
+ "Sword of Body and Mind": {
+  "id": "Sword of Body and Mind",
+  "name": "Sword of Body and Mind",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from green and from blue.\nWhenever equipped creature deals combat damage to a player, you create a 2/2 green Wolf creature token and that player mills ten cards.\nEquip {2}"
+ },
+ "Luxior, Giada's Gift": {
+  "id": "Luxior, Giada's Gift",
+  "name": "Luxior, Giada's Gift",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1 for each counter on it.\nEquipped permanent isn't a planeswalker and is a creature in addition to its other types. (Loyalty abilities can still be activated.)\nEquip planeswalker {1}\nEquip {3}"
+ },
+ "Mirrormind Crown": {
+  "id": "Mirrormind Crown",
+  "name": "Mirrormind Crown",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "As long as this Equipment is attached to a creature, the first time you would create one or more tokens each turn, you may instead create that many tokens that are copies of equipped creature.\nEquip {2}"
+ },
+ "Orcrist, Goblin-cleaver": {
+  "id": "Orcrist, Goblin-cleaver",
+  "name": "Orcrist, Goblin-cleaver",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has trample.\nWhenever equipped creature deals combat damage to a player, choose a creature type. Create a Treasure token for each creature you control of that type.\nEquip {3}"
+ },
+ "Lost Jitte": {
+  "id": "Lost Jitte",
+  "name": "Lost Jitte",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Whenever equipped creature deals combat damage, put a charge counter on Lost Jitte.\nRemove a charge counter from Lost Jitte: Choose one —\n• Untap target land.\n• Target creature can't block this turn.\n• Put a +1/+1 counter on equipped creature.\nEquip {1}"
+ },
+ "Bilbo's Ring": {
+  "id": "Bilbo's Ring",
+  "name": "Bilbo's Ring",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "During your turn, equipped creature has hexproof and can't be blocked.\nWhenever equipped creature attacks alone, you draw a card and you lose 1 life.\nEquip Halfling {1} ({1}: Attach to target Halfling you control. Equip only as a sorcery.)\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Sword of Once and Future": {
+  "id": "Sword of Once and Future",
+  "name": "Sword of Once and Future",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2 and has protection from blue and from black.\nWhenever equipped creature deals combat damage to a player, surveil 2. Then you may cast an instant or sorcery spell with mana value 2 or less from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead.\nEquip {2}"
+ },
+ "Mirror Shield": {
+  "id": "Mirror Shield",
+  "name": "Mirror Shield",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +0/+2 and has hexproof and \"Whenever a creature with deathtouch blocks or becomes blocked by this creature, destroy that creature.\"\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "My Precious // Allure of Power": {
+  "id": "My Precious // Allure of Power",
+  "name": "My Precious // Allure of Power",
+  "typeLine": "Legendary Artifact — Equipment // Instant — Adventure",
+  "manaCost": "{3} // {1}{B}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "My Precious: Equipped creature has hexproof and can't be blocked.\nEquip—{2}, Pay 2 life.\n\nAllure of Power: As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards."
+ },
+ "Glamdring": {
+  "id": "Glamdring",
+  "name": "Glamdring",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature has first strike and gets +1/+0 for each instant and sorcery card in your graveyard.\nWhenever equipped creature deals combat damage to a player, you may cast an instant or sorcery spell from your hand with mana value less than or equal to that damage without paying its mana cost.\nEquip {3}"
+ },
+ "Vorrac Battlehorns": {
+  "id": "Vorrac Battlehorns",
+  "name": "Vorrac Battlehorns",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature has trample and can't be blocked by more than one creature.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Eternal Scourge": {
+  "id": "Eternal Scourge",
+  "name": "Eternal Scourge",
+  "typeLine": "Creature — Eldrazi Horror",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "You may cast this card from exile.\nWhen this creature becomes the target of a spell or ability an opponent controls, exile this creature.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Adventuring Gear": {
+  "id": "Adventuring Gear",
+  "name": "Adventuring Gear",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Landfall — Whenever a land you control enters, equipped creature gets +2/+2 until end of turn.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Herigast, Erupting Nullkite": {
+  "id": "Herigast, Erupting Nullkite",
+  "name": "Herigast, Erupting Nullkite",
+  "typeLine": "Legendary Creature — Eldrazi Dragon",
+  "manaCost": "{9}",
+  "cmc": 9,
+  "colors": [],
+  "oracle": "Emerge {6}{R}{R} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, you may exile your hand. If you do, draw three cards.\nFlying\nEach creature spell you cast has emerge. The emerge cost is equal to its mana cost.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Nemesis Mask": {
+  "id": "Nemesis Mask",
+  "name": "Nemesis Mask",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "All creatures able to block equipped creature do so.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Ring of Xathrid": {
+  "id": "Ring of Xathrid",
+  "name": "Ring of Xathrid",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{2}: Regenerate equipped creature. (The next time that creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)\nAt the beginning of your upkeep, put a +1/+1 counter on equipped creature if it's black.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Barrow-Blade": {
+  "id": "Barrow-Blade",
+  "name": "Barrow-Blade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1.\nWhenever equipped creature blocks or becomes blocked by a creature, that creature loses all abilities until end of turn.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Ring of Evos Isle": {
+  "id": "Ring of Evos Isle",
+  "name": "Ring of Evos Isle",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "{2}: Equipped creature gains hexproof until end of turn. (It can't be the target of spells or abilities your opponents control.)\nAt the beginning of your upkeep, put a +1/+1 counter on equipped creature if it's blue.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "O-Naginata": {
+  "id": "O-Naginata",
+  "name": "O-Naginata",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "This Equipment can be attached only to a creature with power 3 or greater.\nEquipped creature gets +3/+0 and has trample.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Sword of the Meek": {
+  "id": "Sword of the Meek",
+  "name": "Sword of the Meek",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+2.\nEquip {2}\nWhenever a 1/1 creature you control enters, you may return this card from your graveyard to the battlefield, then attach it to that creature."
+ },
+ "The Capitoline Triad": {
+  "id": "The Capitoline Triad",
+  "name": "The Capitoline Triad",
+  "typeLine": "Legendary Creature — God Artificer",
+  "manaCost": "{10}",
+  "cmc": 10,
+  "colors": [],
+  "oracle": "Those Who Came Before — This spell costs {1} less to cast for each historic card in your graveyard. (Artifacts, legendaries, and Sagas are historic.)\nExile any number of historic cards from your graveyard with total mana value 30 or greater: You get an emblem with \"Creatures you control have base power and toughness 9/9.\"",
+  "power": "7",
+  "toughness": "7"
+ },
+ "Dissection Tools": {
+  "id": "Dissection Tools",
+  "name": "Dissection Tools",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "When this Equipment enters, manifest dread, then attach this Equipment to that creature.\nEquipped creature gets +2/+2 and has deathtouch and lifelink.\nEquip—Sacrifice a creature."
+ },
+ "Hunter's Blowgun": {
+  "id": "Hunter's Blowgun",
+  "name": "Hunter's Blowgun",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1.\nEquipped creature has deathtouch during your turn. Otherwise, it has reach.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Devourer of Destiny": {
+  "id": "Devourer of Destiny",
+  "name": "Devourer of Destiny",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{5}{C}{C}",
+  "cmc": 7,
+  "colors": [],
+  "oracle": "You may reveal this card from your opening hand. If you do, at the beginning of your first upkeep, look at the top four cards of your library. You may put one of those cards back on top of your library. Exile the rest.\nWhen you cast this spell, exile target permanent that's one or more colors.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Quick-Draw Katana": {
+  "id": "Quick-Draw Katana",
+  "name": "Quick-Draw Katana",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "During your turn, equipped creature gets +2/+0 and has first strike. (It deals combat damage before creatures without first strike.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Glamdring, Foe-hammer // Gleam of Death": {
+  "id": "Glamdring, Foe-hammer // Gleam of Death",
+  "name": "Glamdring, Foe-hammer // Gleam of Death",
+  "typeLine": "Legendary Artifact — Equipment // Sorcery — Adventure",
+  "manaCost": "{2} // {3}{U}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Glamdring, Foe-hammer: Instant and sorcery spells you cast cost {X} less to cast, where X is equipped creature's power.\nEquip {2}\n\nGleam of Death: Mill six cards, then put all instant and sorcery cards from among them into your hand. (Then exile this card. You may cast the artifact later from exile.)"
+ },
+ "Worldslayer": {
+  "id": "Worldslayer",
+  "name": "Worldslayer",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Whenever equipped creature deals combat damage to a player, destroy all permanents other than this Equipment.\nEquip {5} ({5}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Sigil of Valor": {
+  "id": "Sigil of Valor",
+  "name": "Sigil of Valor",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Whenever equipped creature attacks alone, it gets +1/+1 until end of turn for each other creature you control.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Sword of Kaldra": {
+  "id": "Sword of Kaldra",
+  "name": "Sword of Kaldra",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +5/+5.\nWhenever equipped creature deals damage to a creature, exile that creature. (Exile it only if it's still on the battlefield.)\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Propagator Drone": {
+  "id": "Propagator Drone",
+  "name": "Propagator Drone",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{1}{G}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nCreature tokens you control have evolve. (They have \"Whenever a creature you control enters, if it has greater power or toughness than this token, put a +1/+1 counter on this token.\" They see this creature enter.)\n{3}{G}: Create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+  "power": "2",
+  "toughness": "2",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Iron Man Armor": {
+  "id": "Iron Man Armor",
+  "name": "Iron Man Armor",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +2/+1 and has flying.\n{2}: If this Equipment isn't a creature, it becomes a 0/0 Construct Hero artifact creature with flying and \"This creature gets +1/+1 for each artifact you control\" until end of turn.\nEquip {2}"
+ },
+ "Territory Culler": {
+  "id": "Territory Culler",
+  "name": "Territory Culler",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{4}{G}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nReach\nLandfall — Whenever a land you control enters, look at the top card of your library. If it's a creature card, you may reveal it and put it into your hand. If you don't put the card into your hand, you may put it into your graveyard.",
+  "power": "7",
+  "toughness": "5"
+ },
+ "Trepanation Blade": {
+  "id": "Trepanation Blade",
+  "name": "Trepanation Blade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Whenever equipped creature attacks, defending player reveals cards from the top of their library until they reveal a land card. The creature gets +1/+0 until end of turn for each card revealed this way. That player puts the revealed cards into their graveyard.\nEquip {2}"
+ },
+ "Eater of Virtue": {
+  "id": "Eater of Virtue",
+  "name": "Eater of Virtue",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Whenever equipped creature dies, exile it.\nEquipped creature gets +2/+0.\nAs long as a card exiled with Eater of Virtue has flying, equipped creature has flying. The same is true for first strike, double strike, deathtouch, haste, hexproof, indestructible, lifelink, menace, protection, reach, trample, and vigilance.\nEquip {1}"
+ },
+ "Eldrazi Repurposer": {
+  "id": "Eldrazi Repurposer",
+  "name": "Eldrazi Repurposer",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{2}{G}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen you cast this spell and when this creature dies, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+  "power": "3",
+  "toughness": "3",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Fishing Gear": {
+  "id": "Fishing Gear",
+  "name": "Fishing Gear",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Whenever equipped creature deals combat damage to a player, exile the top card of that player's library. If it's a permanent card, you may put it onto the battlefield under your control. If you don't, create a 1/1 blue Fish creature token.\nEquip {2}"
+ },
+ "Hand of Vecna": {
+  "id": "Hand of Vecna",
+  "name": "Hand of Vecna",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "At the beginning of combat on your turn, equipped creature or a creature you control named Vecna gets +X/+X until end of turn, where X is the number of cards in your hand.\nEquip—Pay 1 life for each card in your hand.\nEquip {2}"
+ },
+ "Sting, Bilbo's Sword": {
+  "id": "Sting, Bilbo's Sword",
+  "name": "Sting, Bilbo's Sword",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Flash\nWhen Sting enters, put a hone counter on Sting for each creature target opponent controls. Attach Sting to up to one target creature you control. (Each hone counter on an Equipment grants +1/+0 to equipped creature.)\nEquip {3}"
+ },
+ "Runechanter's Pike": {
+  "id": "Runechanter's Pike",
+  "name": "Runechanter's Pike",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature has first strike and gets +X/+0, where X is the number of instant and sorcery cards in your graveyard.\nEquip {2}"
+ },
+ "Rocket-Powered Goblin Glider": {
+  "id": "Rocket-Powered Goblin Glider",
+  "name": "Rocket-Powered Goblin Glider",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "When this Equipment enters, if it was cast from your graveyard, attach it to target creature you control.\nEquipped creature gets +2/+0 and has flying and haste.\nEquip {2}\nMayhem {2}"
+ },
+ "The Dominion Bracelet": {
+  "id": "The Dominion Bracelet",
+  "name": "The Dominion Bracelet",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1 and has \"{15}, Exile The Dominion Bracelet: You control target opponent during their next turn. This ability costs {X} less to activate, where X is this creature's power. Activate only as a sorcery.\" (You see all cards that player could see and make all decisions for them.)\nEquip {1}"
+ },
+ "Hot Soup": {
+  "id": "Hot Soup",
+  "name": "Hot Soup",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature can't be blocked.\nWhenever equipped creature is dealt damage, destroy it.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Deceiver of Form": {
+  "id": "Deceiver of Form",
+  "name": "Deceiver of Form",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{6}{C}",
+  "cmc": 7,
+  "colors": [],
+  "oracle": "({C} represents colorless mana.)\nAt the beginning of combat on your turn, reveal the top card of your library. If a creature card is revealed this way, you may have creatures you control other than this creature become copies of that card until end of turn. You may put that card on the bottom of your library.",
+  "power": "8",
+  "toughness": "8"
+ },
+ "Reality Smasher": {
+  "id": "Reality Smasher",
+  "name": "Reality Smasher",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{4}{C}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "({C} represents colorless mana.)\nTrample, haste\nWhenever this creature becomes the target of a spell an opponent controls, counter that spell unless its controller discards a card.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Kusari-Gama": {
+  "id": "Kusari-Gama",
+  "name": "Kusari-Gama",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature has \"{2}: This creature gets +1/+0 until end of turn.\"\nWhenever equipped creature deals damage to a blocking creature, this Equipment deals that much damage to each other creature defending player controls.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Eldrazi Mimic": {
+  "id": "Eldrazi Mimic",
+  "name": "Eldrazi Mimic",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Whenever another colorless creature you control enters, you may have this creature's base power and toughness become equal to that creature's power and toughness until end of turn.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Deathrender": {
+  "id": "Deathrender",
+  "name": "Deathrender",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2.\nWhenever equipped creature dies, you may put a creature card from your hand onto the battlefield and attach this Equipment to it.\nEquip {2}"
+ },
+ "Oathkeeper, Takeno's Daisho": {
+  "id": "Oathkeeper, Takeno's Daisho",
+  "name": "Oathkeeper, Takeno's Daisho",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +3/+1.\nWhenever equipped creature dies, return that card to the battlefield under your control if it's a Samurai card.\nWhen Oathkeeper is put into a graveyard from the battlefield, exile equipped creature.\nEquip {2}"
+ },
+ "Konda's Banner": {
+  "id": "Konda's Banner",
+  "name": "Konda's Banner",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Konda's Banner can be attached only to a legendary creature.\nCreatures that share a color with equipped creature get +1/+1.\nCreatures that share a creature type with equipped creature get +1/+1.\nEquip {2}"
+ },
+ "Nightmare Lash": {
+  "id": "Nightmare Lash",
+  "name": "Nightmare Lash",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1 for each Swamp you control.\nEquip—Pay 3 life. (Pay 3 life: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Shield of Kaldra": {
+  "id": "Shield of Kaldra",
+  "name": "Shield of Kaldra",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipment named Sword of Kaldra, Shield of Kaldra, and Helm of Kaldra have indestructible.\nEquipped creature has indestructible. (Damage and effects that say \"destroy\" don't destroy it.)\nEquip {4}"
+ },
+ "Trailblazer's Torch": {
+  "id": "Trailblazer's Torch",
+  "name": "Trailblazer's Torch",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "When this Equipment enters, you take the initiative.\nWhenever equipped creature becomes blocked, it deals 2 damage to each creature blocking it.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Long-Lost Lances": {
+  "id": "Long-Lost Lances",
+  "name": "Long-Lost Lances",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+0.\nDuring your turn, creatures you control that are equipped have first strike and vigilance.\nEquip {2}"
+ },
+ "Spawnsire of Ulamog": {
+  "id": "Spawnsire of Ulamog",
+  "name": "Spawnsire of Ulamog",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{10}",
+  "cmc": 10,
+  "colors": [],
+  "oracle": "Annihilator 1 (Whenever this creature attacks, defending player sacrifices a permanent of their choice.)\n{4}: Create two 0/1 colorless Eldrazi Spawn creature tokens. They have \"Sacrifice this token: Add {C}.\"\n{20}: Cast any number of Eldrazi spells from among cards you own outside the game without paying their mana costs.",
+  "power": "7",
+  "toughness": "11",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Ugin's Conjurant": {
+  "id": "Ugin's Conjurant",
+  "name": "Ugin's Conjurant",
+  "typeLine": "Creature — Spirit Monk",
+  "manaCost": "{X}",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This creature enters with X +1/+1 counters on it.\nIf damage would be dealt to this creature while it has a +1/+1 counter on it, prevent that damage and remove that many +1/+1 counters from this creature.",
+  "power": "0",
+  "toughness": "0"
+ },
+ "Helm of Kaldra": {
+  "id": "Helm of Kaldra",
+  "name": "Helm of Kaldra",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature has first strike, trample, and haste.\n{1}: If you control Equipment named Helm of Kaldra, Sword of Kaldra, and Shield of Kaldra, create Kaldra, a legendary 4/4 colorless Avatar creature token. Attach those Equipment to it.\nEquip {2}"
+ },
+ "Hand of Emrakul": {
+  "id": "Hand of Emrakul",
+  "name": "Hand of Emrakul",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{9}",
+  "cmc": 9,
+  "colors": [],
+  "oracle": "You may sacrifice four Eldrazi Spawn rather than pay this spell's mana cost.\nAnnihilator 1 (Whenever this creature attacks, defending player sacrifices a permanent of their choice.)",
+  "power": "7",
+  "toughness": "7"
+ },
+ "Hope-Ender Coatl": {
+  "id": "Hope-Ender Coatl",
+  "name": "Hope-Ender Coatl",
+  "typeLine": "Creature — Eldrazi Snake",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nFlash\nWhen you cast this spell, counter target spell an opponent controls unless they pay {1}.\nFlying",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Livewire Lash": {
+  "id": "Livewire Lash",
+  "name": "Livewire Lash",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+0 and has \"Whenever this creature becomes the target of a spell, this creature deals 2 damage to any target.\"\nEquip {2}"
+ },
+ "Inverter of Truth": {
+  "id": "Inverter of Truth",
+  "name": "Inverter of Truth",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nFlying\nWhen this creature enters, exile all cards from your library face down, then shuffle all cards from your graveyard into your library.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Drownyard Lurker": {
+  "id": "Drownyard Lurker",
+  "name": "Drownyard Lurker",
+  "typeLine": "Creature — Eldrazi Trilobite",
+  "manaCost": "{7}",
+  "cmc": 7,
+  "colors": [],
+  "oracle": "Vigilance\nWhen you cast or cycle Drownyard Lurker, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"\nCycling {2}{U} ({2}{U}, Discard this card: Draw a card.)",
+  "power": "7",
+  "toughness": "7",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Butcher's Cleaver": {
+  "id": "Butcher's Cleaver",
+  "name": "Butcher's Cleaver",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +3/+0.\nAs long as equipped creature is a Human, it has lifelink.\nEquip {3}"
+ },
+ "Warped Tusker": {
+  "id": "Warped Tusker",
+  "name": "Warped Tusker",
+  "typeLine": "Creature — Eldrazi Boar Beast",
+  "manaCost": "{7}",
+  "cmc": 7,
+  "colors": [],
+  "oracle": "Reach\nWhen you cast or cycle Warped Tusker, create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"\nCycling {2}{G} ({2}{G}, Discard this card: Draw a card.)",
+  "power": "6",
+  "toughness": "8",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Thief of Existence": {
+  "id": "Thief of Existence",
+  "name": "Thief of Existence",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{1}{C}{G}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen you cast this spell, exile up to one target noncreature, nonland permanent an opponent controls with mana value 4 or less. If you do, Thief of Existence gains \"When this creature leaves the battlefield, target opponent draws a card.\"",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Scythe of the Wretched": {
+  "id": "Scythe of the Wretched",
+  "name": "Scythe of the Wretched",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2.\nWhenever a creature dealt damage by equipped creature this turn dies, return that card to the battlefield under your control. Attach this Equipment to that creature.\nEquip {4}"
+ },
+ "General's Kabuto": {
+  "id": "General's Kabuto",
+  "name": "General's Kabuto",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature has shroud. (It can't be the target of spells or abilities.)\nPrevent all combat damage that would be dealt to equipped creature.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Magitek Scythe": {
+  "id": "Magitek Scythe",
+  "name": "Magitek Scythe",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "A Test of Your Reflexes! — When this Equipment enters, you may attach it to target creature you control. If you do, that creature gains first strike until end of turn and must be blocked this turn if able.\nEquipped creature gets +2/+1.\nEquip {2}"
+ },
+ "Sigil of Distinction": {
+  "id": "Sigil of Distinction",
+  "name": "Sigil of Distinction",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{X}",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "This Equipment enters with X charge counters on it.\nEquipped creature gets +1/+1 for each charge counter on this Equipment.\nEquip—Remove a charge counter from this Equipment."
+ },
+ "Trusty Boomerang": {
+  "id": "Trusty Boomerang",
+  "name": "Trusty Boomerang",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{1}, {T}: Tap target creature. Return Trusty Boomerang to its owner's hand.\"\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Surestrike Trident": {
+  "id": "Surestrike Trident",
+  "name": "Surestrike Trident",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature has first strike and \"{T}, Unattach Surestrike Trident: This creature deals damage equal to its power to target player or planeswalker.\"\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Rooftop Percher": {
+  "id": "Rooftop Percher",
+  "name": "Rooftop Percher",
+  "typeLine": "Creature — Shapeshifter",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Changeling (This card is every creature type.)\nFlying\nWhen this creature enters, exile up to two target cards from graveyards. You gain 3 life.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Blight Herder": {
+  "id": "Blight Herder",
+  "name": "Blight Herder",
+  "typeLine": "Creature — Eldrazi Processor",
+  "manaCost": "{5}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "When you cast this spell, you may put two cards your opponents own from exile into their owners' graveyards. If you do, create three 1/1 colorless Eldrazi Scion creature tokens. They have \"Sacrifice this token: Add {C}.\"",
+  "power": "4",
+  "toughness": "5",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Demonmail Hauberk": {
+  "id": "Demonmail Hauberk",
+  "name": "Demonmail Hauberk",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +4/+2.\nEquip—Sacrifice a creature."
+ },
+ "Saw": {
+  "id": "Saw",
+  "name": "Saw",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+0.\nWhenever equipped creature attacks, you may sacrifice a permanent other than that creature or this Equipment. If you do, draw a card.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Fishing Pole": {
+  "id": "Fishing Pole",
+  "name": "Fishing Pole",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{1}, {T}, Tap Fishing Pole: Put a bait counter on Fishing Pole.\"\nWhenever equipped creature becomes untapped, remove a bait counter from this Equipment. If you do, create a 1/1 blue Fish creature token.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Magebane Armor": {
+  "id": "Magebane Armor",
+  "name": "Magebane Armor",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+4 and loses flying.\nPrevent all noncombat damage that would be dealt to equipped creature.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Wings of Hubris": {
+  "id": "Wings of Hubris",
+  "name": "Wings of Hubris",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature has flying.\nSacrifice this Equipment: Equipped creature can't be blocked this turn. Sacrifice it at the beginning of the next end step.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Pathway Arrows": {
+  "id": "Pathway Arrows",
+  "name": "Pathway Arrows",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{2}, {T}: This creature deals 1 damage to target creature. If a colorless creature is dealt damage this way, tap it.\"\nEquip {2}"
+ },
+ "Spellbinder": {
+  "id": "Spellbinder",
+  "name": "Spellbinder",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Imprint — When this Equipment enters, you may exile an instant card from your hand.\nWhenever equipped creature deals combat damage to a player, you may copy the exiled card. If you do, you may cast the copy without paying its mana cost.\nEquip {4}"
+ },
+ "Sorcerer's Wand": {
+  "id": "Sorcerer's Wand",
+  "name": "Sorcerer's Wand",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{T}: This creature deals 1 damage to target player or planeswalker. If this creature is a Wizard, it deals 2 damage instead.\"\nEquip {3}"
+ },
+ "Walker of the Wastes": {
+  "id": "Walker of the Wastes",
+  "name": "Walker of the Wastes",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{4}{C}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "({C} represents colorless mana.)\nTrample\nThis creature gets +1/+1 for each land you control named Wastes.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "The Black Arrow": {
+  "id": "The Black Arrow",
+  "name": "The Black Arrow",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Flash\nWhen The Black Arrow enters, it deals 1 damage to any target. If a Dragon is dealt damage this way, destroy it.\nEquipped creature gets +1/+1 and has reach.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Angelic Armaments": {
+  "id": "Angelic Armaments",
+  "name": "Angelic Armaments",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2, has flying, and is a white Angel in addition to its other colors and types.\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Neglected Heirloom // Ashmouth Blade": {
+  "id": "Neglected Heirloom // Ashmouth Blade",
+  "name": "Neglected Heirloom // Ashmouth Blade",
+  "typeLine": "Artifact — Equipment // Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Neglected Heirloom: Equipped creature gets +1/+1.\nWhen equipped creature transforms, transform this Equipment.\nEquip {1}\n\nAshmouth Blade: Equipped creature gets +3/+3 and has first strike.\nEquip {3}"
+ },
+ "Benthic Infiltrator": {
+  "id": "Benthic Infiltrator",
+  "name": "Benthic Infiltrator",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)\nThis creature can't be blocked.",
+  "power": "1",
+  "toughness": "4"
+ },
+ "Fathom Feeder": {
+  "id": "Fathom Feeder",
+  "name": "Fathom Feeder",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{U}{B}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nDeathtouch\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)\n{3}{U}{B}: Draw a card. Each opponent exiles the top card of their library.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Captain's Hook": {
+  "id": "Captain's Hook",
+  "name": "Captain's Hook",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+0, has menace, and is a Pirate in addition to its other creature types.\nWhenever this Equipment becomes unattached from a permanent, destroy that permanent.\nEquip {1}"
+ },
+ "Hedron Matrix": {
+  "id": "Hedron Matrix",
+  "name": "Hedron Matrix",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +X/+X, where X is its mana value.\nEquip {4}"
+ },
+ "Arc Spitter": {
+  "id": "Arc Spitter",
+  "name": "Arc Spitter",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{1}: This creature deals 1 damage to target creature that's blocking it.\"\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Dimensional Infiltrator": {
+  "id": "Dimensional Infiltrator",
+  "name": "Dimensional Infiltrator",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nFlash\nFlying\n{1}{C}: Target opponent exiles the top card of their library. If it's a land card, you may return this creature to its owner's hand. ({C} represents colorless mana.)",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Bladed Bracers": {
+  "id": "Bladed Bracers",
+  "name": "Bladed Bracers",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1.\nAs long as equipped creature is a Human or an Angel, it has vigilance.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Blinding Powder": {
+  "id": "Blinding Powder",
+  "name": "Blinding Powder",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"Unattach Blinding Powder: Prevent all combat damage that would be dealt to this creature this turn.\"\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Paleontologist's Pick-Axe // Dinosaur Headdress": {
+  "id": "Paleontologist's Pick-Axe // Dinosaur Headdress",
+  "name": "Paleontologist's Pick-Axe // Dinosaur Headdress",
+  "typeLine": "Artifact — Equipment // Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Paleontologist's Pick-Axe: Whenever equipped creature attacks, draw a card, then discard a card.\nEquip {1}\nCraft with one or more creatures {5} ({5}, Exile this artifact, Exile one or more creatures you control and/or creature cards from your graveyard: Return this card transformed under its owner's control. Craft only as a sorcery.)\n\nDinosaur Headdress: When this Equipment enters, attach it to target creature you control.\nAs this Equipment becomes attached to a creature, choose an exiled creature card used to craft this Equipment.\nEquipped creature is a copy of the last chosen card.\nEquip {2}"
+ },
+ "Tatsumasa, the Dragon's Fang": {
+  "id": "Tatsumasa, the Dragon's Fang",
+  "name": "Tatsumasa, the Dragon's Fang",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{6}",
+  "cmc": 6,
+  "colors": [],
+  "oracle": "Equipped creature gets +5/+5.\n{6}, Exile Tatsumasa: Create a 5/5 blue Dragon Spirit creature token with flying. Return Tatsumasa to the battlefield under its owner's control when that token dies.\nEquip {3}"
+ },
+ "Leering Emblem": {
+  "id": "Leering Emblem",
+  "name": "Leering Emblem",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Whenever you cast a spell, equipped creature gets +2/+2 until end of turn.\nEquip {2}"
+ },
+ "Ulamog's Despoiler": {
+  "id": "Ulamog's Despoiler",
+  "name": "Ulamog's Despoiler",
+  "typeLine": "Creature — Eldrazi Processor",
+  "manaCost": "{6}",
+  "cmc": 6,
+  "colors": [],
+  "oracle": "As this creature enters, you may put two cards your opponents own from exile into their owners' graveyards. If you do, this creature enters with four +1/+1 counters on it.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Heartseeker": {
+  "id": "Heartseeker",
+  "name": "Heartseeker",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+1 and has \"{T}, Unattach Heartseeker: Destroy target creature.\"\nEquip {5} ({5}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Ruin Processor": {
+  "id": "Ruin Processor",
+  "name": "Ruin Processor",
+  "typeLine": "Creature — Eldrazi Processor",
+  "manaCost": "{7}",
+  "cmc": 7,
+  "colors": [],
+  "oracle": "When you cast this spell, you may put a card an opponent owns from exile into that player's graveyard. If you do, you gain 5 life.",
+  "power": "7",
+  "toughness": "8"
+ },
+ "Depth Defiler": {
+  "id": "Depth Defiler",
+  "name": "Depth Defiler",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{3}{U}{U}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nKicker {C} (You may pay an additional {C} as you cast this spell.)\nWhen you cast this spell, choose one. If it was kicked, choose both instead.\n• Return target creature to its owner's hand.\n• Target player draws two cards, then discards a card.",
+  "power": "3",
+  "toughness": "5"
+ },
+ "Neko-Te": {
+  "id": "Neko-Te",
+  "name": "Neko-Te",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Whenever equipped creature deals damage to a creature, tap that creature. That creature doesn't untap during its controller's untap step for as long as this Equipment remains on the battlefield.\nWhenever equipped creature deals damage to a player, that player loses 1 life.\nEquip {2}"
+ },
+ "Distended Mindbender": {
+  "id": "Distended Mindbender",
+  "name": "Distended Mindbender",
+  "typeLine": "Creature — Eldrazi Insect",
+  "manaCost": "{8}",
+  "cmc": 8,
+  "colors": [],
+  "oracle": "Emerge {5}{B}{B} (You may cast this spell by sacrificing a creature and paying the emerge cost reduced by that creature's mana value.)\nWhen you cast this spell, target opponent reveals their hand. You choose from it a nonland card with mana value 3 or less and a card with mana value 4 or greater. That player discards those cards.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Relic Axe": {
+  "id": "Relic Axe",
+  "name": "Relic Axe",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +1/+1. If it's a Warrior, it gets +2/+1 instead.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Shield of the Avatar": {
+  "id": "Shield of the Avatar",
+  "name": "Shield of the Avatar",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "If a source would deal damage to equipped creature, prevent X of that damage, where X is the number of creatures you control.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Dead-Iron Sledge": {
+  "id": "Dead-Iron Sledge",
+  "name": "Dead-Iron Sledge",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Whenever equipped creature blocks or becomes blocked by a creature, destroy both creatures.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Bronze Cudgels": {
+  "id": "Bronze Cudgels",
+  "name": "Bronze Cudgels",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "{2}: Until end of turn, equipped creature gets +X/+0, where X is the number of times this ability has resolved this turn.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Kozilek's Pathfinder": {
+  "id": "Kozilek's Pathfinder",
+  "name": "Kozilek's Pathfinder",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{6}",
+  "cmc": 6,
+  "colors": [],
+  "oracle": "{C}: Target creature can't block this creature this turn. ({C} represents colorless mana.)",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Ruination Guide": {
+  "id": "Ruination Guide",
+  "name": "Ruination Guide",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{2}{U}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)\nOther colorless creatures you control get +1/+0.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Ghostfire Blade": {
+  "id": "Ghostfire Blade",
+  "name": "Ghostfire Blade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2.\nEquip {3}\nThis Equipment's equip ability costs {2} less to activate if it targets a colorless creature."
+ },
+ "Vile Aggregate": {
+  "id": "Vile Aggregate",
+  "name": "Vile Aggregate",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{2}{R}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nVile Aggregate's power is equal to the number of colorless creatures you control.\nTrample\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)",
+  "power": "*",
+  "toughness": "5"
+ },
+ "Mist Intruder": {
+  "id": "Mist Intruder",
+  "name": "Mist Intruder",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{1}{U}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nFlying\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)",
+  "power": "1",
+  "toughness": "2"
+ },
+ "True-Faith Censer": {
+  "id": "True-Faith Censer",
+  "name": "True-Faith Censer",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1 and has vigilance.\nAs long as equipped creature is a Human, it gets an additional +1/+0.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Eldrazi Obligator": {
+  "id": "Eldrazi Obligator",
+  "name": "Eldrazi Obligator",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{2}{R}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen you cast this spell, you may pay {1}{C}. If you do, gain control of target creature until end of turn, untap that creature, and it gains haste until end of turn. ({C} represents colorless mana.)\nHaste",
+  "power": "3",
+  "toughness": "1"
+ },
+ "Piston Sledge": {
+  "id": "Piston Sledge",
+  "name": "Piston Sledge",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +3/+1.\nEquip—Sacrifice an artifact."
+ },
+ "Salvage Drone": {
+  "id": "Salvage Drone",
+  "name": "Salvage Drone",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{U}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)\nWhen this creature dies, you may draw a card. If you do, discard a card.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Ninja's Kunai": {
+  "id": "Ninja's Kunai",
+  "name": "Ninja's Kunai",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{1}, {T}, Sacrifice Ninja's Kunai: Ninja's Kunai deals 3 damage to any target.\"\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Barrage Tyrant": {
+  "id": "Barrage Tyrant",
+  "name": "Barrage Tyrant",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{4}{R}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\n{2}{R}, Sacrifice another colorless creature: This creature deals damage equal to the sacrificed creature's power to any target.",
+  "power": "5",
+  "toughness": "3"
+ },
+ "Voidpouncer": {
+  "id": "Voidpouncer",
+  "name": "Voidpouncer",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{1}{R}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nKicker {2}{C} (You may pay an additional {2}{C} as you cast this spell.)\nIf this creature was kicked, it enters with two +1/+1 counters and a trample counter on it and with haste.",
+  "power": "3",
+  "toughness": "1"
+ },
+ "Wumpus Aberration": {
+  "id": "Wumpus Aberration",
+  "name": "Wumpus Aberration",
+  "typeLine": "Creature — Eldrazi Beast",
+  "manaCost": "{3}{G}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen you cast this spell, if {C} wasn't spent to cast it, target opponent may put a creature card from their hand onto the battlefield.\nTrample",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Sharpened Pitchfork": {
+  "id": "Sharpened Pitchfork",
+  "name": "Sharpened Pitchfork",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature has first strike.\nAs long as equipped creature is a Human, it gets +1/+1.\nEquip {1}"
+ },
+ "Spy Kit": {
+  "id": "Spy Kit",
+  "name": "Spy Kit",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1 and has all names of nonlegendary creature cards in addition to its name.\nEquip {2}"
+ },
+ "Hankyu": {
+  "id": "Hankyu",
+  "name": "Hankyu",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{T}: Put an aim counter on Hankyu\" and \"{T}, Remove all aim counters from Hankyu: This creature deals damage to any target equal to the number of aim counters removed this way.\"\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Haunted Plate Mail": {
+  "id": "Haunted Plate Mail",
+  "name": "Haunted Plate Mail",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +4/+4.\n{0}: Until end of turn, this permanent becomes a 4/4 Spirit artifact creature that's no longer an Equipment. Activate only if you control no creatures.\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Stitcher's Graft": {
+  "id": "Stitcher's Graft",
+  "name": "Stitcher's Graft",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +3/+3.\nWhenever equipped creature attacks, it doesn't untap during its controller's next untap step.\nWhenever this Equipment becomes unattached from a permanent, sacrifice that permanent.\nEquip {2}"
+ },
+ "Cement Shoes": {
+  "id": "Cement Shoes",
+  "name": "Cement Shoes",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +3/+3 and has \"At the beginning of your end step, tap this creature.\"\nEquipped creature doesn't untap during its controller's untap step.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Jousting Lance": {
+  "id": "Jousting Lance",
+  "name": "Jousting Lance",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+0.\nDuring your turn, equipped creature has first strike.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Spare Dagger": {
+  "id": "Spare Dagger",
+  "name": "Spare Dagger",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+0 and has \"Whenever this creature attacks, you may sacrifice Spare Dagger. When you do, this creature deals 1 damage to any target.\"\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Blazing Torch": {
+  "id": "Blazing Torch",
+  "name": "Blazing Torch",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature can't be blocked by Vampires or Zombies.\nEquipped creature has \"{T}, Sacrifice Blazing Torch: Blazing Torch deals 2 damage to any target.\"\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Silver-Inlaid Dagger": {
+  "id": "Silver-Inlaid Dagger",
+  "name": "Silver-Inlaid Dagger",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+0.\nAs long as equipped creature is a Human, it gets an additional +1/+0.\nEquip {2}"
+ },
+ "Transcendent Archaic": {
+  "id": "Transcendent Archaic",
+  "name": "Transcendent Archaic",
+  "typeLine": "Creature — Avatar",
+  "manaCost": "{7}",
+  "cmc": 7,
+  "colors": [],
+  "oracle": "Vigilance\nConverge — When this creature enters, you may draw X cards, where X is the number of colors of mana spent to cast this spell. If you draw one or more cards this way, discard two cards.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Thought Harvester": {
+  "id": "Thought Harvester",
+  "name": "Thought Harvester",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nFlying\nWhenever you cast a colorless spell, target opponent exiles the top card of their library.",
+  "power": "2",
+  "toughness": "4"
+ },
+ "Dominator Drone": {
+  "id": "Dominator Drone",
+  "name": "Dominator Drone",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)\nWhen this creature enters, if you control another colorless creature, each opponent loses 2 life.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Bearer of Silence": {
+  "id": "Bearer of Silence",
+  "name": "Bearer of Silence",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen you cast this spell, you may pay {1}{C}. If you do, target opponent sacrifices a creature. ({C} represents colorless mana.)\nFlying\nThis creature can't block.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Heavy Arbalest": {
+  "id": "Heavy Arbalest",
+  "name": "Heavy Arbalest",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature doesn't untap during its controller's untap step.\nEquipped creature has \"{T}: This creature deals 2 damage to any target.\"\nEquip {4}"
+ },
+ "Dread Defiler": {
+  "id": "Dread Defiler",
+  "name": "Dread Defiler",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{6}{B}",
+  "cmc": 7,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\n{3}{C}, Exile a creature card from your graveyard: Target opponent loses life equal to the exiled card's power. ({C} represents colorless mana.)",
+  "power": "6",
+  "toughness": "8"
+ },
+ "Sludge Crawler": {
+  "id": "Sludge Crawler",
+  "name": "Sludge Crawler",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)\n{2}: This creature gets +1/+1 until end of turn.",
+  "power": "1",
+  "toughness": "1"
+ },
+ "Shield of the Realm": {
+  "id": "Shield of the Realm",
+  "name": "Shield of the Realm",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "If a source would deal damage to equipped creature, prevent 2 of that damage.\nEquip {1}"
+ },
+ "Dredging Claw": {
+  "id": "Dredging Claw",
+  "name": "Dredging Claw",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+0 and has menace. (It can't be blocked except by two or more creatures.)\nWhenever a creature enters from your graveyard, you may attach this Equipment to it.\nEquip {1}{B} ({1}{B}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Runed Crown": {
+  "id": "Runed Crown",
+  "name": "Runed Crown",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "When this Equipment enters, you may search your library, hand, and/or graveyard for a Rune card and put it onto the battlefield attached to this Equipment. If you search your library this way, shuffle.\nEquipped creature gets +1/+1.\nEquip {2}"
+ },
+ "Slab Hammer": {
+  "id": "Slab Hammer",
+  "name": "Slab Hammer",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Whenever equipped creature attacks, you may return a land you control to its owner's hand. If you do, the creature gets +2/+2 until end of turn.\nEquip {2}"
+ },
+ "Leonin Bola": {
+  "id": "Leonin Bola",
+  "name": "Leonin Bola",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{T}, Unattach Leonin Bola: Tap target creature.\"\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Shuriken": {
+  "id": "Shuriken",
+  "name": "Shuriken",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature has \"{T}, Unattach Shuriken: Shuriken deals 2 damage to target creature. That creature's controller gains control of Shuriken unless it was unattached from a Ninja.\"\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Gate Smasher": {
+  "id": "Gate Smasher",
+  "name": "Gate Smasher",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "This Equipment can be attached only to a creature with toughness 4 or greater.\nEquipped creature gets +3/+0 and has trample.\nEquip {3}"
+ },
+ "Dust Stalker": {
+  "id": "Dust Stalker",
+  "name": "Dust Stalker",
+  "typeLine": "Creature — Eldrazi",
+  "manaCost": "{2}{B}{R}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nHaste\nAt the beginning of each end step, if you control no other colorless creatures, return this creature to its owner's hand.",
+  "power": "5",
+  "toughness": "3"
+ },
+ "Wasteland Strangler": {
+  "id": "Wasteland Strangler",
+  "name": "Wasteland Strangler",
+  "typeLine": "Creature — Eldrazi Processor",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen this creature enters, you may put a card an opponent owns from exile into that player's graveyard. If you do, target creature gets -3/-3 until end of turn.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Hedron Blade": {
+  "id": "Hedron Blade",
+  "name": "Hedron Blade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1.\nWhenever equipped creature becomes blocked by one or more colorless creatures, it gains deathtouch until end of turn. (Any amount of damage it deals to a creature is enough to destroy it.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Culling Drone": {
+  "id": "Culling Drone",
+  "name": "Culling Drone",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nIngest (Whenever this creature deals combat damage to a player, that player exiles the top card of their library.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Ulamog's Reclaimer": {
+  "id": "Ulamog's Reclaimer",
+  "name": "Ulamog's Reclaimer",
+  "typeLine": "Creature — Eldrazi Processor",
+  "manaCost": "{4}{U}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen this creature enters, you may put a card an opponent owns from exile into that player's graveyard. If you do, return target instant or sorcery card from your graveyard to your hand.",
+  "power": "2",
+  "toughness": "5"
+ },
+ "Murderer's Axe": {
+  "id": "Murderer's Axe",
+  "name": "Murderer's Axe",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+2.\nEquip—Discard a card."
+ },
+ "Dagger of the Worthy": {
+  "id": "Dagger of the Worthy",
+  "name": "Dagger of the Worthy",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+0 and has afflict 1. (Whenever it becomes blocked, defending player loses 1 life.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Mind Raker": {
+  "id": "Mind Raker",
+  "name": "Mind Raker",
+  "typeLine": "Creature — Eldrazi Processor",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen this creature enters, you may put a card an opponent owns from exile into that player's graveyard. If you do, each opponent discards a card.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Vectis Gloves": {
+  "id": "Vectis Gloves",
+  "name": "Vectis Gloves",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +2/+0 and has artifact landwalk. (It can't be blocked as long as defending player controls an artifact land.)\nEquip {2}"
+ },
+ "Rakdos Riteknife": {
+  "id": "Rakdos Riteknife",
+  "name": "Rakdos Riteknife",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+0 for each blood counter on this Equipment and has \"{T}, Sacrifice a creature: Put a blood counter on Rakdos Riteknife.\"\n{B}{R}, Sacrifice this Equipment: Target player sacrifices a permanent of their choice for each blood counter on this Equipment.\nEquip {2}"
+ },
+ "Mindmelter": {
+  "id": "Mindmelter",
+  "name": "Mindmelter",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{1}{U}{B}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nThis creature can't be blocked.\n{3}{C}: Target opponent exiles a card from their hand. Activate only as a sorcery. ({C} represents colorless mana.)",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Silent Skimmer": {
+  "id": "Silent Skimmer",
+  "name": "Silent Skimmer",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nFlying\nWhenever this creature attacks, defending player loses 2 life.",
+  "power": "0",
+  "toughness": "4"
+ },
+ "Murk Strider": {
+  "id": "Murk Strider",
+  "name": "Murk Strider",
+  "typeLine": "Creature — Eldrazi Processor",
+  "manaCost": "{3}{U}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nWhen this creature enters, you may put a card an opponent owns from exile into that player's graveyard. If you do, return target creature to its owner's hand.",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Opaline Bracers": {
+  "id": "Opaline Bracers",
+  "name": "Opaline Bracers",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Sunburst (This artifact enters with a charge counter on it for each color of mana spent to cast it.)\nEquipped creature gets +X/+X, where X is the number of charge counters on this Equipment.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Heavy Mattock": {
+  "id": "Heavy Mattock",
+  "name": "Heavy Mattock",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1.\nAs long as equipped creature is a Human, it gets an additional +1/+1.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Thirsting Axe": {
+  "id": "Thirsting Axe",
+  "name": "Thirsting Axe",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature gets +4/+0.\nAt the beginning of your end step, if equipped creature didn't deal combat damage to a creature this turn, sacrifice it.\nEquip {2}"
+ },
+ "Grifter's Blade": {
+  "id": "Grifter's Blade",
+  "name": "Grifter's Blade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Flash\nAs this Equipment enters, choose a creature you control it could be attached to. If you do, it enters attached to that creature.\nEquipped creature gets +1/+1.\nEquip {1}"
+ },
+ "Eldrazi Aggressor": {
+  "id": "Eldrazi Aggressor",
+  "name": "Eldrazi Aggressor",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{2}{R}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nThis creature has haste as long as you control another colorless creature.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Immobilizer Eldrazi": {
+  "id": "Immobilizer Eldrazi",
+  "name": "Immobilizer Eldrazi",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{1}{R}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\n{2}{C}: Each creature with toughness greater than its power can't block this turn. ({C} represents colorless mana.)",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Razor Boomerang": {
+  "id": "Razor Boomerang",
+  "name": "Razor Boomerang",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}",
+  "cmc": 3,
+  "colors": [],
+  "oracle": "Equipped creature has \"{T}, Unattach Razor Boomerang: It deals 1 damage to any target. Return Razor Boomerang to its owner's hand.\"\nEquip {2}"
+ },
+ "Wooden Stake": {
+  "id": "Wooden Stake",
+  "name": "Wooden Stake",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+0.\nWhenever equipped creature blocks or becomes blocked by a Vampire, destroy that creature. It can't be regenerated.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Reaver Drone": {
+  "id": "Reaver Drone",
+  "name": "Reaver Drone",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nAt the beginning of your upkeep, you lose 1 life unless you control another colorless creature.",
+  "power": "2",
+  "toughness": "1"
+ },
+ "Healer's Headdress": {
+  "id": "Healer's Headdress",
+  "name": "Healer's Headdress",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}",
+  "cmc": 2,
+  "colors": [],
+  "oracle": "Equipped creature gets +0/+2 and has \"{T}: Prevent the next 1 damage that would be dealt to any target this turn.\"\n{W}{W}: Attach this Equipment to target creature you control.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Skitterskin": {
+  "id": "Skitterskin",
+  "name": "Skitterskin",
+  "typeLine": "Creature — Eldrazi Drone",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nThis creature can't block.\n{1}{B}: Regenerate this creature. Activate only if you control another colorless creature.",
+  "power": "4",
+  "toughness": "3"
+ },
+ "Emrakul, the Aeons Torn": {
+  "id": "Emrakul, the Aeons Torn",
+  "name": "Emrakul, the Aeons Torn",
+  "typeLine": "Legendary Creature — Eldrazi",
+  "manaCost": "{15}",
+  "cmc": 15,
+  "colors": [],
+  "oracle": "This spell can't be countered.\nWhen you cast this spell, take an extra turn after this one.\nFlying, protection from spells that are one or more colors, annihilator 6\nWhen Emrakul is put into a graveyard from anywhere, its owner shuffles their graveyard into their library.",
+  "power": "15",
+  "toughness": "15"
+ },
+ "Kozilek, Compleated": {
+  "id": "Kozilek, Compleated",
+  "name": "Kozilek, Compleated",
+  "typeLine": "Legendary Creature — Phyrexian Eldrazi",
+  "manaCost": "{8}{C/P}{C/P}",
+  "cmc": 10,
+  "colors": [],
+  "oracle": "({C/P} can be paid with either {C} or 2 life.)\nWhen you cast this spell, each opponent gets two poison counters, then each opponent with more than two cards in hand discards cards equal to the difference.\nAnnihinfect (Whenever this creature attacks, defending player sacrifices a permanent for each poison counter they have.)",
+  "power": "12",
+  "toughness": "12"
+ },
+ "Muraganda Eldrazi": {
+  "id": "Muraganda Eldrazi",
+  "name": "Muraganda Eldrazi",
+  "typeLine": "Creature — Eldrazi Dinosaur",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [],
+  "oracle": "Devoid (This card has no color.)\nDeworded (This creature counts as having no abilities.)\nWhen you cast this spell, put a primeval counter on target creature. (A creature with a primeval counter loses all abilities and can't gain abilities.)",
+  "power": "6",
+  "toughness": "5"
+ },
+ "Cloak of the Philosopher": {
+  "id": "Cloak of the Philosopher",
+  "name": "Cloak of the Philosopher",
+  "typeLine": "Hero Artifact — Equipment",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1.\n{2}: Untap equipped creature.\nEquip {2}"
+ },
+ "Luxior, Ignited": {
+  "id": "Luxior, Ignited",
+  "name": "Luxior, Ignited",
+  "typeLine": "Legendary Artifact Planeswalker — Equipment Luxior",
+  "manaCost": "{4}",
+  "cmc": 4,
+  "colors": [],
+  "oracle": "Equipped creature gets +1/+1 for each counter on Luxior, Ignited.\n+1: Attach this Equipment to up to one target creature you control.\n−2: Equipped creature gets +2/+2 and gains double strike until end of turn.",
+  "loyalty": "1"
+ }
+}

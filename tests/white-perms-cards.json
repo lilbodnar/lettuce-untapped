@@ -1,0 +1,2304 @@
+{
+ "Caduceus, Staff of Hermes": {
+  "id": "Caduceus, Staff of Hermes",
+  "name": "Caduceus, Staff of Hermes",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature has lifelink.\nAs long as you have 30 or more life, equipped creature gets +5/+5 and has indestructible and \"Prevent all damage that would be dealt to this creature.\"\nEquip {W}{W}"
+ },
+ "Thousand Moons Smithy // Barracks of the Thousand": {
+  "id": "Thousand Moons Smithy // Barracks of the Thousand",
+  "name": "Thousand Moons Smithy // Barracks of the Thousand",
+  "typeLine": "Legendary Artifact // Legendary Artifact Land",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Thousand Moons Smithy: When Thousand Moons Smithy enters, create a white Gnome Soldier artifact creature token with \"This token's power and toughness are each equal to the number of artifacts and/or creatures you control.\"\nAt the beginning of your first main phase, you may tap five untapped artifacts and/or creatures you control. If you do, transform Thousand Moons Smithy.\n\nBarracks of the Thousand: (Transforms from Thousand Moons Smithy.)\n{T}: Add {W}.\nWhenever you cast an artifact or creature spell using mana produced by Barracks of the Thousand, create a white Gnome Soldier artifact creature token with \"This token's power and toughness are each equal to the number of artifacts and/or creatures you control.\"",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "The Mind Stone": {
+  "id": "The Mind Stone",
+  "name": "The Mind Stone",
+  "typeLine": "Legendary Artifact — Infinity Stone",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Indestructible\n{T}: Add {W}.\n{5}{W}, {T}: Harness The Mind Stone. (Once harnessed, its ∞ ability is active.)\n∞ — At the beginning of your end step, exile up to one other target nonland permanent you control, then return that card to the battlefield under its owner's control.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Rammas Echor, Ancient Shield": {
+  "id": "Rammas Echor, Ancient Shield",
+  "name": "Rammas Echor, Ancient Shield",
+  "typeLine": "Legendary Artifact",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever you cast your second spell each turn, draw a card, then create a 0/3 white Wall creature token with defender.\nAt the beginning of combat on your turn, creatures you control with defender gain exalted until end of turn. (Whenever a creature you control attacks alone, it gets +1/+1 until end of turn for each instance of exalted among permanents you control.)"
+ },
+ "Unidentified Hovership": {
+  "id": "Unidentified Hovership",
+  "name": "Unidentified Hovership",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this Vehicle enters, exile up to one target creature with toughness 5 or less.\nWhen this Vehicle leaves the battlefield, the exiled card's owner manifests dread.\nCrew 1",
+  "power": "2",
+  "toughness": "2"
+ },
+ "Carrot Cake": {
+  "id": "Carrot Cake",
+  "name": "Carrot Cake",
+  "typeLine": "Artifact — Food",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this artifact enters and when you sacrifice it, create a 1/1 white Rabbit creature token and scry 1. (Look at the top card of your library. You may put that card on the bottom.)\n{2}, {T}, Sacrifice this artifact: You gain 3 life."
+ },
+ "Greatsword of Tyr": {
+  "id": "Greatsword of Tyr",
+  "name": "Greatsword of Tyr",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever equipped creature attacks, put a +1/+1 counter on it and tap up to one target creature defending player controls.\nEquip {W} ({W}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Dragoon's Lance": {
+  "id": "Dragoon's Lance",
+  "name": "Dragoon's Lance",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+0 and is a Knight in addition to its other types.\nDuring your turn, equipped creature has flying.\nGae Bolg — Equip {4}"
+ },
+ "Godsend": {
+  "id": "Godsend",
+  "name": "Godsend",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature gets +3/+3.\nWhenever equipped creature blocks or becomes blocked by one or more creatures, you may exile one of those creatures.\nYour opponents can't cast spells with the same name as a card exiled with Godsend.\nEquip {3}"
+ },
+ "White Mage's Staff": {
+  "id": "White Mage's Staff",
+  "name": "White Mage's Staff",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+1, has \"Whenever this creature attacks, you gain 1 life,\" and is a Cleric in addition to its other types.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Glider Staff": {
+  "id": "Glider Staff",
+  "name": "Glider Staff",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this Equipment enters, airbend up to one target creature. (Exile it. While it's exiled, its owner may cast it for {2} rather than its mana cost.)\nEquipped creature gets +1/+1 and has flying.\nEquip {2}"
+ },
+ "Argent Dais": {
+  "id": "Argent Dais",
+  "name": "Argent Dais",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This artifact enters with two oil counters on it.\nWhenever two or more creatures attack, put an oil counter on this artifact.\n{2}, {T}, Remove two oil counters from this artifact: Exile another target nonland permanent. Its controller draws two cards."
+ },
+ "Dusk Rose Reliquary": {
+  "id": "Dusk Rose Reliquary",
+  "name": "Dusk Rose Reliquary",
+  "typeLine": "Artifact",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nWard {2}\nWhen this artifact enters, exile target artifact or creature an opponent controls until this artifact leaves the battlefield."
+ },
+ "Fabrication Foundry": {
+  "id": "Fabrication Foundry",
+  "name": "Fabrication Foundry",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{T}: Add {W}. Spend this mana only to cast an artifact spell or activate an ability of an artifact source.\n{2}{W}, {T}, Exile one or more other artifacts you control with total mana value X: Return target artifact card with mana value X or less from your graveyard to the battlefield. Activate only as a sorcery.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Costume Closet": {
+  "id": "Costume Closet",
+  "name": "Costume Closet",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This artifact enters with two +1/+1 counters on it.\n{T}: Move a +1/+1 counter from this artifact onto target creature you control. Activate only as a sorcery.\nWhenever a modified creature you control leaves the battlefield, put a +1/+1 counter on this artifact. (Equipment, Auras you control, and counters are modifications.)"
+ },
+ "Alacrian Armory": {
+  "id": "Alacrian Armory",
+  "name": "Alacrian Armory",
+  "typeLine": "Artifact",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control get +0/+1 and have vigilance.\nAt the beginning of combat on your turn, choose up to one target Mount or Vehicle you control. Until end of turn, that permanent becomes saddled if it's a Mount and becomes an artifact creature if it's a Vehicle."
+ },
+ "Collector's Cage": {
+  "id": "Collector's Cage",
+  "name": "Collector's Cage",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Hideaway 5 (When this artifact enters, look at the top five cards of your library, exile one face down, then put the rest on the bottom in a random order.)\n{1}, {T}: Put a +1/+1 counter on target creature you control. Then if you control three or more creatures with different powers, you may play the exiled card without paying its mana cost."
+ },
+ "Hookblade": {
+  "id": "Hookblade",
+  "name": "Hookblade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +1/+0.\nDuring your turn, equipped creature has flying.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Hexgold Hoverwings": {
+  "id": "Hexgold Hoverwings",
+  "name": "Hexgold Hoverwings",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)\nEquipped creature has flying.\nCreatures you control that are equipped get +1/+0.\nEquip {2}{W}"
+ },
+ "Stormbeacon Blade": {
+  "id": "Stormbeacon Blade",
+  "name": "Stormbeacon Blade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature gets +3/+0.\nWhenever equipped creature attacks, draw a card if you control three or more attacking creatures.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Ancestral Katana": {
+  "id": "Ancestral Katana",
+  "name": "Ancestral Katana",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a Samurai or Warrior you control attacks alone, you may pay {1}. When you do, attach this Equipment to it.\nEquipped creature gets +2/+1.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Voyager Glidecar": {
+  "id": "Voyager Glidecar",
+  "name": "Voyager Glidecar",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this Vehicle enters, scry 1.\nTap three other untapped creatures you control: Until end of turn, this Vehicle becomes an artifact creature and gains flying. Put a +1/+1 counter on it.\nCrew 1",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Mysterious Limousine": {
+  "id": "Mysterious Limousine",
+  "name": "Mysterious Limousine",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever this Vehicle enters or attacks, exile up to one other target creature until this Vehicle leaves the battlefield. If a creature is put into exile this way, return each other card exiled with this Vehicle to the battlefield under its owner's control.\nCrew 2",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Seraphic Greatsword": {
+  "id": "Seraphic Greatsword",
+  "name": "Seraphic Greatsword",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature gets +2/+2.\nWhenever equipped creature attacks the player with the most life or tied for most life, create a 4/4 white Angel creature token with flying that's tapped and attacking that player.\nEquip {4}"
+ },
+ "Spring-Loaded Sawblades // Bladewheel Chariot": {
+  "id": "Spring-Loaded Sawblades // Bladewheel Chariot",
+  "name": "Spring-Loaded Sawblades // Bladewheel Chariot",
+  "typeLine": "Artifact // Artifact — Vehicle",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Spring-Loaded Sawblades: Flash\nWhen this artifact enters, it deals 5 damage to target tapped creature an opponent controls.\nCraft with artifact {3}{W} ({3}{W}, Exile this artifact, Exile another artifact you control or an artifact card from your graveyard: Return this card transformed under its owner's control. Craft only as a sorcery.)\n\nBladewheel Chariot: Tap two other untapped artifacts you control: This Vehicle becomes an artifact creature until end of turn.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)"
+ },
+ "Bark of Doran": {
+  "id": "Bark of Doran",
+  "name": "Bark of Doran",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature gets +0/+1.\nAs long as equipped creature's toughness is greater than its power, it assigns combat damage equal to its toughness rather than its power.\nEquip {1} ({1}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Pinnacle Starcage": {
+  "id": "Pinnacle Starcage",
+  "name": "Pinnacle Starcage",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this artifact enters, exile all artifacts and creatures with mana value 2 or less until this artifact leaves the battlefield.\n{6}{W}{W}: Put each card exiled with this artifact into its owner's graveyard, then create a 2/2 colorless Robot artifact creature token for each card put into a graveyard this way. Sacrifice this artifact."
+ },
+ "Skyseer's Chariot": {
+  "id": "Skyseer's Chariot",
+  "name": "Skyseer's Chariot",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nAs this Vehicle enters, choose a nonland card name.\nActivated abilities of sources with the chosen name cost {2} more to activate.\nCrew 2",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Dancing Sword": {
+  "id": "Dancing Sword",
+  "name": "Dancing Sword",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature gets +2/+1.\nWhen equipped creature dies, you may have this Equipment become a 2/1 Construct artifact creature with flying and ward {1}. If you do, it isn't an Equipment.\nEquip {1}"
+ },
+ "Idol of Endurance": {
+  "id": "Idol of Endurance",
+  "name": "Idol of Endurance",
+  "typeLine": "Artifact",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this artifact enters, exile all creature cards with mana value 3 or less from your graveyard until this artifact leaves the battlefield.\n{1}{W}, {T}: Until end of turn, you may cast a creature spell from among cards exiled with this artifact without paying its mana cost."
+ },
+ "Bride's Gown": {
+  "id": "Bride's Gown",
+  "name": "Bride's Gown",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature gets +2/+0. It gets an additional +0/+2 and has first strike as long as an Equipment named Groom's Finery is attached to a creature you control.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Arcanum Things": {
+  "id": "Arcanum Things",
+  "name": "Arcanum Things",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature has flying.\nEquip {2}\nEquipment swap {2}{W} ({2}{W}: Exchange this Equipment with an Equipment card in your hand. If this Equipment was attached to a creature, attach the new Equipment to that creature.)"
+ },
+ "Avacyn's Collar, the Symbol of Her Church": {
+  "id": "Avacyn's Collar, the Symbol of Her Church",
+  "name": "Avacyn's Collar, the Symbol of Her Church",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Equipped creature can't attack, block, or transform, and its activated abilities can't be activated.\nShackle {3} ({3}: Attach to target creature you don't control. Shackle only as a sorcery.)"
+ },
+ "Celestial Vault": {
+  "id": "Celestial Vault",
+  "name": "Celestial Vault",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}, {T}: Draft a card from Celestial Vault's spellbook and exile it face down.\n{1}, Sacrifice Celestial Vault: Put each card exiled with Celestial Vault into your hand."
+ },
+ "Slayer's Bounty": {
+  "id": "Slayer's Bounty",
+  "name": "Slayer's Bounty",
+  "typeLine": "Legendary Artifact — Clue",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When Slayer's Bounty enters the battlefield, look at the creature cards in target opponent's hand.\nWhenever you sacrifice Slayer's Bounty or another Clue, draft a card from Slayer's Bounty's spellbook.\n{2}, Sacrifice Slayer's Bounty: Draw a card."
+ },
+ "Tainted Sigil": {
+  "id": "Tainted Sigil",
+  "name": "Tainted Sigil",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "{T}, Sacrifice this artifact: You gain life equal to the total life lost by all players this turn. (Damage causes loss of life.)"
+ },
+ "Invasion of New Capenna // Holy Frazzle-Cannon": {
+  "id": "Invasion of New Capenna // Holy Frazzle-Cannon",
+  "name": "Invasion of New Capenna // Holy Frazzle-Cannon",
+  "typeLine": "Battle — Siege // Artifact — Equipment",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Invasion of New Capenna: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, you may sacrifice an artifact or creature. When you do, exile target artifact or creature an opponent controls.\n\nHoly Frazzle-Cannon: Whenever equipped creature attacks, put a +1/+1 counter on that creature and each other creature you control that shares a creature type with it.\nEquip {1}"
+ },
+ "Aegis of the Legion": {
+  "id": "Aegis of the Legion",
+  "name": "Aegis of the Legion",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Equipped creature gets +1/+1 and has mentor. (Whenever it attacks, put a +1/+1 counter on target attacking creature with lesser power.)\nWhenever equipped creature mentors a creature, put a shield counter on that creature. (If that creature would be dealt damage or destroyed, remove a shield counter from it instead.)\nEquip {3}"
+ },
+ "Cloudspire Skycycle": {
+  "id": "Cloudspire Skycycle",
+  "name": "Cloudspire Skycycle",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}{R}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Flying\nWhen this Vehicle enters, distribute two +1/+1 counters among one or two other target Vehicles and/or creatures you control.\nCrew 1",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Dune Drifter": {
+  "id": "Dune Drifter",
+  "name": "Dune Drifter",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{X}{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "When this Vehicle enters, return target artifact or creature card with mana value X or less from your graveyard to the battlefield.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Archaeomancer's Spade": {
+  "id": "Archaeomancer's Spade",
+  "name": "Archaeomancer's Spade",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{R}{W}",
+  "cmc": 3,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "When this artifact enters, seek two cards with flashback and put them into your graveyard.\n{T}: Add {R}{W}. This mana can't be spent to cast spells from your hand.",
+  "producedMana": [
+   "R",
+   "W"
+  ]
+ },
+ "Protean War Engine": {
+  "id": "Protean War Engine",
+  "name": "Protean War Engine",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "As Protean War Engine enters, draft a card from Protean War Engine's spellbook and exile it.\nWhenever Protean War Engine becomes crewed, until end of turn, it becomes a copy of the exiled card, except it's a Vehicle artifact in addition to its other types.\nCrew 3",
+  "power": "0",
+  "toughness": "4"
+ },
+ "Quickbeast Amulet": {
+  "id": "Quickbeast Amulet",
+  "name": "Quickbeast Amulet",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{G}{W}",
+  "cmc": 2,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Starting intensity 0\nEquipped creature gets +X/+X, where X is this Equipment's intensity.\nWhenever a creature you control enters, this Equipment intensifies by X, where X is that creature's power.\nEquip {2}"
+ },
+ "Spirit Link": {
+  "id": "Spirit Link",
+  "name": "Spirit Link",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature (Target a creature as you cast this. This card enters attached to that creature.)\nWhenever enchanted creature deals damage, you gain that much life."
+ },
+ "Shardmage's Rescue": {
+  "id": "Shardmage's Rescue",
+  "name": "Shardmage's Rescue",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature you control\nAs long as this Aura entered this turn, enchanted creature has hexproof.\nEnchanted creature gets +1/+1."
+ },
+ "Benevolent Blessing": {
+  "id": "Benevolent Blessing",
+  "name": "Benevolent Blessing",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature\nAs this Aura enters, choose a color.\nEnchanted creature has protection from the chosen color. This effect doesn't remove Auras and Equipment you control that are already attached to it."
+ },
+ "Celestial Mantle": {
+  "id": "Celestial Mantle",
+  "name": "Celestial Mantle",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{W}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +3/+3.\nWhenever enchanted creature deals combat damage to a player, double its controller's life total."
+ },
+ "Planar Disruption": {
+  "id": "Planar Disruption",
+  "name": "Planar Disruption",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant artifact, creature, or planeswalker\nEnchanted permanent can't attack or block, and its activated abilities can't be activated."
+ },
+ "Spirit Loop": {
+  "id": "Spirit Loop",
+  "name": "Spirit Loop",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature you control\nWhenever enchanted creature deals damage, you gain that much life.\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand."
+ },
+ "Dog Umbra": {
+  "id": "Dog Umbra",
+  "name": "Dog Umbra",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature\nAs long as another player controls enchanted creature, it can't attack or block. Otherwise, this Aura has umbra armor. (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)"
+ },
+ "Spectra Ward": {
+  "id": "Spectra Ward",
+  "name": "Spectra Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+2 and has protection from each color. This effect doesn't remove Auras. (It can't be blocked, targeted, or dealt damage by anything that's white, blue, black, red, or green.)"
+ },
+ "Indestructibility": {
+  "id": "Indestructibility",
+  "name": "Indestructibility",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant permanent\nEnchanted permanent has indestructible. (Effects that say \"destroy\" don't destroy that permanent. A creature with indestructible can't be destroyed by damage.)"
+ },
+ "Guilty Conscience": {
+  "id": "Guilty Conscience",
+  "name": "Guilty Conscience",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature deals damage, this Aura deals that much damage to that creature."
+ },
+ "Overwhelming Splendor": {
+  "id": "Overwhelming Splendor",
+  "name": "Overwhelming Splendor",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{6}{W}{W}",
+  "cmc": 8,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant player\nCreatures enchanted player controls lose all abilities and have base power and toughness 1/1.\nEnchanted player can't activate abilities that aren't mana abilities or loyalty abilities."
+ },
+ "Petrify": {
+  "id": "Petrify",
+  "name": "Petrify",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant artifact or creature\nEnchanted permanent can't attack or block, and its activated abilities can't be activated."
+ },
+ "Curse of Exhaustion": {
+  "id": "Curse of Exhaustion",
+  "name": "Curse of Exhaustion",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant player\nEnchanted player can't cast more than one spell each turn."
+ },
+ "Super-Soldier Serum": {
+  "id": "Super-Soldier Serum",
+  "name": "Super-Soldier Serum",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+2, has first strike and vigilance, and is a legendary Soldier in addition to its other types.\nWhenever enchanted creature attacks or blocks, attach any number of target Equipment you control to it."
+ },
+ "Saving Grace": {
+  "id": "Saving Grace",
+  "name": "Saving Grace",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature you control\nWhen this Aura enters, all damage that would be dealt this turn to you and permanents you control is dealt to enchanted creature instead.\nEnchanted creature gets +0/+3."
+ },
+ "Born to Drive": {
+  "id": "Born to Drive",
+  "name": "Born to Drive",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant artifact or creature\nAs long as enchanted permanent is a creature, it gets +1/+1 for each creature and/or Vehicle you control.\nChannel — {2}{W}, Discard this card: Create two 1/1 colorless Pilot creature tokens with \"This token crews Vehicles as though its power were 2 greater.\""
+ },
+ "Mask of Law and Grace": {
+  "id": "Mask of Law and Grace",
+  "name": "Mask of Law and Grace",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from black and from red."
+ },
+ "Shield of Duty and Reason": {
+  "id": "Shield of Duty and Reason",
+  "name": "Shield of Duty and Reason",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from green and from blue."
+ },
+ "Elspeth's Talent": {
+  "id": "Elspeth's Talent",
+  "name": "Elspeth's Talent",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant planeswalker\nEnchanted planeswalker has \"[+1]: Create three 1/1 white Soldier creature tokens.\"\nWhenever you activate a loyalty ability of enchanted planeswalker, creatures you control get +2/+2 and gain vigilance until end of turn."
+ },
+ "Face of Divinity": {
+  "id": "Face of Divinity",
+  "name": "Face of Divinity",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+2.\nAs long as another Aura is attached to enchanted creature, it has first strike and lifelink."
+ },
+ "Curse of Silence": {
+  "id": "Curse of Silence",
+  "name": "Curse of Silence",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant player\nAs this Aura enters, choose a card name.\nSpells with the chosen name enchanted player casts cost {2} more to cast.\nWhenever enchanted player casts a spell with the chosen name, you may sacrifice this Aura. If you do, draw a card."
+ },
+ "Friendly Neighborhood": {
+  "id": "Friendly Neighborhood",
+  "name": "Friendly Neighborhood",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant land\nWhen this Aura enters, create three 1/1 green and white Human Citizen creature tokens.\nEnchanted land has \"{1}, {T}: Target creature gets +1/+1 until end of turn for each creature you control. Activate only as a sorcery.\""
+ },
+ "Lightwheel Enhancements": {
+  "id": "Lightwheel Enhancements",
+  "name": "Lightwheel Enhancements",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature or Vehicle\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nEnchanted permanent gets +1/+1 and has vigilance.\nMax speed — You may cast this card from your graveyard."
+ },
+ "Hardlight Containment": {
+  "id": "Hardlight Containment",
+  "name": "Hardlight Containment",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant artifact you control\nWhen this Aura enters, exile target creature an opponent controls until this Aura leaves the battlefield.\nEnchanted permanent has ward {1}."
+ },
+ "Radiant Grace // Radiant Restraints": {
+  "id": "Radiant Grace // Radiant Restraints",
+  "name": "Radiant Grace // Radiant Restraints",
+  "typeLine": "Enchantment — Aura // Enchantment — Aura Curse",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Radiant Grace: Enchant creature\nEnchanted creature gets +1/+0 and has vigilance.\nWhen enchanted creature dies, return this card to the battlefield transformed under your control attached to target opponent.\n\nRadiant Restraints: Enchant player\nCreatures enchanted player controls enter tapped."
+ },
+ "Murder Investigation": {
+  "id": "Murder Investigation",
+  "name": "Murder Investigation",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature you control\nWhen enchanted creature dies, create X 1/1 white Soldier creature tokens, where X is its power."
+ },
+ "Roadside Assistance": {
+  "id": "Roadside Assistance",
+  "name": "Roadside Assistance",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature or Vehicle\nWhen this Aura enters, create a 1/1 colorless Pilot creature token with \"This token saddles Mounts and crews Vehicles as though its power were 2 greater.\"\nEnchanted permanent gets +1/+1 and has lifelink."
+ },
+ "Heliod's Punishment": {
+  "id": "Heliod's Punishment",
+  "name": "Heliod's Punishment",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nThis Aura enters with four task counters on it.\nEnchanted creature can't attack or block. It loses all abilities and has \"{T}: Remove a task counter from Heliod's Punishment. Then if it has no task counters on it, destroy Heliod's Punishment.\""
+ },
+ "Solid Footing": {
+  "id": "Solid Footing",
+  "name": "Solid Footing",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature\nEnchanted creature gets +1/+1.\nAs long as enchanted creature has vigilance, it assigns combat damage equal to its toughness rather than its power."
+ },
+ "Oppressive Rays": {
+  "id": "Oppressive Rays",
+  "name": "Oppressive Rays",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't attack or block unless its controller pays {3}.\nActivated abilities of enchanted creature cost {3} more to activate."
+ },
+ "Bound in Gold": {
+  "id": "Bound in Gold",
+  "name": "Bound in Gold",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant permanent\nEnchanted permanent can't attack, block, or crew Vehicles, and its activated abilities can't be activated unless they're mana abilities."
+ },
+ "Temporal Isolation": {
+  "id": "Temporal Isolation",
+  "name": "Temporal Isolation",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature\nEnchanted creature has shadow. (It can block or be blocked by only creatures with shadow.)\nPrevent all damage that would be dealt by enchanted creature."
+ },
+ "Nahiri's Binding": {
+  "id": "Nahiri's Binding",
+  "name": "Nahiri's Binding",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature or planeswalker\nEnchanted permanent can't attack or block, and its activated abilities can't be activated."
+ },
+ "Gelid Shackles": {
+  "id": "Gelid Shackles",
+  "name": "Gelid Shackles",
+  "typeLine": "Snow Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't block, and its activated abilities can't be activated.\n{S}: Enchanted creature gains defender until end of turn. ({S} can be paid with one mana from a snow source.)"
+ },
+ "Spiral into Solitude": {
+  "id": "Spiral into Solitude",
+  "name": "Spiral into Solitude",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't attack or block.\n{1}{W}, Blight 1, Sacrifice this Aura: Exile enchanted creature. (To blight 1, put a -1/-1 counter on a creature you control.)"
+ },
+ "Candletrap": {
+  "id": "Candletrap",
+  "name": "Candletrap",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has defender.\nPrevent all combat damage that would be dealt by enchanted creature.\nCoven — {2}{W}, Sacrifice this Aura: Exile enchanted creature. Activate only if you control three or more creatures with different powers."
+ },
+ "Zealot's Conviction": {
+  "id": "Zealot's Conviction",
+  "name": "Zealot's Conviction",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature\nEnchanted creature gets +1/+1.\nCorrupted — As long as an opponent has three or more poison counters, enchanted creature gets an additional +1/+0 and has first strike."
+ },
+ "Evershrike's Gift": {
+  "id": "Evershrike's Gift",
+  "name": "Evershrike's Gift",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+0 and has flying.\n{1}{W}, Blight 2: Return this card from your graveyard to your hand. Activate only as a sorcery. (To blight 2, put two -1/-1 counters on a creature you control.)"
+ },
+ "Intercessor's Arrest": {
+  "id": "Intercessor's Arrest",
+  "name": "Intercessor's Arrest",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant permanent\nEnchanted permanent can't attack, block, or crew Vehicles. Its activated abilities can't be activated unless they're mana abilities."
+ },
+ "Bonds of Faith": {
+  "id": "Bonds of Faith",
+  "name": "Bonds of Faith",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+2 as long as it's a Human. Otherwise, it can't attack or block."
+ },
+ "Soul Tithe": {
+  "id": "Soul Tithe",
+  "name": "Soul Tithe",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant nonland permanent\nAt the beginning of the upkeep of enchanted permanent's controller, that player sacrifices it unless they pay {X}, where X is its mana value."
+ },
+ "Sentinel's Mark": {
+  "id": "Sentinel's Mark",
+  "name": "Sentinel's Mark",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature\nEnchanted creature gets +1/+2 and has vigilance.\nAddendum — When this Aura enters, if you cast it during your main phase, enchanted creature gains lifelink until end of turn."
+ },
+ "Military Discipline": {
+  "id": "Military Discipline",
+  "name": "Military Discipline",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature\nWhen this Aura enters, enchanted creature gains first strike until end of turn.\nEnchanted creature gets +1/+0."
+ },
+ "Archery Training": {
+  "id": "Archery Training",
+  "name": "Archery Training",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of your upkeep, you may put an arrow counter on this Aura.\nEnchanted creature has \"{T}: This creature deals X damage to target attacking or blocking creature, where X is the number of arrow counters on Archery Training.\""
+ },
+ "Inviolability": {
+  "id": "Inviolability",
+  "name": "Inviolability",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nPrevent all damage that would be dealt to enchanted creature."
+ },
+ "Lashknife": {
+  "id": "Lashknife",
+  "name": "Lashknife",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If you control a Plains, you may tap an untapped creature you control rather than pay this spell's mana cost.\nEnchant creature\nEnchanted creature has first strike."
+ },
+ "Hold for Ransom": {
+  "id": "Hold for Ransom",
+  "name": "Hold for Ransom",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't attack or block and has \"{7}: Hold for Ransom's controller sacrifices it and draws a card. Activate only as a sorcery.\""
+ },
+ "Animal Boneyard": {
+  "id": "Animal Boneyard",
+  "name": "Animal Boneyard",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant land\nEnchanted land has \"{T}, Sacrifice a creature: You gain life equal to the sacrificed creature's toughness.\""
+ },
+ "Aerial Modification": {
+  "id": "Aerial Modification",
+  "name": "Aerial Modification",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature or Vehicle\nAs long as enchanted permanent is a Vehicle, it's a creature in addition to its other types.\nEnchanted creature gets +2/+2 and has flying."
+ },
+ "Captured by the Consulate": {
+  "id": "Captured by the Consulate",
+  "name": "Captured by the Consulate",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature you don't control\nEnchanted creature can't attack.\nWhenever an opponent casts a spell, if it has a single target, change the target to enchanted creature if able."
+ },
+ "Hope Against Hope": {
+  "id": "Hope Against Hope",
+  "name": "Hope Against Hope",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+1 for each creature you control.\nAs long as enchanted creature is a Human, it has first strike."
+ },
+ "Valor of the Worthy": {
+  "id": "Valor of the Worthy",
+  "name": "Valor of the Worthy",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+1.\nWhen enchanted creature leaves the battlefield, create a 1/1 white Spirit creature token with flying."
+ },
+ "Kithkin Armor": {
+  "id": "Kithkin Armor",
+  "name": "Kithkin Armor",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't be blocked by creatures with power 3 or greater.\nSacrifice this Aura: The next time a source of your choice would deal damage to enchanted creature this turn, prevent that damage."
+ },
+ "Favorable Destiny": {
+  "id": "Favorable Destiny",
+  "name": "Favorable Destiny",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+2 as long as it's white.\nEnchanted creature has shroud as long as its controller controls another creature. (It can't be the target of spells or abilities.)"
+ },
+ "Detention Vortex": {
+  "id": "Detention Vortex",
+  "name": "Detention Vortex",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant nonland permanent\nEnchanted permanent can't attack or block, and its activated abilities can't be activated.\n{3}: Destroy this Aura. Only your opponents may activate this ability and only as a sorcery."
+ },
+ "Luminous Wake": {
+  "id": "Luminous Wake",
+  "name": "Luminous Wake",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature attacks or blocks, you gain 4 life."
+ },
+ "Defang": {
+  "id": "Defang",
+  "name": "Defang",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nPrevent all damage that would be dealt by enchanted creature."
+ },
+ "Armament of Nyx": {
+  "id": "Armament of Nyx",
+  "name": "Armament of Nyx",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has double strike as long as it's an enchantment. Otherwise, prevent all damage that would be dealt by enchanted creature. (A creature with double strike deals both first-strike and regular combat damage.)"
+ },
+ "Sky Tether": {
+  "id": "Sky Tether",
+  "name": "Sky Tether",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has defender and loses flying."
+ },
+ "Suppression Bonds": {
+  "id": "Suppression Bonds",
+  "name": "Suppression Bonds",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant nonland permanent\nEnchanted permanent can't attack or block, and its activated abilities can't be activated."
+ },
+ "Mantle of Leadership": {
+  "id": "Mantle of Leadership",
+  "name": "Mantle of Leadership",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash (You may cast this spell any time you could cast an instant.)\nEnchant creature\nWhenever a creature enters, enchanted creature gets +2/+2 until end of turn."
+ },
+ "Blessing": {
+  "id": "Blessing",
+  "name": "Blessing",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\n{W}: Enchanted creature gets +1/+1 until end of turn."
+ },
+ "Black Ward": {
+  "id": "Black Ward",
+  "name": "Black Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from black. This effect doesn't remove this Aura."
+ },
+ "Pledge of Loyalty": {
+  "id": "Pledge of Loyalty",
+  "name": "Pledge of Loyalty",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from each color among permanents you control. This effect doesn't remove this Aura."
+ },
+ "Blue Ward": {
+  "id": "Blue Ward",
+  "name": "Blue Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from blue. This effect doesn't remove this Aura."
+ },
+ "Cooperation": {
+  "id": "Cooperation",
+  "name": "Cooperation",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has banding. (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding a player controls are blocking or being blocked by a creature, that player divides that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)"
+ },
+ "Guardian's Magemark": {
+  "id": "Guardian's Magemark",
+  "name": "Guardian's Magemark",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nEnchant creature\nCreatures you control that are enchanted get +1/+1."
+ },
+ "Crown of Awe": {
+  "id": "Crown of Awe",
+  "name": "Crown of Awe",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from black and from red.\nSacrifice this Aura: Enchanted creature and other creatures that share a creature type with it gain protection from black and from red until end of turn."
+ },
+ "Floating Shield": {
+  "id": "Floating Shield",
+  "name": "Floating Shield",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nAs this Aura enters, choose a color.\nEnchanted creature has protection from the chosen color. This effect doesn't remove this Aura.\nSacrifice this Aura: Target creature gains protection from the chosen color until end of turn."
+ },
+ "Coalition Flag": {
+  "id": "Coalition Flag",
+  "name": "Coalition Flag",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature you control\nEnchanted creature is a Flagbearer.\nWhile an opponent is choosing targets as part of casting a spell they control or activating an ability they control, that player must choose at least one Flagbearer on the battlefield if able."
+ },
+ "Black Scarab": {
+  "id": "Black Scarab",
+  "name": "Black Scarab",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't be blocked by black creatures.\nEnchanted creature gets +2/+2 as long as an opponent controls a black permanent."
+ },
+ "Red Ward": {
+  "id": "Red Ward",
+  "name": "Red Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from red. This effect doesn't remove this Aura."
+ },
+ "Green Ward": {
+  "id": "Green Ward",
+  "name": "Green Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from green. This effect doesn't remove this Aura."
+ },
+ "Supernatural Rescue": {
+  "id": "Supernatural Rescue",
+  "name": "Supernatural Rescue",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This spell has flash as long as you control a Spirit.\nWhen you cast this spell, tap up to two target creatures you don't control.\nEnchant creature you control\nEnchanted creature gets +1/+2."
+ },
+ "White Scarab": {
+  "id": "White Scarab",
+  "name": "White Scarab",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't be blocked by white creatures.\nEnchanted creature gets +2/+2 as long as an opponent controls a white permanent."
+ },
+ "Blue Scarab": {
+  "id": "Blue Scarab",
+  "name": "Blue Scarab",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't be blocked by blue creatures.\nEnchanted creature gets +2/+2 as long as an opponent controls a blue permanent."
+ },
+ "Weight of Conscience": {
+  "id": "Weight of Conscience",
+  "name": "Weight of Conscience",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't attack.\nTap two untapped creatures you control that share a creature type: Exile enchanted creature."
+ },
+ "Samite Blessing": {
+  "id": "Samite Blessing",
+  "name": "Samite Blessing",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has \"{T}: The next time a source of your choice would deal damage to target creature this turn, prevent that damage.\""
+ },
+ "Armor of Faith": {
+  "id": "Armor of Faith",
+  "name": "Armor of Faith",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+1.\n{W}: Enchanted creature gets +0/+1 until end of turn."
+ },
+ "Consecrate Land": {
+  "id": "Consecrate Land",
+  "name": "Consecrate Land",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant land\nEnchanted land has indestructible and can't be enchanted by other Auras."
+ },
+ "Genju of the Fields": {
+  "id": "Genju of the Fields",
+  "name": "Genju of the Fields",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant Plains\n{2}: Until end of turn, enchanted Plains becomes a 2/5 white Spirit creature with \"Whenever this creature deals damage, its controller gains that much life.\" It's still a land.\nWhen enchanted Plains is put into a graveyard, you may return this card from your graveyard to your hand."
+ },
+ "Heart of Light": {
+  "id": "Heart of Light",
+  "name": "Heart of Light",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature (Target a creature as you cast this. This card enters attached to that creature.)\nPrevent all damage that would be dealt to and dealt by enchanted creature."
+ },
+ "Green Scarab": {
+  "id": "Green Scarab",
+  "name": "Green Scarab",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't be blocked by green creatures.\nEnchanted creature gets +2/+2 as long as an opponent controls a green permanent."
+ },
+ "Red Scarab": {
+  "id": "Red Scarab",
+  "name": "Red Scarab",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't be blocked by red creatures.\nEnchanted creature gets +2/+2 as long as an opponent controls a red permanent."
+ },
+ "Holy Armor": {
+  "id": "Holy Armor",
+  "name": "Holy Armor",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +0/+2.\n{W}: Enchanted creature gets +0/+1 until end of turn."
+ },
+ "Artifact Ward": {
+  "id": "Artifact Ward",
+  "name": "Artifact Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't be blocked by artifact creatures.\nPrevent all damage that would be dealt to enchanted creature by artifact sources.\nEnchanted creature can't be the target of abilities from artifact sources."
+ },
+ "White Ward": {
+  "id": "White Ward",
+  "name": "White Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has protection from white. This effect doesn't remove this Aura."
+ },
+ "Prismatic Ward": {
+  "id": "Prismatic Ward",
+  "name": "Prismatic Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nAs this Aura enters, choose a color.\nPrevent all damage that would be dealt to enchanted creature by sources of the chosen color."
+ },
+ "Seeker": {
+  "id": "Seeker",
+  "name": "Seeker",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't be blocked except by artifact creatures and/or white creatures."
+ },
+ "Muzzle": {
+  "id": "Muzzle",
+  "name": "Muzzle",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nPrevent all damage that would be dealt by enchanted creature."
+ },
+ "Stasis Cocoon": {
+  "id": "Stasis Cocoon",
+  "name": "Stasis Cocoon",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant artifact\nEnchanted artifact can't attack or block, and its activated abilities can't be activated."
+ },
+ "Relic Ward": {
+  "id": "Relic Ward",
+  "name": "Relic Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You may cast this spell as though it had flash. If you cast it any time a sorcery couldn't have been cast, the controller of the permanent it becomes sacrifices it at the beginning of the next cleanup step.\nEnchant artifact\nEnchanted artifact has shroud. (It can't be the target of spells or abilities.)"
+ },
+ "Secure Detention": {
+  "id": "Secure Detention",
+  "name": "Secure Detention",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant artifact or creature\nWhen this Aura enters, create a 1/1 white Soldier creature token.\nEnchanted permanent can't attack or block, and its activated abilities can't be activated."
+ },
+ "Shadow Lance": {
+  "id": "Shadow Lance",
+  "name": "Shadow Lance",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has first strike.\n{1}{B}: Enchanted creature gets +2/+2 until end of turn."
+ },
+ "Farrel's Mantle": {
+  "id": "Farrel's Mantle",
+  "name": "Farrel's Mantle",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature attacks and isn't blocked, its controller may have it deal damage equal to its power plus 2 to another target creature. If that player does, the attacking creature assigns no combat damage this turn."
+ },
+ "Farmstead": {
+  "id": "Farmstead",
+  "name": "Farmstead",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant land\nEnchanted land has \"At the beginning of your upkeep, you may pay {W}{W}. If you do, you gain 1 life.\""
+ },
+ "Tattoo Ward": {
+  "id": "Tattoo Ward",
+  "name": "Tattoo Ward",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+1 and has protection from enchantments. This effect doesn't remove this Aura.\nSacrifice this Aura: Destroy target enchantment."
+ },
+ "Serra's Boon": {
+  "id": "Serra's Boon",
+  "name": "Serra's Boon",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+2 as long as it's white. Otherwise, it gets -2/-1."
+ },
+ "Fylgja": {
+  "id": "Fylgja",
+  "name": "Fylgja",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nThis Aura enters with four healing counters on it.\nRemove a healing counter from this Aura: Prevent the next 1 damage that would be dealt to enchanted creature this turn.\n{2}{W}: Put a healing counter on this Aura."
+ },
+ "Infinite Authority": {
+  "id": "Infinite Authority",
+  "name": "Infinite Authority",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature blocks or becomes blocked by a creature with toughness 3 or less, destroy the other creature at end of combat. At the beginning of the next end step, if that creature was destroyed this way, put a +1/+1 counter on the first creature."
+ },
+ "Ward of Piety": {
+  "id": "Ward of Piety",
+  "name": "Ward of Piety",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\n{1}{W}: The next 1 damage that would be dealt to enchanted creature this turn is dealt to any target instead."
+ },
+ "Manacles of Decay": {
+  "id": "Manacles of Decay",
+  "name": "Manacles of Decay",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature can't attack.\n{B}: Enchanted creature gets -1/-1 until end of turn.\n{R}: Enchanted creature can't block this turn."
+ },
+ "Seatower Imprisonment": {
+  "id": "Seatower Imprisonment",
+  "name": "Seatower Imprisonment",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Enchant creature or planeswalker you don't control\nWhen this enchantment enters, conjure a card named Soldiers of the Watch onto the battlefield.\nEnchanted permanent can't attack or block, and its activated abilities can't be activated."
+ },
+ "Shield of the Oversoul": {
+  "id": "Shield of the Oversoul",
+  "name": "Shield of the Oversoul",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{G/W}",
+  "cmc": 3,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Enchant creature\nAs long as enchanted creature is green, it gets +1/+1 and has indestructible. (Damage and effects that say \"destroy\" don't destroy it. If its toughness is 0 or less, it still dies.)\nAs long as enchanted creature is white, it gets +1/+1 and has flying."
+ },
+ "Armadillo Cloak": {
+  "id": "Armadillo Cloak",
+  "name": "Armadillo Cloak",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{G}{W}",
+  "cmc": 3,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+2 and has trample.\nWhenever enchanted creature deals damage, you gain that much life."
+ },
+ "Edge of the Divinity": {
+  "id": "Edge of the Divinity",
+  "name": "Edge of the Divinity",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{W/B}",
+  "cmc": 1,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Enchant creature\nAs long as enchanted creature is white, it gets +1/+2.\nAs long as enchanted creature is black, it gets +2/+1."
+ },
+ "Wheel of Sun and Moon": {
+  "id": "Wheel of Sun and Moon",
+  "name": "Wheel of Sun and Moon",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{G/W}{G/W}",
+  "cmc": 2,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Enchant player\nIf a card would be put into enchanted player's graveyard from anywhere, instead that card is revealed and put on the bottom of that player's library."
+ },
+ "Soul Link": {
+  "id": "Soul Link",
+  "name": "Soul Link",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature deals damage, you gain that much life.\nWhenever enchanted creature is dealt damage, you gain that much life."
+ },
+ "Scourge of the Nobilis": {
+  "id": "Scourge of the Nobilis",
+  "name": "Scourge of the Nobilis",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{R/W}",
+  "cmc": 3,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Enchant creature\nAs long as enchanted creature is red, it gets +1/+1 and has \"{R/W}: This creature gets +1/+0 until end of turn.\"\nAs long as enchanted creature is white, it gets +1/+1 and has lifelink. (Damage dealt by the creature also causes its controller to gain that much life.)"
+ },
+ "Indrik Umbra": {
+  "id": "Indrik Umbra",
+  "name": "Indrik Umbra",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{4}{G}{W}",
+  "cmc": 6,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +4/+4 and has first strike, and all creatures able to block it do so.\nUmbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)"
+ },
+ "Wellspring": {
+  "id": "Wellspring",
+  "name": "Wellspring",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{G}{W}",
+  "cmc": 3,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Enchant land\nWhen this Aura enters, gain control of enchanted land until end of turn.\nAt the beginning of your upkeep, untap enchanted land. You gain control of that land until end of turn."
+ },
+ "Elspeth Resplendent": {
+  "id": "Elspeth Resplendent",
+  "name": "Elspeth Resplendent",
+  "typeLine": "Legendary Planeswalker — Elspeth",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: Choose up to one target creature. Put a +1/+1 counter and a counter from among flying, first strike, lifelink, or vigilance on it.\n−3: Look at the top seven cards of your library. You may put a permanent card with mana value 3 or less from among them onto the battlefield with a shield counter on it. Put the rest on the bottom of your library in a random order.\n−7: Create five 3/3 white Angel creature tokens with flying.",
+  "loyalty": "5"
+ },
+ "The Wandering Emperor": {
+  "id": "The Wandering Emperor",
+  "name": "The Wandering Emperor",
+  "typeLine": "Legendary Planeswalker",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nAs long as The Wandering Emperor entered this turn, you may activate her loyalty abilities any time you could cast an instant.\n+1: Put a +1/+1 counter on up to one target creature. It gains first strike until end of turn.\n−1: Create a 2/2 white Samurai creature token with vigilance.\n−2: Exile target tapped creature. You gain 2 life.",
+  "loyalty": "3"
+ },
+ "Basri Ket": {
+  "id": "Basri Ket",
+  "name": "Basri Ket",
+  "typeLine": "Legendary Planeswalker — Basri",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: Put a +1/+1 counter on up to one target creature. It gains indestructible until end of turn.\n−2: Whenever one or more nontoken creatures attack this turn, create that many 1/1 white Soldier creature tokens that are tapped and attacking.\n−6: You get an emblem with \"At the beginning of combat on your turn, create a 1/1 white Soldier creature token, then put a +1/+1 counter on each creature you control.\"",
+  "loyalty": "3"
+ },
+ "Gideon Blackblade": {
+  "id": "Gideon Blackblade",
+  "name": "Gideon Blackblade",
+  "typeLine": "Legendary Planeswalker — Gideon",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "During your turn, Gideon Blackblade is a 4/4 Human Soldier creature with indestructible that's still a planeswalker.\nPrevent all damage that would be dealt to Gideon Blackblade during your turn.\n+1: Up to one other target creature you control gains your choice of vigilance, lifelink, or indestructible until end of turn.\n−6: Exile target nonland permanent.",
+  "loyalty": "4"
+ },
+ "Gideon of the Trials": {
+  "id": "Gideon of the Trials",
+  "name": "Gideon of the Trials",
+  "typeLine": "Legendary Planeswalker — Gideon",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: Until your next turn, prevent all damage target permanent would deal.\n0: Until end of turn, Gideon becomes a 4/4 Human Soldier creature with indestructible that's still a planeswalker. Prevent all damage that would be dealt to him this turn.\n0: You get an emblem with \"As long as you control a Gideon planeswalker, you can't lose the game and your opponents can't win the game.\"",
+  "loyalty": "3"
+ },
+ "Elspeth, Sun's Nemesis": {
+  "id": "Elspeth, Sun's Nemesis",
+  "name": "Elspeth, Sun's Nemesis",
+  "typeLine": "Legendary Planeswalker — Elspeth",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "−1: Up to two target creatures you control each get +2/+1 until end of turn.\n−2: Create two 1/1 white Human Soldier creature tokens.\n−3: You gain 5 life.\nEscape—{4}{W}{W}, Exile four other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)",
+  "loyalty": "5"
+ },
+ "Worzel, the Protector": {
+  "id": "Worzel, the Protector",
+  "name": "Worzel, the Protector",
+  "typeLine": "Legendary Planeswalker — Worzel",
+  "manaCost": "{1}{W}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "0: Create a 1/1 white Cat creature token with \"{T}: Put a loyalty counter on each planeswalker you control.\"\n−1: Look at the top six cards of your library. You may reveal a planeswalker or basic Plains card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\n−8: Create ten Scryb Sprites tokens. (They're {G} 1/1 Faerie creatures with flying.)\nWorzel, the Protector can be your commander.",
+  "loyalty": "4"
+ },
+ "Gideon, the Oathsworn": {
+  "id": "Gideon, the Oathsworn",
+  "name": "Gideon, the Oathsworn",
+  "typeLine": "Legendary Planeswalker — Gideon",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever you attack with two or more non-Gideon creatures, put a +1/+1 counter on each of those creatures.\n+2: Until end of turn, Gideon becomes a 5/5 white Soldier creature that's still a planeswalker. Prevent all damage that would be dealt to him this turn. (He can't attack if he was cast this turn.)\n−9: Exile Gideon and each creature your opponents control.",
+  "loyalty": "4"
+ },
+ "Grand Master of Flowers": {
+  "id": "Grand Master of Flowers",
+  "name": "Grand Master of Flowers",
+  "typeLine": "Legendary Planeswalker — Bahamut",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As long as Grand Master of Flowers has seven or more loyalty counters on him, he's a 7/7 Dragon God creature with flying and indestructible.\n+1: Target creature without first strike, double strike, or vigilance can't attack or block until your next turn.\n+1: Search your library and/or graveyard for a card named Monk of the Open Hand, reveal it, and put it into your hand. If you search your library this way, shuffle.",
+  "loyalty": "3"
+ },
+ "Elspeth, Undaunted Hero": {
+  "id": "Elspeth, Undaunted Hero",
+  "name": "Elspeth, Undaunted Hero",
+  "typeLine": "Legendary Planeswalker — Elspeth",
+  "manaCost": "{2}{W}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+2: Put a +1/+1 counter on each of up to two target creatures.\n−2: Search your library and/or graveyard for a card named Sunlit Hoplite and put it onto the battlefield. If you search your library this way, shuffle.\n−8: Until end of turn, creatures you control gain flying and get +X/+X, where X is your devotion to white.",
+  "loyalty": "5"
+ },
+ "Basri, Devoted Paladin": {
+  "id": "Basri, Devoted Paladin",
+  "name": "Basri, Devoted Paladin",
+  "typeLine": "Legendary Planeswalker — Basri",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "+1: Put a +1/+1 counter on up to one target creature. It gains vigilance until end of turn.\n−1: Whenever a creature attacks this turn, put a +1/+1 counter on it.\n−6: Creatures you control get +2/+2 and gain flying until end of turn.",
+  "loyalty": "4"
+ },
+ "Oko, Lord of the Fae": {
+  "id": "Oko, Lord of the Fae",
+  "name": "Oko, Lord of the Fae",
+  "typeLine": "Legendary Planeswalker — Oko",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures can't attack planeswalkers you control unless their controller pays {1} for each of those creatures.\n+1: Up to one target artifact or creature loses all abilities until your next turn.\n−1: Create a 2/2 white Ox creature token.\n−7: You get an emblem with \"At the beginning of your upkeep, conjure a random planeswalker card into exile. You may cast that card this turn without paying its mana cost.\"",
+  "loyalty": "3"
+ },
+ "Quintorius Kand": {
+  "id": "Quintorius Kand",
+  "name": "Quintorius Kand",
+  "typeLine": "Legendary Planeswalker — Quintorius",
+  "manaCost": "{3}{R}{W}",
+  "cmc": 5,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Whenever you cast a spell from exile, Quintorius Kand deals 2 damage to each opponent and you gain 2 life.\n+1: Create a 3/2 red and white Spirit creature token.\n−3: Discover 4.\n−6: Exile any number of target cards from your graveyard. Add {R} for each card exiled this way. You may play those cards this turn.",
+  "loyalty": "4",
+  "producedMana": [
+   "R"
+  ]
+ },
+ "Sorin, Vengeful Bloodlord": {
+  "id": "Sorin, Vengeful Bloodlord",
+  "name": "Sorin, Vengeful Bloodlord",
+  "typeLine": "Legendary Planeswalker — Sorin",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "During your turn, creatures and planeswalkers you control have lifelink.\n+2: Sorin deals 1 damage to target player or planeswalker.\n−X: Return target creature card with mana value X from your graveyard to the battlefield. That creature is a Vampire in addition to its other types.",
+  "loyalty": "4"
+ },
+ "Kaya the Inexorable": {
+  "id": "Kaya the Inexorable",
+  "name": "Kaya the Inexorable",
+  "typeLine": "Legendary Planeswalker — Kaya",
+  "manaCost": "{3}{W}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "+1: Put a ghostform counter on up to one target nontoken creature. It gains \"When this creature dies or is put into exile, return it to its owner's hand and create a 1/1 white Spirit creature token with flying.\"\n−3: Exile target nonland permanent.\n−7: You get an emblem with \"At the beginning of your upkeep, you may cast a legendary spell from your hand, from your graveyard, or from among cards you own in exile without paying its mana cost.\"",
+  "loyalty": "5"
+ },
+ "Ajani, Sleeper Agent": {
+  "id": "Ajani, Sleeper Agent",
+  "name": "Ajani, Sleeper Agent",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{1}{G}{G/W/P}{W}",
+  "cmc": 4,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Compleated ({G/W/P} can be paid with {G}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: Reveal the top card of your library. If it's a creature or planeswalker card, put it into your hand. Otherwise, you may put it on the bottom of your library.\n−3: Distribute three +1/+1 counters among up to three target creatures. They gain vigilance until end of turn.\n−6: You get an emblem with \"Whenever you cast a creature or planeswalker spell, target opponent gets two poison counters.\"",
+  "loyalty": "4"
+ },
+ "Ajani, Mentor of Heroes": {
+  "id": "Ajani, Mentor of Heroes",
+  "name": "Ajani, Mentor of Heroes",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{3}{G}{W}",
+  "cmc": 5,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "+1: Distribute three +1/+1 counters among one, two, or three target creatures you control.\n+1: Look at the top four cards of your library. You may reveal an Aura, creature, or planeswalker card from among them and put it into your hand. Put the rest on the bottom of your library in any order.\n−8: You gain 100 life.",
+  "loyalty": "4"
+ },
+ "Kaya, Intangible Slayer": {
+  "id": "Kaya, Intangible Slayer",
+  "name": "Kaya, Intangible Slayer",
+  "typeLine": "Legendary Planeswalker — Kaya",
+  "manaCost": "{3}{W}{W}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Hexproof\n+2: Each opponent loses 3 life and you gain 3 life.\n0: You draw two cards. Then each opponent may scry 1.\n−3: Exile target creature or enchantment. If it wasn't an Aura, create a token that's a copy of it, except it's a 1/1 white Spirit creature with flying in addition to its other types.",
+  "loyalty": "6"
+ },
+ "Sorin, Grim Nemesis": {
+  "id": "Sorin, Grim Nemesis",
+  "name": "Sorin, Grim Nemesis",
+  "typeLine": "Legendary Planeswalker — Sorin",
+  "manaCost": "{4}{W}{B}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "+1: Reveal the top card of your library and put that card into your hand. Each opponent loses life equal to its mana value.\n−X: Sorin deals X damage to target creature or planeswalker and you gain X life.\n−9: Create a number of 1/1 black Vampire Knight creature tokens with lifelink equal to the highest life total among all players.",
+  "loyalty": "6"
+ },
+ "Nahiri, Heir of the Ancients": {
+  "id": "Nahiri, Heir of the Ancients",
+  "name": "Nahiri, Heir of the Ancients",
+  "typeLine": "Legendary Planeswalker — Nahiri",
+  "manaCost": "{2}{R}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "+1: Create a 1/1 white Kor Warrior creature token. You may attach an Equipment you control to it.\n−2: Look at the top six cards of your library. You may reveal a Warrior or Equipment card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\n−3: Nahiri deals damage to target creature or planeswalker equal to twice the number of Equipment you control.",
+  "loyalty": "4"
+ },
+ "Sorin, Solemn Visitor": {
+  "id": "Sorin, Solemn Visitor",
+  "name": "Sorin, Solemn Visitor",
+  "typeLine": "Legendary Planeswalker — Sorin",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "+1: Until your next turn, creatures you control get +1/+0 and gain lifelink.\n−2: Create a 2/2 black Vampire creature token with flying.\n−6: You get an emblem with \"At the beginning of each opponent's upkeep, that player sacrifices a creature of their choice.\"",
+  "loyalty": "4"
+ },
+ "Kaya, Orzhov Usurper": {
+  "id": "Kaya, Orzhov Usurper",
+  "name": "Kaya, Orzhov Usurper",
+  "typeLine": "Legendary Planeswalker — Kaya",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "+1: Exile up to two target cards from a single graveyard. You gain 2 life if at least one creature card was exiled this way.\n−1: Exile target nonland permanent with mana value 1 or less.\n−5: Kaya deals damage to target player equal to the number of cards that player owns in exile and you gain that much life.",
+  "loyalty": "3"
+ },
+ "Huatli, Warrior Poet": {
+  "id": "Huatli, Warrior Poet",
+  "name": "Huatli, Warrior Poet",
+  "typeLine": "Legendary Planeswalker — Huatli",
+  "manaCost": "{3}{R}{W}",
+  "cmc": 5,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "+2: You gain life equal to the greatest power among creatures you control.\n0: Create a 3/3 green Dinosaur creature token with trample.\n−X: Huatli deals X damage divided as you choose among any number of target creatures. Creatures dealt damage this way can't block this turn.",
+  "loyalty": "3"
+ },
+ "Ajani Vengeant": {
+  "id": "Ajani Vengeant",
+  "name": "Ajani Vengeant",
+  "typeLine": "Legendary Planeswalker — Ajani",
+  "manaCost": "{2}{R}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "+1: Target permanent doesn't untap during its controller's next untap step.\n−2: Ajani deals 3 damage to any target and you gain 3 life.\n−7: Destroy all lands target player controls.",
+  "loyalty": "3"
+ },
+ "Kaya, Spirits' Justice": {
+  "id": "Kaya, Spirits' Justice",
+  "name": "Kaya, Spirits' Justice",
+  "typeLine": "Legendary Planeswalker — Kaya",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Whenever one or more creatures you control and/or creature cards in your graveyard are put into exile, you may choose a creature card from among them. Until end of turn, target token you control becomes a copy of it, except it has flying.\n+2: Surveil 2, then exile a card from a graveyard.\n+1: Create a 1/1 white and black Spirit creature token with flying.\n−2: Exile target creature you control. For each other player, exile up to one target creature that player controls.",
+  "loyalty": "3"
+ },
+ "Kaya, Ghost Assassin": {
+  "id": "Kaya, Ghost Assassin",
+  "name": "Kaya, Ghost Assassin",
+  "typeLine": "Legendary Planeswalker — Kaya",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "0: Exile Kaya or up to one target creature. Return that card to the battlefield under its owner's control at the beginning of your next upkeep. You lose 2 life.\n−1: Each opponent loses 2 life and you gain 2 life.\n−2: Each opponent discards a card and you draw a card.",
+  "loyalty": "5"
+ },
+ "Nahiri, the Unforgiving": {
+  "id": "Nahiri, the Unforgiving",
+  "name": "Nahiri, the Unforgiving",
+  "typeLine": "Legendary Planeswalker — Nahiri",
+  "manaCost": "{1}{R}{R/W/P}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Compleated ({R/W/P} can be paid with {R}, {W}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: Until your next turn, up to one target creature attacks a player each combat if able.\n+1: Discard a card, then draw a card.\n0: Exile target creature or Equipment card with mana value less than Nahiri's loyalty from your graveyard. Create a token that's a copy of it. That token gains haste. Exile it at the beginning of the next end step.",
+  "loyalty": "5"
+ },
+ "Huatli, Dinosaur Knight": {
+  "id": "Huatli, Dinosaur Knight",
+  "name": "Huatli, Dinosaur Knight",
+  "typeLine": "Legendary Planeswalker — Huatli",
+  "manaCost": "{4}{R}{W}",
+  "cmc": 6,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "+2: Put two +1/+1 counters on up to one target Dinosaur you control.\n−3: Target Dinosaur you control deals damage equal to its power to target creature you don't control.\n−7: Dinosaurs you control get +4/+4 until end of turn.",
+  "loyalty": "4"
+ },
+ "Nahiri, Storm of Stone": {
+  "id": "Nahiri, Storm of Stone",
+  "name": "Nahiri, Storm of Stone",
+  "typeLine": "Legendary Planeswalker — Nahiri",
+  "manaCost": "{2}{R/W}{R/W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "During your turn, creatures you control have first strike and equip abilities you activate cost {1} less to activate.\n−X: Nahiri deals X damage to target tapped creature.",
+  "loyalty": "6"
+ },
+ "Kaya, Bane of the Dead": {
+  "id": "Kaya, Bane of the Dead",
+  "name": "Kaya, Bane of the Dead",
+  "typeLine": "Legendary Planeswalker — Kaya",
+  "manaCost": "{3}{W/B}{W/B}{W/B}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Your opponents and permanents your opponents control with hexproof can be the targets of spells and abilities you control as though they didn't have hexproof.\n−3: Exile target creature.",
+  "loyalty": "7"
+ },
+ "Elspeth Conquers Death": {
+  "id": "Elspeth Conquers Death",
+  "name": "Elspeth Conquers Death",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Exile target permanent an opponent controls with mana value 3 or greater.\nII — Noncreature spells your opponents cast cost {2} more to cast until your next turn.\nIII — Return target creature or planeswalker card from your graveyard to the battlefield. Put a +1/+1 counter or a loyalty counter on it."
+ },
+ "Fall of the First Civilization": {
+  "id": "Fall of the First Civilization",
+  "name": "Fall of the First Civilization",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — You and target opponent each draw two cards.\nII — Exile target artifact an opponent controls.\nIII — Each player chooses three nonland permanents they control. Destroy all other nonland permanents."
+ },
+ "Tale of Tinúviel": {
+  "id": "Tale of Tinúviel",
+  "name": "Tale of Tinúviel",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Target creature you control gains indestructible for as long as you control this Saga.\nII — Return target creature card from your graveyard to the battlefield.\nIII — Up to two target creatures you control each gain lifelink until end of turn."
+ },
+ "Origin of Spider-Man": {
+  "id": "Origin of Spider-Man",
+  "name": "Origin of Spider-Man",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 2/1 green Spider creature token with reach.\nII — Put a +1/+1 counter on target creature you control. It becomes a legendary Spider Hero in addition to its other types.\nIII — Target creature you control gains double strike until end of turn."
+ },
+ "Urza Assembles the Titans": {
+  "id": "Urza Assembles the Titans",
+  "name": "Urza Assembles the Titans",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI — Scry 4, then you may reveal the top card of your library. If a planeswalker card is revealed this way, put it into your hand.\nII — You may put a planeswalker card with mana value 6 or less from your hand onto the battlefield.\nIII — You may activate the loyalty abilities of planeswalkers you control twice this turn rather than only once."
+ },
+ "Fall of the Thran": {
+  "id": "Fall of the Thran",
+  "name": "Fall of the Thran",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy all lands.\nII, III — Each player returns two land cards from their graveyard to the battlefield."
+ },
+ "Origin of the Avengers": {
+  "id": "Origin of the Avengers",
+  "name": "Origin of the Avengers",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Scry 2.\nII — You may put a Hero creature card with mana value 3 or less from your hand onto the battlefield. If you don't, draw a card.\nIII — Put a +1/+1 counter on each creature you control."
+ },
+ "Roads Go Ever, Ever On": {
+  "id": "Roads Go Ever, Ever On",
+  "name": "Roads Go Ever, Ever On",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI — Search your library for up to two basic Plains cards, exile them, then shuffle. You gain 2 life.\nII, III — Put a card exiled with this Saga into its owner's hand.\nIV — Whenever you attack this turn, target creature you control gets +1/+1 until end of turn for each Plains you control."
+ },
+ "Origin of Captain America": {
+  "id": "Origin of Captain America",
+  "name": "Origin of Captain America",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Put a +1/+1 counter on target creature you control. It gains first strike and vigilance until end of turn.\nII — Create a colorless Equipment artifact token named Sturdy Shield with \"Equipped creature gets +1/+2\" and equip {2}.\nIII — Tap up to one target creature and put a stun counter on it."
+ },
+ "Naktamun Shines Again": {
+  "id": "Naktamun Shines Again",
+  "name": "Naktamun Shines Again",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step add a lore counter. Sacrifice after III.)\nI — All creature cards you own with mana value 2 or less perpetually get +1/+0.\nII — Seek a creature card with mana value 2 or less and put it onto the battlefield.\nIII — Creatures you control with mana value 2 or less gain flying until end of turn."
+ },
+ "Thunder of Unity": {
+  "id": "Thunder of Unity",
+  "name": "Thunder of Unity",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{R}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R",
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — You draw two cards and you lose 2 life.\nII, III — Whenever a creature you control enters this turn, each opponent loses 1 life and you gain 1 life."
+ },
+ "Revival of the Ancestors": {
+  "id": "Revival of the Ancestors",
+  "name": "Revival of the Ancestors",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{W}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G",
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create three 1/1 white Spirit creature tokens.\nII — Distribute three +1/+1 counters among one, two, or three target creatures you control.\nIII — Creatures you control gain trample and lifelink until end of turn."
+ },
+ "Fall of the Impostor": {
+  "id": "Fall of the Impostor",
+  "name": "Fall of the Impostor",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{G}{W}",
+  "cmc": 3,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Put a +1/+1 counter on up to one target creature.\nIII — Exile a creature with the greatest power among creatures target opponent controls."
+ },
+ "Ascent of the Worthy": {
+  "id": "Ascent of the Worthy",
+  "name": "Ascent of the Worthy",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Choose a creature you control. Until your next turn, all damage that would be dealt to creatures you control is dealt to that creature instead.\nIII — Return target creature card from your graveyard to the battlefield with a flying counter on it. That creature is an Angel Warrior in addition to its other types."
+ },
+ "The Super Hero Civil War": {
+  "id": "The Super Hero Civil War",
+  "name": "The Super Hero Civil War",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{3}{R}{W}",
+  "cmc": 5,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Gain control of up to two target creatures with total mana value 6 or less for as long as this Saga remains on the battlefield.\nII — Creatures you control get +1/+1 and gain vigilance until end of turn.\nIII — Target creature you control fights up to one other target creature."
+ },
+ "The City on the Edge of Forever": {
+  "id": "The City on the Edge of Forever",
+  "name": "The City on the Edge of Forever",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{3}{W}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — All artifacts and creatures phase out. Create a 0/1 white Human creature token with \"Permanents can't phase in.\" (Treat phased-out permanents and anything attached to them as though they don't exist.)\nII — You draw two cards and each player loses 2 life.\nIII — Sacrifice a creature token. If you do, you gain 5 life."
+ }
+}
