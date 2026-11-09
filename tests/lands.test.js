@@ -59,6 +59,8 @@ test("Urza's Saga gains its abilities, then fetches a cheap artifact", () => {
   const saga = put(game, "Urza's Saga");
   run(game, saga, 'This Saga gains "{T}: Add {C}."');
   assert.ok(saga.grantedLines.includes('{T}: Add {C}.'));
+  const mox = find(game, 'Mox');
+  if (game.cards[mox].zone !== 'library') Game.move(game, mox, 'library'); // (the opening hand can draw the only Mox)
   run(game, saga, 'Search your library for an artifact card with mana cost {0} or {1}, put it onto the battlefield, then shuffle.');
   assert.ok(game.zones.battlefield.some(iid => game.cards[iid].id === 'Mox'));
 });
