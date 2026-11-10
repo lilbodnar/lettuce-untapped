@@ -1,0 +1,2436 @@
+{
+ "Misinformation": {
+  "id": "Misinformation",
+  "name": "Misinformation",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Put up to three target cards from an opponent's graveyard on top of their library in any order."
+ },
+ "Showstopper": {
+  "id": "Showstopper",
+  "name": "Showstopper",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Until end of turn, creatures you control gain \"When this creature dies, it deals 2 damage to target creature an opponent controls.\""
+ },
+ "Reckoner's Bargain": {
+  "id": "Reckoner's Bargain",
+  "name": "Reckoner's Bargain",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nYou gain life equal to the sacrificed permanent's mana value. Draw two cards."
+ },
+ "Sacrifice": {
+  "id": "Sacrifice",
+  "name": "Sacrifice",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nAdd an amount of {B} equal to the sacrificed creature's mana value.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Sick and Tired": {
+  "id": "Sick and Tired",
+  "name": "Sick and Tired",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Two target creatures each get -1/-1 until end of turn."
+ },
+ "Plunge into Darkness": {
+  "id": "Plunge into Darkness",
+  "name": "Plunge into Darkness",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Sacrifice any number of creatures. You gain 3 life for each creature sacrificed this way.\n• Pay any amount of life, then look at that many cards from the top of your library. Put one of those cards into your hand and exile the rest.\nEntwine {B} (Choose both if you pay the entwine cost.)"
+ },
+ "Bloodline Culling": {
+  "id": "Bloodline Culling",
+  "name": "Bloodline Culling",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target creature gets -5/-5 until end of turn.\n• Creature tokens get -2/-2 until end of turn."
+ },
+ "Gravebind": {
+  "id": "Gravebind",
+  "name": "Gravebind",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature can't be regenerated this turn.\nDraw a card at the beginning of the next turn's upkeep."
+ },
+ "Defiling Tears": {
+  "id": "Defiling Tears",
+  "name": "Defiling Tears",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, target creature becomes black, gets +1/-1, and gains \"{B}: Regenerate this creature.\""
+ },
+ "Sadistic Slash": {
+  "id": "Sadistic Slash",
+  "name": "Sadistic Slash",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -5/-5 until end of turn.\nMayhem {1}{B} (You may cast this card from your graveyard for {1}{B} if you discarded it this turn.)"
+ },
+ "Force of Despair": {
+  "id": "Force of Despair",
+  "name": "Force of Despair",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If it's not your turn, you may exile a black card from your hand rather than pay this spell's mana cost.\nDestroy all creatures that entered this turn."
+ },
+ "Geth's Verdict": {
+  "id": "Geth's Verdict",
+  "name": "Geth's Verdict",
+  "typeLine": "Instant",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player sacrifices a creature of their choice and loses 1 life."
+ },
+ "Stomped by the Foot": {
+  "id": "Stomped by the Foot",
+  "name": "Stomped by the Foot",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker—Sacrifice an artifact or creature. (You may sacrifice an artifact or creature in addition to any other costs as you cast this spell.)\nTarget creature gets -2/-2 until end of turn. If this spell was kicked, that creature gets -5/-5 until end of turn instead."
+ },
+ "Grim Reminder": {
+  "id": "Grim Reminder",
+  "name": "Grim Reminder",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for a nonland card and reveal it. Each opponent who cast a spell this turn with the same name as that card loses 6 life. Then shuffle.\n{B}{B}: Return this card from your graveyard to your hand. Activate only during your upkeep."
+ },
+ "Corpse Lunge": {
+  "id": "Corpse Lunge",
+  "name": "Corpse Lunge",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, exile a creature card from your graveyard.\nCorpse Lunge deals damage equal to the exiled card's power to target creature."
+ },
+ "Fatal Push": {
+  "id": "Fatal Push",
+  "name": "Fatal Push",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature if it has mana value 2 or less.\nRevolt — Destroy that creature if it has mana value 4 or less instead if a permanent left the battlefield under your control this turn."
+ },
+ "Mythos of Nethroi": {
+  "id": "Mythos of Nethroi",
+  "name": "Mythos of Nethroi",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target nonland permanent if it's a creature or if {G}{W} was spent to cast this spell."
+ },
+ "Compound Fracture": {
+  "id": "Compound Fracture",
+  "name": "Compound Fracture",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -1/-1 until end of turn. It gets an additional -1/-1 until end of turn for each card named Compound Fracture in your graveyard."
+ },
+ "Tainted Pact": {
+  "id": "Tainted Pact",
+  "name": "Tainted Pact",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile the top card of your library. You may put that card into your hand unless it has the same name as another card exiled this way. Repeat this process until you put a card into your hand or you exile two cards with the same name, whichever comes first."
+ },
+ "Cut Down": {
+  "id": "Cut Down",
+  "name": "Cut Down",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature with total power and toughness 5 or less."
+ },
+ "Tragic Fall": {
+  "id": "Tragic Fall",
+  "name": "Tragic Fall",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -3/-3 until end of turn.\nHellbent — That creature gets -13/-13 until end of turn instead if you have no cards in hand."
+ },
+ "Induce Despair": {
+  "id": "Induce Despair",
+  "name": "Induce Despair",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, reveal a creature card from your hand.\nTarget creature gets -X/-X until end of turn, where X is the revealed card's mana value."
+ },
+ "Fatal Fissure": {
+  "id": "Fatal Fissure",
+  "name": "Fatal Fissure",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose target creature. When that creature dies this turn, you earthbend 4. (Target land you control becomes a 0/0 creature with haste that's still a land. Put four +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.)"
+ },
+ "Simulacrum": {
+  "id": "Simulacrum",
+  "name": "Simulacrum",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You gain life equal to the damage dealt to you this turn. Simulacrum deals damage to target creature you control equal to the damage dealt to you this turn."
+ },
+ "Feed the Cauldron": {
+  "id": "Feed the Cauldron",
+  "name": "Feed the Cauldron",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature with mana value 3 or less. If it's your turn, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")"
+ },
+ "Terminal Criticism": {
+  "id": "Terminal Criticism",
+  "name": "Terminal Criticism",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature or planeswalker that's blue or red. You gain 1 life."
+ },
+ "Death Pulse": {
+  "id": "Death Pulse",
+  "name": "Death Pulse",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -4/-4 until end of turn.\nCycling {1}{B}{B} ({1}{B}{B}, Discard this card: Draw a card.)\nWhen you cycle this card, you may have target creature get -1/-1 until end of turn."
+ },
+ "Grim Harvest": {
+  "id": "Grim Harvest",
+  "name": "Grim Harvest",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to your hand.\nRecover {2}{B} (When a creature is put into your graveyard from the battlefield, you may pay {2}{B}. If you do, return this card from your graveyard to your hand. Otherwise, exile this card.)"
+ },
+ "Sewers of Estark": {
+  "id": "Sewers of Estark",
+  "name": "Sewers of Estark",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose target creature. If it's attacking, it can't be blocked this turn. If it's blocking, prevent all combat damage that would be dealt this combat by it and each creature it's blocking."
+ },
+ "Hit // Run": {
+  "id": "Hit // Run",
+  "name": "Hit // Run",
+  "typeLine": "Instant // Instant",
+  "manaCost": "{1}{B}{R} // {3}{R}{G}",
+  "cmc": 8,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "Hit: Target player sacrifices an artifact or creature of their choice. Hit deals damage to that player equal to that permanent's mana value.\n\nRun: Attacking creatures you control get +1/+0 until end of turn for each other attacking creature."
+ },
+ "Death of a Thousand Stings": {
+  "id": "Death of a Thousand Stings",
+  "name": "Death of a Thousand Stings",
+  "typeLine": "Instant — Arcane",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player loses 1 life and you gain 1 life.\nAt the beginning of your upkeep, if you have more cards in hand than each opponent, you may return this card from your graveyard to your hand."
+ },
+ "Cutthroat Maneuver": {
+  "id": "Cutthroat Maneuver",
+  "name": "Cutthroat Maneuver",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Up to two target creatures each get +1/+1 and gain lifelink until end of turn."
+ },
+ "Entomb": {
+  "id": "Entomb",
+  "name": "Entomb",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for a card, put that card into your graveyard, then shuffle."
+ },
+ "Rapid Decay": {
+  "id": "Rapid Decay",
+  "name": "Rapid Decay",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile up to three target cards from a single graveyard.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Sickening Shoal": {
+  "id": "Sickening Shoal",
+  "name": "Sickening Shoal",
+  "typeLine": "Instant — Arcane",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may exile a black card with mana value X from your hand rather than pay this spell's mana cost.\nTarget creature gets -X/-X until end of turn."
+ },
+ "Lonely End": {
+  "id": "Lonely End",
+  "name": "Lonely End",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target creature get -3/-3 until end of turn.\n• Remove three loyalty counters from target planeswalker.\nIf you weren't the starting player, you gain 3 life."
+ },
+ "Scent of Nightshade": {
+  "id": "Scent of Nightshade",
+  "name": "Scent of Nightshade",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Reveal any number of black cards in your hand. Target creature gets -X/-X until end of turn, where X is the number of cards revealed this way."
+ },
+ "Ebony Charm": {
+  "id": "Ebony Charm",
+  "name": "Ebony Charm",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target opponent loses 1 life and you gain 1 life.\n• Exile up to three target cards from a single graveyard.\n• Target creature gains fear until end of turn. (It can't be blocked except by artifact creatures and/or black creatures.)"
+ },
+ "Dark Bargain": {
+  "id": "Dark Bargain",
+  "name": "Dark Bargain",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at the top three cards of your library. Put two of them into your hand and the other into your graveyard. Dark Bargain deals 2 damage to you."
+ },
+ "Orcish Medicine": {
+  "id": "Orcish Medicine",
+  "name": "Orcish Medicine",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gains your choice of lifelink or indestructible until end of turn.\nAmass Orcs 1. (Put a +1/+1 counter on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)"
+ },
+ "Mausoleum Secrets": {
+  "id": "Mausoleum Secrets",
+  "name": "Mausoleum Secrets",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Undergrowth — Search your library for a black card with mana value less than or equal to the number of creature cards in your graveyard, reveal it, put it into your hand, then shuffle."
+ },
+ "Imp's Mischief": {
+  "id": "Imp's Mischief",
+  "name": "Imp's Mischief",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Change the target of target spell with a single target. You lose life equal to that spell's mana value."
+ },
+ "Pharika's Libation": {
+  "id": "Pharika's Libation",
+  "name": "Pharika's Libation",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target opponent sacrifices a creature of their choice.\n• Target opponent sacrifices an enchantment of their choice."
+ },
+ "Dark Dabbling": {
+  "id": "Dark Dabbling",
+  "name": "Dark Dabbling",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Regenerate target creature. Draw a card. (The next time the creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, also regenerate each other creature you control."
+ },
+ "Impose Hierarchy": {
+  "id": "Impose Hierarchy",
+  "name": "Impose Hierarchy",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature with mana value 4 or less. You gain 1 life for each creature card in its controller's hand."
+ },
+ "Rat Out": {
+  "id": "Rat Out",
+  "name": "Rat Out",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Up to one target creature gets -1/-1 until end of turn. You create a 1/1 black Rat creature token with \"This token can't block.\""
+ },
+ "Urgent Necropsy": {
+  "id": "Urgent Necropsy",
+  "name": "Urgent Necropsy",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "As an additional cost to cast this spell, collect evidence X, where X is the total mana value of the permanents this spell targets.\nDestroy up to one target artifact, up to one target creature, up to one target enchantment, and up to one target planeswalker."
+ },
+ "Chain Assassination": {
+  "id": "Chain Assassination",
+  "name": "Chain Assassination",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Freerunning {1}{B} (You may cast this spell for its freerunning cost if you dealt combat damage to a player this turn with an Assassin or commander.)\nDestroy target creature. If another creature died this turn, draw a card."
+ },
+ "Slaughter": {
+  "id": "Slaughter",
+  "name": "Slaughter",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Buyback—Pay 4 life. (You may pay 4 life in addition to any other costs as you cast this spell. If you do, put this card into your hand as it resolves.)\nDestroy target nonblack creature. It can't be regenerated."
+ },
+ "Bail Out": {
+  "id": "Bail Out",
+  "name": "Bail Out",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, target creature you control gains \"When this creature dies, return it to the battlefield tapped under its owner's control. It deals 1 damage to each opponent.\"\nOverload {2}{B}{B}"
+ },
+ "Not Dead After All": {
+  "id": "Not Dead After All",
+  "name": "Not Dead After All",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, target creature you control gains \"When this creature dies, return it to the battlefield tapped under its owner's control, then create a Wicked Role token attached to it.\" (Enchanted creature gets +1/+1. When this token is put into a graveyard, each opponent loses 1 life.)"
+ },
+ "Grim Contest": {
+  "id": "Grim Contest",
+  "name": "Grim Contest",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Choose target creature you control and target creature an opponent controls. Each of those creatures deals damage equal to its toughness to the other."
+ },
+ "Surgical Extraction": {
+  "id": "Surgical Extraction",
+  "name": "Surgical Extraction",
+  "typeLine": "Instant",
+  "manaCost": "{B/P}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "({B/P} can be paid with either {B} or 2 life.)\nChoose target card in a graveyard other than a basic land card. Search its owner's graveyard, hand, and library for any number of cards with the same name as that card and exile them. Then that player shuffles."
+ },
+ "Silence the Believers": {
+  "id": "Silence the Believers",
+  "name": "Silence the Believers",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Strive — This spell costs {2}{B} more to cast for each target beyond the first.\nExile any number of target creatures and all Auras attached to them."
+ },
+ "The Spot's Portal": {
+  "id": "The Spot's Portal",
+  "name": "The Spot's Portal",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Put target creature on the bottom of its owner's library. You lose 2 life unless you control a Villain."
+ },
+ "Stunning Reversal": {
+  "id": "Stunning Reversal",
+  "name": "Stunning Reversal",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "The next time you would lose the game this turn, instead draw seven cards and your life total becomes 1.\nExile Stunning Reversal."
+ },
+ "Backlash": {
+  "id": "Backlash",
+  "name": "Backlash",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Tap target untapped creature. That creature deals damage equal to its power to its controller."
+ },
+ "Goryo's Vengeance": {
+  "id": "Goryo's Vengeance",
+  "name": "Goryo's Vengeance",
+  "typeLine": "Instant — Arcane",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target legendary creature card from your graveyard to the battlefield. That creature gains haste. Exile it at the beginning of the next end step.\nSplice onto Arcane {2}{B} (As you cast an Arcane spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.)"
+ },
+ "Anoint with Affliction": {
+  "id": "Anoint with Affliction",
+  "name": "Anoint with Affliction",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target creature if it has mana value 3 or less.\nCorrupted — Exile that creature instead if its controller has three or more poison counters."
+ },
+ "Hatred": {
+  "id": "Hatred",
+  "name": "Hatred",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, pay X life.\nTarget creature gets +X/+0 until end of turn."
+ },
+ "Agonizing Demise": {
+  "id": "Agonizing Demise",
+  "name": "Agonizing Demise",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {1}{R} (You may pay an additional {1}{R} as you cast this spell.)\nDestroy target nonblack creature. It can't be regenerated. If this spell was kicked, Agonizing Demise deals damage equal to that creature's power to the creature's controller."
+ },
+ "Contagion": {
+  "id": "Contagion",
+  "name": "Contagion",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may pay 1 life and exile a black card from your hand rather than pay this spell's mana cost.\nDistribute two -2/-1 counters among one or two target creatures."
+ },
+ "Grave Consequences": {
+  "id": "Grave Consequences",
+  "name": "Grave Consequences",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player may exile any number of cards from their graveyard. Then each player loses 1 life for each card in their graveyard.\nDraw a card."
+ },
+ "Faerie Fencing": {
+  "id": "Faerie Fencing",
+  "name": "Faerie Fencing",
+  "typeLine": "Instant",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -X/-X until end of turn. That creature gets an additional -3/-3 until end of turn if you controlled a Faerie as you cast this spell."
+ },
+ "Tomb Hex": {
+  "id": "Tomb Hex",
+  "name": "Tomb Hex",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -2/-2 until end of turn.\nLandfall — If you had a land enter the battlefield under your control this turn, that creature gets -4/-4 until end of turn instead."
+ },
+ "Insidious Dreams": {
+  "id": "Insidious Dreams",
+  "name": "Insidious Dreams",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, discard X cards.\nSearch your library for X cards, then shuffle and put those cards on top in any order."
+ },
+ "A Good Day to Die": {
+  "id": "A Good Day to Die",
+  "name": "A Good Day to Die",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets +2/+0 until end of turn. When that creature dies this turn, you draw a card."
+ },
+ "Flare of Malice": {
+  "id": "Flare of Malice",
+  "name": "Flare of Malice",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may sacrifice a nontoken black creature rather than pay this spell's mana cost.\nEach opponent sacrifices a creature or planeswalker with the greatest mana value among creatures and planeswalkers they control."
+ },
+ "Stench of Decay": {
+  "id": "Stench of Decay",
+  "name": "Stench of Decay",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Nonartifact creatures get -1/-1 until end of turn."
+ },
+ "Supper for Spiders": {
+  "id": "Supper for Spiders",
+  "name": "Supper for Spiders",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Put onto the battlefield under your control all creature cards in your opponents' graveyards that were put there from the battlefield this turn. They are Food artifacts with \"{2}, {T}, Sacrifice this artifact: You gain 3 life.\" (They lose all other types and subtypes.)"
+ },
+ "Rabid Attack": {
+  "id": "Rabid Attack",
+  "name": "Rabid Attack",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, any number of target creatures you control each get +1/+0 and gain \"When this creature dies, draw a card.\""
+ },
+ "Tsabo's Decree": {
+  "id": "Tsabo's Decree",
+  "name": "Tsabo's Decree",
+  "typeLine": "Instant",
+  "manaCost": "{5}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a creature type. Target player reveals their hand and discards all creature cards of that type. Then destroy all creatures of that type that player controls. They can't be regenerated."
+ },
+ "Oblivion's Hunger": {
+  "id": "Oblivion's Hunger",
+  "name": "Oblivion's Hunger",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature you control gains indestructible until end of turn. Draw a card if that creature has a +1/+1 counter on it. (Damage and effects that say \"destroy\" don't destroy the creature.)"
+ },
+ "To the Slaughter": {
+  "id": "To the Slaughter",
+  "name": "To the Slaughter",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player sacrifices a creature or planeswalker of their choice.\nDelirium — If there are four or more card types among cards in your graveyard, instead that player sacrifices a creature and a planeswalker of their choice."
+ },
+ "Rise of the Deathbringer": {
+  "id": "Rise of the Deathbringer",
+  "name": "Rise of the Deathbringer",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Draw cards equal to the greatest power among creatures you control. You lose life equal to the number of cards drawn this way.\n• All creatures get -3/-3 until end of turn."
+ },
+ "Corpse Dance": {
+  "id": "Corpse Dance",
+  "name": "Corpse Dance",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Buyback {2} (You may pay an additional {2} as you cast this spell. If you do, put this card into your hand as it resolves.)\nReturn the top creature card of your graveyard to the battlefield. That creature gains haste until end of turn. Exile it at the beginning of the next end step."
+ },
+ "Outrageous Robbery": {
+  "id": "Outrageous Robbery",
+  "name": "Outrageous Robbery",
+  "typeLine": "Instant",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent exiles the top X cards of their library face down. You may look at and play those cards for as long as they remain exiled. If you cast a spell this way, you may spend mana as though it were mana of any type to cast it."
+ },
+ "Cabal Ritual": {
+  "id": "Cabal Ritual",
+  "name": "Cabal Ritual",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Add {B}{B}{B}.\nThreshold — Add {B}{B}{B}{B}{B} instead if there are seven or more cards in your graveyard.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Undercity's Embrace": {
+  "id": "Undercity's Embrace",
+  "name": "Undercity's Embrace",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent sacrifices a creature of their choice. If you control a creature with power 4 or greater, you gain 4 life."
+ },
+ "Flunk": {
+  "id": "Flunk",
+  "name": "Flunk",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -X/-X until end of turn, where X is 7 minus the number of cards in that creature's controller's hand."
+ },
+ "Tainted Treats": {
+  "id": "Tainted Treats",
+  "name": "Tainted Treats",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Destroy target artifact or creature. If its mana value was 4 or less, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")"
+ },
+ "Public Execution": {
+  "id": "Public Execution",
+  "name": "Public Execution",
+  "typeLine": "Instant",
+  "manaCost": "{5}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature an opponent controls. Each other creature that player controls gets -2/-0 until end of turn."
+ },
+ "Lethal Exploit": {
+  "id": "Lethal Exploit",
+  "name": "Lethal Exploit",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -2/-2 until end of turn. It gets an additional -1/-1 until end of turn for each modified creature you controlled as you cast this spell. (Equipment, Auras you control, and counters are modifications.)"
+ },
+ "Shadow Prophecy": {
+  "id": "Shadow Prophecy",
+  "name": "Shadow Prophecy",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Domain — Look at the top X cards of your library, where X is the number of basic land types among lands you control. Put up to two of them into your hand and the rest into your graveyard. You lose 2 life."
+ },
+ "Final Flourish": {
+  "id": "Final Flourish",
+  "name": "Final Flourish",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker—Sacrifice an artifact or creature. (You may sacrifice an artifact or creature in addition to any other costs as you cast this spell.)\nTarget creature gets -2/-2 until end of turn. If this spell was kicked, that creature gets -6/-6 until end of turn instead."
+ },
+ "Traitor's Clutch": {
+  "id": "Traitor's Clutch",
+  "name": "Traitor's Clutch",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets +1/+0, becomes black, and gains shadow until end of turn. (It can block or be blocked by only creatures with shadow.)\nFlashback {1}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Ray of Enfeeblement": {
+  "id": "Ray of Enfeeblement",
+  "name": "Ray of Enfeeblement",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -4/-1 until end of turn. If that creature is white, it gets -4/-4 until end of turn instead."
+ },
+ "Scarblade's Malice": {
+  "id": "Scarblade's Malice",
+  "name": "Scarblade's Malice",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature you control gains deathtouch and lifelink until end of turn. When that creature dies this turn, create a 2/2 black and green Elf creature token."
+ },
+ "Back for More": {
+  "id": "Back for More",
+  "name": "Back for More",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}{G}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield. When you do, it fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)"
+ },
+ "Spinning Darkness": {
+  "id": "Spinning Darkness",
+  "name": "Spinning Darkness",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may exile the top three black cards of your graveyard rather than pay this spell's mana cost.\nSpinning Darkness deals 3 damage to target nonblack creature. You gain 3 life."
+ },
+ "Dash Hopes": {
+  "id": "Dash Hopes",
+  "name": "Dash Hopes",
+  "typeLine": "Instant",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When you cast this spell, any player may pay 5 life. If a player does, counter Dash Hopes.\nCounter target spell."
+ },
+ "Virulent Wound": {
+  "id": "Virulent Wound",
+  "name": "Virulent Wound",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Put a -1/-1 counter on target creature. When that creature dies this turn, its controller gets a poison counter."
+ },
+ "Sold Out": {
+  "id": "Sold Out",
+  "name": "Sold Out",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target creature. If it was dealt damage this turn, create a Clue token. (It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")"
+ },
+ "Shade's Breath": {
+  "id": "Shade's Breath",
+  "name": "Shade's Breath",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, each creature you control becomes a black Shade and gains \"{B}: This creature gets +1/+1 until end of turn.\""
+ },
+ "Foul Renewal": {
+  "id": "Foul Renewal",
+  "name": "Foul Renewal",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to your hand. Target creature gets -X/-X until end of turn, where X is the toughness of the card returned this way."
+ },
+ "Devour Flesh": {
+  "id": "Devour Flesh",
+  "name": "Devour Flesh",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player sacrifices a creature of their choice, then gains life equal to that creature's toughness."
+ },
+ "Withering Boon": {
+  "id": "Withering Boon",
+  "name": "Withering Boon",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, pay 3 life.\nCounter target creature spell."
+ },
+ "Twinstrike": {
+  "id": "Twinstrike",
+  "name": "Twinstrike",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Twinstrike deals 2 damage to each of two target creatures.\nHellbent — Destroy those creatures instead if you have no cards in hand."
+ },
+ "Extinguish the Light": {
+  "id": "Extinguish the Light",
+  "name": "Extinguish the Light",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature or planeswalker. If its mana value was 3 or less, you gain 3 life."
+ },
+ "March of Wretched Sorrow": {
+  "id": "March of Wretched Sorrow",
+  "name": "March of Wretched Sorrow",
+  "typeLine": "Instant",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, you may exile any number of black cards from your hand. This spell costs {2} less to cast for each card exiled this way.\nMarch of Wretched Sorrow deals X damage to target creature or planeswalker and you gain X life."
+ },
+ "Rescue from the Underworld": {
+  "id": "Rescue from the Underworld",
+  "name": "Rescue from the Underworld",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nChoose target creature card in your graveyard. Return that card and the sacrificed card to the battlefield under your control at the beginning of your next upkeep. Exile Rescue from the Underworld."
+ },
+ "Cankerous Thirst": {
+  "id": "Cankerous Thirst",
+  "name": "Cankerous Thirst",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B/G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "If {B} was spent to cast this spell, you may have target creature get -3/-3 until end of turn. If {G} was spent to cast this spell, you may have target creature get +3/+3 until end of turn. (Do both if {B}{G} was spent.)"
+ },
+ "Touch of Darkness": {
+  "id": "Touch of Darkness",
+  "name": "Touch of Darkness",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "One or more target creatures become black until end of turn."
+ },
+ "Dissection Practice": {
+  "id": "Dissection Practice",
+  "name": "Dissection Practice",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent loses 1 life and you gain 1 life.\nUp to one target creature gets +1/+1 until end of turn.\nUp to one target creature gets -1/-1 until end of turn."
+ },
+ "Drag to the Underworld": {
+  "id": "Drag to the Underworld",
+  "name": "Drag to the Underworld",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {X} less to cast, where X is your devotion to black. (Each {B} in the mana costs of permanents you control counts toward your devotion to black.)\nDestroy target creature."
+ },
+ "Soulshriek": {
+  "id": "Soulshriek",
+  "name": "Soulshriek",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature you control gets +X/+0 until end of turn, where X is the number of creature cards in your graveyard. Sacrifice that creature at the beginning of the next end step."
+ },
+ "Kaervek's Spite": {
+  "id": "Kaervek's Spite",
+  "name": "Kaervek's Spite",
+  "typeLine": "Instant",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice all permanents you control and discard your hand.\nTarget player loses 5 life."
+ },
+ "Destined // Lead": {
+  "id": "Destined // Lead",
+  "name": "Destined // Lead",
+  "typeLine": "Instant // Sorcery",
+  "manaCost": "{1}{B} // {3}{G}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Destined: Target creature gets +1/+0 and gains indestructible until end of turn.\n\nLead: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nAll creatures able to block target creature this turn do so."
+ },
+ "Soul Rend": {
+  "id": "Soul Rend",
+  "name": "Soul Rend",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature if it's white. A creature destroyed this way can't be regenerated.\nDraw a card at the beginning of the next turn's upkeep."
+ },
+ "Vincent's Limit Break": {
+  "id": "Vincent's Limit Break",
+  "name": "Vincent's Limit Break",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Tiered (Choose one additional cost.)\nUntil end of turn, target creature you control gains \"When this creature dies, return it to the battlefield tapped under its owner's control\" and has the chosen base power and toughness.\n• Galian Beast — {0} — 3/2.\n• Death Gigas — {1} — 5/2.\n• Hellmasker — {3} — 7/2."
+ },
+ "Tribute to Urborg": {
+  "id": "Tribute to Urborg",
+  "name": "Tribute to Urborg",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {1}{U} (You may pay an additional {1}{U} as you cast this spell.)\nTarget creature gets -2/-2 until end of turn. If this spell was kicked, that creature gets an additional -1/-1 until end of turn for each instant and sorcery card in your graveyard."
+ },
+ "The End": {
+  "id": "The End",
+  "name": "The End",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {2} less to cast if your life total is 5 or less.\nExile target creature or planeswalker. Search its controller's graveyard, hand, and library for any number of cards with the same name as that permanent and exile them. That player shuffles, then draws a card for each card exiled from their hand this way."
+ },
+ "Dragon's Prey": {
+  "id": "Dragon's Prey",
+  "name": "Dragon's Prey",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {2} more to cast if it targets a Dragon.\nDestroy target creature."
+ },
+ "Raise the Draugr": {
+  "id": "Raise the Draugr",
+  "name": "Raise the Draugr",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Return target creature card from your graveyard to your hand.\n• Return two target creature cards that share a creature type from your graveyard to your hand."
+ },
+ "Dark Triumph": {
+  "id": "Dark Triumph",
+  "name": "Dark Triumph",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If you control a Swamp, you may sacrifice a creature rather than pay this spell's mana cost.\nCreatures you control get +2/+0 until end of turn."
+ },
+ "Eye Gouge": {
+  "id": "Eye Gouge",
+  "name": "Eye Gouge",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -1/-1 until end of turn. If it's a Cyclops, destroy it."
+ },
+ "Undying Malice": {
+  "id": "Undying Malice",
+  "name": "Undying Malice",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, target creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it.\""
+ },
+ "Nightcreep": {
+  "id": "Nightcreep",
+  "name": "Nightcreep",
+  "typeLine": "Instant",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, all creatures become black and all lands become Swamps."
+ },
+ "Scarab Feast": {
+  "id": "Scarab Feast",
+  "name": "Scarab Feast",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile up to three target cards from a single graveyard.\nCycling {B} ({B}, Discard this card: Draw a card.)"
+ },
+ "Grisly Spectacle": {
+  "id": "Grisly Spectacle",
+  "name": "Grisly Spectacle",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target nonartifact creature. Its controller mills cards equal to that creature's power."
+ },
+ "Break Under Pressure": {
+  "id": "Break Under Pressure",
+  "name": "Break Under Pressure",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent sacrifices a creature or planeswalker with the greatest mana value among creatures and planeswalkers they control. You gain 2 life."
+ },
+ "Broken Visage": {
+  "id": "Broken Visage",
+  "name": "Broken Visage",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target nonartifact attacking creature. It can't be regenerated. Create a black Spirit creature token. Its power is equal to that creature's power and its toughness is equal to that creature's toughness. Sacrifice the token at the beginning of the next end step."
+ },
+ "Rushed Rebirth": {
+  "id": "Rushed Rebirth",
+  "name": "Rushed Rebirth",
+  "typeLine": "Instant",
+  "manaCost": "{B}{G}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Choose target creature. When that creature dies this turn, search your library for a creature card with lesser mana value, put it onto the battlefield tapped, then shuffle."
+ },
+ "Grave Expectations": {
+  "id": "Grave Expectations",
+  "name": "Grave Expectations",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Heist target opponent's library.\n• Exile up to three target cards from your opponents' graveyards. You gain 3 life."
+ },
+ "Desert's Due": {
+  "id": "Desert's Due",
+  "name": "Desert's Due",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -2/-2 until end of turn. It gets an additional -1/-1 until end of turn for each Desert you control."
+ },
+ "Skulduggery": {
+  "id": "Skulduggery",
+  "name": "Skulduggery",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, target creature you control gets +1/+1 and target creature an opponent controls gets -1/-1."
+ },
+ "Seize the Soul": {
+  "id": "Seize the Soul",
+  "name": "Seize the Soul",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target nonwhite, nonblack creature. Create a 1/1 white Spirit creature token with flying.\nHaunt (When this spell card is put into a graveyard after resolving, exile it haunting target creature.)\nWhen the creature this card haunts dies, destroy target nonwhite, nonblack creature. Create a 1/1 white Spirit creature token with flying."
+ },
+ "Necrologia": {
+  "id": "Necrologia",
+  "name": "Necrologia",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cast this spell only during your end step.\nAs an additional cost to cast this spell, pay X life.\nDraw X cards."
+ },
+ "Vayne's Treachery": {
+  "id": "Vayne's Treachery",
+  "name": "Vayne's Treachery",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker—Sacrifice an artifact or creature. (You may sacrifice an artifact or creature in addition to any other costs as you cast this spell.)\nTarget creature gets -2/-2 until end of turn. If this spell was kicked, that creature gets -6/-6 until end of turn instead."
+ },
+ "Candy Grapple": {
+  "id": "Candy Grapple",
+  "name": "Candy Grapple",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)\nTarget creature gets -3/-3 until end of turn. If this spell was bargained, that creature gets -5/-5 until end of turn instead."
+ },
+ "Ad Nauseam": {
+  "id": "Ad Nauseam",
+  "name": "Ad Nauseam",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Reveal the top card of your library and put that card into your hand. You lose life equal to its mana value. You may repeat this process any number of times."
+ },
+ "Shallow Grave": {
+  "id": "Shallow Grave",
+  "name": "Shallow Grave",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return the top creature card of your graveyard to the battlefield. That creature gains haste until end of turn. Exile it at the beginning of the next end step."
+ },
+ "Demonic Consultation": {
+  "id": "Demonic Consultation",
+  "name": "Demonic Consultation",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a card name. Exile the top six cards of your library, then reveal cards from the top of your library until you reveal a card with the chosen name. Put that card into your hand and exile all other cards revealed this way."
+ },
+ "Toxic Stench": {
+  "id": "Toxic Stench",
+  "name": "Toxic Stench",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target nonblack creature gets -1/-1 until end of turn.\nThreshold — If there are seven or more cards in your graveyard, instead destroy that creature. It can't be regenerated."
+ },
+ "Cling to Dust": {
+  "id": "Cling to Dust",
+  "name": "Cling to Dust",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target card from a graveyard. If it was a creature card, you gain 3 life. Otherwise, you draw a card.\nEscape—{3}{B}, Exile five other cards from your graveyard. (You may cast this card from your graveyard for its escape cost.)"
+ },
+ "Shriveling Rot": {
+  "id": "Shriveling Rot",
+  "name": "Shriveling Rot",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Until end of turn, whenever a creature is dealt damage, destroy it.\n• Until end of turn, whenever a creature dies, that creature's controller loses life equal to its toughness.\nEntwine {2}{B} (Choose both if you pay the entwine cost.)"
+ },
+ "Torment of Venom": {
+  "id": "Torment of Venom",
+  "name": "Torment of Venom",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Put three -1/-1 counters on target creature. Its controller loses 3 life unless they sacrifice another nonland permanent of their choice or discard a card."
+ },
+ "Consuming Ashes": {
+  "id": "Consuming Ashes",
+  "name": "Consuming Ashes",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target creature. If it had mana value 3 or less, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)"
+ },
+ "Delirium": {
+  "id": "Delirium",
+  "name": "Delirium",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Cast this spell only during an opponent's turn.\nTap target creature that player controls. That creature deals damage equal to its power to the player. Prevent all combat damage that would be dealt to and dealt by the creature this turn."
+ },
+ "Echoing Decay": {
+  "id": "Echoing Decay",
+  "name": "Echoing Decay",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature and all other creatures with the same name as that creature get -2/-2 until end of turn."
+ },
+ "Pyretic Rebirth": {
+  "id": "Pyretic Rebirth",
+  "name": "Pyretic Rebirth",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{R}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Return target artifact or creature card from your graveyard to your hand. Pyretic Rebirth deals damage equal to that card's mana value to up to one target creature or planeswalker."
+ },
+ "Glyph of Doom": {
+  "id": "Glyph of Doom",
+  "name": "Glyph of Doom",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose target Wall creature. At this turn's next end of combat, destroy all creatures that were blocked by that creature this turn."
+ },
+ "Olivia's Midnight Ambush": {
+  "id": "Olivia's Midnight Ambush",
+  "name": "Olivia's Midnight Ambush",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -2/-2 until end of turn. If it's night, that creature gets -13/-13 until end of turn instead."
+ },
+ "Spoils of Evil": {
+  "id": "Spoils of Evil",
+  "name": "Spoils of Evil",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "For each artifact or creature card in target opponent's graveyard, add {C} and you gain 1 life.",
+  "producedMana": [
+   "C"
+  ]
+ },
+ "Isildur's Fateful Strike": {
+  "id": "Isildur's Fateful Strike",
+  "name": "Isildur's Fateful Strike",
+  "typeLine": "Legendary Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(You may cast a legendary instant only if you control a legendary creature or planeswalker.)\nDestroy target creature. If its controller has more than four cards in hand, they exile cards from their hand equal to the difference."
+ },
+ "Foul-Tongue Shriek": {
+  "id": "Foul-Tongue Shriek",
+  "name": "Foul-Tongue Shriek",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent loses 1 life for each attacking creature you control. You gain that much life."
+ },
+ "Malakir Rebirth // Malakir Mire": {
+  "id": "Malakir Rebirth // Malakir Mire",
+  "name": "Malakir Rebirth // Malakir Mire",
+  "typeLine": "Instant // Land",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Malakir Rebirth: Choose target creature. You lose 2 life. Until end of turn, that creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control.\"\n\nMalakir Mire: This land enters tapped.\n{T}: Add {B}.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Burden of Greed": {
+  "id": "Burden of Greed",
+  "name": "Burden of Greed",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player loses 1 life for each tapped artifact they control."
+ },
+ "Dina's Guidance": {
+  "id": "Dina's Guidance",
+  "name": "Dina's Guidance",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Search your library for a creature card, reveal it, put it into your hand or graveyard, then shuffle."
+ },
+ "Rain of Filth": {
+  "id": "Rain of Filth",
+  "name": "Rain of Filth",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, lands you control gain \"Sacrifice this land: Add {B}.\"",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Depressurize": {
+  "id": "Depressurize",
+  "name": "Depressurize",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -3/-0 until end of turn. Then if that creature's power is 0 or less, destroy it."
+ },
+ "Black Sun's Twilight": {
+  "id": "Black Sun's Twilight",
+  "name": "Black Sun's Twilight",
+  "typeLine": "Instant",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Up to one target creature gets -X/-X until end of turn. If X is 5 or more, return a creature card with mana value X or less from your graveyard to the battlefield tapped."
+ },
+ "Join the Dead": {
+  "id": "Join the Dead",
+  "name": "Join the Dead",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -5/-5 until end of turn.\nDescend 4 — That creature gets -10/-10 until end of turn instead if there are four or more permanent cards in your graveyard."
+ },
+ "Noxious Grasp": {
+  "id": "Noxious Grasp",
+  "name": "Noxious Grasp",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature or planeswalker that's green or white. You gain 1 life."
+ },
+ "Neutralize the Guards": {
+  "id": "Neutralize the Guards",
+  "name": "Neutralize the Guards",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Creatures target opponent controls get -1/-1 until end of turn. Surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)"
+ },
+ "Hapato's Might": {
+  "id": "Hapato's Might",
+  "name": "Hapato's Might",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets +X/+0 until end of turn, where X is a number from 0 to 6 chosen at random."
+ },
+ "Carnival // Carnage": {
+  "id": "Carnival // Carnage",
+  "name": "Carnival // Carnage",
+  "typeLine": "Instant // Sorcery",
+  "manaCost": "{B/R} // {2}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Carnival: Carnival deals 1 damage to target creature or planeswalker and 1 damage to that permanent's controller.\n\nCarnage: Carnage deals 3 damage to target opponent. That player discards two cards."
+ },
+ "Haunting Hymn": {
+  "id": "Haunting Hymn",
+  "name": "Haunting Hymn",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards. If you cast this spell during your main phase, that player discards four cards instead."
+ },
+ "Soul Spike": {
+  "id": "Soul Spike",
+  "name": "Soul Spike",
+  "typeLine": "Instant",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may exile two black cards from your hand rather than pay this spell's mana cost.\nSoul Spike deals 4 damage to any target and you gain 4 life."
+ },
+ "Eject the Warp Core": {
+  "id": "Eject the Warp Core",
+  "name": "Eject the Warp Core",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker—Sacrifice an artifact or creature. (You may sacrifice an artifact or creature in addition to any other costs as you cast this spell.)\nTarget creature gets -2/-2 until end of turn. If this spell was kicked, that creature gets -6/-6 until end of turn instead."
+ },
+ "Grim Return": {
+  "id": "Grim Return",
+  "name": "Grim Return",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose target creature card in a graveyard that was put there from the battlefield this turn. Put that card onto the battlefield under your control."
+ },
+ "Consume the Meek": {
+  "id": "Consume the Meek",
+  "name": "Consume the Meek",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy each creature with mana value 3 or less. They can't be regenerated."
+ },
+ "Liliana's Triumph": {
+  "id": "Liliana's Triumph",
+  "name": "Liliana's Triumph",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each opponent sacrifices a creature of their choice. If you control a Liliana planeswalker, each opponent also discards a card."
+ },
+ "Welcome the Darkness": {
+  "id": "Welcome the Darkness",
+  "name": "Welcome the Darkness",
+  "typeLine": "Instant",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "X can't be 0.\nDraw X cards. Create an X/X black Demon creature token with flying. Your life total becomes X. You can't gain life for the rest of the game."
+ },
+ "Feed the Cycle": {
+  "id": "Feed the Cycle",
+  "name": "Feed the Cycle",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, forage or pay {B}. (To forage, exile three cards from your graveyard or sacrifice a Food.)\nDestroy target creature or planeswalker."
+ },
+ "Caustic Exhale": {
+  "id": "Caustic Exhale",
+  "name": "Caustic Exhale",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, behold a Dragon or pay {1}. (To behold a Dragon, choose a Dragon you control or reveal a Dragon card from your hand.)\nTarget creature gets -3/-3 until end of turn."
+ },
+ "Blessing of Belzenlok": {
+  "id": "Blessing of Belzenlok",
+  "name": "Blessing of Belzenlok",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets +2/+1 until end of turn. If it's legendary, it also gains lifelink until end of turn."
+ },
+ "Hostile Negotiations": {
+  "id": "Hostile Negotiations",
+  "name": "Hostile Negotiations",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile the top three cards of your library in a face-down pile, then exile the top three cards of your library in another face-down pile. Look at the cards in each pile, then turn a pile of your choice face up. An opponent chooses one of those piles. Put that pile into your hand and the other into your graveyard. You lose 3 life."
+ },
+ "Vicious Offering": {
+  "id": "Vicious Offering",
+  "name": "Vicious Offering",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker—Sacrifice a creature. (You may sacrifice a creature in addition to any other costs as you cast this spell.)\nTarget creature gets -2/-2 until end of turn. If this spell was kicked, that creature gets -5/-5 until end of turn instead."
+ },
+ "Debt to the Kami": {
+  "id": "Debt to the Kami",
+  "name": "Debt to the Kami",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target opponent exiles a creature they control.\n• Target opponent exiles an enchantment they control."
+ },
+ "Ritual of the Returned": {
+  "id": "Ritual of the Returned",
+  "name": "Ritual of the Returned",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target creature card from your graveyard. Create a black Zombie creature token. Its power is equal to that card's power and its toughness is equal to that card's toughness."
+ },
+ "Needlebite Trap": {
+  "id": "Needlebite Trap",
+  "name": "Needlebite Trap",
+  "typeLine": "Instant — Trap",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If an opponent gained life this turn, you may pay {B} rather than pay this spell's mana cost.\nTarget player loses 5 life and you gain 5 life."
+ },
+ "Unleash the Inferno": {
+  "id": "Unleash the Inferno",
+  "name": "Unleash the Inferno",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{R}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "Unleash the Inferno deals 7 damage to target creature or planeswalker. When it deals excess damage this way, destroy target artifact or enchantment an opponent controls with mana value less than or equal to that amount of excess damage."
+ },
+ "Touch of Moonglove": {
+  "id": "Touch of Moonglove",
+  "name": "Touch of Moonglove",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature you control gets +1/+0 and gains deathtouch until end of turn. Whenever a creature dealt damage by that creature dies this turn, its controller loses 2 life. (Any amount of damage a creature with deathtouch deals to a creature is enough to destroy it.)"
+ },
+ "Umbral Juke": {
+  "id": "Umbral Juke",
+  "name": "Umbral Juke",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target player sacrifices a creature or planeswalker of their choice.\n• Create a 2/1 white and black Inkling creature token with flying."
+ },
+ "Urborg Justice": {
+  "id": "Urborg Justice",
+  "name": "Urborg Justice",
+  "typeLine": "Instant",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent sacrifices a creature of their choice for each creature put into your graveyard from the battlefield this turn."
+ },
+ "Parasitic Grasp": {
+  "id": "Parasitic Grasp",
+  "name": "Parasitic Grasp",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cleave {1}{B}{B} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nParasitic Grasp deals 3 damage to target [Human] creature. You gain 3 life."
+ },
+ "Hour of Glory": {
+  "id": "Hour of Glory",
+  "name": "Hour of Glory",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target creature. If that creature was a God, its controller reveals their hand and exiles all cards from it with the same name as that creature."
+ },
+ "Makeshift Mannequin": {
+  "id": "Makeshift Mannequin",
+  "name": "Makeshift Mannequin",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield with a mannequin counter on it. For as long as that creature has a mannequin counter on it, it has \"When this creature becomes the target of a spell or ability, sacrifice it.\""
+ },
+ "Vona's Hunger": {
+  "id": "Vona's Hunger",
+  "name": "Vona's Hunger",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nEach opponent sacrifices a creature of their choice. If you have the city's blessing, instead each opponent sacrifices half the creatures they control of their choice, rounded up."
+ },
+ "Tribute to Hunger": {
+  "id": "Tribute to Hunger",
+  "name": "Tribute to Hunger",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent sacrifices a creature of their choice. You gain life equal to that creature's toughness."
+ },
+ "It Doesn't Add Up": {
+  "id": "It Doesn't Add Up",
+  "name": "It Doesn't Add Up",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield. Suspect it. (It has menace and can't block.)"
+ },
+ "Dark Endurance": {
+  "id": "Dark Endurance",
+  "name": "Dark Endurance",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {1} less to cast if it targets a blocking creature.\nTarget creature gets +2/+0 and gains indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it.)"
+ },
+ "Another Chance": {
+  "id": "Another Chance",
+  "name": "Another Chance",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may mill two cards. Then return up to two creature cards from your graveyard to your hand. (To mill two cards, put the top two cards of your library into your graveyard.)"
+ },
+ "Ghastly Demise": {
+  "id": "Ghastly Demise",
+  "name": "Ghastly Demise",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target nonblack creature if its toughness is less than or equal to the number of cards in your graveyard."
+ },
+ "Erebos's Intervention": {
+  "id": "Erebos's Intervention",
+  "name": "Erebos's Intervention",
+  "typeLine": "Instant",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target creature gets -X/-X until end of turn. You gain X life.\n• Exile up to twice X target cards from graveyards."
+ },
+ "Ravenous Trap": {
+  "id": "Ravenous Trap",
+  "name": "Ravenous Trap",
+  "typeLine": "Instant — Trap",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If an opponent had three or more cards put into their graveyard from anywhere this turn, you may pay {0} rather than pay this spell's mana cost.\nExile target player's graveyard."
+ },
+ "Unbury": {
+  "id": "Unbury",
+  "name": "Unbury",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Return target creature card from your graveyard to your hand.\n• Return two target creature cards that share a creature type from your graveyard to your hand."
+ },
+ "Word of Command": {
+  "id": "Word of Command",
+  "name": "Word of Command",
+  "typeLine": "Instant",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at target opponent's hand and choose a card from it. You control that player until Word of Command finishes resolving. The player plays that card if able. While doing so, the player can activate mana abilities only if they're from lands that player controls and only if mana they produce is spent to activate other mana abilities of lands the player controls and/or to play that card. If the chosen card is cast as a spell, you control the player while that spell is resolving."
+ },
+ "Murderous Spoils": {
+  "id": "Murderous Spoils",
+  "name": "Murderous Spoils",
+  "typeLine": "Instant",
+  "manaCost": "{5}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target nonblack creature. It can't be regenerated. You gain control of all Equipment that were attached to it. (This effect lasts indefinitely.)"
+ },
+ "Chill Haunting": {
+  "id": "Chill Haunting",
+  "name": "Chill Haunting",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, exile X creature cards from your graveyard.\nTarget creature gets -X/-X until end of turn."
+ },
+ "Gaze of the Gorgon": {
+  "id": "Gaze of the Gorgon",
+  "name": "Gaze of the Gorgon",
+  "typeLine": "Instant",
+  "manaCost": "{3}{B/G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "({B/G} can be paid with either {B} or {G}.)\nRegenerate target creature. At this turn's next end of combat, destroy all creatures that blocked or were blocked by it this turn."
+ },
+ "Nocturnal Hunger": {
+  "id": "Nocturnal Hunger",
+  "name": "Nocturnal Hunger",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Gift a Food (You may promise an opponent a gift as you cast this spell. If you do, they create a Food token before its other effects. It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nDestroy target creature. If the gift wasn't promised, you lose 2 life."
+ },
+ "Requiting Hex": {
+  "id": "Requiting Hex",
+  "name": "Requiting Hex",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)\nDestroy target creature with mana value 2 or less. If this spell's additional cost was paid, you gain 2 life."
+ },
+ "Vampiric Tutor": {
+  "id": "Vampiric Tutor",
+  "name": "Vampiric Tutor",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for a card, then shuffle and put that card on top. You lose 2 life."
+ },
+ "Drag to the Roots": {
+  "id": "Drag to the Roots",
+  "name": "Drag to the Roots",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Delirium — This spell costs {2} less to cast as long as there are four or more card types among cards in your graveyard.\nDestroy target nonland permanent."
+ },
+ "Cruel Feeding": {
+  "id": "Cruel Feeding",
+  "name": "Cruel Feeding",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Strive — This spell costs {2}{B} more to cast for each target beyond the first.\nAny number of target creatures each get +1/+0 and gain lifelink until end of turn. (Damage dealt by a creature with lifelink also causes its controller to gain that much life.)"
+ },
+ "Spoils of the Vault": {
+  "id": "Spoils of the Vault",
+  "name": "Spoils of the Vault",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a card name. Reveal cards from the top of your library until you reveal a card with that name, then put that card into your hand. Exile all other cards revealed this way, and you lose 1 life for each of the exiled cards."
+ },
+ "Dredge": {
+  "id": "Dredge",
+  "name": "Dredge",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sacrifice a creature or land.\nDraw a card."
+ },
+ "Harness Infinity": {
+  "id": "Harness Infinity",
+  "name": "Harness Infinity",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}{B}{B}{G}{G}{G}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Exchange your hand and graveyard.\nExile Harness Infinity."
+ },
+ "Zuko's Conviction": {
+  "id": "Zuko's Conviction",
+  "name": "Zuko's Conviction",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {4} (You may pay an additional {4} as you cast this spell.)\nReturn target creature card from your graveyard to your hand. If this spell was kicked, instead put that card onto the battlefield tapped."
+ },
+ "Szat's Will": {
+  "id": "Szat's Will",
+  "name": "Szat's Will",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Each opponent sacrifices a creature they control with the greatest power.\n• Exile all opponents' graveyards, then create X 0/1 black Thrull creature tokens, where X is the greatest power among creature cards exiled this way."
+ },
+ "Desperate Measures": {
+  "id": "Desperate Measures",
+  "name": "Desperate Measures",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets +1/-1 until end of turn. When it dies under your control this turn, draw two cards."
+ },
+ "Shadow of the Grave": {
+  "id": "Shadow of the Grave",
+  "name": "Shadow of the Grave",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return to your hand all cards in your graveyard that you cycled or discarded this turn."
+ },
+ "Treacherous Urge": {
+  "id": "Treacherous Urge",
+  "name": "Treacherous Urge",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You may put a creature card from it onto the battlefield under your control. That creature gains haste. Sacrifice it at the beginning of the next end step."
+ },
+ "Rowan's Grim Search": {
+  "id": "Rowan's Grim Search",
+  "name": "Rowan's Grim Search",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)\nIf this spell was bargained, look at the top four cards of your library, then put up to two of them back on top of your library in any order and the rest into your graveyard.\nYou draw two cards and you lose 2 life."
+ },
+ "Common Black Removal": {
+  "id": "Common Black Removal",
+  "name": "Common Black Removal",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one. Destroy target creature, then —\n• Create a Food token.\n• Create a Treasure token.\n• Put a menace counter on a creature you control.\n• That creature's controller mills cards equal to its power."
+ },
+ "Feign Death": {
+  "id": "Feign Death",
+  "name": "Feign Death",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, target creature gains \"When this creature dies, return it to the battlefield tapped under its owner's control with a +1/+1 counter on it.\""
+ },
+ "Nasty End": {
+  "id": "Nasty End",
+  "name": "Nasty End",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nDraw two cards. If the sacrificed creature was legendary, draw three cards instead."
+ },
+ "Dose of Dawnglow": {
+  "id": "Dose of Dawnglow",
+  "name": "Dose of Dawnglow",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield. Then if it isn't your main phase, blight 2. (Put two -1/-1 counters on a creature you control.)"
+ },
+ "Krovikan Rot": {
+  "id": "Krovikan Rot",
+  "name": "Krovikan Rot",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature with power 2 or less.\nRecover {1}{B}{B} (When a creature is put into your graveyard from the battlefield, you may pay {1}{B}{B}. If you do, return this card from your graveyard to your hand. Otherwise, exile this card.)"
+ },
+ "Extirpate": {
+  "id": "Extirpate",
+  "name": "Extirpate",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nChoose target card in a graveyard other than a basic land card. Search its owner's graveyard, hand, and library for all cards with the same name as that card and exile them. Then that player shuffles."
+ },
+ "Deathlace": {
+  "id": "Deathlace",
+  "name": "Deathlace",
+  "typeLine": "Instant",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target spell or permanent becomes black. (Mana symbols on that permanent remain unchanged.)"
+ },
+ "Early Winter": {
+  "id": "Early Winter",
+  "name": "Early Winter",
+  "typeLine": "Instant",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Exile target creature.\n• Target opponent exiles an enchantment they control."
+ },
+ "Foul-Tongue Invocation": {
+  "id": "Foul-Tongue Invocation",
+  "name": "Foul-Tongue Invocation",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, you may reveal a Dragon card from your hand.\nTarget player sacrifices a creature of their choice. If you revealed a Dragon card or controlled a Dragon as you cast this spell, you gain 4 life."
+ },
+ "Wail of War": {
+  "id": "Wail of War",
+  "name": "Wail of War",
+  "typeLine": "Instant",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Creatures target opponent controls get -1/-1 until end of turn.\n• Return up to two target creature cards from your graveyard to your hand."
+ },
+ "False Cure": {
+  "id": "False Cure",
+  "name": "False Cure",
+  "typeLine": "Instant",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, whenever a player gains life, that player loses 2 life for each 1 life they gained."
+ },
+ "Cleaver Blow": {
+  "id": "Cleaver Blow",
+  "name": "Cleaver Blow",
+  "typeLine": "Instant",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Multicleave {1} (You may pay an additional {1} any number of times as you cast this spell. For each time you do, choose a paired set of square brackets and remove the words in between.)\nDestroy target [nonblack] creature [with mana value 3 or less] [an opponent controls]. You [and its controller each] draw a card [and lose 2 life]. Create a [tapped] 1/1 white Spirit creature token with flying."
+ }
+}

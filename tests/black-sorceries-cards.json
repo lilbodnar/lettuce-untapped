@@ -1,0 +1,4845 @@
+{
+ "Mind Extraction": {
+  "id": "Mind Extraction",
+  "name": "Mind Extraction",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nTarget player reveals their hand and discards all cards of each of the sacrificed creature's colors."
+ },
+ "Sanguine Indulgence": {
+  "id": "Sanguine Indulgence",
+  "name": "Sanguine Indulgence",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {3} less to cast if you've gained 3 or more life this turn.\nReturn up to two target creature cards from your graveyard to your hand."
+ },
+ "Strategic Betrayal": {
+  "id": "Strategic Betrayal",
+  "name": "Strategic Betrayal",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent exiles a creature they control and their graveyard."
+ },
+ "Cabal Therapy": {
+  "id": "Cabal Therapy",
+  "name": "Cabal Therapy",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a nonland card name. Target player reveals their hand and discards all cards with that name.\nFlashback—Sacrifice a creature. (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "You Compleat Me": {
+  "id": "You Compleat Me",
+  "name": "You Compleat Me",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If your life total is greater than 10, it becomes 10. For the rest of the game, your maximum life total is 10. You get an emblem with \"Pay 2 life: Add one mana of any color\" and \"At the beginning of your upkeep, you draw a card and you lose 1 life.\"",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Commune with Evil": {
+  "id": "Commune with Evil",
+  "name": "Commune with Evil",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at the top four cards of your library. Put one of them into your hand and the rest into your graveyard. You gain 3 life."
+ },
+ "Macabre Reconstruction": {
+  "id": "Macabre Reconstruction",
+  "name": "Macabre Reconstruction",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {2} less to cast if a creature card was put into your graveyard from anywhere this turn.\nReturn up to two target creature cards from your graveyard to your hand."
+ },
+ "Live Fast": {
+  "id": "Live Fast",
+  "name": "Live Fast",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You draw two cards, lose 2 life, and get {E}{E} (two energy counters)."
+ },
+ "Deadly Cover-Up": {
+  "id": "Deadly Cover-Up",
+  "name": "Deadly Cover-Up",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, you may collect evidence 6.\nDestroy all creatures. If evidence was collected, exile a card from an opponent's graveyard. Then search its owner's graveyard, hand, and library for any number of cards with that name and exile them. That player shuffles, then draws a card for each card exiled from their hand this way."
+ },
+ "Traitor's Roar": {
+  "id": "Traitor's Roar",
+  "name": "Traitor's Roar",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B/R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Tap target untapped creature. It deals damage equal to its power to its controller.\nConspire (As you cast this spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose a new target for the copy.)"
+ },
+ "Strongarm Tactics": {
+  "id": "Strongarm Tactics",
+  "name": "Strongarm Tactics",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player discards a card. Then each player who didn't discard a creature card this way loses 4 life."
+ },
+ "Outbreak": {
+  "id": "Outbreak",
+  "name": "Outbreak",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may discard a Swamp card rather than pay this spell's mana cost.\nChoose a creature type. All creatures of that type get -1/-1 until end of turn."
+ },
+ "Rankle's Prank": {
+  "id": "Rankle's Prank",
+  "name": "Rankle's Prank",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one or more —\n• Each player discards two cards.\n• Each player loses 4 life.\n• Each player sacrifices two creatures of their choice."
+ },
+ "Soul Burn": {
+  "id": "Soul Burn",
+  "name": "Soul Burn",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Spend only black and/or red mana on X.\nSoul Burn deals X damage to any target. You gain life equal to the damage dealt, but not more than the amount of {B} spent on X, the player's life total before the damage was dealt, the planeswalker's loyalty before the damage was dealt, or the creature's toughness."
+ },
+ "Awaken the Erstwhile": {
+  "id": "Awaken the Erstwhile",
+  "name": "Awaken the Erstwhile",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player discards all the cards in their hand, then creates that many 2/2 black Zombie creature tokens."
+ },
+ "Flesh // Blood": {
+  "id": "Flesh // Blood",
+  "name": "Flesh // Blood",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{3}{B}{G} // {R}{G}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "Flesh: Exile target creature card from a graveyard. Put X +1/+1 counters on target creature, where X is the power of the card you exiled.\nFuse (You may cast one or both halves of this card from your hand.)\n\nBlood: Target creature you control deals damage equal to its power to any target.\nFuse (You may cast one or both halves of this card from your hand.)"
+ },
+ "Increasing Ambition": {
+  "id": "Increasing Ambition",
+  "name": "Increasing Ambition",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for a card and put that card into your hand. If this spell was cast from a graveyard, instead search your library for two cards and put those cards into your hand. Then shuffle.\nFlashback {7}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Dead Drop": {
+  "id": "Dead Drop",
+  "name": "Dead Drop",
+  "typeLine": "Sorcery",
+  "manaCost": "{9}{B}",
+  "cmc": 10,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Delve (Each card you exile from your graveyard while casting this spell pays for {1}.)\nTarget player sacrifices two creatures of their choice."
+ },
+ "Mind Drain": {
+  "id": "Mind Drain",
+  "name": "Mind Drain",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards two cards, mills a card, and loses 1 life. You gain 1 life. (To mill a card, a player puts the top card of their library into their graveyard.)"
+ },
+ "Psychotic Episode": {
+  "id": "Psychotic Episode",
+  "name": "Psychotic Episode",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand and the top card of their library. You choose a card revealed this way. That player puts the chosen card on the bottom of their library.\nMadness {1}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)"
+ },
+ "Lively Dirge": {
+  "id": "Lively Dirge",
+  "name": "Lively Dirge",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Spree (Choose one or more additional costs.)\n+ {1} — Search your library for a card, put it into your graveyard, then shuffle.\n+ {2} — Return up to two creature cards with total mana value 4 or less from your graveyard to the battlefield."
+ },
+ "Demogorgon's Clutches": {
+  "id": "Demogorgon's Clutches",
+  "name": "Demogorgon's Clutches",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards two cards, mills two cards, and loses 2 life. (To mill a card, a player puts the top card of their library into their graveyard.)"
+ },
+ "Life's Finale": {
+  "id": "Life's Finale",
+  "name": "Life's Finale",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all creatures, then search target opponent's library for up to three creature cards and put them into their graveyard. Then that player shuffles."
+ },
+ "Drill Bit": {
+  "id": "Drill Bit",
+  "name": "Drill Bit",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Spectacle {B} (You may cast this spell for its spectacle cost rather than its mana cost if an opponent lost life this turn.)\nTarget player reveals their hand. You choose a nonland card from it. That player discards that card."
+ },
+ "Rush of Dread": {
+  "id": "Rush of Dread",
+  "name": "Rush of Dread",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Spree (Choose one or more additional costs.)\n+ {1} — Target opponent sacrifices half the creatures they control of their choice, rounded up.\n+ {2} — Target opponent discards half the cards in their hand, rounded up.\n+ {2} — Target opponent loses half their life, rounded up."
+ },
+ "Neverending Torment": {
+  "id": "Neverending Torment",
+  "name": "Neverending Torment",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search target player's library for X cards, where X is the number of cards in your hand, and exile them. Then that player shuffles.\nEpic (For the rest of the game, you can't cast spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability. You may choose a new target for the copy.)"
+ },
+ "Bankrupt in Blood": {
+  "id": "Bankrupt in Blood",
+  "name": "Bankrupt in Blood",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice two creatures.\nDraw three cards."
+ },
+ "Intimidation Tactics": {
+  "id": "Intimidation Tactics",
+  "name": "Intimidation Tactics",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose an artifact or creature card from it. Exile that card.\nCycling {3} ({3}, Discard this card: Draw a card.)"
+ },
+ "Agonizing Remorse": {
+  "id": "Agonizing Remorse",
+  "name": "Agonizing Remorse",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonland card from it or a card from their graveyard. Exile that card. You lose 1 life."
+ },
+ "Unmarked Grave": {
+  "id": "Unmarked Grave",
+  "name": "Unmarked Grave",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for a nonlegendary card, put that card into your graveyard, then shuffle."
+ },
+ "Temporal Extortion": {
+  "id": "Temporal Extortion",
+  "name": "Temporal Extortion",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When you cast this spell, any player may pay half their life, rounded up. If a player does, counter Temporal Extortion.\nTake an extra turn after this one."
+ },
+ "Stench of Evil": {
+  "id": "Stench of Evil",
+  "name": "Stench of Evil",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all Plains. For each land destroyed this way, Stench of Evil deals 1 damage to that land's controller unless they pay {2}."
+ },
+ "Okiba Salvage": {
+  "id": "Okiba Salvage",
+  "name": "Okiba Salvage",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature or Vehicle card from your graveyard to the battlefield. Then put two +1/+1 counters on that permanent if you control an artifact and an enchantment."
+ },
+ "Reckoner Shakedown": {
+  "id": "Reckoner Shakedown",
+  "name": "Reckoner Shakedown",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You may choose a nonland card from it. If you do, that player discards that card. If you don't, put two +1/+1 counters on a creature or Vehicle you control."
+ },
+ "Cauldron's Gift": {
+  "id": "Cauldron's Gift",
+  "name": "Cauldron's Gift",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Adamant — If at least three black mana was spent to cast this spell, mill four cards.\nYou may choose a creature card in your graveyard. If you do, return it to the battlefield with an additional +1/+1 counter on it."
+ },
+ "Choking Miasma": {
+  "id": "Choking Miasma",
+  "name": "Choking Miasma",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {G} (You may pay an additional {G} as you cast this spell.)\nIf this spell was kicked, put a +1/+1 counter on a creature you control.\nAll creatures get -2/-2 until end of turn."
+ },
+ "Foggy Swamp Visions": {
+  "id": "Foggy Swamp Visions",
+  "name": "Foggy Swamp Visions",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, waterbend {X}. (While paying a waterbend cost, you can tap your artifacts and creatures to help. Each one pays for {1}.)\nExile X target creature cards from graveyards. For each creature card exiled this way, create a token that's a copy of it. At the beginning of your next end step, sacrifice those tokens."
+ },
+ "Extract the Truth": {
+  "id": "Extract the Truth",
+  "name": "Extract the Truth",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target opponent reveals their hand. You may choose a creature, enchantment, or planeswalker card from it. That player discards that card.\n• Target opponent sacrifices an enchantment of their choice."
+ },
+ "Pitiless Carnage": {
+  "id": "Pitiless Carnage",
+  "name": "Pitiless Carnage",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sacrifice any number of permanents you control, then draw that many cards.\nPlot {1}{B}{B} (You may pay {1}{B}{B} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)"
+ },
+ "Discerning Taste": {
+  "id": "Discerning Taste",
+  "name": "Discerning Taste",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at the top four cards of your library. Put one of them into your hand and the rest into your graveyard. You gain life equal to the greatest power among creature cards put into your graveyard this way."
+ },
+ "Tormented Thoughts": {
+  "id": "Tormented Thoughts",
+  "name": "Tormented Thoughts",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nTarget player discards a number of cards equal to the sacrificed creature's power."
+ },
+ "Plague Wind": {
+  "id": "Plague Wind",
+  "name": "Plague Wind",
+  "typeLine": "Sorcery",
+  "manaCost": "{7}{B}{B}",
+  "cmc": 9,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all creatures you don't control. They can't be regenerated."
+ },
+ "Cloudkill": {
+  "id": "Cloudkill",
+  "name": "Cloudkill",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "All creatures get -X/-X until end of turn, where X is the greatest mana value of a commander you own on the battlefield or in the command zone."
+ },
+ "Command the Dreadhorde": {
+  "id": "Command the Dreadhorde",
+  "name": "Command the Dreadhorde",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose any number of target creature and/or planeswalker cards in graveyards. Command the Dreadhorde deals damage to you equal to the total mana value of those cards. Put them onto the battlefield under your control."
+ },
+ "Stain the Mind": {
+  "id": "Stain the Mind",
+  "name": "Stain the Mind",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nChoose a nonland card name. Search target player's graveyard, hand, and library for any number of cards with that name and exile them. Then that player shuffles."
+ },
+ "Whack": {
+  "id": "Whack",
+  "name": "Whack",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {3} less to cast if it targets a white creature.\nTarget creature gets -4/-4 until end of turn."
+ },
+ "Unmask": {
+  "id": "Unmask",
+  "name": "Unmask",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may exile a black card from your hand rather than pay this spell's mana cost.\nTarget player reveals their hand. You choose a nonland card from it. That player discards that card."
+ },
+ "Assassin's Strike": {
+  "id": "Assassin's Strike",
+  "name": "Assassin's Strike",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature. Its controller discards a card."
+ },
+ "Cry of the Carnarium": {
+  "id": "Cry of the Carnarium",
+  "name": "Cry of the Carnarium",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "All creatures get -2/-2 until end of turn. Exile all creature cards in all graveyards that were put there from the battlefield this turn. If a creature would die this turn, exile it instead."
+ },
+ "Virtus's Maneuver": {
+  "id": "Virtus's Maneuver",
+  "name": "Virtus's Maneuver",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "For each player, choose friend or foe. Each friend returns a creature card from their graveyard to their hand. Each foe sacrifices a creature of their choice."
+ },
+ "Rhystic Tutor": {
+  "id": "Rhystic Tutor",
+  "name": "Rhystic Tutor",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Unless any player pays {2}, search your library for a card, put that card into your hand, then shuffle."
+ },
+ "Villainous Wrath": {
+  "id": "Villainous Wrath",
+  "name": "Villainous Wrath",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent loses life equal to the number of creatures they control. Then destroy all creatures."
+ },
+ "Memory Theft": {
+  "id": "Memory Theft",
+  "name": "Memory Theft",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonland card from it. That player discards that card. You may put a card that has an Adventure that player owns from exile into that player's graveyard."
+ },
+ "Fateful Handoff": {
+  "id": "Fateful Handoff",
+  "name": "Fateful Handoff",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Draw cards equal to the mana value of target artifact or creature you control. An opponent gains control of that permanent."
+ },
+ "Extrapolate the Impossible": {
+  "id": "Extrapolate the Impossible",
+  "name": "Extrapolate the Impossible",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may reveal exactly two cards you own with different names from outside the game. An opponent chooses one of them. You put that card into your hand."
+ },
+ "Peer into the Abyss": {
+  "id": "Peer into the Abyss",
+  "name": "Peer into the Abyss",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player draws cards equal to half the number of cards in their library and loses half their life. Round up each time."
+ },
+ "Mage Hunters' Onslaught": {
+  "id": "Mage Hunters' Onslaught",
+  "name": "Mage Hunters' Onslaught",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature or planeswalker.\nWhenever a creature blocks this turn, its controller loses 1 life."
+ },
+ "Collective Brutality": {
+  "id": "Collective Brutality",
+  "name": "Collective Brutality",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Escalate—Discard a card. (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Target opponent reveals their hand. You choose an instant or sorcery card from it. That player discards that card.\n• Target creature gets -2/-2 until end of turn.\n• Target opponent loses 2 life and you gain 2 life."
+ },
+ "Break the Ice": {
+  "id": "Break the Ice",
+  "name": "Break the Ice",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target land that is snow or could produce {C}.\nOverload {4}{B}{B} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")"
+ },
+ "Kaito's Pursuit": {
+  "id": "Kaito's Pursuit",
+  "name": "Kaito's Pursuit",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards. Ninjas and Rogues you control gain menace until end of turn. (They can't be blocked except by two or more creatures.)"
+ },
+ "Repay in Kind": {
+  "id": "Repay in Kind",
+  "name": "Repay in Kind",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player's life total becomes the lowest life total among all players."
+ },
+ "Allure of the Unknown": {
+  "id": "Allure of the Unknown",
+  "name": "Allure of the Unknown",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Reveal the top six cards of your library. An opponent exiles a nonland card from among them, then you put the rest into your hand. That opponent may cast the exiled card without paying its mana cost."
+ },
+ "Call from the Grave": {
+  "id": "Call from the Grave",
+  "name": "Call from the Grave",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Put a random creature from a random graveyard into play under your control. Call from the Grave deals to you an amount of damage equal to that creature's casting cost."
+ },
+ "Severed Strands": {
+  "id": "Severed Strands",
+  "name": "Severed Strands",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nYou gain life equal to the sacrificed creature's toughness. Destroy target creature an opponent controls."
+ },
+ "Evil Reawakened": {
+  "id": "Evil Reawakened",
+  "name": "Evil Reawakened",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield with two additional +1/+1 counters on it."
+ },
+ "Mind Shatter": {
+  "id": "Mind Shatter",
+  "name": "Mind Shatter",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards X cards at random."
+ },
+ "Reprocess": {
+  "id": "Reprocess",
+  "name": "Reprocess",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sacrifice any number of artifacts, creatures, and/or lands. Draw a card for each permanent sacrificed this way."
+ },
+ "Hypnotic Cloud": {
+  "id": "Hypnotic Cloud",
+  "name": "Hypnotic Cloud",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {4} (You may pay an additional {4} as you cast this spell.)\nTarget player discards a card. If this spell was kicked, that player discards three cards instead."
+ },
+ "Painful Memories": {
+  "id": "Painful Memories",
+  "name": "Painful Memories",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at target opponent's hand and choose a card from it. Put that card on top of that player's library."
+ },
+ "Coiling Rebirth": {
+  "id": "Coiling Rebirth",
+  "name": "Coiling Rebirth",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nReturn target creature card from your graveyard to the battlefield. Then if the gift was promised and that creature isn't legendary, create a token that's a copy of that creature, except it's 1/1."
+ },
+ "Eriette's Whisper": {
+  "id": "Eriette's Whisper",
+  "name": "Eriette's Whisper",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards two cards. Create a Wicked Role token attached to up to one target creature you control. (If you control another Role on it, put that one into the graveyard. Enchanted creature gets +1/+1. When this token is put into a graveyard, each opponent loses 1 life.)"
+ },
+ "Tyrannize": {
+  "id": "Tyrannize",
+  "name": "Tyrannize",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B/R}{B/R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Target player discards their hand unless they pay 7 life."
+ },
+ "Eldritch Pact": {
+  "id": "Eldritch Pact",
+  "name": "Eldritch Pact",
+  "typeLine": "Sorcery",
+  "manaCost": "{6}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player draws X cards and loses X life, where X is the number of cards in their graveyard."
+ },
+ "Psychic Spear": {
+  "id": "Psychic Spear",
+  "name": "Psychic Spear",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose a Spirit or Arcane card from it. That player discards that card."
+ },
+ "Resounding Scream": {
+  "id": "Resounding Scream",
+  "name": "Resounding Scream",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards a card at random.\nCycling {5}{U}{B}{R} ({5}{U}{B}{R}, Discard this card: Draw a card.)\nWhen you cycle this card, target player discards two cards at random."
+ },
+ "Self-Inflicted Wound": {
+  "id": "Self-Inflicted Wound",
+  "name": "Self-Inflicted Wound",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent sacrifices a green or white creature of their choice. If that player does, they lose 2 life."
+ },
+ "Monomania": {
+  "id": "Monomania",
+  "name": "Monomania",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player chooses a card in their hand and discards the rest."
+ },
+ "Dead Reckoning": {
+  "id": "Dead Reckoning",
+  "name": "Dead Reckoning",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may put target creature card from your graveyard on top of your library. If you do, Dead Reckoning deals damage equal to that card's power to target creature."
+ },
+ "Talara's Bane": {
+  "id": "Talara's Bane",
+  "name": "Talara's Bane",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a green or white creature card from it. You gain life equal to that creature card's toughness, then that player discards that card."
+ },
+ "Come Back Wrong": {
+  "id": "Come Back Wrong",
+  "name": "Come Back Wrong",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature. If a creature card is put into a graveyard this way, return it to the battlefield under your control. Sacrifice it at the beginning of your next end step."
+ },
+ "Gloomlance": {
+  "id": "Gloomlance",
+  "name": "Gloomlance",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature. If that creature was green or white, its controller discards a card."
+ },
+ "Rebuild the City": {
+  "id": "Rebuild the City",
+  "name": "Rebuild the City",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{R}{G}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "Choose target land. Create three tokens that are copies of it, except they're 3/3 creatures in addition to their other types and they have vigilance and menace. (They're affected by summoning sickness.)"
+ },
+ "Fill with Fright": {
+  "id": "Fill with Fright",
+  "name": "Fill with Fright",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards. Scry 2. (Look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)"
+ },
+ "Agonizing Memories": {
+  "id": "Agonizing Memories",
+  "name": "Agonizing Memories",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at target player's hand and choose two cards from it. Put them on top of that player's library in any order."
+ },
+ "Cry of Contrition": {
+  "id": "Cry of Contrition",
+  "name": "Cry of Contrition",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards a card.\nHaunt (When this spell card is put into a graveyard after resolving, exile it haunting target creature.)\nWhen the creature this card haunts dies, target player discards a card."
+ },
+ "Dusk's Landing": {
+  "id": "Dusk's Landing",
+  "name": "Dusk's Landing",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Draw a card. If an opponent lost life this turn and you gained life this turn, seek two Vampire cards instead."
+ },
+ "Edgar's Awakening": {
+  "id": "Edgar's Awakening",
+  "name": "Edgar's Awakening",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield.\nWhen you discard this card, you may pay {B}. When you do, return target creature card from your graveyard to your hand."
+ },
+ "Poison the Waters": {
+  "id": "Poison the Waters",
+  "name": "Poison the Waters",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• All creatures get -1/-1 until end of turn.\n• Target player reveals their hand. You choose an artifact or creature card from it. That player discards that card."
+ },
+ "Blackmail": {
+  "id": "Blackmail",
+  "name": "Blackmail",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals three cards from their hand and you choose one of them. That player discards that card."
+ },
+ "Settle the Score": {
+  "id": "Settle the Score",
+  "name": "Settle the Score",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target creature. Put two loyalty counters on a planeswalker you control."
+ },
+ "Necromantic Summons": {
+  "id": "Necromantic Summons",
+  "name": "Necromantic Summons",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Put target creature card from a graveyard onto the battlefield under your control.\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, that creature enters with two additional +1/+1 counters on it."
+ },
+ "Desperate Research": {
+  "id": "Desperate Research",
+  "name": "Desperate Research",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a card name other than a basic land card name. Reveal the top seven cards of your library and put all of them with that name into your hand. Exile the rest."
+ },
+ "Bleeding Edge": {
+  "id": "Bleeding Edge",
+  "name": "Bleeding Edge",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Up to one target creature gets -2/-2 until end of turn. Amass Zombies 2. (Put two +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)"
+ },
+ "Torment of Hailfire": {
+  "id": "Torment of Hailfire",
+  "name": "Torment of Hailfire",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Repeat the following process X times. Each opponent loses 3 life unless that player sacrifices a nonland permanent of their choice or discards a card."
+ },
+ "Harsh Scrutiny": {
+  "id": "Harsh Scrutiny",
+  "name": "Harsh Scrutiny",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a creature card from it. That player discards that card. Scry 1."
+ },
+ "Last Rites": {
+  "id": "Last Rites",
+  "name": "Last Rites",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Discard any number of cards. Target player reveals their hand, then you choose a nonland card from it for each card discarded this way. That player discards those cards."
+ },
+ "Solve for Disappointment": {
+  "id": "Solve for Disappointment",
+  "name": "Solve for Disappointment",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonland permanent card from it. That player discards that card.\nEmpower Jace 1. (Put a loyalty counter on a Jace token you control. If you don't control one, first create a blue Jace planeswalker token with \"[−1]: Surveil 1\" and \"[−3]: Draw a card.\")"
+ },
+ "Rite of Consumption": {
+  "id": "Rite of Consumption",
+  "name": "Rite of Consumption",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nRite of Consumption deals damage equal to the sacrificed creature's power to target player or planeswalker. You gain life equal to the damage dealt this way."
+ },
+ "Rats' Feast": {
+  "id": "Rats' Feast",
+  "name": "Rats' Feast",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile X target cards from a single graveyard."
+ },
+ "Deadly Embrace": {
+  "id": "Deadly Embrace",
+  "name": "Deadly Embrace",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature an opponent controls. Then draw a card for each creature that died this turn."
+ },
+ "Cranial Extraction": {
+  "id": "Cranial Extraction",
+  "name": "Cranial Extraction",
+  "typeLine": "Sorcery — Arcane",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a nonland card name. Search target player's graveyard, hand, and library for all cards with that name and exile them. Then that player shuffles."
+ },
+ "Duress": {
+  "id": "Duress",
+  "name": "Duress",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a noncreature, nonland card from it. That player discards that card."
+ },
+ "Soul Exchange": {
+  "id": "Soul Exchange",
+  "name": "Soul Exchange",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, exile a creature you control.\nReturn target creature card from your graveyard to the battlefield. Put a +2/+2 counter on that creature if the exiled creature was a Thrull."
+ },
+ "Horrifying Revelation": {
+  "id": "Horrifying Revelation",
+  "name": "Horrifying Revelation",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards a card, then mills a card."
+ },
+ "Fatal Grudge": {
+  "id": "Fatal Grudge",
+  "name": "Fatal Grudge",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a nonland permanent.\nEach opponent chooses a permanent they control that shares a card type with the sacrificed permanent and sacrifices it.\nDraw a card."
+ },
+ "Addle": {
+  "id": "Addle",
+  "name": "Addle",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a color. Target player reveals their hand and you choose a card of that color from it. That player discards that card."
+ },
+ "Pumpkin Bombardment": {
+  "id": "Pumpkin Bombardment",
+  "name": "Pumpkin Bombardment",
+  "typeLine": "Sorcery",
+  "manaCost": "{B/R}",
+  "cmc": 1,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "As an additional cost to cast this spell, discard a card or pay {2}.\nPumpkin Bombardment deals 3 damage to target creature."
+ },
+ "Cabal Conditioning": {
+  "id": "Cabal Conditioning",
+  "name": "Cabal Conditioning",
+  "typeLine": "Sorcery",
+  "manaCost": "{6}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Any number of target players each discard a number of cards equal to the greatest mana value among permanents you control."
+ },
+ "Tombfire": {
+  "id": "Tombfire",
+  "name": "Tombfire",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player exiles all cards with flashback from their graveyard."
+ },
+ "Midnight Ritual": {
+  "id": "Midnight Ritual",
+  "name": "Midnight Ritual",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile X target creature cards from your graveyard. For each creature card exiled this way, create a 2/2 black Zombie creature token."
+ },
+ "Inquisition of Kozilek": {
+  "id": "Inquisition of Kozilek",
+  "name": "Inquisition of Kozilek",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose a nonland card from it with mana value 3 or less. That player discards that card."
+ },
+ "Widespread Brutality": {
+  "id": "Widespread Brutality",
+  "name": "Widespread Brutality",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{R}{R}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Amass Zombies 2, then the Army you amassed deals damage equal to its power to each non-Army creature. (To amass Zombies 2, put two +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)"
+ },
+ "Splitting Headache": {
+  "id": "Splitting Headache",
+  "name": "Splitting Headache",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target player discards two cards.\n• Target player reveals their hand. You choose a card from it. That player discards that card."
+ },
+ "Haunting Echoes": {
+  "id": "Haunting Echoes",
+  "name": "Haunting Echoes",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile all cards from target player's graveyard other than basic land cards. For each card exiled this way, search that player's library for all cards with the same name as that card and exile them. Then that player shuffles."
+ },
+ "Fraying Omnipotence": {
+  "id": "Fraying Omnipotence",
+  "name": "Fraying Omnipotence",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player loses half their life, then discards half the cards in their hand, then sacrifices half the creatures they control of their choice. Round up each time."
+ },
+ "Tendrils of Despair": {
+  "id": "Tendrils of Despair",
+  "name": "Tendrils of Despair",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nTarget opponent discards two cards."
+ },
+ "Choking Sands": {
+  "id": "Choking Sands",
+  "name": "Choking Sands",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target non-Swamp land. If that land was nonbasic, Choking Sands deals 2 damage to the land's controller."
+ },
+ "Infinite Obliteration": {
+  "id": "Infinite Obliteration",
+  "name": "Infinite Obliteration",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a creature card name. Search target opponent's graveyard, hand, and library for any number of cards with that name and exile them. Then that player shuffles."
+ },
+ "Bubbling Muck": {
+  "id": "Bubbling Muck",
+  "name": "Bubbling Muck",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, whenever a player taps a Swamp for mana, that player adds an additional {B}.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Rise of the Witch-king": {
+  "id": "Rise of the Witch-king",
+  "name": "Rise of the Witch-king",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Each player sacrifices a creature of their choice. If you sacrificed a creature this way, you may return another permanent card from your graveyard to the battlefield."
+ },
+ "Desecrated Earth": {
+  "id": "Desecrated Earth",
+  "name": "Desecrated Earth",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target land. Its controller discards a card."
+ },
+ "Psychic Whorl": {
+  "id": "Psychic Whorl",
+  "name": "Psychic Whorl",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards two cards. Then if you control a Rat, surveil 2. (Look at the top two cards of your library, then put any number of them into your graveyard and the rest on top of your library in any order.)"
+ },
+ "Mire's Toll": {
+  "id": "Mire's Toll",
+  "name": "Mire's Toll",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals a number of cards from their hand equal to the number of Swamps you control. You choose one of them. That player discards that card."
+ },
+ "Nightmare Incursion": {
+  "id": "Nightmare Incursion",
+  "name": "Nightmare Incursion",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search target player's library for up to X cards, where X is the number of Swamps you control, and exile them. Then that player shuffles."
+ },
+ "Torrent of Souls": {
+  "id": "Torrent of Souls",
+  "name": "Torrent of Souls",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B/R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Return up to one target creature card from your graveyard to the battlefield if {B} was spent to cast this spell. Creatures target player controls get +2/+0 and gain haste until end of turn if {R} was spent to cast this spell. (Do both if {B}{R} was spent.)"
+ },
+ "Auntie's Sentence": {
+  "id": "Auntie's Sentence",
+  "name": "Auntie's Sentence",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target opponent reveals their hand. You choose a nonland permanent card from it. That player discards that card.\n• Target creature gets -2/-2 until end of turn."
+ },
+ "Check for Traps": {
+  "id": "Check for Traps",
+  "name": "Check for Traps",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonland card from it. Exile that card. If an instant card or a card with flash is exiled this way, they lose 1 life. Otherwise, you lose 1 life."
+ },
+ "Bloodchief's Thirst": {
+  "id": "Bloodchief's Thirst",
+  "name": "Bloodchief's Thirst",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {2}{B} (You may pay an additional {2}{B} as you cast this spell.)\nDestroy target creature or planeswalker with mana value 2 or less. If this spell was kicked, instead destroy target creature or planeswalker."
+ },
+ "Decode Transmissions": {
+  "id": "Decode Transmissions",
+  "name": "Decode Transmissions",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You draw two cards and lose 2 life.\nVoid — If a nonland permanent left the battlefield this turn or a spell was warped this turn, instead you draw two cards and each opponent loses 2 life."
+ },
+ "Remorseless Punishment": {
+  "id": "Remorseless Punishment",
+  "name": "Remorseless Punishment",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent loses 5 life unless that player discards two cards or sacrifices a creature or planeswalker of their choice. Repeat this process once."
+ },
+ "Pain // Suffering": {
+  "id": "Pain // Suffering",
+  "name": "Pain // Suffering",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{B} // {3}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Pain: Target player discards a card.\n\nSuffering: Destroy target land."
+ },
+ "Infernal Contract": {
+  "id": "Infernal Contract",
+  "name": "Infernal Contract",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Draw four cards. You lose half your life, rounded up."
+ },
+ "Ostracize": {
+  "id": "Ostracize",
+  "name": "Ostracize",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a creature card from it. That player discards that card."
+ },
+ "Psychic Miasma": {
+  "id": "Psychic Miasma",
+  "name": "Psychic Miasma",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards a card. If a land card is discarded this way, return Psychic Miasma to its owner's hand."
+ },
+ "Pain's Reward": {
+  "id": "Pain's Reward",
+  "name": "Pain's Reward",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player may bid life. You start the bidding with a bid of any number. In turn order, each player may top the high bid. The bidding ends if the high bid stands. The high bidder loses life equal to the high bid and draws four cards."
+ },
+ "Wrench Mind": {
+  "id": "Wrench Mind",
+  "name": "Wrench Mind",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards unless they discard an artifact card."
+ },
+ "Empty the Catacombs": {
+  "id": "Empty the Catacombs",
+  "name": "Empty the Catacombs",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player returns all creature cards from their graveyard to their hand."
+ },
+ "Lost Hours": {
+  "id": "Lost Hours",
+  "name": "Lost Hours",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose a nonland card from it. That player puts that card into their library third from the top."
+ },
+ "Lethal Throwdown": {
+  "id": "Lethal Throwdown",
+  "name": "Lethal Throwdown",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature or sacrifice a modified creature. (Equipment, Auras you control, and counters are modifications.)\nDestroy target creature or planeswalker. If the modified creature was sacrificed, draw a card."
+ },
+ "Mind Swords": {
+  "id": "Mind Swords",
+  "name": "Mind Swords",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If you control a Swamp, you may sacrifice a creature rather than pay this spell's mana cost.\nEach player exiles two cards from their hand."
+ },
+ "Forbidden Ritual": {
+  "id": "Forbidden Ritual",
+  "name": "Forbidden Ritual",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sacrifice a nontoken permanent. If you do, target opponent loses 2 life unless that player sacrifices a permanent of their choice or discards a card. You may repeat this process any number of times."
+ },
+ "Die Young": {
+  "id": "Die Young",
+  "name": "Die Young",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose target creature. You get {E}{E} (two energy counters), then you may pay any amount of {E}. The creature gets -1/-1 until end of turn for each {E} paid this way."
+ },
+ "Final Strike": {
+  "id": "Final Strike",
+  "name": "Final Strike",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nFinal Strike deals damage to target opponent or planeswalker equal to the sacrificed creature's power."
+ },
+ "Hint of Insanity": {
+  "id": "Hint of Insanity",
+  "name": "Hint of Insanity",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. That player discards all nonland cards with the same name as another card in their hand."
+ },
+ "Shadow of the Enemy": {
+  "id": "Shadow of the Enemy",
+  "name": "Shadow of the Enemy",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile all creature cards from target player's graveyard. You may cast spells from among those cards for as long as they remain exiled, and mana of any type can be spent to cast them."
+ },
+ "Choice of Damnations": {
+  "id": "Choice of Damnations",
+  "name": "Choice of Damnations",
+  "typeLine": "Sorcery — Arcane",
+  "manaCost": "{5}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent chooses a number. You may have that player lose that much life. If you don't, that player sacrifices all but that many permanents of their choice."
+ },
+ "Mind Warp": {
+  "id": "Mind Warp",
+  "name": "Mind Warp",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at target player's hand and choose X cards from it. That player discards those cards."
+ },
+ "Rakdos's Return": {
+  "id": "Rakdos's Return",
+  "name": "Rakdos's Return",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Rakdos's Return deals X damage to target opponent or planeswalker. That player or that planeswalker's controller discards X cards."
+ },
+ "Lost Legacy": {
+  "id": "Lost Legacy",
+  "name": "Lost Legacy",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a nonartifact, nonland card name. Search target player's graveyard, hand, and library for any number of cards with that name and exile them. That player shuffles, then draws a card for each card exiled from their hand this way."
+ },
+ "Pox": {
+  "id": "Pox",
+  "name": "Pox",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player loses a third of their life, then discards a third of the cards in their hand, then sacrifices a third of the creatures they control of their choice, then sacrifices a third of the lands they control of their choice. Round up each time."
+ },
+ "Petty Larceny": {
+  "id": "Petty Larceny",
+  "name": "Petty Larceny",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Freerunning {1}{B} (You may cast this spell for its freerunning cost if you dealt combat damage to a player this turn with an Assassin or commander.)\nLook at the top two cards of target opponent's library and exile those cards face down. You may play those cards for as long as they remain exiled, and mana of any type can be spent to cast them. Create a Treasure token."
+ },
+ "Dai Li Indoctrination": {
+  "id": "Dai Li Indoctrination",
+  "name": "Dai Li Indoctrination",
+  "typeLine": "Sorcery — Lesson",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target opponent reveals their hand. You choose a nonland permanent card from it. That player discards that card.\n• Earthbend 2. (Target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped.)"
+ },
+ "Vicious Rumors": {
+  "id": "Vicious Rumors",
+  "name": "Vicious Rumors",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Vicious Rumors deals 1 damage to each opponent. Each opponent discards a card, then mills a card. You gain 1 life."
+ },
+ "Coveted Prize": {
+  "id": "Coveted Prize",
+  "name": "Coveted Prize",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {1} less to cast for each creature in your party. (Your party consists of up to one each of Cleric, Rogue, Warrior, and Wizard.)\nSearch your library for a card, put it into your hand, then shuffle. If you have a full party, you may cast a spell with mana value 4 or less from your hand without paying its mana cost."
+ },
+ "Agadeem's Awakening // Agadeem, the Undercrypt": {
+  "id": "Agadeem's Awakening // Agadeem, the Undercrypt",
+  "name": "Agadeem's Awakening // Agadeem, the Undercrypt",
+  "typeLine": "Sorcery // Land",
+  "manaCost": "{X}{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Agadeem's Awakening: Return from your graveyard to the battlefield any number of target creature cards that each have a different mana value X or less.\n\nAgadeem, the Undercrypt: As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {B}.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Drown in Filth": {
+  "id": "Drown in Filth",
+  "name": "Drown in Filth",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{G}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Choose target creature. Mill four cards, then that creature gets -1/-1 until end of turn for each land card in your graveyard."
+ },
+ "Morbid Curiosity": {
+  "id": "Morbid Curiosity",
+  "name": "Morbid Curiosity",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nDraw cards equal to the mana value of the sacrificed permanent."
+ },
+ "Malicious Eclipse": {
+  "id": "Malicious Eclipse",
+  "name": "Malicious Eclipse",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "All creatures get -2/-2 until end of turn. If a creature an opponent controls would die this turn, exile it instead."
+ },
+ "Struggle for Sanity": {
+  "id": "Struggle for Sanity",
+  "name": "Struggle for Sanity",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. That player exiles a card from it, then you exile a card from it. Repeat this process until all cards in that hand have been exiled. That player returns the cards they exiled this way to their hand and puts the rest into their graveyard."
+ },
+ "Thought Hemorrhage": {
+  "id": "Thought Hemorrhage",
+  "name": "Thought Hemorrhage",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{R}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Choose a nonland card name. Target player reveals their hand. Thought Hemorrhage deals 3 damage to that player for each card with the chosen name revealed this way. Search that player's graveyard, hand, and library for all cards with that name and exile them. Then that player shuffles."
+ },
+ "Mind Roots": {
+  "id": "Mind Roots",
+  "name": "Mind Roots",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Target player discards two cards. Put up to one land card discarded this way onto the battlefield tapped under your control."
+ },
+ "Temporal Intervention": {
+  "id": "Temporal Intervention",
+  "name": "Temporal Intervention",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Void — This spell costs {2} less to cast if a nonland permanent left the battlefield this turn or a spell was warped this turn.\nTarget opponent reveals their hand. You choose a nonland card from it. That player discards that card."
+ },
+ "Thought Distortion": {
+  "id": "Thought Distortion",
+  "name": "Thought Distortion",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell can't be countered.\nTarget opponent reveals their hand. Exile all noncreature, nonland cards from that player's hand and graveyard."
+ },
+ "Phantasmal Extraction": {
+  "id": "Phantasmal Extraction",
+  "name": "Phantasmal Extraction",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If you weren't the starting player, this spell costs {1} less to cast.\nTarget opponent reveals each nonland card in their hand with mana value 4 or less. Choose a card revealed this way or a card in their graveyard. Exile that card."
+ },
+ "Go Blank": {
+  "id": "Go Blank",
+  "name": "Go Blank",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards. Then exile that player's graveyard."
+ },
+ "Return of the Nightstalkers": {
+  "id": "Return of the Nightstalkers",
+  "name": "Return of the Nightstalkers",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return all Nightstalker permanent cards from your graveyard to the battlefield. Then destroy all Swamps you control."
+ },
+ "Mordor on the March": {
+  "id": "Mordor on the March",
+  "name": "Mordor on the March",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Exile a creature card from your graveyard. Create a token that's a copy of it. It gains haste until end of turn. Exile it at the beginning of the next end step.\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)"
+ },
+ "Stinging Vitriol": {
+  "id": "Stinging Vitriol",
+  "name": "Stinging Vitriol",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Stinging Vitriol deals 2 damage to target opponent. That player reveals their hand. You choose a nonland card from it. They discard that card."
+ },
+ "Bond of Revival": {
+  "id": "Bond of Revival",
+  "name": "Bond of Revival",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield. It gains haste until your next turn."
+ },
+ "Scarring Memories": {
+  "id": "Scarring Memories",
+  "name": "Scarring Memories",
+  "typeLine": "Sorcery — Lesson",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may cast this spell as though it had flash if you control an attacking legendary creature.\nTarget opponent sacrifices a creature of their choice, discards a card, and loses 3 life."
+ },
+ "Din of the Fireherd": {
+  "id": "Din of the Fireherd",
+  "name": "Din of the Fireherd",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B/R}{B/R}{B/R}",
+  "cmc": 8,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Create a 5/5 black and red Elemental creature token. Target opponent sacrifices a creature of their choice for each black creature you control, then sacrifices a land of their choice for each red creature you control."
+ },
+ "Demonic Attorney": {
+  "id": "Demonic Attorney",
+  "name": "Demonic Attorney",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Remove this card from your deck before playing if you're not playing for ante.\nEach player antes the top card of their library."
+ },
+ "Inside Information": {
+  "id": "Inside Information",
+  "name": "Inside Information",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile the top X cards of target opponent's library. You may play those cards this turn. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost."
+ },
+ "Minion Missile": {
+  "id": "Minion Missile",
+  "name": "Minion Missile",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature or discard a card.\nDestroy target creature. Minion Missile deals 2 damage to that creature's controller."
+ },
+ "Head Games": {
+  "id": "Head Games",
+  "name": "Head Games",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent puts the cards from their hand on top of their library. Search that player's library for that many cards. The player puts those cards into their hand, then shuffles."
+ },
+ "Persecute": {
+  "id": "Persecute",
+  "name": "Persecute",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a color. Target player reveals their hand and discards all cards of that color."
+ },
+ "Blood Beckoning": {
+  "id": "Blood Beckoning",
+  "name": "Blood Beckoning",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {3} (You may pay an additional {3} as you cast this spell.)\nReturn target creature card from your graveyard to your hand. If this spell was kicked, instead return two target creature cards from your graveyard to your hand."
+ },
+ "Reign of Terror": {
+  "id": "Reign of Terror",
+  "name": "Reign of Terror",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all green creatures or all white creatures. They can't be regenerated. You lose 2 life for each creature that died this way."
+ },
+ "Death Cloud": {
+  "id": "Death Cloud",
+  "name": "Death Cloud",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player loses X life, discards X cards, sacrifices X creatures of their choice, then sacrifices X lands of their choice."
+ },
+ "Cruel Alliance": {
+  "id": "Cruel Alliance",
+  "name": "Cruel Alliance",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Teamwork 2 (As an additional cost to cast this spell, you may tap any number of creatures you control with total power 2 or more.)\nExile target creature with mana value 3 or less. If this spell was cast using teamwork, instead exile target creature and you gain 3 life."
+ },
+ "Infernal Tutor": {
+  "id": "Infernal Tutor",
+  "name": "Infernal Tutor",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Reveal a card from your hand. Search your library for a card with the same name as that card, reveal it, put it into your hand, then shuffle.\nHellbent — If you have no cards in hand, instead search your library for a card, put it into your hand, then shuffle."
+ },
+ "Cornered by Black Mages": {
+  "id": "Cornered by Black Mages",
+  "name": "Cornered by Black Mages",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent sacrifices a creature of their choice.\nCreate a 0/1 black Wizard creature token with \"Whenever you cast a noncreature spell, this token deals 1 damage to each opponent.\""
+ },
+ "Killing Wave": {
+  "id": "Killing Wave",
+  "name": "Killing Wave",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "For each creature, its controller sacrifices it unless they pay X life."
+ },
+ "Mastermind's Acquisition": {
+  "id": "Mastermind's Acquisition",
+  "name": "Mastermind's Acquisition",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Search your library for a card, put it into your hand, then shuffle.\n• Put a card you own from outside the game into your hand."
+ },
+ "Dread Charge": {
+  "id": "Dread Charge",
+  "name": "Dread Charge",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Black creatures you control can't be blocked this turn except by black creatures."
+ },
+ "Aphetto Dredging": {
+  "id": "Aphetto Dredging",
+  "name": "Aphetto Dredging",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return up to three target creature cards of the creature type of your choice from your graveyard to your hand."
+ },
+ "Blasphemous Edict": {
+  "id": "Blasphemous Edict",
+  "name": "Blasphemous Edict",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may pay {B} rather than pay this spell's mana cost if there are thirteen or more creatures on the battlefield.\nEach player sacrifices thirteen creatures of their choice."
+ },
+ "Praetor's Grasp": {
+  "id": "Praetor's Grasp",
+  "name": "Praetor's Grasp",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search target opponent's library for a card and exile it face down. Then that player shuffles. You may play that card for as long as it remains exiled."
+ },
+ "Night Terrors": {
+  "id": "Night Terrors",
+  "name": "Night Terrors",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose a nonland card from it. Exile that card."
+ },
+ "Vigor Mortis": {
+  "id": "Vigor Mortis",
+  "name": "Vigor Mortis",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield. If {G} was spent to cast this spell, that creature enters with an additional +1/+1 counter on it."
+ },
+ "Scheming Symmetry": {
+  "id": "Scheming Symmetry",
+  "name": "Scheming Symmetry",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose two target players. Each of them searches their library for a card, then shuffles and puts that card on top."
+ },
+ "Feast of Flesh": {
+  "id": "Feast of Flesh",
+  "name": "Feast of Flesh",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Feast of Flesh deals X damage to target creature and you gain X life, where X is 1 plus the number of cards named Feast of Flesh in all graveyards."
+ },
+ "Behold the Sinister Six!": {
+  "id": "Behold the Sinister Six!",
+  "name": "Behold the Sinister Six!",
+  "typeLine": "Sorcery",
+  "manaCost": "{6}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return up to six target creature cards with different names from your graveyard to the battlefield."
+ },
+ "Glistening Deluge": {
+  "id": "Glistening Deluge",
+  "name": "Glistening Deluge",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "All creatures get -1/-1 until end of turn. Creatures that are green and/or white get an additional -2/-2 until end of turn."
+ },
+ "Demonic Counsel": {
+  "id": "Demonic Counsel",
+  "name": "Demonic Counsel",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for a Demon card, reveal it, put it into your hand, then shuffle.\nDelirium — If there are four or more card types among cards in your graveyard, instead search your library for any card, put it into your hand, then shuffle."
+ },
+ "Doomsday": {
+  "id": "Doomsday",
+  "name": "Doomsday",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library and graveyard for five cards and exile the rest. Put the chosen cards on top of your library in any order. You lose half your life, rounded up."
+ },
+ "Sickening Dreams": {
+  "id": "Sickening Dreams",
+  "name": "Sickening Dreams",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, discard X cards.\nSickening Dreams deals X damage to each creature and each player."
+ },
+ "Tourach's Canticle": {
+  "id": "Tourach's Canticle",
+  "name": "Tourach's Canticle",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a card from it. That player discards that card, then discards a card at random."
+ },
+ "Delirium Skeins": {
+  "id": "Delirium Skeins",
+  "name": "Delirium Skeins",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player discards three cards."
+ },
+ "Final Punishment": {
+  "id": "Final Punishment",
+  "name": "Final Punishment",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player loses life equal to the damage already dealt to that player this turn."
+ },
+ "Darkpact": {
+  "id": "Darkpact",
+  "name": "Darkpact",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Remove this card from your deck before playing if you're not playing for ante.\nYou own target card in the ante. Exchange that card with the top card of your library."
+ },
+ "Liliana's Spoils": {
+  "id": "Liliana's Spoils",
+  "name": "Liliana's Spoils",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards a card.\nLook at the top five cards of your library. You may reveal a black card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+ },
+ "Funeral Rites": {
+  "id": "Funeral Rites",
+  "name": "Funeral Rites",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You draw two cards, lose 2 life, then mill two cards."
+ },
+ "Eradicate": {
+  "id": "Eradicate",
+  "name": "Eradicate",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target nonblack creature. Search its controller's graveyard, hand, and library for all cards with the same name as that creature and exile them. Then that player shuffles."
+ },
+ "Quag Feast": {
+  "id": "Quag Feast",
+  "name": "Quag Feast",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose target creature, planeswalker, or Vehicle. Mill two cards, then destroy the chosen permanent if its mana value is less than or equal to the number of cards in your graveyard."
+ },
+ "Wake to Slaughter": {
+  "id": "Wake to Slaughter",
+  "name": "Wake to Slaughter",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Choose up to two target creature cards in your graveyard. An opponent chooses one of them. Return that card to your hand. Return the other to the battlefield under your control. It gains haste. Exile it at the beginning of the next end step.\nFlashback {4}{B}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Mind Twist": {
+  "id": "Mind Twist",
+  "name": "Mind Twist",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards X cards at random."
+ },
+ "Destroy the Evidence": {
+  "id": "Destroy the Evidence",
+  "name": "Destroy the Evidence",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target land. Its controller reveals cards from the top of their library until they reveal a land card, then puts those cards into their graveyard."
+ },
+ "Cruelclaw's Heist": {
+  "id": "Cruelclaw's Heist",
+  "name": "Cruelclaw's Heist",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nTarget opponent reveals their hand. You choose a nonland card from it. Exile that card. If the gift was promised, you may cast that card for as long as it remains exiled, and mana of any type can be spent to cast it."
+ },
+ "Witch's Vengeance": {
+  "id": "Witch's Vengeance",
+  "name": "Witch's Vengeance",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Creatures of the creature type of your choice get -3/-3 until end of turn."
+ },
+ "Distress": {
+  "id": "Distress",
+  "name": "Distress",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose a nonland card from it. That player discards that card."
+ },
+ "Smallpox": {
+  "id": "Smallpox",
+  "name": "Smallpox",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player loses 1 life, discards a card, sacrifices a creature of their choice, then sacrifices a land of their choice."
+ },
+ "Kaervek's Hex": {
+  "id": "Kaervek's Hex",
+  "name": "Kaervek's Hex",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kaervek's Hex deals 1 damage to each nonblack creature and an additional 1 damage to each green creature."
+ },
+ "Liliana's Defeat": {
+  "id": "Liliana's Defeat",
+  "name": "Liliana's Defeat",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target black creature or black planeswalker. If that permanent was a Liliana planeswalker, her controller loses 3 life."
+ },
+ "Skull Raid": {
+  "id": "Skull Raid",
+  "name": "Skull Raid",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards two cards. If fewer than two cards were discarded this way, you draw cards equal to the difference.\nForetell {1}{B} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)"
+ },
+ "Ruinous Waterbending": {
+  "id": "Ruinous Waterbending",
+  "name": "Ruinous Waterbending",
+  "typeLine": "Sorcery — Lesson",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, you may waterbend {4}. (While paying a waterbend cost, you can tap your artifacts and creatures to help. Each one pays for {1}.)\nAll creatures get -2/-2 until end of turn. If this spell's additional cost was paid, whenever a creature dies this turn, you gain 1 life."
+ },
+ "Legion's End": {
+  "id": "Legion's End",
+  "name": "Legion's End",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target creature an opponent controls with mana value 2 or less and all other creatures that player controls with the same name as that creature. Then that player reveals their hand and exiles all cards with that name from their hand and graveyard."
+ },
+ "Rogues' Gallery": {
+  "id": "Rogues' Gallery",
+  "name": "Rogues' Gallery",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "For each color, return up to one target creature card of that color from your graveyard to your hand."
+ },
+ "Grub's Command": {
+  "id": "Grub's Command",
+  "name": "Grub's Command",
+  "typeLine": "Kindred Sorcery — Goblin",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Choose two —\n• Create a token that's a copy of target Goblin you control.\n• Creatures target player controls get +1/+1 and gain haste until end of turn.\n• Destroy target artifact or creature.\n• Target player mills five cards, then puts each Goblin card milled this way into their hand."
+ },
+ "Morality Shift": {
+  "id": "Morality Shift",
+  "name": "Morality Shift",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exchange your graveyard and library. Then shuffle your library."
+ },
+ "Shadows' Verdict": {
+  "id": "Shadows' Verdict",
+  "name": "Shadows' Verdict",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile all creatures and planeswalkers with mana value 3 or less from the battlefield and all creature and planeswalker cards with mana value 3 or less from all graveyards."
+ },
+ "Revoke Demise": {
+  "id": "Revoke Demise",
+  "name": "Revoke Demise",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {2} less to cast if it targets a creature card with mana value 3 or less.\nReturn target creature card from your graveyard to the battlefield. You gain 2 life."
+ },
+ "Angrath's Rampage": {
+  "id": "Angrath's Rampage",
+  "name": "Angrath's Rampage",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Choose one —\n• Target player sacrifices an artifact of their choice.\n• Target player sacrifices a creature of their choice.\n• Target player sacrifices a planeswalker of their choice."
+ },
+ "Bog Down": {
+  "id": "Bog Down",
+  "name": "Bog Down",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker—Sacrifice two lands. (You may sacrifice two lands in addition to any other costs as you cast this spell.)\nTarget player discards two cards. If this spell was kicked, that player discards three cards instead."
+ },
+ "Arcane Omens": {
+  "id": "Arcane Omens",
+  "name": "Arcane Omens",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Converge — Target player discards X cards, where X is the number of colors of mana spent to cast this spell."
+ },
+ "Binding Negotiation": {
+  "id": "Binding Negotiation",
+  "name": "Binding Negotiation",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You may choose a nonland card from it. If you do, they discard it. Otherwise, you may put a face-up exiled card they own into their graveyard."
+ },
+ "Mind Sludge": {
+  "id": "Mind Sludge",
+  "name": "Mind Sludge",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards a card for each Swamp you control."
+ },
+ "Driven // Despair": {
+  "id": "Driven // Despair",
+  "name": "Driven // Despair",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{1}{G} // {1}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Driven: Until end of turn, creatures you control gain trample and \"Whenever this creature deals combat damage to a player, draw a card.\"\n\nDespair: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nUntil end of turn, creatures you control gain menace and \"Whenever this creature deals combat damage to a player, that player discards a card.\""
+ },
+ "Stroke of Luck": {
+  "id": "Stroke of Luck",
+  "name": "Stroke of Luck",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at the top four cards of your library. Choose one of them and put all cards with the same name as the chosen card from among them into your hand. You lose 1 life for each card put into your hand this way. Put the rest on the bottom of your library in a random order."
+ },
+ "Extortion": {
+  "id": "Extortion",
+  "name": "Extortion",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at target player's hand and choose up to two cards from it. That player discards those cards."
+ },
+ "Perish the Thought": {
+  "id": "Perish the Thought",
+  "name": "Perish the Thought",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a card from it. That player shuffles that card into their library."
+ },
+ "Abandon Hope": {
+  "id": "Abandon Hope",
+  "name": "Abandon Hope",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, discard X cards.\nLook at target opponent's hand and choose X cards from it. That player discards those cards."
+ },
+ "Word of Binding": {
+  "id": "Word of Binding",
+  "name": "Word of Binding",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Tap X target creatures."
+ },
+ "Icequake": {
+  "id": "Icequake",
+  "name": "Icequake",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target land. If that land was a snow land, Icequake deals 1 damage to that land's controller."
+ },
+ "Dreams of Steel and Oil": {
+  "id": "Dreams of Steel and Oil",
+  "name": "Dreams of Steel and Oil",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose an artifact or creature card from it, then choose an artifact or creature card from their graveyard. Exile the chosen cards."
+ },
+ "Voices from the Void": {
+  "id": "Voices from the Void",
+  "name": "Voices from the Void",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Domain — Target player discards a card for each basic land type among lands you control."
+ },
+ "Specter's Shriek": {
+  "id": "Specter's Shriek",
+  "name": "Specter's Shriek",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You may choose a nonland card from it. If you do, that player exiles that card. If a nonblack card is exiled this way, exile a card from your hand."
+ },
+ "No Way Out": {
+  "id": "No Way Out",
+  "name": "No Way Out",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards two cards. You create a 2/2 black Zombie creature token with decayed. (It can't block. When it attacks, sacrifice it at end of combat.)"
+ },
+ "Mind Ravel": {
+  "id": "Mind Ravel",
+  "name": "Mind Ravel",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards a card.\nDraw a card at the beginning of the next turn's upkeep."
+ },
+ "Haunting Misery": {
+  "id": "Haunting Misery",
+  "name": "Haunting Misery",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, exile X creature cards from your graveyard.\nHaunting Misery deals X damage to target player or planeswalker."
+ },
+ "Heartless Pillage": {
+  "id": "Heartless Pillage",
+  "name": "Heartless Pillage",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards two cards.\nRaid — If you attacked this turn, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Bond of Agony": {
+  "id": "Bond of Agony",
+  "name": "Bond of Agony",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, pay X life.\nEach other player loses X life."
+ },
+ "Sins of the Past": {
+  "id": "Sins of the Past",
+  "name": "Sins of the Past",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, you may cast target instant or sorcery card from your graveyard without paying its mana cost. If that spell would be put into your graveyard, exile it instead. Exile Sins of the Past."
+ },
+ "Vicious Rivalry": {
+  "id": "Vicious Rivalry",
+  "name": "Vicious Rivalry",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "As an additional cost to cast this spell, pay X life.\nDestroy all artifacts and creatures with mana value X or less."
+ },
+ "Stronghold Discipline": {
+  "id": "Stronghold Discipline",
+  "name": "Stronghold Discipline",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player loses 1 life for each creature they control."
+ },
+ "Lay Bare the Heart": {
+  "id": "Lay Bare the Heart",
+  "name": "Lay Bare the Heart",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonlegendary, nonland card from it. That player discards that card."
+ },
+ "Pillage the Bog": {
+  "id": "Pillage the Bog",
+  "name": "Pillage the Bog",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{G}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Look at the top X cards of your library, where X is twice the number of lands you control. Put one of them into your hand and the rest on the bottom of your library in a random order.\nPlot {1}{B}{G} (You may pay {1}{B}{G} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)"
+ },
+ "Inquisition": {
+  "id": "Inquisition",
+  "name": "Inquisition",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. Inquisition deals damage to that player equal to the number of white cards in their hand."
+ },
+ "Shattered Dreams": {
+  "id": "Shattered Dreams",
+  "name": "Shattered Dreams",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose an artifact card from it. That player discards that card."
+ },
+ "Gix's Command": {
+  "id": "Gix's Command",
+  "name": "Gix's Command",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose two —\n• Put two +1/+1 counters on up to one creature. It gains lifelink until end of turn.\n• Destroy each creature with power 2 or less.\n• Return up to two creature cards from your graveyard to your hand.\n• Each opponent sacrifices a creature with the greatest power among creatures they control."
+ },
+ "Necromentia": {
+  "id": "Necromentia",
+  "name": "Necromentia",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a card name other than a basic land card name. Search target opponent's graveyard, hand, and library for any number of cards with that name and exile them. That player shuffles, then creates a 2/2 black Zombie creature token for each card exiled from their hand this way."
+ },
+ "Jarad's Orders": {
+  "id": "Jarad's Orders",
+  "name": "Jarad's Orders",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Search your library for up to two creature cards and reveal them. Put one into your hand and the other into your graveyard. Then shuffle."
+ },
+ "Blood Price": {
+  "id": "Blood Price",
+  "name": "Blood Price",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at the top four cards of your library. Put two of them into your hand and the rest on the bottom of your library in any order. You lose 2 life."
+ },
+ "Grim Captain's Call": {
+  "id": "Grim Captain's Call",
+  "name": "Grim Captain's Call",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return a Pirate card from your graveyard to your hand, then do the same for Vampire, Dinosaur, and Merfolk."
+ },
+ "Brain Pry": {
+  "id": "Brain Pry",
+  "name": "Brain Pry",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a nonland card name. Target player reveals their hand. That player discards a card with that name. If they can't, you draw a card."
+ },
+ "Pulse of the Dross": {
+  "id": "Pulse of the Dross",
+  "name": "Pulse of the Dross",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals three cards from their hand and you choose one of them. That player discards that card. Then if that player has more cards in hand than you, return Pulse of the Dross to its owner's hand."
+ },
+ "Extract a Confession": {
+  "id": "Extract a Confession",
+  "name": "Extract a Confession",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, you may collect evidence 6. (Exile cards with total mana value 6 or greater from your graveyard.)\nEach opponent sacrifices a creature of their choice. If evidence was collected, instead each opponent sacrifices a creature with the greatest power among creatures they control."
+ },
+ "Toil // Trouble": {
+  "id": "Toil // Trouble",
+  "name": "Toil // Trouble",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{2}{B} // {2}{R}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Toil: Target player draws two cards and loses 2 life.\nFuse (You may cast one or both halves of this card from your hand.)\n\nTrouble: Trouble deals damage to target player equal to the number of cards in that player's hand.\nFuse (You may cast one or both halves of this card from your hand.)"
+ },
+ "Call of the Death-Dweller": {
+  "id": "Call of the Death-Dweller",
+  "name": "Call of the Death-Dweller",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return up to two target creature cards with total mana value 3 or less from your graveyard to the battlefield. Put a deathtouch counter on either of them. Then put a menace counter on either of them."
+ },
+ "Wit's End": {
+  "id": "Wit's End",
+  "name": "Wit's End",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards their hand."
+ },
+ "Draconic Fealty": {
+  "id": "Draconic Fealty",
+  "name": "Draconic Fealty",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, you may behold a Dragon.\nTarget player discards a card with the greatest mana value among cards in their hand. If a Dragon was beheld, exile that player's graveyard."
+ },
+ "Flay": {
+  "id": "Flay",
+  "name": "Flay",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards a card at random. Then that player discards another card at random unless they pay {1}."
+ },
+ "Hymn to Tourach": {
+  "id": "Hymn to Tourach",
+  "name": "Hymn to Tourach",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards at random."
+ },
+ "Nightmare Void": {
+  "id": "Nightmare Void",
+  "name": "Nightmare Void",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose a card from it. That player discards that card.\nDredge 2 (If you would draw a card, you may mill two cards instead. If you do, return this card from your graveyard to your hand.)"
+ },
+ "Dispossess": {
+  "id": "Dispossess",
+  "name": "Dispossess",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose an artifact card name. Search target opponent's graveyard, hand, and library for any number of cards with the chosen name and exile them. Then that player shuffles."
+ },
+ "Prison Break": {
+  "id": "Prison Break",
+  "name": "Prison Break",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield with an additional +1/+1 counter on it.\nMayhem {3}{B} (You may cast this card from your graveyard for {3}{B} if you discarded it this turn. Timing rules still apply.)"
+ },
+ "Pulling Teeth": {
+  "id": "Pulling Teeth",
+  "name": "Pulling Teeth",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Clash with an opponent. If you win, target player discards two cards. Otherwise, that player discards a card. (Each clashing player reveals the top card of their library, then puts that card on their choice of the top or bottom. A player wins if their card had a greater mana value.)"
+ },
+ "Divest": {
+  "id": "Divest",
+  "name": "Divest",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose an artifact or creature card from it. That player discards that card."
+ },
+ "Contract from Below": {
+  "id": "Contract from Below",
+  "name": "Contract from Below",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Remove this card from your deck before playing if you're not playing for ante.\nDiscard your hand, ante the top card of your library, then draw seven cards."
+ },
+ "Deliver Unto Evil": {
+  "id": "Deliver Unto Evil",
+  "name": "Deliver Unto Evil",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose up to four target cards in your graveyard. If you control a Bolas planeswalker, return those cards to your hand. Otherwise, an opponent chooses two of them. Leave the chosen cards in your graveyard and put the rest into your hand.\nExile Deliver Unto Evil."
+ },
+ "Atrocious Experiment": {
+  "id": "Atrocious Experiment",
+  "name": "Atrocious Experiment",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player mills two cards, draws two cards, and loses 2 life. (To mill a card, a player puts the top card of their library into their graveyard.)"
+ },
+ "Mutinous Massacre": {
+  "id": "Mutinous Massacre",
+  "name": "Mutinous Massacre",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}{R}{R}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Choose odd or even. Destroy each creature with mana value of the chosen quality. Then gain control of all creatures until end of turn. Untap them. They gain haste until end of turn. (Zero is even.)"
+ },
+ "Poison the Well": {
+  "id": "Poison the Well",
+  "name": "Poison the Well",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B/R}{B/R}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Destroy target land. Poison the Well deals 2 damage to that land's controller."
+ },
+ "Aggressive Sabotage": {
+  "id": "Aggressive Sabotage",
+  "name": "Aggressive Sabotage",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {R} (You may pay an additional {R} as you cast this spell.)\nTarget player discards two cards. If this spell was kicked, it deals 3 damage to that player."
+ },
+ "Final Parting": {
+  "id": "Final Parting",
+  "name": "Final Parting",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Search your library for two cards. Put one into your hand and the other into your graveyard. Then shuffle."
+ },
+ "Blightning": {
+  "id": "Blightning",
+  "name": "Blightning",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Blightning deals 3 damage to target player or planeswalker. That player or that planeswalker's controller discards two cards."
+ },
+ "Festergloom": {
+  "id": "Festergloom",
+  "name": "Festergloom",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Nonblack creatures get -1/-1 until end of turn."
+ },
+ "Annihilating Glare": {
+  "id": "Annihilating Glare",
+  "name": "Annihilating Glare",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, pay {4} or sacrifice an artifact or creature.\nDestroy target creature or planeswalker."
+ },
+ "Ruthless Negotiation": {
+  "id": "Ruthless Negotiation",
+  "name": "Ruthless Negotiation",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent exiles a card from their hand. If this spell was cast from a graveyard, draw a card.\nFlashback {4}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Corrupt": {
+  "id": "Corrupt",
+  "name": "Corrupt",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Corrupt deals damage to any target equal to the number of Swamps you control. You gain life equal to the damage dealt this way."
+ },
+ "Confront the Past": {
+  "id": "Confront the Past",
+  "name": "Confront the Past",
+  "typeLine": "Sorcery — Lesson",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Return target planeswalker card with mana value X or less from your graveyard to the battlefield.\n• Remove twice X loyalty counters from target planeswalker an opponent controls."
+ },
+ "Undercity Plague": {
+  "id": "Undercity Plague",
+  "name": "Undercity Plague",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player loses 1 life, discards a card, then sacrifices a permanent of their choice.\nCipher (Then you may exile this spell card encoded on a creature you control. Whenever that creature deals combat damage to a player, its controller may cast a copy of the encoded card without paying its mana cost.)"
+ },
+ "Death's Caress": {
+  "id": "Death's Caress",
+  "name": "Death's Caress",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature. If that creature was a Human, you gain life equal to its toughness."
+ },
+ "Postmortem Lunge": {
+  "id": "Postmortem Lunge",
+  "name": "Postmortem Lunge",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B/P}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "({B/P} can be paid with either {B} or 2 life.)\nReturn target creature card with mana value X from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step."
+ },
+ "Hymn of the Faller": {
+  "id": "Hymn of the Faller",
+  "name": "Hymn of the Faller",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Surveil 1, then you draw a card and lose 1 life. (To surveil 1, look at the top card of your library. You may put it into your graveyard.)\nVoid — If a nonland permanent left the battlefield this turn or a spell was warped this turn, draw another card."
+ },
+ "Corpse Explosion": {
+  "id": "Corpse Explosion",
+  "name": "Corpse Explosion",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "As an additional cost to cast this spell, exile a creature card from your graveyard.\nCorpse Explosion deals damage equal to the exiled card's power to each creature and each planeswalker."
+ },
+ "Devour Intellect": {
+  "id": "Devour Intellect",
+  "name": "Devour Intellect",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards a card. If mana from a Treasure was spent to cast this spell, instead that player reveals their hand, you choose a nonland card from it, then that player discards that card."
+ },
+ "Imperial Edict": {
+  "id": "Imperial Edict",
+  "name": "Imperial Edict",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent chooses a creature they control. Destroy that creature."
+ },
+ "Sword-Point Diplomacy": {
+  "id": "Sword-Point Diplomacy",
+  "name": "Sword-Point Diplomacy",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Reveal the top three cards of your library. For each of those cards, put that card into your hand unless any opponent pays 3 life. Then exile the rest."
+ },
+ "Insatiable Avarice": {
+  "id": "Insatiable Avarice",
+  "name": "Insatiable Avarice",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Spree (Choose one or more additional costs.)\n+ {2} — Search your library for a card, then shuffle and put that card on top.\n+ {B}{B} — Target player draws three cards and loses 3 life."
+ },
+ "Twilight's Call": {
+  "id": "Twilight's Call",
+  "name": "Twilight's Call",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may cast this spell as though it had flash if you pay {2} more to cast it. (You may cast it any time you could cast an instant.)\nEach player returns all creature cards from their graveyard to the battlefield."
+ },
+ "Demonic Bargain": {
+  "id": "Demonic Bargain",
+  "name": "Demonic Bargain",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile the top thirteen cards of your library, then search your library for a card. Put that card into your hand, then shuffle."
+ },
+ "Fatal Lore": {
+  "id": "Fatal Lore",
+  "name": "Fatal Lore",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "An opponent chooses one —\n• You draw three cards.\n• You destroy up to two target creatures that player controls. They can't be regenerated. That player draws up to three cards."
+ },
+ "No One Left Behind": {
+  "id": "No One Left Behind",
+  "name": "No One Left Behind",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {3} less to cast if it targets a creature card with mana value 3 or less.\nReturn target creature card from your graveyard to the battlefield."
+ },
+ "Pointed Discussion": {
+  "id": "Pointed Discussion",
+  "name": "Pointed Discussion",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You draw two cards, lose 2 life, then create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")"
+ },
+ "Last One Standing": {
+  "id": "Last One Standing",
+  "name": "Last One Standing",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Choose a creature at random, then destroy the rest."
+ },
+ "Mutual Destruction": {
+  "id": "Mutual Destruction",
+  "name": "Mutual Destruction",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell has flash as long as you control a permanent with flash.\nAs an additional cost to cast this spell, sacrifice a creature.\nDestroy target creature."
+ },
+ "Consign to the Pit": {
+  "id": "Consign to the Pit",
+  "name": "Consign to the Pit",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature. Consign to the Pit deals 2 damage to that creature's controller."
+ },
+ "Lich-Knights' Conquest": {
+  "id": "Lich-Knights' Conquest",
+  "name": "Lich-Knights' Conquest",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sacrifice any number of artifacts, enchantments, and/or tokens. Return that many creature cards from your graveyard to the battlefield."
+ },
+ "Pelakka Predation // Pelakka Caverns": {
+  "id": "Pelakka Predation // Pelakka Caverns",
+  "name": "Pelakka Predation // Pelakka Caverns",
+  "typeLine": "Sorcery // Land",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Pelakka Predation: Target opponent reveals their hand. You choose a card from it with mana value 3 or greater. That player discards that card.\n\nPelakka Caverns: This land enters tapped.\n{T}: Add {B}.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Despise": {
+  "id": "Despise",
+  "name": "Despise",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a creature or planeswalker card from it. That player discards that card."
+ },
+ "Aim for the Head": {
+  "id": "Aim for the Head",
+  "name": "Aim for the Head",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Exile target Zombie.\n• Target opponent exiles two cards from their hand."
+ },
+ "Sink into Takenuma": {
+  "id": "Sink into Takenuma",
+  "name": "Sink into Takenuma",
+  "typeLine": "Sorcery — Arcane",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sweep — Return any number of Swamps you control to their owner's hand. Target player discards a card for each Swamp returned this way."
+ },
+ "Rhystic Syphon": {
+  "id": "Rhystic Syphon",
+  "name": "Rhystic Syphon",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Unless target player pays {3}, that player loses 5 life and you gain 5 life."
+ },
+ "Behold the Beyond": {
+  "id": "Behold the Beyond",
+  "name": "Behold the Beyond",
+  "typeLine": "Sorcery",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Discard your hand. Search your library for three cards, put them into your hand, then shuffle."
+ },
+ "Pestilent Haze": {
+  "id": "Pestilent Haze",
+  "name": "Pestilent Haze",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• All creatures get -2/-2 until end of turn.\n• Remove two loyalty counters from each planeswalker."
+ },
+ "Suppress": {
+  "id": "Suppress",
+  "name": "Suppress",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player exiles all cards from their hand face down. At the beginning of the end step of that player's next turn, that player returns those cards to their hand."
+ },
+ "Gaze of Pain": {
+  "id": "Gaze of Pain",
+  "name": "Gaze of Pain",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Until end of turn, whenever a creature you control attacks and isn't blocked, you may choose to have it deal damage equal to its power to a target creature. If you do, it assigns no combat damage this turn."
+ },
+ "Ego Drain": {
+  "id": "Ego Drain",
+  "name": "Ego Drain",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonland card from it. That player discards that card. If you don't control a Faerie, exile a card from your hand."
+ },
+ "Morsel Theft": {
+  "id": "Morsel Theft",
+  "name": "Morsel Theft",
+  "typeLine": "Kindred Sorcery — Rogue",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Prowl {1}{B} (You may cast this for its prowl cost if you dealt combat damage to a player this turn with a Rogue.)\nTarget player loses 3 life and you gain 3 life. If this spell's prowl cost was paid, draw a card."
+ },
+ "Infernal Harvest": {
+  "id": "Infernal Harvest",
+  "name": "Infernal Harvest",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, return X Swamps you control to their owner's hand.\nInfernal Harvest deals X damage divided as you choose among any number of target creatures."
+ },
+ "Encroach": {
+  "id": "Encroach",
+  "name": "Encroach",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose a nonbasic land card from it. That player discards that card."
+ },
+ "Grisly Sigil": {
+  "id": "Grisly Sigil",
+  "name": "Grisly Sigil",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Casualty 1 (As you cast this spell, you may sacrifice a creature with power 1 or greater. When you do, copy this spell and you may choose a new target for the copy.)\nChoose target creature or planeswalker. If it was dealt noncombat damage this turn, Grisly Sigil deals 3 damage to it and you gain 3 life. Otherwise, Grisly Sigil deals 1 damage to it and you gain 1 life."
+ },
+ "Nightsnare": {
+  "id": "Nightsnare",
+  "name": "Nightsnare",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You may choose a nonland card from it. If you do, that player discards that card. If you don't, that player discards two cards."
+ },
+ "Doomfall": {
+  "id": "Doomfall",
+  "name": "Doomfall",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target opponent exiles a creature they control.\n• Target opponent reveals their hand. You choose a nonland card from it. Exile that card."
+ },
+ "Desperate Plea": {
+  "id": "Desperate Plea",
+  "name": "Desperate Plea",
+  "typeLine": "Sorcery — Lesson",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nChoose one or both —\n• Return target creature card from your graveyard to the battlefield if its power is less than or equal to the sacrificed creature's power.\n• Destroy target creature."
+ },
+ "Flesh Allergy": {
+  "id": "Flesh Allergy",
+  "name": "Flesh Allergy",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nDestroy target creature. Its controller loses life equal to the number of creatures that died this turn."
+ },
+ "Bloodline Bidding": {
+  "id": "Bloodline Bidding",
+  "name": "Bloodline Bidding",
+  "typeLine": "Sorcery",
+  "manaCost": "{6}{B}{B}",
+  "cmc": 8,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nChoose a creature type. Return all creature cards of the chosen type from your graveyard to the battlefield."
+ },
+ "Overwhelming Forces": {
+  "id": "Overwhelming Forces",
+  "name": "Overwhelming Forces",
+  "typeLine": "Sorcery",
+  "manaCost": "{6}{B}{B}",
+  "cmc": 8,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all creatures target opponent controls. Draw a card for each creature destroyed this way."
+ },
+ "Vicious Betrayal": {
+  "id": "Vicious Betrayal",
+  "name": "Vicious Betrayal",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice any number of creatures.\nTarget creature gets +2/+2 until end of turn for each creature sacrificed this way."
+ },
+ "Fodder Launch": {
+  "id": "Fodder Launch",
+  "name": "Fodder Launch",
+  "typeLine": "Kindred Sorcery — Goblin",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a Goblin.\nTarget creature gets -5/-5 until end of turn. Fodder Launch deals 5 damage to that creature's controller."
+ },
+ "Pick the Brain": {
+  "id": "Pick the Brain",
+  "name": "Pick the Brain",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You choose a nonland card from it and exile that card.\nDelirium — If there are four or more card types among cards in your graveyard, search that player's graveyard, hand, and library for any number of cards with the same name as the exiled card, exile those cards, then that player shuffles."
+ },
+ "Cannibalize": {
+  "id": "Cannibalize",
+  "name": "Cannibalize",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose two target creatures controlled by the same player. Exile one of those creatures and put two +1/+1 counters on the other."
+ },
+ "Exile into Darkness": {
+  "id": "Exile into Darkness",
+  "name": "Exile into Darkness",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player sacrifices a creature of their choice with mana value 3 or less.\nAt the beginning of your upkeep, if you have more cards in hand than each opponent, you may return this card from your graveyard to your hand."
+ },
+ "Phyrexian Tribute": {
+  "id": "Phyrexian Tribute",
+  "name": "Phyrexian Tribute",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice two creatures.\nDestroy target artifact."
+ },
+ "Shatter Assumptions": {
+  "id": "Shatter Assumptions",
+  "name": "Shatter Assumptions",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one —\n• Target opponent reveals their hand and discards all colorless nonland cards.\n• Target opponent reveals their hand and discards all multicolored cards."
+ },
+ "Stupor": {
+  "id": "Stupor",
+  "name": "Stupor",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards a card at random, then discards a card."
+ },
+ "Mycelic Ballad": {
+  "id": "Mycelic Ballad",
+  "name": "Mycelic Ballad",
+  "typeLine": "Sorcery — Chorus",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Starting intensity 2\nEach player sacrifices X creatures and you gain X life, where X is this spell's intensity.\nAll Chorus cards you own intensify by 1."
+ },
+ "Capital Punishment": {
+  "id": "Capital Punishment",
+  "name": "Capital Punishment",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Council's dilemma — Starting with you, each player votes for death or taxes. Each opponent sacrifices a creature of their choice for each death vote and discards a card for each taxes vote."
+ },
+ "Call to the Void": {
+  "id": "Call to the Void",
+  "name": "Call to the Void",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player secretly chooses a creature they control and a creature they don't control. Then those choices are revealed. Destroy each creature chosen this way."
+ },
+ "Slaughter Games": {
+  "id": "Slaughter Games",
+  "name": "Slaughter Games",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{R}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "This spell can't be countered.\nChoose a nonland card name. Search target opponent's graveyard, hand, and library for any number of cards with that name and exile them. Then that player shuffles."
+ },
+ "Pox Plague": {
+  "id": "Pox Plague",
+  "name": "Pox Plague",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}{B}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player loses half their life, then discards half the cards in their hand, then sacrifices half the permanents they control of their choice. Round down each time."
+ },
+ "Dark Deal": {
+  "id": "Dark Deal",
+  "name": "Dark Deal",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player discards all the cards in their hand, then draws that many cards minus one."
+ },
+ "Bloodsoaked Insight // Sanguine Morass": {
+  "id": "Bloodsoaked Insight // Sanguine Morass",
+  "name": "Bloodsoaked Insight // Sanguine Morass",
+  "typeLine": "Sorcery // Land",
+  "manaCost": "{5}{B/R}{B/R}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Bloodsoaked Insight: This spell costs {1} less to cast for each 1 life your opponents have lost this turn.\nTarget opponent exiles the top three cards of their library. Until the end of your next turn, you may play those cards. If you cast a spell this way, mana of any type can be spent to cast it.\n\nSanguine Morass: This land enters tapped.\n{T}: Add {B} or {R}.",
+  "producedMana": [
+   "B",
+   "R"
+  ]
+ },
+ "Deadly Complication": {
+  "id": "Deadly Complication",
+  "name": "Deadly Complication",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Choose one or both —\n• Destroy target creature.\n• Put a +1/+1 counter on target suspected creature you control. You may have it become no longer suspected."
+ },
+ "Noggin Whack": {
+  "id": "Noggin Whack",
+  "name": "Noggin Whack",
+  "typeLine": "Kindred Sorcery — Rogue",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Prowl {1}{B} (You may cast this for its prowl cost if you dealt combat damage to a player this turn with a Rogue.)\nTarget player reveals three cards from their hand. You choose two of them. That player discards those cards."
+ },
+ "Liliana's Indignation": {
+  "id": "Liliana's Indignation",
+  "name": "Liliana's Indignation",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Mill X cards. Target player loses 2 life for each creature card put into your graveyard this way."
+ },
+ "Summon Undead": {
+  "id": "Summon Undead",
+  "name": "Summon Undead",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may mill three cards. Then return a creature card from your graveyard to the battlefield. (To mill a card, put the top card of your library into your graveyard.)"
+ },
+ "Ill-Gotten Gains": {
+  "id": "Ill-Gotten Gains",
+  "name": "Ill-Gotten Gains",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile Ill-Gotten Gains. Each player discards their hand, then returns up to three cards from their graveyard to their hand."
+ },
+ "Dimir Machinations": {
+  "id": "Dimir Machinations",
+  "name": "Dimir Machinations",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at the top three cards of target player's library. Exile any number of those cards, then put the rest back in any order.\nTransmute {1}{B}{B} ({1}{B}{B}, Discard this card: Search your library for a card with the same mana value as this card, reveal it, put it into your hand, then shuffle. Transmute only as a sorcery.)"
+ },
+ "Curse of the Cabal": {
+  "id": "Curse of the Cabal",
+  "name": "Curse of the Cabal",
+  "typeLine": "Sorcery",
+  "manaCost": "{9}{B}",
+  "cmc": 10,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player sacrifices half the permanents they control of their choice, rounded down.\nSuspend 2—{2}{B}{B} (Rather than cast this card from your hand, you may pay {2}{B}{B} and exile it with two time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost.)\nAt the beginning of each player's upkeep, if this card is suspended, that player may sacrifice a permanent of their choice. If the player does, put two time counters on this card."
+ },
+ "Unhinge": {
+  "id": "Unhinge",
+  "name": "Unhinge",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards a card.\nDraw a card."
+ },
+ "Davriel's Shadowfugue": {
+  "id": "Davriel's Shadowfugue",
+  "name": "Davriel's Shadowfugue",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards and loses 2 life."
+ },
+ "Beseech the Mirror": {
+  "id": "Beseech the Mirror",
+  "name": "Beseech the Mirror",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)\nSearch your library for a card, exile it face down, then shuffle. If this spell was bargained, you may cast the exiled card without paying its mana cost if that spell's mana value is 4 or less. Put the exiled card into your hand if it wasn't cast this way."
+ },
+ "Noxious Vapors": {
+  "id": "Noxious Vapors",
+  "name": "Noxious Vapors",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player reveals their hand, chooses one card of each color from it, then discards all other nonland cards."
+ },
+ "Massacre": {
+  "id": "Massacre",
+  "name": "Massacre",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If an opponent controls a Plains and you control a Swamp, you may cast this spell without paying its mana cost.\nAll creatures get -2/-2 until end of turn."
+ },
+ "Deathmark": {
+  "id": "Deathmark",
+  "name": "Deathmark",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target green or white creature."
+ },
+ "Whispers of Emrakul": {
+  "id": "Whispers of Emrakul",
+  "name": "Whispers of Emrakul",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards a card at random.\nDelirium — If there are four or more card types among cards in your graveyard, that player discards two cards at random instead."
+ },
+ "Beseech the Queen": {
+  "id": "Beseech the Queen",
+  "name": "Beseech the Queen",
+  "typeLine": "Sorcery",
+  "manaCost": "{2/B}{2/B}{2/B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "({2/B} can be paid with any two mana or with {B}. This card's mana value is 6.)\nSearch your library for a card with mana value less than or equal to the number of lands you control, reveal it, put it into your hand, then shuffle."
+ },
+ "Footsteps of the Goryo": {
+  "id": "Footsteps of the Goryo",
+  "name": "Footsteps of the Goryo",
+  "typeLine": "Sorcery — Arcane",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield. Sacrifice that creature at the beginning of the next end step."
+ },
+ "Deadly Precision": {
+  "id": "Deadly Precision",
+  "name": "Deadly Precision",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, pay {4} or sacrifice an artifact or creature.\nDestroy target creature."
+ },
+ "Skull Rend": {
+  "id": "Skull Rend",
+  "name": "Skull Rend",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Skull Rend deals 2 damage to each opponent. Those players each discard two cards at random."
+ },
+ "Marsh Casualties": {
+  "id": "Marsh Casualties",
+  "name": "Marsh Casualties",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {3} (You may pay an additional {3} as you cast this spell.)\nCreatures target player controls get -1/-1 until end of turn. If this spell was kicked, those creatures get -2/-2 until end of turn instead."
+ },
+ "Path of Peril": {
+  "id": "Path of Peril",
+  "name": "Path of Peril",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cleave {4}{W}{B} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nDestroy all creatures [with mana value 2 or less]."
+ },
+ "Life // Death": {
+  "id": "Life // Death",
+  "name": "Life // Death",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{G} // {1}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Life: All lands you control become 1/1 creatures until end of turn. They're still lands.\n\nDeath: Return target creature card from your graveyard to the battlefield. You lose life equal to its mana value."
+ },
+ "Syphon Soul": {
+  "id": "Syphon Soul",
+  "name": "Syphon Soul",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Syphon Soul deals 2 damage to each other player. You gain life equal to the damage dealt this way."
+ },
+ "Intruder's Inquisition": {
+  "id": "Intruder's Inquisition",
+  "name": "Intruder's Inquisition",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Target creature you control deals damage equal to its power to target creature an opponent controls. If excess damage was dealt to a creature this way, its controller discards a card with the greatest mana value among cards in their hand."
+ },
+ "Defossilize": {
+  "id": "Defossilize",
+  "name": "Defossilize",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return target creature card from your graveyard to the battlefield. That creature explores, then it explores again. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on that creature, then put the card back or put it into your graveyard. Then repeat this process.)"
+ },
+ "Soul Reap": {
+  "id": "Soul Reap",
+  "name": "Soul Reap",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target nongreen creature. Its controller loses 3 life if you've cast another black spell this turn."
+ },
+ "Root Manipulation": {
+  "id": "Root Manipulation",
+  "name": "Root Manipulation",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{G}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Until end of turn, creatures you control get +2/+2 and gain menace and \"Whenever this creature attacks, you gain 1 life.\" (A creature with menace can't be blocked except by two or more creatures.)"
+ },
+ "Incriminate": {
+  "id": "Incriminate",
+  "name": "Incriminate",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose two target creatures controlled by the same player. That player sacrifices one of them of their choice."
+ },
+ "Hellish Sideswipe": {
+  "id": "Hellish Sideswipe",
+  "name": "Hellish Sideswipe",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice an artifact or creature.\nDestroy target creature or Vehicle. If the sacrificed permanent was a Vehicle, draw a card."
+ },
+ "Shredder's Technique": {
+  "id": "Shredder's Technique",
+  "name": "Shredder's Technique",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sneak {B} (You may cast this spell for {B} if you also return an unblocked attacker you control to hand during the declare blockers step.)\nDestroy target creature or enchantment. If an enchantment was destroyed this way, you lose 2 life."
+ },
+ "Assemble the Team": {
+  "id": "Assemble the Team",
+  "name": "Assemble the Team",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{G}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Search the top third of your library, rounded up, for a card. Put that card into your hand, then shuffle."
+ },
+ "Warren Weirding": {
+  "id": "Warren Weirding",
+  "name": "Warren Weirding",
+  "typeLine": "Kindred Sorcery — Goblin",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player sacrifices a creature of their choice. If a Goblin is sacrificed this way, that player creates two 1/1 black Goblin Rogue creature tokens, and those tokens gain haste until end of turn."
+ },
+ "Perfect Intimidation": {
+  "id": "Perfect Intimidation",
+  "name": "Perfect Intimidation",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose one or both —\n• Target opponent exiles two cards from their hand.\n• Remove all counters from target creature."
+ },
+ "Graveyard Shift": {
+  "id": "Graveyard Shift",
+  "name": "Graveyard Shift",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell has flash as long as there are five or more mana values among cards in your graveyard.\nReturn target creature card from your graveyard to the battlefield."
+ },
+ "Kaervek's Purge": {
+  "id": "Kaervek's Purge",
+  "name": "Kaervek's Purge",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Destroy target creature with mana value X. If that creature dies this way, Kaervek's Purge deals damage equal to the creature's power to the creature's controller."
+ },
+ "Stargaze": {
+  "id": "Stargaze",
+  "name": "Stargaze",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at twice X cards from the top of your library. Put X cards from among them into your hand and the rest into your graveyard. You lose X life."
+ },
+ "Endemic Plague": {
+  "id": "Endemic Plague",
+  "name": "Endemic Plague",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nDestroy all creatures that share a creature type with the sacrificed creature. They can't be regenerated."
+ },
+ "Creeping Chill": {
+  "id": "Creeping Chill",
+  "name": "Creeping Chill",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Creeping Chill deals 3 damage to each opponent and you gain 3 life.\nWhen Creeping Chill is put into your graveyard from your library, you may exile it. If you do, Creeping Chill deals 3 damage to each opponent and you gain 3 life."
+ },
+ "Day of Black Sun": {
+  "id": "Day of Black Sun",
+  "name": "Day of Black Sun",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each creature with mana value X or less loses all abilities until end of turn. Destroy those creatures."
+ },
+ "Ruthless Disposal": {
+  "id": "Ruthless Disposal",
+  "name": "Ruthless Disposal",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, discard a card and sacrifice a creature.\nTwo target creatures each get -13/-13 until end of turn."
+ },
+ "Cruel Bargain": {
+  "id": "Cruel Bargain",
+  "name": "Cruel Bargain",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Draw four cards. You lose half your life, rounded up."
+ },
+ "Brainspoil": {
+  "id": "Brainspoil",
+  "name": "Brainspoil",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature that isn't enchanted. It can't be regenerated.\nTransmute {1}{B}{B} ({1}{B}{B}, Discard this card: Search your library for a card with the same mana value as this card, reveal it, put it into your hand, then shuffle. Transmute only as a sorcery.)"
+ },
+ "Perish": {
+  "id": "Perish",
+  "name": "Perish",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all green creatures. They can't be regenerated."
+ },
+ "Memoricide": {
+  "id": "Memoricide",
+  "name": "Memoricide",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a nonland card name. Search target player's graveyard, hand, and library for any number of cards with that name and exile them. Then that player shuffles."
+ },
+ "Phyrexian Purge": {
+  "id": "Phyrexian Purge",
+  "name": "Phyrexian Purge",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{R}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "This spell costs 3 life more to cast for each target.\nDestroy any number of target creatures."
+ },
+ "Sheoldred's Restoration": {
+  "id": "Sheoldred's Restoration",
+  "name": "Sheoldred's Restoration",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {2}{W} (You may pay an additional {2}{W} as you cast this spell.)\nReturn target creature card from your graveyard to the battlefield. If this spell was kicked, you gain life equal to that card's mana value. Otherwise, you lose that much life.\nExile Sheoldred's Restoration."
+ },
+ "Rain of Daggers": {
+  "id": "Rain of Daggers",
+  "name": "Rain of Daggers",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all creatures target opponent controls. You lose 2 life for each creature destroyed this way."
+ },
+ "Misfortune": {
+  "id": "Misfortune",
+  "name": "Misfortune",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{R}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "An opponent chooses one —\n• You put a +1/+1 counter on each creature you control and gain 4 life.\n• You put a -1/-1 counter on each creature that player controls and Misfortune deals 4 damage to that player."
+ },
+ "Jund 'Em Out": {
+  "id": "Jund 'Em Out",
+  "name": "Jund 'Em Out",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{R}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "Retrace (Sorry, no room for reminder text.)\nChoose one at random. Create a copy of the chosen card. You may cast the copy without paying its mana cost.\n• Abrupt Decay\n• Blightning\n• Bloodbraid Elf\n• Lightning Bolt\n• Liliana of the Veil\n• Tarmogoyf"
+ },
+ "Sadistic Sacrament": {
+  "id": "Sadistic Sacrament",
+  "name": "Sadistic Sacrament",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {7} (You may pay an additional {7} as you cast this spell.)\nSearch target player's library for up to three cards, exile them, then that player shuffles. If this spell was kicked, instead search that player's library for up to fifteen cards, exile them, then that player shuffles."
+ },
+ "Mind Spike": {
+  "id": "Mind Spike",
+  "name": "Mind Spike",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals each noncreature, nonland card in their hand. You choose a card revealed this way. That player discards that card. You lose 2 life. If they didn't reveal a card this way, you draw a card."
+ },
+ "Golden Demise": {
+  "id": "Golden Demise",
+  "name": "Golden Demise",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Ascend (If you control ten or more permanents, you get the city's blessing for the rest of the game.)\nAll creatures get -2/-2 until end of turn. If you have the city's blessing, instead only creatures your opponents control get -2/-2 until end of turn."
+ },
+ "Squirming Emergence": {
+  "id": "Squirming Emergence",
+  "name": "Squirming Emergence",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Fathomless descent — Return to the battlefield target nonland permanent card in your graveyard with mana value less than or equal to the number of permanent cards in your graveyard."
+ },
+ "Traumatic Revelation": {
+  "id": "Traumatic Revelation",
+  "name": "Traumatic Revelation",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent reveals their hand. You may choose a creature or battle card from it. If you do, that player discards that card. If you don't, incubate 3. (Create an Incubator token with three +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)"
+ },
+ "Too Evil to Stay Dead": {
+  "id": "Too Evil to Stay Dead",
+  "name": "Too Evil to Stay Dead",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Teamwork 4 (As an additional cost to cast this spell, you may tap any number of creatures you control with total power 4 or more.)\nChoose target creature card in your graveyard with mana value 4 or less. If this spell was cast using teamwork, instead choose target creature card in your graveyard. Return the chosen card to the battlefield."
+ },
+ "Tragic Trajectory": {
+  "id": "Tragic Trajectory",
+  "name": "Tragic Trajectory",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gets -2/-2 until end of turn.\nVoid — That creature gets -10/-10 until end of turn instead if a nonland permanent left the battlefield this turn or a spell was warped this turn."
+ },
+ "Scrounge": {
+  "id": "Scrounge",
+  "name": "Scrounge",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent chooses an artifact card in their graveyard. Put that card onto the battlefield under your control."
+ },
+ "Rakshasa's Secret": {
+  "id": "Rakshasa's Secret",
+  "name": "Rakshasa's Secret",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards two cards. You mill two cards."
+ },
+ "Drain Life": {
+  "id": "Drain Life",
+  "name": "Drain Life",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Spend only black mana on X.\nDrain Life deals X damage to any target. You gain life equal to the damage dealt, but not more life than the player's life total before the damage was dealt, the planeswalker's loyalty before the damage was dealt, or the creature's toughness."
+ },
+ "Hellfire": {
+  "id": "Hellfire",
+  "name": "Hellfire",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all nonblack creatures. Hellfire deals X plus 3 damage to you, where X is the number of creatures that died this way."
+ },
+ "Mental Agony": {
+  "id": "Mental Agony",
+  "name": "Mental Agony",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards and loses 2 life."
+ },
+ "Chain of Smog": {
+  "id": "Chain of Smog",
+  "name": "Chain of Smog",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards. That player may copy this spell and may choose a new target for that copy."
+ },
+ "Down // Dirty": {
+  "id": "Down // Dirty",
+  "name": "Down // Dirty",
+  "typeLine": "Sorcery // Sorcery",
+  "manaCost": "{3}{B} // {2}{G}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Down: Target player discards two cards.\nFuse (You may cast one or both halves of this card from your hand.)\n\nDirty: Return target card from your graveyard to your hand.\nFuse (You may cast one or both halves of this card from your hand.)"
+ },
+ "Hazardous Conditions": {
+  "id": "Hazardous Conditions",
+  "name": "Hazardous Conditions",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Creatures with no counters on them get -2/-2 until end of turn."
+ },
+ "All Hallow's Eve": {
+  "id": "All Hallow's Eve",
+  "name": "All Hallow's Eve",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile All Hallow's Eve with two scream counters on it.\nAt the beginning of your upkeep, if this card is exiled with a scream counter on it, remove a scream counter from it. If there are no more scream counters on it, put it into your graveyard and each player returns all creature cards from their graveyard to the battlefield."
+ },
+ "Gruesome Discovery": {
+  "id": "Gruesome Discovery",
+  "name": "Gruesome Discovery",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards two cards.\nMorbid — If a creature died this turn, instead that player reveals their hand, you choose two cards from it, then that player discards those cards."
+ },
+ "Thoughtseize": {
+  "id": "Thoughtseize",
+  "name": "Thoughtseize",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player reveals their hand. You choose a nonland card from it. That player discards that card. You lose 2 life."
+ },
+ "Morgue Burst": {
+  "id": "Morgue Burst",
+  "name": "Morgue Burst",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{R}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Return target creature card from your graveyard to your hand. Morgue Burst deals damage to any target equal to the power of the card returned this way."
+ },
+ "Back for Seconds": {
+  "id": "Back for Seconds",
+  "name": "Back for Seconds",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)\nReturn up to two target creature cards from your graveyard to your hand. If this spell was bargained, you may put one of those cards with mana value 4 or less onto the battlefield instead of putting it into your hand."
+ },
+ "Devouring Greed": {
+  "id": "Devouring Greed",
+  "name": "Devouring Greed",
+  "typeLine": "Sorcery — Arcane",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As an additional cost to cast this spell, you may sacrifice any number of Spirits.\nTarget player loses 2 life plus 2 life for each Spirit sacrificed this way. You gain that much life."
+ },
+ "Plague of Vermin": {
+  "id": "Plague of Vermin",
+  "name": "Plague of Vermin",
+  "typeLine": "Sorcery",
+  "manaCost": "{6}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Starting with you, each player may pay any amount of life. Repeat this process until no one pays life. Each player creates a 1/1 black Rat creature token for each 1 life they paid this way."
+ },
+ "Mind Burst": {
+  "id": "Mind Burst",
+  "name": "Mind Burst",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target player discards X cards, where X is one plus the number of cards named Mind Burst in all graveyards."
+ },
+ "Dread Fugue": {
+  "id": "Dread Fugue",
+  "name": "Dread Fugue",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cleave {2}{B} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nTarget player reveals their hand. You choose a nonland card from it [with mana value 2 or less]. That player discards that card."
+ },
+ "The Elderspell": {
+  "id": "The Elderspell",
+  "name": "The Elderspell",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy any number of target planeswalkers. Choose a planeswalker you control. Put two loyalty counters on it for each planeswalker destroyed this way."
+ },
+ "Rite of the Serpent": {
+  "id": "Rite of the Serpent",
+  "name": "Rite of the Serpent",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature. If that creature had a +1/+1 counter on it, create a 1/1 green Snake creature token."
+ },
+ "Ribbons of Night": {
+  "id": "Ribbons of Night",
+  "name": "Ribbons of Night",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Ribbons of Night deals 4 damage to target creature and you gain 4 life. If {U} was spent to cast this spell, draw a card."
+ },
+ "Shrouded Lore": {
+  "id": "Shrouded Lore",
+  "name": "Shrouded Lore",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent chooses a card in your graveyard. You may pay {B}. If you do, repeat this process except that opponent can't choose a card already chosen for Shrouded Lore. Then put the last chosen card into your hand."
+ },
+ "Do or Die": {
+  "id": "Do or Die",
+  "name": "Do or Die",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Separate all creatures target player controls into two piles. Destroy all creatures in the pile of that player's choice. They can't be regenerated."
+ },
+ "Sandman's Quicksand": {
+  "id": "Sandman's Quicksand",
+  "name": "Sandman's Quicksand",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Mayhem {3}{B} (You may cast this card from your graveyard for {3}{B} if you discarded it this turn. Timing rules still apply.)\nAll creatures get -2/-2 until end of turn. If this spell's mayhem cost was paid, creatures your opponents control get -2/-2 until end of turn instead."
+ },
+ "The Final Days": {
+  "id": "The Final Days",
+  "name": "The Final Days",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Create two tapped 2/2 black Horror creature tokens. If this spell was cast from a graveyard, instead create X of those tokens, where X is the number of creature cards in your graveyard.\nFlashback {4}{B}{B} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Spoils of War": {
+  "id": "Spoils of War",
+  "name": "Spoils of War",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "X is the number of artifact and/or creature cards in an opponent's graveyard as you cast this spell.\nDistribute X +1/+1 counters among any number of target creatures."
+ },
+ "Prying Questions": {
+  "id": "Prying Questions",
+  "name": "Prying Questions",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent loses 3 life and puts a card from their hand on top of their library."
+ },
+ "Bitter Revelation": {
+  "id": "Bitter Revelation",
+  "name": "Bitter Revelation",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Look at the top four cards of your library. Put two of them into your hand and the rest into your graveyard. You lose 2 life."
+ },
+ "Extinction": {
+  "id": "Extinction",
+  "name": "Extinction",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy all creatures of the creature type of your choice."
+ },
+ "Secret Salvage": {
+  "id": "Secret Salvage",
+  "name": "Secret Salvage",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Exile target nonland card from your graveyard. Search your library for any number of cards with the same name as that card, reveal them, put them into your hand, then shuffle."
+ },
+ "Salt Road Skirmish": {
+  "id": "Salt Road Skirmish",
+  "name": "Salt Road Skirmish",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy target creature. Create two 1/1 red Warrior creature tokens. They gain haste until end of turn. Sacrifice them at the beginning of the next end step."
+ },
+ "Plague Spores": {
+  "id": "Plague Spores",
+  "name": "Plague Spores",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}{R}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Destroy target nonblack creature and target land. They can't be regenerated."
+ },
+ "Gruesome Encore": {
+  "id": "Gruesome Encore",
+  "name": "Gruesome Encore",
+  "typeLine": "Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Put target creature card from an opponent's graveyard onto the battlefield under your control. It gains haste. Exile it at the beginning of the next end step. If that creature would leave the battlefield, exile it instead of putting it anywhere else."
+ },
+ "Gruesome Menagerie": {
+  "id": "Gruesome Menagerie",
+  "name": "Gruesome Menagerie",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose a creature card with mana value 1 in your graveyard, then do the same for creature cards with mana value 2 and 3. Return those cards to the battlefield."
+ },
+ "Mind Knives": {
+  "id": "Mind Knives",
+  "name": "Mind Knives",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent discards a card at random."
+ },
+ "Deadly Allure": {
+  "id": "Deadly Allure",
+  "name": "Deadly Allure",
+  "typeLine": "Sorcery",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target creature gains deathtouch until end of turn and must be blocked this turn if able.\nFlashback {G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+ },
+ "Invoke Despair": {
+  "id": "Invoke Despair",
+  "name": "Invoke Despair",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Target opponent sacrifices a creature of their choice. If they can't, they lose 2 life and you draw a card. Then repeat this process for an enchantment and a planeswalker."
+ },
+ "Soul Strings": {
+  "id": "Soul Strings",
+  "name": "Soul Strings",
+  "typeLine": "Sorcery",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Return two target creature cards from your graveyard to your hand unless any player pays {X}."
+ },
+ "Worst Fears": {
+  "id": "Worst Fears",
+  "name": "Worst Fears",
+  "typeLine": "Sorcery",
+  "manaCost": "{7}{B}",
+  "cmc": 8,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You control target player during that player's next turn. Exile Worst Fears. (You see all cards that player could see and make all decisions for them.)"
+ },
+ "Dead Ringers": {
+  "id": "Dead Ringers",
+  "name": "Dead Ringers",
+  "typeLine": "Sorcery",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Destroy two target nonblack creatures unless either one is a color the other isn't. They can't be regenerated."
+ },
+ "Exhume": {
+  "id": "Exhume",
+  "name": "Exhume",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each player puts a creature card from their graveyard onto the battlefield."
+ },
+ "Void": {
+  "id": "Void",
+  "name": "Void",
+  "typeLine": "Sorcery",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Choose a number. Destroy all artifacts and creatures with mana value equal to that number. Then target player reveals their hand and discards all nonland cards with mana value equal to the number."
+ },
+ "Withering Curse": {
+  "id": "Withering Curse",
+  "name": "Withering Curse",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "All creatures get -2/-2 until end of turn.\nInfusion — If you gained life this turn, destroy all creatures instead."
+ },
+ "Grave Strength": {
+  "id": "Grave Strength",
+  "name": "Grave Strength",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Choose target creature. Mill three cards, then put a +1/+1 counter on that creature for each creature card in your graveyard. (To mill three cards, put the top three cards of your library into your graveyard.)"
+ },
+ "Death Wish": {
+  "id": "Death Wish",
+  "name": "Death Wish",
+  "typeLine": "Sorcery",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may put a card you own from outside the game into your hand. You lose half your life, rounded up. Exile Death Wish."
+ }
+}

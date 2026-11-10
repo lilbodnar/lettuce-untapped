@@ -1,0 +1,910 @@
+{
+ "Mukotai Soulripper": {
+  "id": "Mukotai Soulripper",
+  "name": "Mukotai Soulripper",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever this Vehicle attacks, you may sacrifice another artifact or creature. If you do, put a +1/+1 counter on this Vehicle and it gains menace until end of turn.\nCrew 2 (Tap any number of creatures you control with total power 2 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "4",
+  "toughness": "3"
+ },
+ "Angrath, the Flame-Chained": {
+  "id": "Angrath, the Flame-Chained",
+  "name": "Angrath, the Flame-Chained",
+  "typeLine": "Legendary Planeswalker — Angrath",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "+1: Each opponent discards a card and loses 2 life.\n−3: Gain control of target creature until end of turn. Untap it. It gains haste until end of turn. Sacrifice it at the beginning of the next end step if it has mana value 3 or less.\n−8: Each opponent loses life equal to the number of cards in their graveyard.",
+  "loyalty": "4"
+ },
+ "Liliana of the Veil": {
+  "id": "Liliana of the Veil",
+  "name": "Liliana of the Veil",
+  "typeLine": "Legendary Planeswalker — Liliana",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Each player discards a card.\n−2: Target player sacrifices a creature.\n−6: Separate all permanents target player controls into two piles. That player sacrifices all permanents in the pile of their choice.",
+  "loyalty": "3"
+ },
+ "Apocalypse Runner": {
+  "id": "Apocalypse Runner",
+  "name": "Apocalypse Runner",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}{B}{R}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "{T}: Target creature you control with power 2 or less gains lifelink until end of turn and can't be blocked this turn.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "6",
+  "toughness": "5"
+ },
+ "Hemlock Vial": {
+  "id": "Hemlock Vial",
+  "name": "Hemlock Vial",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this artifact enters, you draw a card and you lose 1 life.\n{B}, {T}, Sacrifice this artifact: Each equipped creature and Equipment you control gains deathtouch until end of turn."
+ },
+ "Ral Zarek, Guest Lecturer": {
+  "id": "Ral Zarek, Guest Lecturer",
+  "name": "Ral Zarek, Guest Lecturer",
+  "typeLine": "Legendary Planeswalker — Ral",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Surveil 2.\n−1: Any number of target players each discard a card.\n−2: Return target creature card with mana value 3 or less from your graveyard to the battlefield.\n−7: Flip five coins. Target opponent skips their next X turns, where X is the number of coins that came up heads.",
+  "loyalty": "3"
+ },
+ "Requiem Monolith": {
+  "id": "Requiem Monolith",
+  "name": "Requiem Monolith",
+  "typeLine": "Artifact",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{T}: Until end of turn, target creature gains \"Whenever this creature is dealt damage, you draw that many cards and lose that much life.\" That creature's controller may have this artifact deal 1 damage to it. Activate only as a sorcery."
+ },
+ "Nissa of Shadowed Boughs": {
+  "id": "Nissa of Shadowed Boughs",
+  "name": "Nissa of Shadowed Boughs",
+  "typeLine": "Legendary Planeswalker — Nissa",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Landfall — Whenever a land you control enters, put a loyalty counter on Nissa.\n+1: Untap target land you control. You may have it become a 3/3 Elemental creature with haste and menace until end of turn. It's still a land.\n−5: You may put a creature card with mana value less than or equal to the number of lands you control onto the battlefield from your hand or graveyard with two +1/+1 counters on it.",
+  "loyalty": "4"
+ },
+ "Invasion of Azgol // Ashen Reaper": {
+  "id": "Invasion of Azgol // Ashen Reaper",
+  "name": "Invasion of Azgol // Ashen Reaper",
+  "typeLine": "Battle — Siege // Creature — Zombie Elemental",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Invasion of Azgol: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, target player sacrifices a creature or planeswalker of their choice and loses 1 life.\n\nAshen Reaper: Menace\nAt the beginning of your end step, put a +1/+1 counter on this creature if a permanent was put into a graveyard from the battlefield this turn."
+ },
+ "Davriel, Rogue Shadowmage": {
+  "id": "Davriel, Rogue Shadowmage",
+  "name": "Davriel, Rogue Shadowmage",
+  "typeLine": "Legendary Planeswalker — Davriel",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each opponent's upkeep, if that player has one or fewer cards in hand, Davriel deals 2 damage to them.\n−1: Target player discards a card.",
+  "loyalty": "3"
+ },
+ "Davriel, Soul Broker": {
+  "id": "Davriel, Soul Broker",
+  "name": "Davriel, Soul Broker",
+  "typeLine": "Legendary Planeswalker — Davriel",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Until your next turn, whenever an opponent attacks you and/or planeswalkers you control, they discard a card. If they can't, they sacrifice an attacking creature.\n−2: Accept one of Davriel's offers, then accept one of Davriel's conditions.\n−3: Target creature an opponent controls perpetually gets -3/-3.",
+  "loyalty": "4"
+ },
+ "Yawgmoth's Day Planner": {
+  "id": "Yawgmoth's Day Planner",
+  "name": "Yawgmoth's Day Planner",
+  "typeLine": "Artifact",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{T}, Pay 2 life: Add {B}{B}.\nYou may cast spells from your graveyard. Only mana produced by abilities that caused you to lose life may be spent to cast spells this way. (Damage causes loss of life.)\nIf a card would be put into your graveyard from anywhere, exile it instead.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Angrath, Minotaur Pirate": {
+  "id": "Angrath, Minotaur Pirate",
+  "name": "Angrath, Minotaur Pirate",
+  "typeLine": "Legendary Planeswalker — Angrath",
+  "manaCost": "{4}{B}{R}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "+2: Angrath deals 1 damage to target opponent or planeswalker and each creature that player or that planeswalker's controller controls.\n−3: Return target Pirate card from your graveyard to the battlefield.\n−11: Destroy all creatures target opponent controls. Angrath deals damage to that player equal to their total power.",
+  "loyalty": "5"
+ },
+ "Bolas's Citadel": {
+  "id": "Bolas's Citadel",
+  "name": "Bolas's Citadel",
+  "typeLine": "Legendary Artifact",
+  "manaCost": "{3}{B}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You may look at the top card of your library any time.\nYou may play lands and cast spells from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.\n{T}, Sacrifice ten nonland permanents: Each opponent loses 10 life."
+ },
+ "Invasion of Eldraine // Prickle Faeries": {
+  "id": "Invasion of Eldraine // Prickle Faeries",
+  "name": "Invasion of Eldraine // Prickle Faeries",
+  "typeLine": "Battle — Siege // Creature — Faerie",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Invasion of Eldraine: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, target opponent discards two cards.\n\nPrickle Faeries: Flying\nAt the beginning of each opponent's upkeep, if that player has two or fewer cards in hand, this creature deals 2 damage to them."
+ },
+ "The Darkhold": {
+  "id": "The Darkhold",
+  "name": "The Darkhold",
+  "typeLine": "Legendary Artifact — Book",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{T}: Put a sin counter on The Darkhold. Draw a card for each sin counter on it, then you lose 1 life for each card in your hand.\n{6}{B}{B}, {T}: Each player's life total becomes the lowest life total among all players. Activate only as a sorcery."
+ },
+ "The Fire Nation Drill": {
+  "id": "The Fire Nation Drill",
+  "name": "The Fire Nation Drill",
+  "typeLine": "Legendary Artifact — Vehicle",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Trample\nWhen The Fire Nation Drill enters, you may tap it. When you do, destroy target creature with power 4 or less.\n{1}: Permanents your opponents control lose hexproof and indestructible until end of turn.\nCrew 2",
+  "power": "6",
+  "toughness": "3"
+ },
+ "The Last Ride": {
+  "id": "The Last Ride",
+  "name": "The Last Ride",
+  "typeLine": "Legendary Artifact — Vehicle",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "The Last Ride gets -X/-X, where X is your life total.\n{2}{B}, Pay 2 life: Draw a card.\nCrew 2",
+  "power": "13",
+  "toughness": "13"
+ },
+ "Garruk, Veiled Butcher": {
+  "id": "Garruk, Veiled Butcher",
+  "name": "Garruk, Veiled Butcher",
+  "typeLine": "Legendary Planeswalker — Garruk",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If a creature an opponent controls would die, exile it instead.\n+2: Up to one target creature gets -4/-1 until your next turn.\n−2: Each player sacrifices a creature of their choice. If you sacrificed a creature this way, create a 4/4 green Beast creature token with trample.\n−3: Each opponent discards two cards. For each opponent who didn't discard two nonland cards this way, you draw a card.",
+  "loyalty": "5"
+ },
+ "Liliana, Dreadhorde General": {
+  "id": "Liliana, Dreadhorde General",
+  "name": "Liliana, Dreadhorde General",
+  "typeLine": "Legendary Planeswalker — Liliana",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature you control dies, draw a card.\n+1: Create a 2/2 black Zombie creature token.\n−4: Each player sacrifices two creatures of their choice.\n−9: Each opponent chooses a permanent they control of each permanent type and sacrifices the rest.",
+  "loyalty": "6"
+ },
+ "Vorpal Sword": {
+  "id": "Vorpal Sword",
+  "name": "Vorpal Sword",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Equipped creature gets +2/+0 and has deathtouch.\n{5}{B}{B}{B}: Until end of turn, this Equipment gains \"Whenever equipped creature deals combat damage to a player, that player loses the game.\"\nEquip {B}{B}"
+ },
+ "Garruk the Slayer": {
+  "id": "Garruk the Slayer",
+  "name": "Garruk the Slayer",
+  "typeLine": "Legendary Planeswalker — Garruk",
+  "manaCost": "",
+  "cmc": 0,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "0: Put a 2/2 green Wolf creature token onto the battlefield.\n+4: Target Wolf creature gets +1/+0 and gains deathtouch until end of turn.\n−10: Destroy target creature. Put loyalty counters on Garruk the Slayer equal to that creature's toughness.\n−25: Destroy all creatures Garruk the Slayer doesn't control.",
+  "loyalty": "20"
+ },
+ "Liliana, the Last Hope": {
+  "id": "Liliana, the Last Hope",
+  "name": "Liliana, the Last Hope",
+  "typeLine": "Legendary Planeswalker — Liliana",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Up to one target creature gets -2/-1 until your next turn.\n−2: Mill two cards, then you may return a creature card from your graveyard to your hand.\n−7: You get an emblem with \"At the beginning of your end step, create X 2/2 black Zombie creature tokens, where X is two plus the number of Zombies you control.\"",
+  "loyalty": "3"
+ },
+ "Hylderblade": {
+  "id": "Hylderblade",
+  "name": "Hylderblade",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Equipped creature gets +3/+1.\nVoid — At the beginning of your end step, if a nonland permanent left the battlefield this turn or a spell was warped this turn, attach this Equipment to target creature you control.\nEquip {4} ({4}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Mind Carver": {
+  "id": "Mind Carver",
+  "name": "Mind Carver",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this Equipment enters, attach it to target creature you control.\nEquipped creature gets +1/+0. It gets +3/+1 instead as long as an opponent has eight or more cards in their graveyard.\nEquip {2}{B}"
+ },
+ "Ashiok, Wicked Manipulator": {
+  "id": "Ashiok, Wicked Manipulator",
+  "name": "Ashiok, Wicked Manipulator",
+  "typeLine": "Legendary Planeswalker — Ashiok",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If you would pay life while your library has at least that many cards in it, exile that many cards from the top of your library instead.\n+1: Look at the top two cards of your library. Exile one of them and put the other into your hand.\n−2: Create two 1/1 black Nightmare creature tokens with \"At the beginning of combat on your turn, if a card was put into exile this turn, put a +1/+1 counter on this token.\"\n−7: Target player exiles the top X cards of their library, where X is the total mana value of cards you own in exile.",
+  "loyalty": "5"
+ },
+ "Dubious Delicacy": {
+  "id": "Dubious Delicacy",
+  "name": "Dubious Delicacy",
+  "typeLine": "Artifact — Food",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flash\nWhen this artifact enters, up to one target creature gets -3/-3 until end of turn.\n{2}, {T}, Sacrifice this artifact: You gain 3 life.\n{2}, {T}, Sacrifice this artifact: Target opponent loses 3 life."
+ },
+ "Phoenix Fleet Airship": {
+  "id": "Phoenix Fleet Airship",
+  "name": "Phoenix Fleet Airship",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flying\nAt the beginning of your end step, if you sacrificed a permanent this turn, create a token that's a copy of this Vehicle.\nAs long as you control eight or more permanents named Phoenix Fleet Airship, this Vehicle is an artifact creature.\nCrew 1",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Invasion of Fiora // Marchesa, Resolute Monarch": {
+  "id": "Invasion of Fiora // Marchesa, Resolute Monarch",
+  "name": "Invasion of Fiora // Marchesa, Resolute Monarch",
+  "typeLine": "Battle — Siege // Legendary Creature — Human Noble",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Invasion of Fiora: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, choose one or both —\n• Destroy all legendary creatures.\n• Destroy all nonlegendary creatures.\n\nMarchesa, Resolute Monarch: Menace, deathtouch\nWhenever Marchesa attacks, remove all counters from up to one target permanent.\nAt the beginning of your upkeep, if you haven't been dealt combat damage since your last turn, you draw a card and you lose 1 life."
+ },
+ "Sorin, Vampire Lord": {
+  "id": "Sorin, Vampire Lord",
+  "name": "Sorin, Vampire Lord",
+  "typeLine": "Legendary Planeswalker — Sorin",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Up to one target creature gets +2/+0 until end of turn.\n−2: Sorin deals 4 damage to any target. You gain 4 life.\n−8: Until end of turn, each Vampire you control gains \"{T}: Gain control of target creature.\"",
+  "loyalty": "4"
+ },
+ "Vraska, Regal Gorgon": {
+  "id": "Vraska, Regal Gorgon",
+  "name": "Vraska, Regal Gorgon",
+  "typeLine": "Legendary Planeswalker — Vraska",
+  "manaCost": "{5}{B}{G}",
+  "cmc": 7,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "+2: Put a +1/+1 counter on up to one target creature. That creature gains menace until end of turn.\n−3: Destroy target creature.\n−10: For each creature card in your graveyard, put a +1/+1 counter on each creature you control.",
+  "loyalty": "5"
+ },
+ "Pestilent Cauldron // Restorative Burst": {
+  "id": "Pestilent Cauldron // Restorative Burst",
+  "name": "Pestilent Cauldron // Restorative Burst",
+  "typeLine": "Artifact // Sorcery",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Pestilent Cauldron: {T}, Discard a card: Create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\"\n{1}, {T}: Each opponent mills cards equal to the amount of life you gained this turn.\n{4}, {T}: Exile four target cards from a single graveyard. Draw a card.\n\nRestorative Burst: Return up to two target creature, land, and/or planeswalker cards from your graveyard to your hand. Each player gains 4 life. Exile Restorative Burst."
+ },
+ "Tevesh Szat, Doom of Fools": {
+  "id": "Tevesh Szat, Doom of Fools",
+  "name": "Tevesh Szat, Doom of Fools",
+  "typeLine": "Legendary Planeswalker — Szat",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+2: Create two 0/1 black Thrull creature tokens.\n+1: You may sacrifice another creature or planeswalker. If you do, draw two cards, then draw another card if the sacrificed permanent was a commander.\n−10: Gain control of all commanders. Put all commanders from the command zone onto the battlefield under your control.\nTevesh Szat, Doom of Fools can be your commander.\nPartner",
+  "loyalty": "4"
+ },
+ "Thieves' Tools": {
+  "id": "Thieves' Tools",
+  "name": "Thieves' Tools",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this Equipment enters, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nEquipped creature can't be blocked as long as its power is 3 or less.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Wishclaw Talisman": {
+  "id": "Wishclaw Talisman",
+  "name": "Wishclaw Talisman",
+  "typeLine": "Artifact",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This artifact enters with three wish counters on it.\n{1}, {T}, Remove a wish counter from this artifact: Search your library for a card, put it into your hand, then shuffle. An opponent gains control of this artifact. Activate only during your turn."
+ },
+ "Vraska, Scheming Gorgon": {
+  "id": "Vraska, Scheming Gorgon",
+  "name": "Vraska, Scheming Gorgon",
+  "typeLine": "Legendary Planeswalker — Vraska",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+2: Creatures you control get +1/+0 until end of turn.\n−3: Destroy target creature.\n−10: Until end of turn, creatures you control gain deathtouch and \"Whenever this creature deals damage to an opponent, that player loses the game.\"",
+  "loyalty": "5"
+ },
+ "Demonic Junker": {
+  "id": "Demonic Junker",
+  "name": "Demonic Junker",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{6}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nWhen this Vehicle enters, for each player, destroy up to one target creature that player controls. If a creature you controlled was destroyed this way, put two +1/+1 counters on this Vehicle.\nCrew 2",
+  "power": "4",
+  "toughness": "3"
+ },
+ "Ob Nixilis, the Hate-Twisted": {
+  "id": "Ob Nixilis, the Hate-Twisted",
+  "name": "Ob Nixilis, the Hate-Twisted",
+  "typeLine": "Legendary Planeswalker — Nixilis",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever an opponent draws a card, Ob Nixilis deals 1 damage to that player.\n−2: Destroy target creature. Its controller draws two cards.",
+  "loyalty": "5"
+ },
+ "Black Mage's Rod": {
+  "id": "Black Mage's Rod",
+  "name": "Black Mage's Rod",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +1/+0, has \"Whenever you cast a noncreature spell, this creature deals 1 damage to each opponent,\" and is a Wizard in addition to its other types.\nEquip {3}"
+ },
+ "Entropic Battlecruiser": {
+  "id": "Entropic Battlecruiser",
+  "name": "Entropic Battlecruiser",
+  "typeLine": "Artifact — Spacecraft",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Station (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n1+ | Whenever an opponent discards a card, they lose 3 life.\n8+ | Flying, deathtouch\nWhenever this Spacecraft attacks, each opponent discards a card. Each opponent who can't loses 3 life.",
+  "power": "3",
+  "toughness": "10"
+ },
+ "Liliana of the Dark Realms": {
+  "id": "Liliana of the Dark Realms",
+  "name": "Liliana of the Dark Realms",
+  "typeLine": "Legendary Planeswalker — Liliana",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Search your library for a Swamp card, reveal it, put it into your hand, then shuffle.\n−3: Target creature gets +X/+X or -X/-X until end of turn, where X is the number of Swamps you control.\n−6: You get an emblem with \"Swamps you control have '{T}: Add {B}{B}{B}{B}.'\"",
+  "loyalty": "3",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "The Soul Stone": {
+  "id": "The Soul Stone",
+  "name": "The Soul Stone",
+  "typeLine": "Legendary Artifact — Infinity Stone",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Indestructible\n{T}: Add {B}.\n{6}{B}, {T}, Exile a creature you control: Harness The Soul Stone. (Once harnessed, its ∞ ability is active.)\n∞ — At the beginning of your upkeep, return target creature card from your graveyard to the battlefield.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Sifa Grent": {
+  "id": "Sifa Grent",
+  "name": "Sifa Grent",
+  "typeLine": "Legendary Planeswalker — Sifa",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Whenever a creature dies, target opponent loses 1 life and you gain 1 life.\n+1: Goad up to two target creatures.\n−6: Each opponent exiles the top two cards of their library. Until end of turn, you may play those cards without paying their mana costs.\nSifa Grent can be your commander.",
+  "loyalty": "4"
+ },
+ "Gisa's Favorite Shovel": {
+  "id": "Gisa's Favorite Shovel",
+  "name": "Gisa's Favorite Shovel",
+  "typeLine": "Legendary Artifact — Equipment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Equipped creature gets +2/+0 and has menace.\nWhenever equipped creature attacks, defending player sacrifices a creature of their choice. If they do, you create a Walker token.\nEquip {4}"
+ },
+ "Phantom Train": {
+  "id": "Phantom Train",
+  "name": "Phantom Train",
+  "typeLine": "Artifact — Vehicle",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Trample\nSacrifice another artifact or creature: Put a +1/+1 counter on this Vehicle. It becomes a Spirit artifact creature in addition to its other types until end of turn.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Ob Nixilis, the Adversary": {
+  "id": "Ob Nixilis, the Adversary",
+  "name": "Ob Nixilis, the Adversary",
+  "typeLine": "Legendary Planeswalker — Nixilis",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Casualty X. The copy isn't legendary and has starting loyalty X. (As you cast this spell, you may sacrifice a creature with power X. When you do, copy this spell. The copy becomes a token.)\n+1: Each opponent loses 2 life unless they discard a card. If you control a Demon or Devil, you gain 2 life.\n−2: Create a 1/1 red Devil creature token with \"When this token dies, it deals 1 damage to any target.\"\n−7: Target player draws seven cards and loses 7 life.",
+  "loyalty": "3"
+ },
+ "Liliana Vess": {
+  "id": "Liliana Vess",
+  "name": "Liliana Vess",
+  "typeLine": "Legendary Planeswalker — Liliana",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Target player discards a card.\n−2: Search your library for a card, then shuffle and put that card on top.\n−8: Put all creature cards from all graveyards onto the battlefield under your control.",
+  "loyalty": "5"
+ },
+ "Tarrian's Journal // The Tomb of Aclazotz": {
+  "id": "Tarrian's Journal // The Tomb of Aclazotz",
+  "name": "Tarrian's Journal // The Tomb of Aclazotz",
+  "typeLine": "Legendary Artifact — Book // Legendary Land — Cave",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Tarrian's Journal: {T}, Sacrifice another artifact or creature: Draw a card. Activate only as a sorcery.\n{2}, {T}, Discard your hand: Transform Tarrian's Journal.\n\nThe Tomb of Aclazotz: (Transforms from Tarrian's Journal.)\n{T}: Add {B}.\n{T}: You may cast a creature spell from your graveyard this turn. If you do, it enters with a finality counter on it and is a Vampire in addition to its other types. (If a creature with a finality counter on it would die, exile it instead.)",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Giant's Skewer": {
+  "id": "Giant's Skewer",
+  "name": "Giant's Skewer",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Equipped creature gets +2/+1.\nWhenever equipped creature deals combat damage to a creature, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Daretti, Ingenious Iconoclast": {
+  "id": "Daretti, Ingenious Iconoclast",
+  "name": "Daretti, Ingenious Iconoclast",
+  "typeLine": "Legendary Planeswalker — Daretti",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "+1: Create a 1/1 colorless Construct artifact creature token with defender.\n−1: You may sacrifice an artifact. If you do, destroy target artifact or creature.\n−6: Choose target artifact card in a graveyard or artifact on the battlefield. Create three tokens that are copies of it.",
+  "loyalty": "3"
+ },
+ "Chaos Shrine's Black Crystal": {
+  "id": "Chaos Shrine's Black Crystal",
+  "name": "Chaos Shrine's Black Crystal",
+  "typeLine": "Legendary Artifact",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a nontoken creature you control dies, exile it.\nAt the beginning of your upkeep, you may put a creature card exiled with Chaos Shrine's Black Crystal onto the battlefield under your control with a finality counter on it."
+ },
+ "Heirloom Mirror // Inherited Fiend": {
+  "id": "Heirloom Mirror // Inherited Fiend",
+  "name": "Heirloom Mirror // Inherited Fiend",
+  "typeLine": "Artifact // Creature — Demon",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Heirloom Mirror: {1}, {T}, Pay 1 life, Discard a card: Draw a card, mill a card, then put a ritual counter on this artifact. Then if it has three or more ritual counters on it, remove them and transform it. Activate only as a sorcery.\n\nInherited Fiend: Flying\n{2}{B}: Exile target creature card from a graveyard. Put a +1/+1 counter on this creature."
+ },
+ "Groom's Finery": {
+  "id": "Groom's Finery",
+  "name": "Groom's Finery",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Equipped creature gets +2/+0. It gets an additional +0/+2 and has deathtouch as long as an Equipment named Bride's Gown is attached to a creature you control.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Sphere of Annihilation": {
+  "id": "Sphere of Annihilation",
+  "name": "Sphere of Annihilation",
+  "typeLine": "Artifact",
+  "manaCost": "{X}{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This artifact enters with X void counters on it.\nAt the beginning of your upkeep, exile this artifact, all creatures and planeswalkers with mana value less than or equal to the number of void counters on it, and all creature and planeswalker cards in graveyards with mana value less than or equal to the number of void counters on it."
+ },
+ "Polygraph Orb": {
+  "id": "Polygraph Orb",
+  "name": "Polygraph Orb",
+  "typeLine": "Artifact",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this artifact enters, look at the top four cards of your library. Put two of them into your hand and the rest into your graveyard. You lose 2 life.\n{2}, {T}, Collect evidence 3: Each opponent loses 3 life unless they discard a card or sacrifice a creature. (To collect evidence 3, exile cards with total mana value 3 or greater from your graveyard.)"
+ },
+ "Pact Weapon": {
+  "id": "Pact Weapon",
+  "name": "Pact Weapon",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As long as this Equipment is attached to a creature, you don't lose the game for having 0 or less life.\nWhenever equipped creature attacks, draw a card and reveal it. The creature gets +X/+X until end of turn and you lose X life, where X is that card's mana value.\nEquip—Discard a card."
+ },
+ "Shredder's Armor": {
+  "id": "Shredder's Armor",
+  "name": "Shredder's Armor",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Equipped creature gets +2/+1.\nWhen this Equipment enters, attach it to target creature you control.\nEquip—Sacrifice another nonland permanent. Activate only once each turn."
+ },
+ "Voltaic Whip": {
+  "id": "Voltaic Whip",
+  "name": "Voltaic Whip",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Equipped creature gets +2/+0 and has \"Whenever this creature attacks alone, you draw a card and lose 1 life.\"\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+ },
+ "Sorin Markov": {
+  "id": "Sorin Markov",
+  "name": "Sorin Markov",
+  "typeLine": "Legendary Planeswalker — Sorin",
+  "manaCost": "{3}{B}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+2: Sorin Markov deals 2 damage to any target and you gain 2 life.\n−3: Target opponent's life total becomes 10.\n−7: You control target player during that player's next turn.",
+  "loyalty": "4"
+ },
+ "Altar of the Wretched // Wretched Bonemass": {
+  "id": "Altar of the Wretched // Wretched Bonemass",
+  "name": "Altar of the Wretched // Wretched Bonemass",
+  "typeLine": "Artifact // Creature — Skeleton Horror",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Altar of the Wretched: When this artifact enters, you may sacrifice a nontoken creature. If you do, draw X cards, then mill X cards, where X is that creature's power.\nCraft with one or more creatures {2}{B}{B}\n{2}{B}: Return this card from your graveyard to your hand.\n\nWretched Bonemass: Wretched Bonemass's power and toughness are each equal to the total power of the exiled cards used to craft it.\nThis creature has flying as long as an exiled card used to craft it has flying. The same is true for first strike, double strike, deathtouch, haste, hexproof, indestructible, lifelink, menace, protection, reach, trample, and vigilance."
+ },
+ "Immortal Coil": {
+  "id": "Immortal Coil",
+  "name": "Immortal Coil",
+  "typeLine": "Artifact",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{T}, Exile two cards from your graveyard: Draw a card.\nIf damage would be dealt to you, prevent that damage. Exile a card from your graveyard for each 1 damage prevented this way.\nWhen there are no cards in your graveyard, you lose the game."
+ },
+ "Ninja's Blades": {
+  "id": "Ninja's Blades",
+  "name": "Ninja's Blades",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Job select\nEquipped creature gets +1/+1, is a Ninja in addition to its other types, and has \"Whenever this creature deals combat damage to a player, draw a card, then discard a card. That player loses life equal to the discarded card's mana value.\"\nMutsunokami — Equip {2}"
+ },
+ "Vraska, Swarm's Eminence": {
+  "id": "Vraska, Swarm's Eminence",
+  "name": "Vraska, Swarm's Eminence",
+  "typeLine": "Legendary Planeswalker — Vraska",
+  "manaCost": "{2}{B/G}{B/G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Whenever a creature you control with deathtouch deals damage to a player or planeswalker, put a +1/+1 counter on that creature.\n−2: Create a 1/1 black Assassin creature token with deathtouch and \"Whenever this token deals damage to a planeswalker, destroy that planeswalker.\"",
+  "loyalty": "5"
+ },
+ "Liliana, Death Mage": {
+  "id": "Liliana, Death Mage",
+  "name": "Liliana, Death Mage",
+  "typeLine": "Legendary Planeswalker — Liliana",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Return up to one target creature card from your graveyard to your hand.\n−3: Destroy target creature. Its controller loses 2 life.\n−7: Target opponent loses 2 life for each creature card in their graveyard.",
+  "loyalty": "4"
+ },
+ "Cursecloth Wrappings": {
+  "id": "Cursecloth Wrappings",
+  "name": "Cursecloth Wrappings",
+  "typeLine": "Artifact",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Zombies you control get +1/+1.\n{T}: Target creature card in your graveyard gains embalm until end of turn. The embalm cost is equal to its mana cost. (Exile that card and pay its embalm cost: Create a token that's a copy of it, except it's a white Zombie in addition to its other types and has no mana cost. Embalm only as a sorcery.)"
+ },
+ "Liliana, Waker of the Dead": {
+  "id": "Liliana, Waker of the Dead",
+  "name": "Liliana, Waker of the Dead",
+  "typeLine": "Legendary Planeswalker — Liliana",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Each player discards a card. Each opponent who can't loses 3 life.\n−3: Target creature gets -X/-X until end of turn, where X is the number of cards in your graveyard.\n−7: You get an emblem with \"At the beginning of combat on your turn, put target creature card from a graveyard onto the battlefield under your control. It gains haste.\"",
+  "loyalty": "4"
+ },
+ "Sarkhan the Mad": {
+  "id": "Sarkhan the Mad",
+  "name": "Sarkhan the Mad",
+  "typeLine": "Legendary Planeswalker — Sarkhan",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "0: Reveal the top card of your library and put it into your hand. Sarkhan deals damage to himself equal to that card's mana value.\n−2: Target creature's controller sacrifices it, then that player creates a 5/5 red Dragon creature token with flying.\n−4: Each Dragon creature you control deals damage equal to its power to target player or planeswalker.",
+  "loyalty": "7"
+ },
+ "Cranial Ram": {
+  "id": "Cranial Ram",
+  "name": "Cranial Ram",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Living weapon (When this Equipment enters, create a 0/0 black Phyrexian Germ creature token, then attach this to it.)\nEquipped creature gets +X/+1, where X is the number of artifacts you control.\nEquip {2}"
+ },
+ "Grond, the Gatebreaker": {
+  "id": "Grond, the Gatebreaker",
+  "name": "Grond, the Gatebreaker",
+  "typeLine": "Legendary Artifact — Vehicle",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Trample\nAs long as it's your turn and you control an Army, Grond is an artifact creature.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Dark Knight's Greatsword": {
+  "id": "Dark Knight's Greatsword",
+  "name": "Dark Knight's Greatsword",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Job select (When this Equipment enters, create a 1/1 colorless Hero creature token, then attach this to it.)\nEquipped creature gets +3/+0 and is a Knight in addition to its other types.\nChaosbringer — Equip—Pay 3 life. Activate only once each turn."
+ },
+ "Goblin Plate Mail": {
+  "id": "Goblin Plate Mail",
+  "name": "Goblin Plate Mail",
+  "typeLine": "Artifact — Equipment",
+  "manaCost": "{1}{B/R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "When this Equipment enters, amass Goblins 1, then attach this Equipment to the amassed Army. (To amass Goblins 1, put a +1/+1 counter on an Army you control. It's also a Goblin. If you don't control an Army, create a 0/0 black Goblin Army creature token first.)\nEquipped creature gets +1/+0 and has menace.\nEquip {4}"
+ },
+ "Invasion of Ulgrotha // Grandmother Ravi Sengir": {
+  "id": "Invasion of Ulgrotha // Grandmother Ravi Sengir",
+  "name": "Invasion of Ulgrotha // Grandmother Ravi Sengir",
+  "typeLine": "Battle — Siege // Legendary Creature — Human Wizard",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Invasion of Ulgrotha: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, it deals 3 damage to any other target and you gain 3 life.\n\nGrandmother Ravi Sengir: Flying\nWhenever a creature an opponent controls dies, put a +1/+1 counter on Grandmother Ravi Sengir and you gain 1 life."
+ },
+ "Sorin the Mirthless": {
+  "id": "Sorin the Mirthless",
+  "name": "Sorin the Mirthless",
+  "typeLine": "Legendary Planeswalker — Sorin",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+1: Look at the top card of your library. You may reveal that card and put it into your hand. If you do, you lose life equal to its mana value.\n−2: Create a 2/3 black Vampire creature token with flying and lifelink.\n−7: Sorin deals 13 damage to any target. You gain 13 life.",
+  "loyalty": "4"
+ },
+ "The Book of Vile Darkness": {
+  "id": "The Book of Vile Darkness",
+  "name": "The Book of Vile Darkness",
+  "typeLine": "Legendary Artifact — Book",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your end step, if you lost 2 or more life this turn, create a 2/2 black Zombie creature token.\n{T}, Exile The Book of Vile Darkness and artifacts you control named Eye of Vecna and Hand of Vecna: Create Vecna, a legendary 8/8 black Zombie God creature token with indestructible and all triggered abilities of the exiled cards."
+ },
+ "Thomil, the Destroyer": {
+  "id": "Thomil, the Destroyer",
+  "name": "Thomil, the Destroyer",
+  "typeLine": "Legendary Planeswalker — Thomil",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "+2: Create a 2/2 black Zombie creature token.\n0: You may sacrifice a creature. If you do, add {B}{B}{B}.\n−5: Create a Lord of the Pit token. (It's a {4}{B}{B}{B} 7/7 Demon creature with flying, trample, and \"At the beginning of your upkeep, sacrifice another creature. If you can't, this token deals 7 damage to you.\")\nThomil, the Destroyer can be your commander.",
+  "loyalty": "4",
+  "producedMana": [
+   "B"
+  ]
+ }
+}

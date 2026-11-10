@@ -1,0 +1,3266 @@
+{
+ "Blighted Nightmare": {
+  "id": "Blighted Nightmare",
+  "name": "Blighted Nightmare",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, creature cards in your graveyard perpetually get +1/+1.\nBlight X, Return this enchantment to its owner's hand: Return target creature card with mana value X or less from your graveyard to the battlefield. X can't be greater than the greatest toughness among creatures you control. Activate only as a sorcery."
+ },
+ "Thran Vigil": {
+  "id": "Thran Vigil",
+  "name": "Thran Vigil",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever one or more artifact and/or creature cards leave your graveyard during your turn, put a +1/+1 counter on target creature you control."
+ },
+ "Coils of the Medusa": {
+  "id": "Coils of the Medusa",
+  "name": "Coils of the Medusa",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/-1.\nSacrifice this Aura: Destroy all non-Wall creatures blocking enchanted creature."
+ },
+ "Parker Luck": {
+  "id": "Parker Luck",
+  "name": "Parker Luck",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your end step, two target players each reveal the top card of their library. They each lose life equal to the mana value of the card revealed by the other player. Then they each put the card they revealed into their hand."
+ },
+ "Tourach's Gate": {
+  "id": "Tourach's Gate",
+  "name": "Tourach's Gate",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land you control\nSacrifice a Thrull: Put three time counters on this Aura.\nAt the beginning of your upkeep, remove a time counter from this Aura. If there are no time counters on this Aura, sacrifice it.\nTap enchanted land: Attacking creatures you control get +2/-1 until end of turn. Activate only if enchanted land is untapped."
+ },
+ "Lich's Duel Mastery": {
+  "id": "Lich's Duel Mastery",
+  "name": "Lich's Duel Mastery",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{3}{B}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Hexproof\nWhen Lich's Duel Mastery enters the battlefield, exile the top five cards of your library face down as shields.\nIf you would lose life, instead put one of your shields into your hand. If you can't, sacrifice Lich's Duel Mastery.\nWhen Lich's Duel Mastery leaves the battlefield, you lose the game."
+ },
+ "Deadly Wanderings": {
+  "id": "Deadly Wanderings",
+  "name": "Deadly Wanderings",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As long as you control exactly one creature, that creature gets +2/+0 and has deathtouch and lifelink."
+ },
+ "Greed's Gambit": {
+  "id": "Greed's Gambit",
+  "name": "Greed's Gambit",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, you draw three cards, gain 6 life, and create three 2/1 black Bat creature tokens with flying.\nAt the beginning of your end step, you discard a card, lose 2 life, and sacrifice a creature.\nWhen this enchantment leaves the battlefield, you discard three cards, lose 6 life, and sacrifice three creatures."
+ },
+ "Momentum Breaker": {
+  "id": "Momentum Breaker",
+  "name": "Momentum Breaker",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Start your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nWhen this enchantment enters, each opponent sacrifices a creature or Vehicle of their choice. Each opponent who can't discards a card.\n{2}, Sacrifice this enchantment: You gain life equal to your speed."
+ },
+ "Corrupted Roots": {
+  "id": "Corrupted Roots",
+  "name": "Corrupted Roots",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant Forest or Plains\nWhenever enchanted land becomes tapped, its controller loses 2 life."
+ },
+ "Insubordination": {
+  "id": "Insubordination",
+  "name": "Insubordination",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of the end step of enchanted creature's controller, this Aura deals 2 damage to that player unless that creature attacked this turn."
+ },
+ "Cursed Land": {
+  "id": "Cursed Land",
+  "name": "Cursed Land",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land\nAt the beginning of the upkeep of enchanted land's controller, this Aura deals 1 damage to that player."
+ },
+ "Fists of the Demigod": {
+  "id": "Fists of the Demigod",
+  "name": "Fists of the Demigod",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B/R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Enchant creature\nAs long as enchanted creature is black, it gets +1/+1 and has wither. (It deals damage to creatures in the form of -1/-1 counters.)\nAs long as enchanted creature is red, it gets +1/+1 and has first strike."
+ },
+ "Hecatomb": {
+  "id": "Hecatomb",
+  "name": "Hecatomb",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, sacrifice this enchantment unless you sacrifice four creatures.\nTap an untapped Swamp you control: This enchantment deals 1 damage to any target."
+ },
+ "Bridge from Below": {
+  "id": "Bridge from Below",
+  "name": "Bridge from Below",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a nontoken creature is put into your graveyard from the battlefield, if this card is in your graveyard, create a 2/2 black Zombie creature token.\nWhen a creature is put into an opponent's graveyard from the battlefield, if this card is in your graveyard, exile this card."
+ },
+ "Demonic Rising": {
+  "id": "Demonic Rising",
+  "name": "Demonic Rising",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your end step, if you control exactly one creature, create a 5/5 black Demon creature token with flying."
+ },
+ "Curse of Oblivion": {
+  "id": "Curse of Oblivion",
+  "name": "Curse of Oblivion",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nAt the beginning of enchanted player's upkeep, that player exiles two cards from their graveyard."
+ },
+ "Nettlevine Blight": {
+  "id": "Nettlevine Blight",
+  "name": "Nettlevine Blight",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature or land\nEnchanted permanent has \"At the beginning of your end step, sacrifice this permanent and attach Nettlevine Blight to a creature or land you control.\""
+ },
+ "The Meathook Massacre": {
+  "id": "The Meathook Massacre",
+  "name": "The Meathook Massacre",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{X}{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When The Meathook Massacre enters, each creature gets -X/-X until end of turn.\nWhenever a creature you control dies, each opponent loses 1 life.\nWhenever a creature an opponent controls dies, you gain 1 life."
+ },
+ "Liliana's Other Contract // Liliana's Undead Minion": {
+  "id": "Liliana's Other Contract // Liliana's Undead Minion",
+  "name": "Liliana's Other Contract // Liliana's Undead Minion",
+  "typeLine": "Enchantment // Legendary Planeswalker — You",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Liliana's Other Contract: When Liliana's Other Contract enters the battlefield, you draw three cards and you lose 3 life.\nIf you would lose the game, instead exile Liliana's Other Contract, then return it to the battlefield transformed under your control.\n\nLiliana's Undead Minion: You can't lose the game.\n+1: Each opponent loses 1 life.\n−4: Destroy target creature."
+ },
+ "Dance of the Dead": {
+  "id": "Dance of the Dead",
+  "name": "Dance of the Dead",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature card in a graveyard\nWhen this Aura enters, if it's on the battlefield, it loses \"enchant creature card in a graveyard\" and gains \"enchant creature put onto the battlefield with this Aura.\" Put enchanted creature card onto the battlefield tapped under your control and attach this Aura to it. When this Aura leaves the battlefield, that creature's controller sacrifices it.\nEnchanted creature gets +1/+1 and doesn't untap during its controller's untap step.\nAt the beginning of the upkeep of enchanted creature's controller, that player may pay {1}{B}. If the player does, untap that creature."
+ },
+ "Treacherous Blessing": {
+  "id": "Treacherous Blessing",
+  "name": "Treacherous Blessing",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, draw three cards.\nWhenever you cast a spell, you lose 1 life.\nWhen this enchantment becomes the target of a spell or ability, sacrifice it."
+ },
+ "Blight": {
+  "id": "Blight",
+  "name": "Blight",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land\nWhen enchanted land becomes tapped, destroy it."
+ },
+ "Demonic Pact": {
+  "id": "Demonic Pact",
+  "name": "Demonic Pact",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, choose one that hasn't been chosen —\n• This enchantment deals 4 damage to any target and you gain 4 life.\n• Target opponent discards two cards.\n• Draw two cards.\n• You lose the game."
+ },
+ "Necropolis of Azar": {
+  "id": "Necropolis of Azar",
+  "name": "Necropolis of Azar",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a non-black creature is put into any graveyard from play, put a husk counter on Necropolis of Azar.\n{5}, Remove a husk counter from Necropolis of Azar: Put a Spawn of Azar token into play. Treat this token as a black creature with a random power and toughness, each no less than 1 and no greater than 3, that has swampwalk."
+ },
+ "Tymaret Calls the Dead": {
+  "id": "Tymaret Calls the Dead",
+  "name": "Tymaret Calls the Dead",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Mill three cards. Then you may exile a creature or enchantment card from your graveyard. If you do, create a 2/2 black Zombie creature token.\nIII — You gain X life and scry X, where X is the number of Zombies you control."
+ },
+ "Lurking Skirge": {
+  "id": "Lurking Skirge",
+  "name": "Lurking Skirge",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When a creature is put into an opponent's graveyard from the battlefield, if this permanent is an enchantment, it becomes a 3/2 Phyrexian Imp creature with flying."
+ },
+ "Warped Devotion": {
+  "id": "Warped Devotion",
+  "name": "Warped Devotion",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a permanent is returned to a player's hand, that player discards a card."
+ },
+ "Wave of Terror": {
+  "id": "Wave of Terror",
+  "name": "Wave of Terror",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nAt the beginning of your draw step, destroy each creature with mana value equal to the number of age counters on this enchantment. They can't be regenerated."
+ },
+ "Patriarch's Desire": {
+  "id": "Patriarch's Desire",
+  "name": "Patriarch's Desire",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/-2.\nThreshold — Enchanted creature gets an additional +2/-2 as long as there are seven or more cards in your graveyard."
+ },
+ "Necra Sanctuary": {
+  "id": "Necra Sanctuary",
+  "name": "Necra Sanctuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, if you control a green or white permanent, target player loses 1 life. If you control a green permanent and a white permanent, that player loses 3 life instead."
+ },
+ "The Death of Gwen Stacy": {
+  "id": "The Death of Gwen Stacy",
+  "name": "The Death of Gwen Stacy",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy target creature.\nII — Each player may discard a card. Each player who doesn't loses 3 life.\nIII — Exile any number of target players' graveyards."
+ },
+ "Midnight Oil": {
+  "id": "Midnight Oil",
+  "name": "Midnight Oil",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This enchantment enters with seven hour counters on it.\nAt the beginning of your draw step, draw an additional card and remove two hour counters from this enchantment.\nYour maximum hand size is equal to the number of hour counters on this enchantment.\nWhenever you discard a card, you lose 1 life."
+ },
+ "Fatal Mutation": {
+  "id": "Fatal Mutation",
+  "name": "Fatal Mutation",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen enchanted creature is turned face up, destroy it. It can't be regenerated."
+ },
+ "Trespasser's Curse": {
+  "id": "Trespasser's Curse",
+  "name": "Trespasser's Curse",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nWhenever a creature enchanted player controls enters, that player loses 1 life and you gain 1 life."
+ },
+ "Deadly Designs": {
+  "id": "Deadly Designs",
+  "name": "Deadly Designs",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{2}: Put a plot counter on this enchantment. Any player may activate this ability.\nWhen there are five or more plot counters on this enchantment, sacrifice it. If you do, destroy up to two target creatures."
+ },
+ "Dark Privilege": {
+  "id": "Dark Privilege",
+  "name": "Dark Privilege",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+1.\nSacrifice a creature: Regenerate enchanted creature."
+ },
+ "Ripples of Undeath": {
+  "id": "Ripples of Undeath",
+  "name": "Ripples of Undeath",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your first main phase, mill three cards. Then you may pay {1} and 3 life. If you do, put a card from among those cards into your hand."
+ },
+ "The Cruelty of Gix": {
+  "id": "The Cruelty of Gix",
+  "name": "The Cruelty of Gix",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI — Target opponent reveals their hand. You choose a creature or planeswalker card from it. That player discards that card.\nII — Search your library for a card, put that card into your hand, then shuffle. You lose 3 life.\nIII — Put target creature card from a graveyard onto the battlefield under your control."
+ },
+ "Penregon Besieged": {
+  "id": "Penregon Besieged",
+  "name": "Penregon Besieged",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your end step, choose a creature with the least toughness among creatures your opponents control. It perpetually gets -1/-1.\nWhen your opponents control no creatures, sacrifice Penregon Besieged."
+ },
+ "Ninja Teen": {
+  "id": "Ninja Teen",
+  "name": "Ninja Teen",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhenever a creature you control leaves the battlefield, each opponent loses 1 life.\n{1}{B}: Level 2\nCreatures you control get +1/+0 and have menace.\n{B}: Level 3\nCreature cards in your graveyard have sneak {3}{B}.\nYou may cast creature spells from your graveyard using their sneak abilities."
+ },
+ "Twisted Embrace": {
+  "id": "Twisted Embrace",
+  "name": "Twisted Embrace",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant artifact or creature you control\nWhen this Aura enters, destroy target creature or planeswalker an opponent controls.\nAs long as enchanted permanent is a creature, it gets +1/+1."
+ },
+ "Cruel Reality": {
+  "id": "Cruel Reality",
+  "name": "Cruel Reality",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nAt the beginning of enchanted player's upkeep, that player sacrifices a creature or planeswalker of their choice. If the player can't, they lose 5 life."
+ },
+ "Dying Wish": {
+  "id": "Dying Wish",
+  "name": "Dying Wish",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature you control\nWhen enchanted creature dies, target player loses X life and you gain X life, where X is its power."
+ },
+ "Season of the Witch": {
+  "id": "Season of the Witch",
+  "name": "Season of the Witch",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you pay 2 life.\nAt the beginning of the end step, destroy all untapped creatures that didn't attack this turn, except for creatures that couldn't attack."
+ },
+ "Dawn of the Dead": {
+  "id": "Dawn of the Dead",
+  "name": "Dawn of the Dead",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, you lose 1 life.\nAt the beginning of your upkeep, you may return target creature card from your graveyard to the battlefield. That creature gains haste until end of turn. Exile it at the beginning of the next end step."
+ },
+ "Hollowmurk Siege": {
+  "id": "Hollowmurk Siege",
+  "name": "Hollowmurk Siege",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{G}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "As this enchantment enters, choose Sultai or Abzan.\n• Sultai — Whenever a counter is put on a creature you control, draw a card. This ability triggers only once each turn.\n• Abzan — Whenever you attack, put a +1/+1 counter on target attacking creature. It gains menace until end of turn."
+ },
+ "Takklemaggot": {
+  "id": "Takklemaggot",
+  "name": "Takklemaggot",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of the upkeep of enchanted creature's controller, put a -0/-1 counter on that creature.\nWhen enchanted creature dies, that creature's controller chooses a creature that this card could enchant. If the player does, return this card to the battlefield under your control attached to that creature. If they don't, return this card to the battlefield under your control as a non-Aura enchantment. It loses \"enchant creature\" and gains \"At the beginning of that player's upkeep, this enchantment deals 1 damage to that player.\""
+ },
+ "Brink of Madness": {
+  "id": "Brink of Madness",
+  "name": "Brink of Madness",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, if you have no cards in hand, sacrifice this enchantment and target opponent discards their hand."
+ },
+ "Festering Wound": {
+  "id": "Festering Wound",
+  "name": "Festering Wound",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of your upkeep, you may put an infection counter on this Aura.\nAt the beginning of the upkeep of enchanted creature's controller, this Aura deals X damage to that player, where X is the number of infection counters on this Aura."
+ },
+ "Grim Feast": {
+  "id": "Grim Feast",
+  "name": "Grim Feast",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "At the beginning of your upkeep, this enchantment deals 1 damage to you.\nWhenever a creature is put into an opponent's graveyard from the battlefield, you gain life equal to its toughness."
+ },
+ "Gift of the Deity": {
+  "id": "Gift of the Deity",
+  "name": "Gift of the Deity",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{4}{B/G}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Enchant creature\nAs long as enchanted creature is black, it gets +1/+1 and has deathtouch. (Any amount of damage it deals to a creature is enough to destroy that creature.)\nAs long as enchanted creature is green, it gets +1/+1 and all creatures able to block it do so."
+ },
+ "Relic Bane": {
+  "id": "Relic Bane",
+  "name": "Relic Bane",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant artifact\nEnchanted artifact has \"At the beginning of your upkeep, you lose 2 life.\""
+ },
+ "Construct a Cosmic Cube": {
+  "id": "Construct a Cosmic Cube",
+  "name": "Construct a Cosmic Cube",
+  "typeLine": "Enchantment — Plan",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever you draw your second card each turn, create a 2/1 black Villain creature token with menace and put a plan counter on this enchantment.\nWhen the seventh plan counter is put on this enchantment, sacrifice it. When you do, you control target opponent during their next turn. (You see all cards that player could see and make all decisions for them.)"
+ },
+ "Traveling Plague": {
+  "id": "Traveling Plague",
+  "name": "Traveling Plague",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of each upkeep, put a plague counter on this Aura.\nEnchanted creature gets -1/-1 for each plague counter on this Aura.\nWhen enchanted creature leaves the battlefield, that creature's controller returns this Aura from its owner's graveyard to the battlefield."
+ },
+ "Honden of Night's Reach": {
+  "id": "Honden of Night's Reach",
+  "name": "Honden of Night's Reach",
+  "typeLine": "Legendary Enchantment — Shrine",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, target opponent discards a card for each Shrine you control."
+ },
+ "Corrupted Zendikon": {
+  "id": "Corrupted Zendikon",
+  "name": "Corrupted Zendikon",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land\nEnchanted land is a 3/3 black Ooze creature. It's still a land.\nWhen enchanted land dies, return that card to its owner's hand."
+ },
+ "Ghoulish Procession": {
+  "id": "Ghoulish Procession",
+  "name": "Ghoulish Procession",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever one or more nontoken creatures die, create a 2/2 black Zombie creature token with decayed. This ability triggers only once each turn. (A creature with decayed can't block. When it attacks, sacrifice it at end of combat.)"
+ },
+ "Cabal Shrine": {
+  "id": "Cabal Shrine",
+  "name": "Cabal Shrine",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a player casts a spell, that player discards X cards, where X is the number of cards in all graveyards with the same name as that spell."
+ },
+ "Decaying Soil": {
+  "id": "Decaying Soil",
+  "name": "Decaying Soil",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, exile a card from your graveyard.\nThreshold — As long as there are seven or more cards in your graveyard, this enchantment has \"Whenever a nontoken creature is put into your graveyard from the battlefield, you may pay {1}. If you do, return that card to your hand.\""
+ },
+ "Creeping Dread": {
+  "id": "Creeping Dread",
+  "name": "Creeping Dread",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, each player discards a card. Each opponent who discarded a card that shares a card type with the card you discarded loses 3 life. (Players reveal the discarded cards simultaneously.)"
+ },
+ "Origin of Black Widow": {
+  "id": "Origin of Black Widow",
+  "name": "Origin of Black Widow",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Each opponent sacrifices a creature of their choice.\nII — Creatures you control gain deathtouch until end of turn.\nIII — Each opponent loses 1 life for each creature card in their graveyard."
+ },
+ "Homicidal Seclusion": {
+  "id": "Homicidal Seclusion",
+  "name": "Homicidal Seclusion",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As long as you control exactly one creature, that creature gets +3/+1 and has lifelink."
+ },
+ "Tinybones Joins Up": {
+  "id": "Tinybones Joins Up",
+  "name": "Tinybones Joins Up",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When Tinybones Joins Up enters, any number of target players each discard a card.\nWhenever a legendary creature you control enters, any number of target players each mill a card and lose 1 life."
+ },
+ "Corrosion": {
+  "id": "Corrosion",
+  "name": "Corrosion",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nAt the beginning of your upkeep, put a rust counter on each artifact target opponent controls. Then destroy each artifact with mana value less than or equal to the number of rust counters on it. Artifacts destroyed this way can't be regenerated.\nWhen this enchantment leaves the battlefield, remove all rust counters from all permanents."
+ },
+ "Evil Presence": {
+  "id": "Evil Presence",
+  "name": "Evil Presence",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land\nEnchanted land is a Swamp."
+ },
+ "Words of Waste": {
+  "id": "Words of Waste",
+  "name": "Words of Waste",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{1}: The next time you would draw a card this turn, each opponent discards a card instead."
+ },
+ "Contamination": {
+  "id": "Contamination",
+  "name": "Contamination",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you sacrifice a creature.\nIf a land is tapped for mana, it produces {B} instead of any other type and amount."
+ },
+ "Parallax Nexus": {
+  "id": "Parallax Nexus",
+  "name": "Parallax Nexus",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Fading 5 (This enchantment enters with five fade counters on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.)\nRemove a fade counter from this enchantment: Target opponent exiles a card from their hand. Activate only as a sorcery.\nWhen this enchantment leaves the battlefield, each player returns to their hand all cards they own exiled with it."
+ },
+ "Cracked Skull": {
+  "id": "Cracked Skull",
+  "name": "Cracked Skull",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen this Aura enters, look at target player's hand. You may choose a nonland card from it. That player discards that card.\nWhen enchanted creature is dealt damage, destroy it."
+ },
+ "Curse of Leeches // Leeching Lurker": {
+  "id": "Curse of Leeches // Leeching Lurker",
+  "name": "Curse of Leeches // Leeching Lurker",
+  "typeLine": "Enchantment — Aura Curse // Creature — Leech Horror",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Curse of Leeches: Enchant player\nAs this permanent transforms into Curse of Leeches, attach it to a player.\nAt the beginning of enchanted player's upkeep, they lose 1 life and you gain 1 life.\nDaybound (If a player casts no spells during their own turn, it becomes night next turn.)\n\nLeeching Lurker: Lifelink\nNightbound (If a player casts at least two spells during their own turn, it becomes day next turn.)"
+ },
+ "Braids's Frightful Return": {
+  "id": "Braids's Frightful Return",
+  "name": "Braids's Frightful Return",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI — You may sacrifice a creature. If you do, each opponent discards a card.\nII — Return target creature card from your graveyard to your hand.\nIII — Target opponent may sacrifice a nonland, nontoken permanent of their choice. If they don't, they lose 2 life and you draw a card."
+ },
+ "Endless Whispers": {
+  "id": "Endless Whispers",
+  "name": "Endless Whispers",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Each creature has \"When this creature dies, choose target opponent. That player puts this card from its owner's graveyard onto the battlefield under their control at the beginning of the next end step.\""
+ },
+ "Pooling Venom": {
+  "id": "Pooling Venom",
+  "name": "Pooling Venom",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land\nWhenever enchanted land becomes tapped, its controller loses 2 life.\n{3}{B}: Destroy enchanted land."
+ },
+ "Predator's Gambit": {
+  "id": "Predator's Gambit",
+  "name": "Predator's Gambit",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+1.\nEnchanted creature has intimidate as long as its controller controls no other creatures. (It can't be blocked except by artifact creatures and/or creatures that share a color with it.)"
+ },
+ "Torment of Scarabs": {
+  "id": "Torment of Scarabs",
+  "name": "Torment of Scarabs",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nAt the beginning of enchanted player's upkeep, that player loses 3 life unless they sacrifice a nonland permanent of their choice or discard a card."
+ },
+ "Mark of the Oni": {
+  "id": "Mark of the Oni",
+  "name": "Mark of the Oni",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nYou control enchanted creature.\nAt the beginning of the end step, if you control no Demons, sacrifice this Aura."
+ },
+ "Gloom": {
+  "id": "Gloom",
+  "name": "Gloom",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "White spells cost {3} more to cast.\nActivated abilities of white enchantments cost {3} more to activate."
+ },
+ "Halving Season": {
+  "id": "Halving Season",
+  "name": "Halving Season",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If an opponent would create one or more tokens, they create half that many of each of those kinds of tokens instead, rounded down.\nIf an opponent would put one or more counters on a permanent or player, they put half that many of each of those kinds of counters on that permanent or player instead, rounded down."
+ },
+ "Funeral March": {
+  "id": "Funeral March",
+  "name": "Funeral March",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen enchanted creature leaves the battlefield, its controller sacrifices a creature of their choice."
+ },
+ "Grievous Wound": {
+  "id": "Grievous Wound",
+  "name": "Grievous Wound",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nEnchanted player can't gain life.\nWhenever enchanted player is dealt damage, they lose half their life, rounded up."
+ },
+ "Robot Domination": {
+  "id": "Robot Domination",
+  "name": "Robot Domination",
+  "typeLine": "Enchantment — Plan",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever one or more creature cards are put into your graveyard from anywhere, you draw a card, lose 1 life, and put a plan counter on this enchantment.\nWhen the third plan counter is put on this enchantment, sacrifice it and create three 2/2 colorless Robot Villain artifact creature tokens."
+ },
+ "Parasitic Implant": {
+  "id": "Parasitic Implant",
+  "name": "Parasitic Implant",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of your upkeep, enchanted creature's controller sacrifices it and you create a 1/1 colorless Phyrexian Myr artifact creature token."
+ },
+ "Illness in the Ranks": {
+  "id": "Illness in the Ranks",
+  "name": "Illness in the Ranks",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Creature tokens get -1/-1."
+ },
+ "Planeswalker's Scorn": {
+  "id": "Planeswalker's Scorn",
+  "name": "Planeswalker's Scorn",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{3}{B}: Target opponent reveals a card at random from their hand. Target creature gets -X/-X until end of turn, where X is the revealed card's mana value. Activate only as a sorcery."
+ },
+ "Nyx Infusion": {
+  "id": "Nyx Infusion",
+  "name": "Nyx Infusion",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+2 as long as it's an enchantment. Otherwise, it gets -2/-2."
+ },
+ "Lingering Death": {
+  "id": "Lingering Death",
+  "name": "Lingering Death",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of the end step of enchanted creature's controller, that player sacrifices that creature."
+ },
+ "Nether Void": {
+  "id": "Nether Void",
+  "name": "Nether Void",
+  "typeLine": "World Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a player casts a spell, counter it unless that player pays {3}."
+ },
+ "Criminal Past": {
+  "id": "Criminal Past",
+  "name": "Criminal Past",
+  "typeLine": "Legendary Enchantment — Background",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Commander creatures you own have menace and \"This creature gets +X/+0, where X is the number of creature cards in your graveyard.\" (A creature with menace can't be blocked except by two or more creatures.)"
+ },
+ "Seizures": {
+  "id": "Seizures",
+  "name": "Seizures",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature becomes tapped, this Aura deals 3 damage to that creature's controller unless that player pays {3}."
+ },
+ "Retribution of the Ancients": {
+  "id": "Retribution of the Ancients",
+  "name": "Retribution of the Ancients",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{B}, Remove X +1/+1 counters from among creatures you control: Target creature gets -X/-X until end of turn."
+ },
+ "Contaminated Ground": {
+  "id": "Contaminated Ground",
+  "name": "Contaminated Ground",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land\nEnchanted land is a Swamp.\nWhenever enchanted land becomes tapped, its controller loses 2 life."
+ },
+ "Darkest Hour": {
+  "id": "Darkest Hour",
+  "name": "Darkest Hour",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "All creatures are black."
+ },
+ "Strange Augmentation": {
+  "id": "Strange Augmentation",
+  "name": "Strange Augmentation",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+1.\nDelirium — Enchanted creature gets an additional +2/+2 as long as there are four or more card types among cards in your graveyard."
+ },
+ "Clutch of Undeath": {
+  "id": "Clutch of Undeath",
+  "name": "Clutch of Undeath",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +3/+3 as long as it's a Zombie. Otherwise, it gets -3/-3."
+ },
+ "Soul Enervation": {
+  "id": "Soul Enervation",
+  "name": "Soul Enervation",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flash\nWhen this enchantment enters, target creature gets -4/-4 until end of turn.\nWhenever one or more creature cards leave your graveyard, each opponent loses 1 life and you gain 1 life."
+ },
+ "Lich": {
+  "id": "Lich",
+  "name": "Lich",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As this enchantment enters, you lose life equal to your life total.\nYou don't lose the game for having 0 or less life.\nIf you would gain life, draw that many cards instead.\nWhenever you're dealt damage, sacrifice that many nontoken permanents. If you can't, you lose the game.\nWhen this enchantment is put into a graveyard from the battlefield, you lose the game."
+ },
+ "Hidetsugu Consumes All // Vessel of the All-Consuming": {
+  "id": "Hidetsugu Consumes All // Vessel of the All-Consuming",
+  "name": "Hidetsugu Consumes All // Vessel of the All-Consuming",
+  "typeLine": "Enchantment — Saga // Enchantment Creature — Ogre Shaman",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Hidetsugu Consumes All: (As this Saga enters and after your draw step, add a lore counter.)\nI — Destroy each nonland permanent with mana value 1 or less.\nII — Exile all graveyards.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nVessel of the All-Consuming: Trample\nWhenever this creature deals damage, put a +1/+1 counter on it.\nWhenever this creature deals damage to a player, if it has dealt 10 or more damage to that player this turn, they lose the game."
+ },
+ "Faerie Tauntings": {
+  "id": "Faerie Tauntings",
+  "name": "Faerie Tauntings",
+  "typeLine": "Kindred Enchantment — Faerie",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever you cast a spell during an opponent's turn, you may have each opponent lose 1 life."
+ },
+ "Artifact Possession": {
+  "id": "Artifact Possession",
+  "name": "Artifact Possession",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant artifact\nWhenever enchanted artifact becomes tapped or a player activates an ability of enchanted artifact without {T} in its activation cost, this Aura deals 2 damage to that artifact's controller."
+ },
+ "Spectacle of Destruction": {
+  "id": "Spectacle of Destruction",
+  "name": "Spectacle of Destruction",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever one or more creatures die, put a wreck counter on this enchantment.\nAt the beginning of your upkeep, if this enchantment has one or more wreck counters on it, remove a wreck counter from it and seek a nonland card."
+ },
+ "Cloak of Confusion": {
+  "id": "Cloak of Confusion",
+  "name": "Cloak of Confusion",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature you control\nWhenever enchanted creature attacks and isn't blocked, you may have it assign no combat damage this turn. If you do, defending player discards a card at random."
+ },
+ "Hopeless Nightmare": {
+  "id": "Hopeless Nightmare",
+  "name": "Hopeless Nightmare",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, each opponent discards a card and loses 2 life.\nWhen this enchantment is put into a graveyard from the battlefield, scry 2.\n{2}{B}: Sacrifice this enchantment."
+ },
+ "Last Laugh": {
+  "id": "Last Laugh",
+  "name": "Last Laugh",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a permanent other than this enchantment is put into a graveyard from the battlefield, this enchantment deals 1 damage to each creature and each player.\nWhen no creatures are on the battlefield, sacrifice this enchantment."
+ },
+ "Krovikan Plague": {
+  "id": "Krovikan Plague",
+  "name": "Krovikan Plague",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant non-Wall creature you control\nWhen this Aura enters, draw a card at the beginning of the next turn's upkeep.\nTap enchanted creature: This Aura deals 1 damage to any target. Put a -0/-1 counter on enchanted creature. Activate only if enchanted creature is untapped."
+ },
+ "Court of Locthwain": {
+  "id": "Court of Locthwain",
+  "name": "Court of Locthwain",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, exile the top card of target opponent's library. You may play that card for as long as it remains exiled, and mana of any type can be spent to cast it. If you're the monarch, until end of turn, you may cast a spell from among cards exiled with this enchantment without paying its mana cost."
+ },
+ "Squandered Resources": {
+  "id": "Squandered Resources",
+  "name": "Squandered Resources",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{G}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Sacrifice a land: Add one mana of any type the sacrificed land could produce.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Imprison": {
+  "id": "Imprison",
+  "name": "Imprison",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhenever a player activates an ability of enchanted creature with {T} in its activation cost that isn't a mana ability, you may pay {1}. If you do, counter that ability. If you don't, destroy this Aura.\nWhenever enchanted creature attacks or blocks, you may pay {1}. If you do, tap the creature, remove it from combat, and creatures it was blocking that had become blocked by only that creature this combat become unblocked. If you don't, destroy this Aura."
+ },
+ "Case of the Stashed Skeleton": {
+  "id": "Case of the Stashed Skeleton",
+  "name": "Case of the Stashed Skeleton",
+  "typeLine": "Enchantment — Case",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this Case enters, create a 2/1 black Skeleton creature token and suspect it. (It has menace and can't block.)\nTo solve — You control no suspected Skeletons. (If unsolved, solve at the beginning of your end step.)\nSolved — {1}{B}, Sacrifice this Case: Search your library for a card, put it into your hand, then shuffle. Activate only as a sorcery."
+ },
+ "Oath of Lim-Dûl": {
+  "id": "Oath of Lim-Dûl",
+  "name": "Oath of Lim-Dûl",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever you lose life, for each 1 life you lost, sacrifice a permanent other than this enchantment unless you discard a card. (Damage dealt to you causes you to lose life.)\n{B}{B}: Draw a card."
+ },
+ "Court of Ambition": {
+  "id": "Court of Ambition",
+  "name": "Court of Ambition",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, each opponent loses 3 life unless they discard a card. If you're the monarch, instead each opponent loses 6 life unless they discard two cards."
+ },
+ "Crown of Suspicion": {
+  "id": "Crown of Suspicion",
+  "name": "Crown of Suspicion",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/-1.\nSacrifice this Aura: Enchanted creature and other creatures that share a creature type with it get +2/-1 until end of turn."
+ },
+ "Sporogenic Infection": {
+  "id": "Sporogenic Infection",
+  "name": "Sporogenic Infection",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen this Aura enters, target player sacrifices a creature of their choice other than enchanted creature.\nWhen enchanted creature is dealt damage, destroy it."
+ },
+ "Pain Magnification": {
+  "id": "Pain Magnification",
+  "name": "Pain Magnification",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Whenever an opponent is dealt 3 or more damage by a single source, that player discards a card."
+ },
+ "Liability": {
+  "id": "Liability",
+  "name": "Liability",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a nontoken permanent is put into a player's graveyard from the battlefield, that player loses 1 life."
+ },
+ "Necrosynthesis": {
+  "id": "Necrosynthesis",
+  "name": "Necrosynthesis",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has \"Whenever another creature dies, put a +1/+1 counter on this creature.\"\nWhen enchanted creature dies, look at the top X cards of your library, where X is its power. Put one of those cards into your hand and the rest on the bottom of your library in a random order."
+ },
+ "Meathook Massacre II": {
+  "id": "Meathook Massacre II",
+  "name": "Meathook Massacre II",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{X}{X}{B}{B}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When Meathook Massacre II enters, each player sacrifices X creatures of their choice.\nWhenever a creature you control dies, you may pay 3 life. If you do, return that card under your control with a finality counter on it.\nWhenever a creature an opponent controls dies, they may pay 3 life. If they don't, return that card under your control with a finality counter on it."
+ },
+ "Death Match": {
+  "id": "Death Match",
+  "name": "Death Match",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature enters, that creature's controller may have target creature of their choice get -3/-3 until end of turn."
+ },
+ "Circle of Affliction": {
+  "id": "Circle of Affliction",
+  "name": "Circle of Affliction",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As this enchantment enters, choose a color.\nWhenever a source of the chosen color deals damage to you, you may pay {1}. If you do, target player loses 1 life and you gain 1 life."
+ },
+ "Ghostly Flame": {
+  "id": "Ghostly Flame",
+  "name": "Ghostly Flame",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Black and/or red permanents and spells are colorless sources of damage."
+ },
+ "Rakdos Joins Up": {
+  "id": "Rakdos Joins Up",
+  "name": "Rakdos Joins Up",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "When Rakdos Joins Up enters, return target creature card from your graveyard to the battlefield with two additional +1/+1 counters on it.\nWhenever a legendary creature you control dies, Rakdos Joins Up deals damage equal to that creature's power to target opponent."
+ },
+ "Spreading Plague": {
+  "id": "Spreading Plague",
+  "name": "Spreading Plague",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature enters, destroy all other creatures that share a color with it. They can't be regenerated."
+ },
+ "Kardur's Vicious Return": {
+  "id": "Kardur's Vicious Return",
+  "name": "Kardur's Vicious Return",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}{R}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — You may sacrifice a creature. When you do, this Saga deals 3 damage to any target.\nII — Each player discards a card.\nIII — Return target creature card from your graveyard to the battlefield. Put a +1/+1 counter on it. It gains haste until your next turn."
+ },
+ "Parallax Dementia": {
+  "id": "Parallax Dementia",
+  "name": "Parallax Dementia",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nFading 1 (This enchantment enters with one fade counter on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.)\nEnchanted creature gets +3/+2.\nWhen this Aura leaves the battlefield, destroy enchanted creature. That creature can't be regenerated."
+ },
+ "Death Watch": {
+  "id": "Death Watch",
+  "name": "Death Watch",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen enchanted creature dies, its controller loses life equal to its power and you gain life equal to its toughness."
+ },
+ "Disturbing Mirth": {
+  "id": "Disturbing Mirth",
+  "name": "Disturbing Mirth",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "When this enchantment enters, you may sacrifice another enchantment or creature. If you do, draw two cards.\nWhen you sacrifice this enchantment, manifest dread. (Look at the top two cards of your library. Put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)"
+ },
+ "Soul Channeling": {
+  "id": "Soul Channeling",
+  "name": "Soul Channeling",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nPay 2 life: Regenerate enchanted creature."
+ },
+ "Null Profusion": {
+  "id": "Null Profusion",
+  "name": "Null Profusion",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Skip your draw step.\nWhenever you play a card, draw a card.\nYour maximum hand size is two."
+ },
+ "Spinal Graft": {
+  "id": "Spinal Graft",
+  "name": "Spinal Graft",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +3/+3.\nWhen enchanted creature becomes the target of a spell or ability, destroy that creature. It can't be regenerated."
+ },
+ "Curse of Death's Hold": {
+  "id": "Curse of Death's Hold",
+  "name": "Curse of Death's Hold",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nCreatures enchanted player controls get -1/-1."
+ },
+ "Riveteers Ascendancy": {
+  "id": "Riveteers Ascendancy",
+  "name": "Riveteers Ascendancy",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{R}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "Whenever you sacrifice a creature, you may return target creature card with lesser mana value from your graveyard to the battlefield tapped. Do this only once each turn."
+ },
+ "Yawgmoth's Agenda": {
+  "id": "Yawgmoth's Agenda",
+  "name": "Yawgmoth's Agenda",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "You can't cast more than one spell each turn.\nYou may play lands and cast spells from your graveyard.\nIf a card would be put into your graveyard from anywhere, exile it instead."
+ },
+ "Ferocity of the Hunt": {
+  "id": "Ferocity of the Hunt",
+  "name": "Ferocity of the Hunt",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B/G}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Flash\nEnchant creature\nEnchanted creature gets +1/+0 and has deathtouch.\nWhen enchanted creature dies, return that card to the battlefield tapped under its owner's control."
+ },
+ "Incriminating Impetus": {
+  "id": "Incriminating Impetus",
+  "name": "Incriminating Impetus",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B/R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Enchant creature\nWhen this Aura enters, suspect enchanted creature. (It has menace and can't block.)\nEnchanted creature gets +2/+2 and is goaded. (It attacks each combat if able and attacks a player other than you if able.)"
+ },
+ "Sothera, the Supervoid": {
+  "id": "Sothera, the Supervoid",
+  "name": "Sothera, the Supervoid",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature you control dies, each opponent chooses a creature they control and exiles it.\nAt the beginning of your end step, if a player controls no creatures, sacrifice Sothera, then put a creature card exiled with it onto the battlefield under your control with two additional +1/+1 counters on it."
+ },
+ "Conspiracy": {
+  "id": "Conspiracy",
+  "name": "Conspiracy",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "As this enchantment enters, choose a creature type.\nCreatures you control are the chosen type. The same is true for creature spells you control and creature cards you own that aren't on the battlefield."
+ },
+ "Lich's Mastery": {
+  "id": "Lich's Mastery",
+  "name": "Lich's Mastery",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{3}{B}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Hexproof\nYou can't lose the game.\nWhenever you gain life, draw that many cards.\nWhenever you lose life, for each 1 life you lost, exile a permanent you control or a card from your hand or graveyard.\nWhen Lich's Mastery leaves the battlefield, you lose the game."
+ },
+ "Corpses of the Lost": {
+  "id": "Corpses of the Lost",
+  "name": "Corpses of the Lost",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Skeletons you control get +1/+0 and have haste.\nWhen this enchantment enters, create a 2/2 black Skeleton Pirate creature token.\nAt the beginning of your end step, if you descended this turn, you may pay 1 life. If you do, return this enchantment to its owner's hand. (You descended if a permanent card was put into your graveyard from anywhere.)"
+ },
+ "Vessel of Malignity": {
+  "id": "Vessel of Malignity",
+  "name": "Vessel of Malignity",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{1}{B}, Sacrifice this enchantment: Target opponent exiles two cards from their hand. Activate only as a sorcery."
+ },
+ "Death's Approach": {
+  "id": "Death's Approach",
+  "name": "Death's Approach",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets -X/-X, where X is the number of creature cards in its controller's graveyard."
+ },
+ "Suicidal Charge": {
+  "id": "Suicidal Charge",
+  "name": "Suicidal Charge",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Sacrifice this enchantment: Creatures your opponents control get -1/-1 until end of turn. Those creatures attack this turn if able."
+ },
+ "Stronghold Arena": {
+  "id": "Stronghold Arena",
+  "name": "Stronghold Arena",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Kicker {G} and/or {W} (You may pay an additional {G} and/or {W} as you cast this spell.)\nWhen this enchantment enters, you gain 3 life for each time it was kicked.\nWhenever one or more creatures you control deal combat damage to a player, you may reveal the top card of your library and put it into your hand. If you do, you lose life equal to its mana value."
+ },
+ "Relic Putrescence": {
+  "id": "Relic Putrescence",
+  "name": "Relic Putrescence",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant artifact\nWhenever enchanted artifact becomes tapped, its controller gets a poison counter."
+ },
+ "Obsessive Pursuit": {
+  "id": "Obsessive Pursuit",
+  "name": "Obsessive Pursuit",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters and at the beginning of your upkeep, you lose 1 life and create a Clue token. (It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nWhenever you attack, put X +1/+1 counters on target attacking creature, where X is the number of permanents you've sacrificed this turn. If X is three or more, that creature gains lifelink until end of turn."
+ },
+ "The Creation of Avacyn": {
+  "id": "The Creation of Avacyn",
+  "name": "The Creation of Avacyn",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Search your library for a card, exile it face down, then shuffle.\nII — Turn the exiled card face up. If it's a creature card, you lose life equal to its mana value.\nIII — You may put the exiled card onto the battlefield if it's a creature card. If you don't put it onto the battlefield, put it into its owner's hand."
+ },
+ "Quest for the Nihil Stone": {
+  "id": "Quest for the Nihil Stone",
+  "name": "Quest for the Nihil Stone",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever an opponent discards a card, you may put a quest counter on this enchantment.\nAt the beginning of each opponent's upkeep, if that player has no cards in hand and this enchantment has two or more quest counters on it, you may have that player lose 5 life."
+ },
+ "Lim-Dûl's Hex": {
+  "id": "Lim-Dûl's Hex",
+  "name": "Lim-Dûl's Hex",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, for each player, this enchantment deals 1 damage to that player unless they pay {B} or {3}."
+ },
+ "Tribute to Horobi // Echo of Death's Wail": {
+  "id": "Tribute to Horobi // Echo of Death's Wail",
+  "name": "Tribute to Horobi // Echo of Death's Wail",
+  "typeLine": "Enchantment — Saga // Enchantment Creature — Spirit",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Tribute to Horobi: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — Each opponent creates a 1/1 black Rat Rogue creature token.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nEcho of Death's Wail: Flying, haste\nWhen this creature enters, gain control of all Rat tokens.\nWhenever this creature attacks, you may sacrifice another creature. If you do, draw a card."
+ },
+ "Thrull Retainer": {
+  "id": "Thrull Retainer",
+  "name": "Thrull Retainer",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +1/+1.\nSacrifice this Aura: Regenerate enchanted creature."
+ },
+ "Lurking Evil": {
+  "id": "Lurking Evil",
+  "name": "Lurking Evil",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Pay half your life, rounded up: This enchantment becomes a 4/4 Phyrexian Horror creature with flying."
+ },
+ "Blood Funnel": {
+  "id": "Blood Funnel",
+  "name": "Blood Funnel",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Noncreature spells you cast cost {2} less to cast.\nWhenever you cast a noncreature spell, counter that spell unless you sacrifice a creature."
+ },
+ "Enslave": {
+  "id": "Enslave",
+  "name": "Enslave",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nYou control enchanted creature.\nAt the beginning of your upkeep, enchanted creature deals 1 damage to its owner."
+ },
+ "Triumph of Cruelty": {
+  "id": "Triumph of Cruelty",
+  "name": "Triumph of Cruelty",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, target opponent discards a card if you control the creature with the greatest power or tied for the greatest power."
+ },
+ "Descent into Madness": {
+  "id": "Descent into Madness",
+  "name": "Descent into Madness",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, put a despair counter on this enchantment, then each player exiles X permanents they control and/or cards from their hand, where X is the number of despair counters on this enchantment."
+ },
+ "Grave Betrayal": {
+  "id": "Grave Betrayal",
+  "name": "Grave Betrayal",
+  "typeLine": "Enchantment",
+  "manaCost": "{5}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature you don't control dies, return it to the battlefield under your control with an additional +1/+1 counter on it at the beginning of the next end step. That creature is a black Zombie in addition to its other colors and types."
+ },
+ "Strands of Undeath": {
+  "id": "Strands of Undeath",
+  "name": "Strands of Undeath",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen this Aura enters, target player discards two cards.\n{B}: Regenerate enchanted creature."
+ },
+ "The Long Reach of Night // Animus of Night's Reach": {
+  "id": "The Long Reach of Night // Animus of Night's Reach",
+  "name": "The Long Reach of Night // Animus of Night's Reach",
+  "typeLine": "Enchantment — Saga // Enchantment Creature — Spirit",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "The Long Reach of Night: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — Each opponent sacrifices a creature of their choice unless they discard a card.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nAnimus of Night's Reach: Menace (This creature can't be blocked except by two or more creatures.)\nWhenever this creature attacks, it gets +X/+0 until end of turn, where X is the number of creature cards in defending player's graveyard."
+ },
+ "Forbidden Crypt": {
+  "id": "Forbidden Crypt",
+  "name": "Forbidden Crypt",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If you would draw a card, return a card from your graveyard to your hand instead. If you can't, you lose the game.\nIf a card would be put into your graveyard from anywhere, exile that card instead."
+ },
+ "Mortuary": {
+  "id": "Mortuary",
+  "name": "Mortuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature is put into your graveyard from the battlefield, put that card on top of your library."
+ },
+ "Liliana's Talent": {
+  "id": "Liliana's Talent",
+  "name": "Liliana's Talent",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant planeswalker\nEnchanted planeswalker has \"[−8]: Put all creature cards from all graveyards onto the battlefield under your control.\"\nWhenever a creature deals damage to enchanted planeswalker, destroy that creature."
+ },
+ "Mornsong Aria": {
+  "id": "Mornsong Aria",
+  "name": "Mornsong Aria",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Players can't draw cards or gain life.\nAt the beginning of each player's draw step, that player loses 3 life, searches their library for a card, puts it into their hand, then shuffles."
+ },
+ "Feast on the Fallen": {
+  "id": "Feast on the Fallen",
+  "name": "Feast on the Fallen",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each upkeep, if an opponent lost life last turn, put a +1/+1 counter on target creature you control."
+ },
+ "Soul Kiss": {
+  "id": "Soul Kiss",
+  "name": "Soul Kiss",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\n{B}, Pay 1 life: Enchanted creature gets +2/+2 until end of turn. Activate no more than three times each turn."
+ },
+ "Measure of Wickedness": {
+  "id": "Measure of Wickedness",
+  "name": "Measure of Wickedness",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your end step, sacrifice this enchantment and you lose 8 life.\nWhenever another card is put into your graveyard from anywhere, target opponent gains control of this enchantment."
+ },
+ "Gift of Fangs": {
+  "id": "Gift of Fangs",
+  "name": "Gift of Fangs",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+2 as long as it's a Vampire. Otherwise, it gets -2/-2."
+ },
+ "In the Pale Moonlight": {
+  "id": "In the Pale Moonlight",
+  "name": "In the Pale Moonlight",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Each opponent sacrifices a nontoken creature of their choice.\nII — Investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nIII — You may sacrifice an artifact or creature. If you do, create two 2/2 black Romulan creature tokens."
+ },
+ "Bottomless Pit": {
+  "id": "Bottomless Pit",
+  "name": "Bottomless Pit",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each player's upkeep, that player discards a card at random."
+ },
+ "Blessing of Leeches": {
+  "id": "Blessing of Leeches",
+  "name": "Blessing of Leeches",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flash\nEnchant creature\nAt the beginning of your upkeep, you lose 1 life.\n{0}: Regenerate enchanted creature."
+ },
+ "March from the Black Gate": {
+  "id": "March from the Black Gate",
+  "name": "March from the Black Gate",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters and whenever an Army you control attacks, amass Orcs 1. (Put a +1/+1 counter on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)"
+ },
+ "Skeletal Swarming": {
+  "id": "Skeletal Swarming",
+  "name": "Skeletal Swarming",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{G}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Each Skeleton you control has trample, attacks each combat if able, and gets +X/+0, where X is the number of other Skeletons you control.\nAt the beginning of your end step, create a tapped 1/1 black Skeleton creature token. If a creature died this turn, create two of those tokens instead."
+ },
+ "Nettling Curse": {
+  "id": "Nettling Curse",
+  "name": "Nettling Curse",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature attacks or blocks, its controller loses 3 life.\n{1}{R}: Enchanted creature attacks this turn if able."
+ },
+ "Necropotence": {
+  "id": "Necropotence",
+  "name": "Necropotence",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Skip your draw step.\nWhenever you discard a card, exile that card from your graveyard.\nPay 1 life: Exile the top card of your library face down. Put that card into your hand at the beginning of your next end step."
+ },
+ "Carnival of Souls": {
+  "id": "Carnival of Souls",
+  "name": "Carnival of Souls",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature enters, you lose 1 life and add {B}.",
+  "producedMana": [
+   "B"
+  ]
+ },
+ "Worms of the Earth": {
+  "id": "Worms of the Earth",
+  "name": "Worms of the Earth",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Players can't play lands.\nLands can't enter the battlefield.\nAt the beginning of each upkeep, any player may sacrifice two lands of their choice or have this enchantment deal 5 damage to that player. If a player does either, destroy this enchantment."
+ },
+ "Withering Hex": {
+  "id": "Withering Hex",
+  "name": "Withering Hex",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhenever a player cycles a card, put a plague counter on this Aura.\nEnchanted creature gets -1/-1 for each plague counter on this Aura."
+ },
+ "Leshrac's Sigil": {
+  "id": "Leshrac's Sigil",
+  "name": "Leshrac's Sigil",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever an opponent casts a green spell, you may pay {B}{B}. If you do, look at that player's hand and choose a card from it. The player discards that card.\n{B}{B}: Return this enchantment to its owner's hand."
+ },
+ "Planar Void": {
+  "id": "Planar Void",
+  "name": "Planar Void",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever another card is put into a graveyard from anywhere, exile that card."
+ },
+ "Tombstone Stairwell": {
+  "id": "Tombstone Stairwell",
+  "name": "Tombstone Stairwell",
+  "typeLine": "World Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cumulative upkeep {1}{B} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nAt the beginning of each upkeep, if this enchantment is on the battlefield, each player creates a 2/2 black Zombie creature token with haste named Tombspawn for each creature card in their graveyard.\nAt the beginning of each end step and when this enchantment leaves the battlefield, destroy all tokens created with this enchantment. They can't be regenerated."
+ },
+ "The Rise of Sozin // Fire Lord Sozin": {
+  "id": "The Rise of Sozin // Fire Lord Sozin",
+  "name": "The Rise of Sozin // Fire Lord Sozin",
+  "typeLine": "Enchantment — Saga // Legendary Creature — Human Noble",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "The Rise of Sozin: (As this Saga enters and after your draw step, add a lore counter.)\nI — Destroy all creatures.\nII — Choose a card name. Search target opponent's graveyard, hand, and library for up to four cards with that name and exile them. Then that player shuffles.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nFire Lord Sozin: Menace, firebending 3 (Whenever this creature attacks, add {R}{R}{R}. This mana lasts until end of combat.)\nWhenever Fire Lord Sozin deals combat damage to a player, you may pay {X}. When you do, put any number of target creature cards with total mana value X or less from that player's graveyard onto the battlefield under your control.",
+  "producedMana": [
+   "R"
+  ]
+ },
+ "Night Dealings": {
+  "id": "Night Dealings",
+  "name": "Night Dealings",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a source you control deals damage to another player, put that many theft counters on this enchantment.\n{2}{B}{B}, Remove X theft counters from this enchantment: Search your library for a nonland card with mana value X, reveal it, put it into your hand, then shuffle."
+ },
+ "Necrotic Plague": {
+  "id": "Necrotic Plague",
+  "name": "Necrotic Plague",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has \"At the beginning of your upkeep, sacrifice this creature.\"\nWhen enchanted creature dies, its controller chooses target creature one of their opponents controls. Return this card from its owner's graveyard to the battlefield attached to that creature."
+ },
+ "Parasitic Bond": {
+  "id": "Parasitic Bond",
+  "name": "Parasitic Bond",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of the upkeep of enchanted creature's controller, this Aura deals 2 damage to that player."
+ },
+ "Shrieking Affliction": {
+  "id": "Shrieking Affliction",
+  "name": "Shrieking Affliction",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each opponent's upkeep, if that player has one or fewer cards in hand, they lose 3 life."
+ },
+ "Call of the Ring": {
+  "id": "Call of the Ring",
+  "name": "Call of the Ring",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, the Ring tempts you.\nWhenever you choose a creature as your Ring-bearer, you may pay 2 life. If you do, draw a card."
+ },
+ "Lethal Vapors": {
+  "id": "Lethal Vapors",
+  "name": "Lethal Vapors",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature enters, destroy it.\n{0}: Destroy this enchantment. You skip your next turn. Any player may activate this ability."
+ },
+ "Corpseweft": {
+  "id": "Corpseweft",
+  "name": "Corpseweft",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{1}{B}, Exile one or more creature cards from your graveyard: Create a tapped X/X black Zombie Horror creature token, where X is twice the number of cards exiled this way."
+ },
+ "Necrodominance": {
+  "id": "Necrodominance",
+  "name": "Necrodominance",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Skip your draw step.\nAt the beginning of your end step, you may pay any amount of life. If you do, draw that many cards.\nYour maximum hand size is five.\nIf a card or token would be put into your graveyard from anywhere, exile it instead."
+ },
+ "Phyrexian Boon": {
+  "id": "Phyrexian Boon",
+  "name": "Phyrexian Boon",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+1 as long as it's black. Otherwise, it gets -1/-2."
+ },
+ "Murderous Betrayal": {
+  "id": "Murderous Betrayal",
+  "name": "Murderous Betrayal",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{B}{B}, Pay half your life, rounded up: Destroy target nonblack creature. It can't be regenerated."
+ },
+ "Tainted Aether": {
+  "id": "Tainted Aether",
+  "name": "Tainted Aether",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature enters, its controller sacrifices a creature or land of their choice."
+ },
+ "Desolation": {
+  "id": "Desolation",
+  "name": "Desolation",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each end step, each player who tapped a land for mana this turn sacrifices a land of their choice. This enchantment deals 2 damage to each player who sacrificed a Plains this way."
+ },
+ "Case of the Gorgon's Kiss": {
+  "id": "Case of the Gorgon's Kiss",
+  "name": "Case of the Gorgon's Kiss",
+  "typeLine": "Enchantment — Case",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this Case enters, destroy up to one target creature that was dealt damage this turn.\nTo solve — Three or more creature cards were put into graveyards from anywhere this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — This Case is a 4/4 Gorgon creature with deathtouch and lifelink in addition to its other types."
+ },
+ "Volrath's Dungeon": {
+  "id": "Volrath's Dungeon",
+  "name": "Volrath's Dungeon",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Pay 5 life: Destroy this enchantment. Any player may activate this ability but only during their turn.\nDiscard a card: Target player puts a card from their hand on top of their library. Activate only as a sorcery."
+ },
+ "Koskun Falls": {
+  "id": "Koskun Falls",
+  "name": "Koskun Falls",
+  "typeLine": "World Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you tap an untapped creature you control.\nCreatures can't attack you unless their controller pays {2} for each creature they control that's attacking you."
+ },
+ "Blood Spatter Analysis": {
+  "id": "Blood Spatter Analysis",
+  "name": "Blood Spatter Analysis",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "When this enchantment enters, it deals 3 damage to target creature an opponent controls.\nWhenever one or more creatures die, mill a card and put a bloodstain counter on this enchantment. Then sacrifice it if it has five or more bloodstain counters on it. When you do, return target creature card from your graveyard to your hand."
+ },
+ "Font of Agonies": {
+  "id": "Font of Agonies",
+  "name": "Font of Agonies",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever you pay life, put that many blood counters on this enchantment.\n{1}{B}, Remove four blood counters from this enchantment: Destroy target creature."
+ },
+ "Anthem of Rakdos": {
+  "id": "Anthem of Rakdos",
+  "name": "Anthem of Rakdos",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{R}{R}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "Whenever a creature you control attacks, it gets +2/+0 until end of turn and this enchantment deals 1 damage to you.\nHellbent — As long as you have no cards in hand, if a source you control would deal damage to a permanent or player, it deals double that damage to that permanent or player instead."
+ },
+ "Pretender's Claim": {
+  "id": "Pretender's Claim",
+  "name": "Pretender's Claim",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature becomes blocked, tap all lands defending player controls."
+ },
+ "Boggart Mischief": {
+  "id": "Boggart Mischief",
+  "name": "Boggart Mischief",
+  "typeLine": "Kindred Enchantment — Goblin",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, you may blight 1. If you do, create two 1/1 black and red Goblin creature tokens. (To blight 1, put a -1/-1 counter on a creature you control.)\nWhenever a Goblin creature you control dies, each opponent loses 1 life and you gain 1 life."
+ },
+ "Colfenor's Plans": {
+  "id": "Colfenor's Plans",
+  "name": "Colfenor's Plans",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, exile the top seven cards of your library face down.\nYou may look at the cards exiled with this enchantment, and you may play lands and cast spells from among those cards.\nSkip your draw step.\nYou can't cast more than one spell each turn."
+ },
+ "Virulent Plague": {
+  "id": "Virulent Plague",
+  "name": "Virulent Plague",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Creature tokens get -2/-2."
+ },
+ "Brink of Disaster": {
+  "id": "Brink of Disaster",
+  "name": "Brink of Disaster",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature or land\nWhen enchanted permanent becomes tapped, destroy it."
+ },
+ "Death Pits of Rath": {
+  "id": "Death Pits of Rath",
+  "name": "Death Pits of Rath",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature is dealt damage, destroy it. It can't be regenerated."
+ },
+ "Scavenger's Talent": {
+  "id": "Scavenger's Talent",
+  "name": "Scavenger's Talent",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhenever one or more creatures you control die, create a Food token. This ability triggers only once each turn.\n{1}{B}: Level 2\nWhenever you sacrifice a permanent, target player mills two cards.\n{2}{B}: Level 3\nAt the beginning of your end step, you may sacrifice three other nonland permanents. If you do, return a creature card from your graveyard to the battlefield with a finality counter on it."
+ },
+ "Yoke of the Damned": {
+  "id": "Yoke of the Damned",
+  "name": "Yoke of the Damned",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen a creature dies, destroy enchanted creature."
+ },
+ "Feast of Sanity": {
+  "id": "Feast of Sanity",
+  "name": "Feast of Sanity",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever you discard a card, this enchantment deals 1 damage to any target and you gain 1 life."
+ },
+ "Curse of Misfortunes": {
+  "id": "Curse of Misfortunes",
+  "name": "Curse of Misfortunes",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nAt the beginning of your upkeep, you may search your library for a Curse card that doesn't have the same name as a Curse attached to enchanted player, put it onto the battlefield attached to that player, then shuffle."
+ },
+ "Kaya's Ghostform": {
+  "id": "Kaya's Ghostform",
+  "name": "Kaya's Ghostform",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature or planeswalker you control\nWhen enchanted permanent dies or is put into exile, return that card to the battlefield under your control."
+ },
+ "Lithoform Blight": {
+  "id": "Lithoform Blight",
+  "name": "Lithoform Blight",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land\nWhen this Aura enters, draw a card.\nEnchanted land loses all land types and abilities and has \"{T}: Add {C}\" and \"{T}, Pay 1 life: Add one mana of any color.\"",
+  "producedMana": [
+   "B",
+   "C",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Tainted Well": {
+  "id": "Tainted Well",
+  "name": "Tainted Well",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant land\nWhen this Aura enters, draw a card.\nEnchanted land is a Swamp."
+ },
+ "Treacherous Link": {
+  "id": "Treacherous Link",
+  "name": "Treacherous Link",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAll damage that would be dealt to enchanted creature is dealt to its controller instead."
+ },
+ "Pillar Tombs of Aku": {
+  "id": "Pillar Tombs of Aku",
+  "name": "Pillar Tombs of Aku",
+  "typeLine": "World Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each player's upkeep, that player may sacrifice a creature of their choice. If that player doesn't, they lose 5 life and you sacrifice this enchantment."
+ },
+ "Oath of Ghouls": {
+  "id": "Oath of Ghouls",
+  "name": "Oath of Ghouls",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each player's upkeep, that player chooses target player whose graveyard has fewer creature cards in it than their graveyard does and is their opponent. The first player may return a creature card from their graveyard to their hand."
+ },
+ "No Mercy": {
+  "id": "No Mercy",
+  "name": "No Mercy",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a creature deals damage to you, destroy it."
+ },
+ "Forsaken Wastes": {
+  "id": "Forsaken Wastes",
+  "name": "Forsaken Wastes",
+  "typeLine": "World Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Players can't gain life.\nAt the beginning of each player's upkeep, that player loses 1 life.\nWhenever this enchantment becomes the target of a spell, that spell's controller loses 5 life."
+ },
+ "Gate to Phyrexia": {
+  "id": "Gate to Phyrexia",
+  "name": "Gate to Phyrexia",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sacrifice a creature: Destroy target artifact. Activate only during your upkeep and only once each turn."
+ },
+ "Spiteful Shadows": {
+  "id": "Spiteful Shadows",
+  "name": "Spiteful Shadows",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature is dealt damage, it deals that much damage to its controller."
+ },
+ "Withercrown": {
+  "id": "Withercrown",
+  "name": "Withercrown",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature has base power 0 and has \"At the beginning of your upkeep, you lose 1 life unless you sacrifice this creature.\""
+ },
+ "Bandit's Talent": {
+  "id": "Bandit's Talent",
+  "name": "Bandit's Talent",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, each opponent discards two cards unless they discard a nonland card.\n{B}: Level 2\nAt the beginning of each opponent's upkeep, if that player has one or fewer cards in hand, they lose 2 life.\n{3}{B}: Level 3\nAt the beginning of your draw step, draw an additional card for each opponent who has one or fewer cards in hand."
+ },
+ "Unholy Annex // Ritual Chamber": {
+  "id": "Unholy Annex // Ritual Chamber",
+  "name": "Unholy Annex // Ritual Chamber",
+  "typeLine": "Enchantment — Room // Enchantment — Room",
+  "manaCost": "{2}{B} // {3}{B}{B}",
+  "cmc": 8,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Unholy Annex: At the beginning of your end step, draw a card. If you control a Demon, each opponent loses 2 life and you gain 2 life. Otherwise, you lose 2 life.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\n\nRitual Chamber: When you unlock this door, create a 6/6 black Demon creature token with flying.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)"
+ },
+ "The Cloning of Shredder": {
+  "id": "The Cloning of Shredder",
+  "name": "The Cloning of Shredder",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Exile target creature card from your graveyard. Create a token that's a copy of it, except it isn't legendary and is a Mutant in addition to its other types.\nII, III — Create a token that's a copy of a card exiled with this Saga, except it isn't legendary and is a Mutant in addition to its other types."
+ },
+ "Cultist of the Absolute": {
+  "id": "Cultist of the Absolute",
+  "name": "Cultist of the Absolute",
+  "typeLine": "Legendary Enchantment — Background",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Commander creatures you own get +3/+3 and have flying, deathtouch, \"Ward—Pay 3 life,\" and \"At the beginning of your upkeep, sacrifice a creature.\""
+ },
+ "At Knifepoint": {
+  "id": "At Knifepoint",
+  "name": "At Knifepoint",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "During your turn, outlaws you control have first strike. (Assassins, Mercenaries, Pirates, Rogues, and Warlocks are outlaws.)\nWhenever you commit a crime, create a 1/1 red Mercenary creature token with \"{T}: Target creature you control gets +1/+0 until end of turn. Activate only as a sorcery.\" This ability triggers only once each turn."
+ },
+ "Tourach's Chant": {
+  "id": "Tourach's Chant",
+  "name": "Tourach's Chant",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you pay {B}.\nWhenever a player puts a Forest onto the battlefield, this enchantment deals 3 damage to that player unless they put a -1/-1 counter on a creature they control."
+ },
+ "Advanced Floral Invocations": {
+  "id": "Advanced Floral Invocations",
+  "name": "Advanced Floral Invocations",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{B/G}",
+  "cmc": 1,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Landfall — Whenever a land you control enters, mill two cards.\n{B/G}: Level 2\nWhenever a land you control enters, creature cards in your graveyard perpetually get +1/+1.\n{4}{B/G}{B/G}: Level 3\nYou may play lands and cast creature spells from your graveyard. If you cast a spell this way, that creature enters with a finality counter on it."
+ },
+ "Mindless Conscription": {
+  "id": "Mindless Conscription",
+  "name": "Mindless Conscription",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters and whenever you draw your third card each turn, amass Zombies 3. (Put three +1/+1 counters on an Army you control. It's also a Zombie. If you don't control an Army, create a 0/0 black Zombie Army creature token first.)"
+ },
+ "Ragged Veins": {
+  "id": "Ragged Veins",
+  "name": "Ragged Veins",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flash\nEnchant creature\nWhenever enchanted creature is dealt damage, its controller loses that much life."
+ },
+ "Banewasp Affliction": {
+  "id": "Banewasp Affliction",
+  "name": "Banewasp Affliction",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen enchanted creature dies, that creature's controller loses life equal to its toughness."
+ },
+ "Painful Quandary": {
+  "id": "Painful Quandary",
+  "name": "Painful Quandary",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever an opponent casts a spell, that player loses 5 life unless they discard a card."
+ },
+ "Bank Job": {
+  "id": "Bank Job",
+  "name": "Bank Job",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "At the beginning of your upkeep, exile the bottom creature card of your library. You may cast that card this turn. At the beginning of the next end step, if that card is still exiled, put it into your graveyard and create a Treasure token."
+ },
+ "Infernal Genesis": {
+  "id": "Infernal Genesis",
+  "name": "Infernal Genesis",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each player's upkeep, that player mills a card. Then they create X 1/1 black Minion creature tokens, where X is the milled card's mana value."
+ },
+ "Earthlink": {
+  "id": "Earthlink",
+  "name": "Earthlink",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{R}{G}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you pay {2}.\nWhenever a creature dies, that creature's controller sacrifices a land of their choice."
+ },
+ "One Ring to Rule Them All": {
+  "id": "One Ring to Rule Them All",
+  "name": "One Ring to Rule Them All",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — The Ring tempts you, then each player mills cards equal to your Ring-bearer's power.\nII — Destroy all nonlegendary creatures.\nIII — Each opponent loses 1 life for each creature card in that player's graveyard."
+ },
+ "Chthonian Nightmare": {
+  "id": "Chthonian Nightmare",
+  "name": "Chthonian Nightmare",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, you get {E}{E}{E} (three energy counters).\nPay X {E}, Sacrifice a creature, Return this enchantment to its owner's hand: Return target creature card with mana value X from your graveyard to the battlefield. Activate only as a sorcery."
+ },
+ "The Revelations of Ezio": {
+  "id": "The Revelations of Ezio",
+  "name": "The Revelations of Ezio",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy target tapped creature an opponent controls.\nII — Whenever an Assassin you control attacks this turn, put a +1/+1 counter on it.\nIII — Return target Assassin creature card from your graveyard to the battlefield with an additional +1/+1 counter on it."
+ },
+ "Gravestorm": {
+  "id": "Gravestorm",
+  "name": "Gravestorm",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, target opponent may exile a card from their graveyard. If that player doesn't, you may draw a card."
+ },
+ "Keldon Twilight": {
+  "id": "Keldon Twilight",
+  "name": "Keldon Twilight",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "At the beginning of each player's end step, if no creatures attacked this turn, that player sacrifices a creature of their choice that they controlled since the beginning of the turn."
+ },
+ "Haunting Wind": {
+  "id": "Haunting Wind",
+  "name": "Haunting Wind",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever an artifact becomes tapped or a player activates an artifact's ability without {T} in its activation cost, this enchantment deals 1 damage to that artifact's controller."
+ },
+ "Withering Wisps": {
+  "id": "Withering Wisps",
+  "name": "Withering Wisps",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of the end step, if no creatures are on the battlefield, sacrifice this enchantment.\n{B}: This enchantment deals 1 damage to each creature and each player. Activate no more times each turn than the number of snow Swamps you control."
+ },
+ "Dark Suspicions": {
+  "id": "Dark Suspicions",
+  "name": "Dark Suspicions",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each opponent's upkeep, that player loses X life, where X is the number of cards in that player's hand minus the number of cards in your hand."
+ },
+ "Fungal Fortitude": {
+  "id": "Fungal Fortitude",
+  "name": "Fungal Fortitude",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flash\nEnchant creature\nEnchanted creature gets +2/+0.\nWhen enchanted creature dies, return it to the battlefield tapped under its owner's control."
+ },
+ "Phyrexian Etchings": {
+  "id": "Phyrexian Etchings",
+  "name": "Phyrexian Etchings",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cumulative upkeep {B} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nAt the beginning of your end step, draw a card for each age counter on this enchantment.\nWhen this enchantment is put into a graveyard from the battlefield, you lose 2 life for each age counter on it."
+ },
+ "No Rest for the Wicked": {
+  "id": "No Rest for the Wicked",
+  "name": "No Rest for the Wicked",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sacrifice this enchantment: Return to your hand all creature cards in your graveyard that were put there from the battlefield this turn."
+ },
+ "Harald Unites the Elves": {
+  "id": "Harald Unites the Elves",
+  "name": "Harald Unites the Elves",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Mill three cards. You may put an Elf or Tyvar card from your graveyard onto the battlefield.\nII — Put a +1/+1 counter on each Elf you control.\nIII — Whenever an Elf you control attacks this turn, target creature an opponent controls gets -1/-1 until end of turn."
+ },
+ "Dystopia": {
+  "id": "Dystopia",
+  "name": "Dystopia",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cumulative upkeep—Pay 1 life. (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nAt the beginning of each player's upkeep, that player sacrifices a green or white permanent of their choice."
+ },
+ "Rain of Gore": {
+  "id": "Rain of Gore",
+  "name": "Rain of Gore",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{R}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "If a spell or ability would cause its controller to gain life, that player loses that much life instead."
+ },
+ "Artificer's Hex": {
+  "id": "Artificer's Hex",
+  "name": "Artificer's Hex",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant Equipment\nAt the beginning of your upkeep, if enchanted Equipment is attached to a creature, destroy that creature."
+ },
+ "Demonic Embrace": {
+  "id": "Demonic Embrace",
+  "name": "Demonic Embrace",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +3/+1, has flying, and is a Demon in addition to its other types.\nYou may cast this card from your graveyard by paying 3 life and discarding a card in addition to paying its other costs."
+ },
+ "Sanguine Brushstroke": {
+  "id": "Sanguine Brushstroke",
+  "name": "Sanguine Brushstroke",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When Sanguine Brushstroke enters the battlefield, create a Blood token and conjure a card named Blood Artist onto the battlefield.\nWhenever you sacrifice a Blood token, each opponent loses 1 life and you gain 1 life."
+ },
+ "Unnatural Hunger": {
+  "id": "Unnatural Hunger",
+  "name": "Unnatural Hunger",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of the upkeep of enchanted creature's controller, this Aura deals damage equal to that creature's power to that player unless they sacrifice another creature of their choice."
+ },
+ "Triskaidekaphobia": {
+  "id": "Triskaidekaphobia",
+  "name": "Triskaidekaphobia",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, choose one —\n• Each player with exactly 13 life loses the game, then each player gains 1 life.\n• Each player with exactly 13 life loses the game, then each player loses 1 life."
+ },
+ "Lord Skitter's Blessing": {
+  "id": "Lord Skitter's Blessing",
+  "name": "Lord Skitter's Blessing",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When this enchantment enters, create a Wicked Role token attached to target creature you control. (Enchanted creature gets +1/+1. When this token is put into a graveyard, each opponent loses 1 life.)\nAt the beginning of your draw step, if you control an enchanted creature, you lose 1 life and you draw an additional card."
+ },
+ "Bloodchief Ascension": {
+  "id": "Bloodchief Ascension",
+  "name": "Bloodchief Ascension",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each end step, if an opponent lost 2 or more life this turn, you may put a quest counter on this enchantment. (Damage causes loss of life.)\nWhenever a card is put into an opponent's graveyard from anywhere, if this enchantment has three or more quest counters on it, you may have that player lose 2 life. If you do, you gain 2 life."
+ },
+ "Precipitous Drop": {
+  "id": "Precipitous Drop",
+  "name": "Precipitous Drop",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen this Aura enters, venture into the dungeon. (Enter the first room or advance to the next room.)\nEnchanted creature gets -2/-2. It gets -5/-5 instead as long as you've completed a dungeon."
+ },
+ "Drudge Spell": {
+  "id": "Drudge Spell",
+  "name": "Drudge Spell",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "{B}, Exile two creature cards from your graveyard: Create a 1/1 black Skeleton creature token. It has \"{B}: Regenerate this token.\"\nWhen this enchantment leaves the battlefield, destroy all Skeleton tokens. They can't be regenerated."
+ },
+ "Sidequest: Hunt the Mark // Yiazmat, Ultimate Mark": {
+  "id": "Sidequest: Hunt the Mark // Yiazmat, Ultimate Mark",
+  "name": "Sidequest: Hunt the Mark // Yiazmat, Ultimate Mark",
+  "typeLine": "Enchantment // Legendary Creature — Dragon",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Sidequest: Hunt the Mark: When this enchantment enters, destroy up to one target creature.\nAt the beginning of your end step, if a creature died under an opponent's control this turn, create a Treasure token. Then if you control three or more Treasures, transform this enchantment.\n\nYiazmat, Ultimate Mark: {1}{B}, Sacrifice another creature or artifact: Yiazmat gains indestructible until end of turn. Tap it."
+ },
+ "Nefarious Lich": {
+  "id": "Nefarious Lich",
+  "name": "Nefarious Lich",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{B}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If damage would be dealt to you, exile that many cards from your graveyard instead. If you can't, you lose the game.\nIf you would gain life, draw that many cards instead.\nWhen this enchantment leaves the battlefield, you lose the game."
+ },
+ "Rime Transfusion": {
+  "id": "Rime Transfusion",
+  "name": "Rime Transfusion",
+  "typeLine": "Snow Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets +2/+1 and has \"{S}: This creature can't be blocked this turn except by snow creatures.\" ({S} can be paid with one mana from a snow source.)"
+ },
+ "Thunderbolts Conspiracy": {
+  "id": "Thunderbolts Conspiracy",
+  "name": "Thunderbolts Conspiracy",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flash\nWhenever a Villain you control dies, return it to the battlefield under its owner's control with a finality counter on it. That creature is a Hero in addition to its other types. (If a creature with a finality counter on it would die, exile it instead.)"
+ },
+ "Nowhere to Run": {
+  "id": "Nowhere to Run",
+  "name": "Nowhere to Run",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Flash\nWhen this enchantment enters, target creature an opponent controls gets -3/-3 until end of turn.\nCreatures your opponents control can be the targets of spells and abilities as though they didn't have hexproof. Ward abilities of those creatures don't trigger."
+ },
+ "The Many Deeds of Belzenlok": {
+  "id": "The Many Deeds of Belzenlok",
+  "name": "The Many Deeds of Belzenlok",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "I — Exile up to one target Saga card from a graveyard. Copy its chapter I ability.\nII — Exile up to one target Saga card from a graveyard. Copy its chapter II ability.\nIII — Exile up to one target Saga card from a graveyard. Copy its chapter III ability."
+ },
+ "Baneful Omen": {
+  "id": "Baneful Omen",
+  "name": "Baneful Omen",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{B}{B}{B}",
+  "cmc": 7,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your end step, you may reveal the top card of your library. If you do, each opponent loses life equal to that card's mana value."
+ },
+ "Mortal Combat": {
+  "id": "Mortal Combat",
+  "name": "Mortal Combat",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, if twenty or more creature cards are in your graveyard, you win the game."
+ },
+ "Binding Agony": {
+  "id": "Binding Agony",
+  "name": "Binding Agony",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhenever enchanted creature is dealt damage, this Aura deals that much damage to that creature's controller."
+ },
+ "Infernal Darkness": {
+  "id": "Infernal Darkness",
+  "name": "Infernal Darkness",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Cumulative upkeep—Pay {B} and 1 life. (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nIf a land is tapped for mana, it produces {B} instead of any other type."
+ },
+ "Oni Possession": {
+  "id": "Oni Possession",
+  "name": "Oni Possession",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of your upkeep, sacrifice a creature.\nEnchanted creature gets +3/+3 and has trample.\nEnchanted creature is a Demon Spirit."
+ },
+ "Unholy Indenture": {
+  "id": "Unholy Indenture",
+  "name": "Unholy Indenture",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen enchanted creature dies, return that card to the battlefield under your control with a +1/+1 counter on it."
+ },
+ "Necromancer's Magemark": {
+  "id": "Necromancer's Magemark",
+  "name": "Necromancer's Magemark",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nCreatures you control that are enchanted get +1/+1.\nIf a creature you control that's enchanted would die, return it to its owner's hand instead."
+ },
+ "The Last Ronin": {
+  "id": "The Last Ronin",
+  "name": "The Last Ronin",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{4}{B}{G}",
+  "cmc": 6,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy all creatures.\nII — Mill four cards. When you do, return target creature card from your graveyard to your hand.\nIII — Whenever a creature you control attacks alone this turn, put three +1/+1 counters on it. It gains trample, lifelink, and indestructible until end of turn."
+ },
+ "Mind Whip": {
+  "id": "Mind Whip",
+  "name": "Mind Whip",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nAt the beginning of the upkeep of enchanted creature's controller, that player may pay {3}. If they don't, this Aura deals 2 damage to that player and you tap that creature."
+ },
+ "Paralyze": {
+  "id": "Paralyze",
+  "name": "Paralyze",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nWhen this Aura enters, tap enchanted creature.\nEnchanted creature doesn't untap during its controller's untap step.\nAt the beginning of the upkeep of enchanted creature's controller, that player may pay {4}. If the player does, untap the creature."
+ },
+ "Lurking Jackals": {
+  "id": "Lurking Jackals",
+  "name": "Lurking Jackals",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "When an opponent has 10 or less life, if this permanent is an enchantment, it becomes a 3/2 Jackal creature."
+ },
+ "Chains of Mephistopheles": {
+  "id": "Chains of Mephistopheles",
+  "name": "Chains of Mephistopheles",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If a player would draw a card except the first one they draw in each of their draw steps, that player discards a card instead. If the player discards a card this way, they draw a card. If the player doesn't discard a card this way, they mill a card."
+ },
+ "Discordant Dirge": {
+  "id": "Discordant Dirge",
+  "name": "Discordant Dirge",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of your upkeep, you may put a verse counter on this enchantment.\n{B}, Sacrifice this enchantment: Look at target opponent's hand and choose up to X cards from it, where X is the number of verse counters on this enchantment. That player discards those cards."
+ },
+ "Curse Artifact": {
+  "id": "Curse Artifact",
+  "name": "Curse Artifact",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant artifact\nAt the beginning of the upkeep of enchanted artifact's controller, this Aura deals 2 damage to that player unless they sacrifice that artifact."
+ },
+ "Doom Reigns Supreme": {
+  "id": "Doom Reigns Supreme",
+  "name": "Doom Reigns Supreme",
+  "typeLine": "Enchantment — Plan",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a Villain you control enters, each opponent loses 1 life and you gain 1 life. Put a plan counter on this enchantment.\nWhen the fifth plan counter is put on this enchantment, sacrifice it. When you do, target opponent exiles the top five cards of their library. You may cast up to two spells from among the exiled cards without paying their mana costs."
+ },
+ "Morgul-Knife Wound": {
+  "id": "Morgul-Knife Wound",
+  "name": "Morgul-Knife Wound",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets -3/-0 and has \"At the beginning of your upkeep, exile this creature unless you pay 2 life.\""
+ },
+ "Warp Artifact": {
+  "id": "Warp Artifact",
+  "name": "Warp Artifact",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant artifact\nAt the beginning of the upkeep of enchanted artifact's controller, this Aura deals 1 damage to that player."
+ },
+ "Leyline of the Void": {
+  "id": "Leyline of the Void",
+  "name": "Leyline of the Void",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nIf a card would be put into an opponent's graveyard from anywhere, exile it instead."
+ },
+ "Genju of the Fens": {
+  "id": "Genju of the Fens",
+  "name": "Genju of the Fens",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{B}",
+  "cmc": 1,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant Swamp\n{2}: Until end of turn, enchanted Swamp becomes a 2/2 black Spirit creature with \"{B}: This creature gets +1/+1 until end of turn.\" It's still a land.\nWhen enchanted Swamp is put into a graveyard, you may return this card from your graveyard to your hand."
+ },
+ "Destructive Flow": {
+  "id": "Destructive Flow",
+  "name": "Destructive Flow",
+  "typeLine": "Enchantment",
+  "manaCost": "{B}{R}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G",
+   "R"
+  ],
+  "oracle": "At the beginning of each player's upkeep, that player sacrifices a nonbasic land of their choice."
+ },
+ "Kagemaro's Clutch": {
+  "id": "Kagemaro's Clutch",
+  "name": "Kagemaro's Clutch",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{3}{B}",
+  "cmc": 4,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant creature\nEnchanted creature gets -X/-X, where X is the number of cards in your hand."
+ },
+ "Bereavement": {
+  "id": "Bereavement",
+  "name": "Bereavement",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}",
+  "cmc": 2,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Whenever a green creature dies, its controller discards a card."
+ },
+ "Cadaverous Bloom": {
+  "id": "Cadaverous Bloom",
+  "name": "Cadaverous Bloom",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{B}{G}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Exile a card from your hand: Add {B}{B} or {G}{G}.",
+  "producedMana": [
+   "B",
+   "G"
+  ]
+ },
+ "Gibbering Descent": {
+  "id": "Gibbering Descent",
+  "name": "Gibbering Descent",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{B}{B}",
+  "cmc": 6,
+  "colors": [
+   "B"
+  ],
+  "oracle": "At the beginning of each player's upkeep, that player loses 1 life and discards a card.\nHellbent — Skip your upkeep step if you have no cards in hand.\nMadness {2}{B}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)"
+ },
+ "Bloodbond March": {
+  "id": "Bloodbond March",
+  "name": "Bloodbond March",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{B}{G}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "G"
+  ],
+  "oracle": "Whenever a player casts a creature spell, each player returns all cards with the same name as that spell from their graveyard to the battlefield."
+ },
+ "Swampsnare Trap": {
+  "id": "Swampsnare Trap",
+  "name": "Swampsnare Trap",
+  "typeLine": "Enchantment — Aura",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "This spell costs {1} less to cast if it targets a creature with flying.\nEnchant creature\nEnchanted creature gets -5/-3."
+ },
+ "The Bloodsky Massacre": {
+  "id": "The Bloodsky Massacre",
+  "name": "The Bloodsky Massacre",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 2/3 red Demon Berserker creature token with menace.\nII — Whenever a Berserker attacks this turn, you draw a card and you lose 1 life.\nIII — Add {R} for each Berserker you control. Until end of turn, you don't lose this mana as steps and phases end.",
+  "producedMana": [
+   "R"
+  ]
+ },
+ "Dralnu's Crusade": {
+  "id": "Dralnu's Crusade",
+  "name": "Dralnu's Crusade",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{B}{R}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "R"
+  ],
+  "oracle": "All Goblins get +1/+1.\nAll Goblins are black and are Zombies in addition to their other creature types."
+ },
+ "Elspeth's Nightmare": {
+  "id": "Elspeth's Nightmare",
+  "name": "Elspeth's Nightmare",
+  "typeLine": "Enchantment — Saga",
+  "manaCost": "{2}{B}",
+  "cmc": 3,
+  "colors": [
+   "B"
+  ],
+  "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy target creature an opponent controls with power 2 or less.\nII — Target opponent reveals their hand. You choose a noncreature, nonland card from it. That player discards that card.\nIII — Exile target opponent's graveyard."
+ },
+ "Curse of Thirst": {
+  "id": "Curse of Thirst",
+  "name": "Curse of Thirst",
+  "typeLine": "Enchantment — Aura Curse",
+  "manaCost": "{4}{B}",
+  "cmc": 5,
+  "colors": [
+   "B"
+  ],
+  "oracle": "Enchant player\nAt the beginning of enchanted player's upkeep, this Aura deals damage to that player equal to the number of Curses attached to them."
+ }
+}
