@@ -1,0 +1,2554 @@
+{
+ "Forge Anew": {
+  "id": "Forge Anew",
+  "name": "Forge Anew",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, return target Equipment card from your graveyard to the battlefield.\nDuring your turn, you may activate equip abilities any time you could cast an instant.\nYou may pay {0} rather than pay the equip cost of the first equip ability you activate during each of your turns."
+ },
+ "Touch the Spirit Realm": {
+  "id": "Touch the Spirit Realm",
+  "name": "Touch the Spirit Realm",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, exile up to one target artifact or creature until this enchantment leaves the battlefield.\nChannel — {1}{W}, Discard this card: Exile target artifact or creature. Return it to the battlefield under its owner's control at the beginning of the next end step."
+ },
+ "Deafening Silence": {
+  "id": "Deafening Silence",
+  "name": "Deafening Silence",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each player can't cast more than one noncreature spell each turn."
+ },
+ "Airbender Ascension": {
+  "id": "Airbender Ascension",
+  "name": "Airbender Ascension",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, airbend up to one target creature.\nWhenever a creature you control enters, put a quest counter on this enchantment.\nAt the beginning of your end step, if this enchantment has four or more quest counters on it, exile up to one target creature you control, then return it to the battlefield under its owner's control."
+ },
+ "Fighter Class": {
+  "id": "Fighter Class",
+  "name": "Fighter Class",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, search your library for an Equipment card, reveal it, put it into your hand, then shuffle.\n{1}{R}{W}: Level 2\nEquip abilities you activate cost {2} less to activate.\n{3}{R}{W}: Level 3\nWhenever a creature you control attacks, up to one target creature blocks it this combat if able."
+ },
+ "Dollmaker's Shop // Porcelain Gallery": {
+  "id": "Dollmaker's Shop // Porcelain Gallery",
+  "name": "Dollmaker's Shop // Porcelain Gallery",
+  "typeLine": "Enchantment — Room // Enchantment — Room",
+  "manaCost": "{1}{W} // {4}{W}{W}",
+  "cmc": 8,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Dollmaker's Shop: Whenever one or more non-Toy creatures you control attack a player, create a 1/1 white Toy artifact creature token.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\n\nPorcelain Gallery: Creatures you control have base power and toughness each equal to the number of creatures you control.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)"
+ },
+ "Lunar Convocation": {
+  "id": "Lunar Convocation",
+  "name": "Lunar Convocation",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "At the beginning of your end step, if you gained life this turn, each opponent loses 1 life.\nAt the beginning of your end step, if you gained and lost life this turn, create a 1/1 black Bat creature token with flying.\n{1}{B}, Pay 2 life: Draw a card."
+ },
+ "Hallowed Haunting": {
+  "id": "Hallowed Haunting",
+  "name": "Hallowed Haunting",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As long as you control seven or more enchantments, creatures you control have flying and vigilance.\nWhenever you cast an enchantment spell, create a white Spirit Cleric creature token with \"This token's power and toughness are each equal to the number of Spirits you control.\""
+ },
+ "Luminarch Ascension": {
+  "id": "Luminarch Ascension",
+  "name": "Luminarch Ascension",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of each opponent's end step, if you didn't lose life this turn, you may put a quest counter on this enchantment. (Damage causes loss of life.)\n{1}{W}: Create a 4/4 white Angel creature token with flying. Activate only if this enchantment has four or more quest counters on it."
+ },
+ "Rabble Rousing": {
+  "id": "Rabble Rousing",
+  "name": "Rabble Rousing",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Hideaway 5 (When this enchantment enters, look at the top five cards of your library, exile one face down, then put the rest on the bottom in a random order.)\nWhenever you attack with one or more creatures, create that many 1/1 green and white Citizen creature tokens. Then if you control ten or more creatures, you may play the exiled card without paying its mana cost."
+ },
+ "Court of Ardenvale": {
+  "id": "Court of Ardenvale",
+  "name": "Court of Ardenvale",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, return target permanent card with mana value 3 or less from your graveyard to your hand. If you're the monarch, return that permanent card to the battlefield instead."
+ },
+ "Solemnity": {
+  "id": "Solemnity",
+  "name": "Solemnity",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Players can't get counters.\nCounters can't be put on artifacts, creatures, enchantments, or lands."
+ },
+ "Solitary Confinement": {
+  "id": "Solitary Confinement",
+  "name": "Solitary Confinement",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you discard a card.\nSkip your draw step.\nYou have shroud. (You can't be the target of spells or abilities.)\nPrevent all damage that would be dealt to you."
+ },
+ "Dawn of a New Age": {
+  "id": "Dawn of a New Age",
+  "name": "Dawn of a New Age",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This enchantment enters with a hope counter on it for each creature you control.\nAt the beginning of your end step, remove a hope counter from this enchantment. If you do, draw a card. Then if this enchantment has no hope counters on it, sacrifice it and you gain 4 life."
+ },
+ "Assemble the Players": {
+  "id": "Assemble the Players",
+  "name": "Assemble the Players",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You may look at the top card of your library any time.\nOnce each turn, you may cast a creature spell with power 2 or less from the top of your library."
+ },
+ "Paladin Class": {
+  "id": "Paladin Class",
+  "name": "Paladin Class",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(Gain the next level as a sorcery to add its ability.)\nSpells your opponents cast during your turn cost {1} more to cast.\n{2}{W}: Level 2\nCreatures you control get +1/+1.\n{4}{W}: Level 3\nWhenever you attack, until end of turn, target attacking creature gets +1/+1 for each other attacking creature and gains double strike."
+ },
+ "Valkyrie's Call": {
+  "id": "Valkyrie's Call",
+  "name": "Valkyrie's Call",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a nontoken, non-Angel creature you control dies, return that card to the battlefield under its owner's control with a +1/+1 counter on it. It has flying and is an Angel in addition to its other types."
+ },
+ "Nahiri's Resolve": {
+  "id": "Nahiri's Resolve",
+  "name": "Nahiri's Resolve",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{R}{W}",
+  "cmc": 5,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Creatures you control get +1/+0 and have haste.\nAt the beginning of your end step, exile any number of nontoken artifacts and/or creatures you control. Return those cards to the battlefield under their owner's control at the beginning of your next upkeep."
+ },
+ "Case of the Uneaten Feast": {
+  "id": "Case of the Uneaten Feast",
+  "name": "Case of the Uneaten Feast",
+  "typeLine": "Enchantment — Case",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature you control enters, you gain 1 life.\nTo solve — You've gained 5 or more life this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — Sacrifice this Case: Creature cards in your graveyard gain \"You may cast this card from your graveyard\" until end of turn."
+ },
+ "Blessed Sanctuary": {
+  "id": "Blessed Sanctuary",
+  "name": "Blessed Sanctuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Prevent all noncombat damage that would be dealt to you and creatures you control.\nWhenever a nontoken creature you control enters, create a 2/2 white Unicorn creature token."
+ },
+ "Nine Lives": {
+  "id": "Nine Lives",
+  "name": "Nine Lives",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Hexproof\nIf a source would deal damage to you, prevent that damage and put an incarnation counter on this enchantment.\nWhen there are nine or more incarnation counters on this enchantment, exile it.\nWhen this enchantment leaves the battlefield, you lose the game."
+ },
+ "Kinbinding": {
+  "id": "Kinbinding",
+  "name": "Kinbinding",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control get +X/+X, where X is the number of creatures that entered the battlefield under your control this turn.\nAt the beginning of combat on your turn, create a 1/1 green and white Kithkin creature token."
+ },
+ "Phyrexian Unlife": {
+  "id": "Phyrexian Unlife",
+  "name": "Phyrexian Unlife",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You don't lose the game for having 0 or less life.\nAs long as you have 0 or less life, all damage is dealt to you as though its source had infect. (Damage is dealt to you in the form of poison counters.)"
+ },
+ "Wedding Announcement // Wedding Festivity": {
+  "id": "Wedding Announcement // Wedding Festivity",
+  "name": "Wedding Announcement // Wedding Festivity",
+  "typeLine": "Enchantment // Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Wedding Announcement: At the beginning of your end step, put an invitation counter on this enchantment. If you attacked with two or more creatures this turn, draw a card. Otherwise, create a 1/1 white Human creature token. Then if this enchantment has three or more invitation counters on it, transform it.\n\nWedding Festivity: Creatures you control get +1/+1."
+ },
+ "Soulcatchers' Aerie": {
+  "id": "Soulcatchers' Aerie",
+  "name": "Soulcatchers' Aerie",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a Bird is put into your graveyard from the battlefield, put a feather counter on this enchantment.\nBird creatures get +1/+1 for each feather counter on this enchantment."
+ },
+ "Historian's Boon": {
+  "id": "Historian's Boon",
+  "name": "Historian's Boon",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever this enchantment or another nontoken enchantment you control enters, create a 1/1 white Soldier creature token.\nWhenever the final chapter ability of a Saga you control triggers, create a 4/4 white Angel creature token with flying and vigilance."
+ },
+ "Sigarda's Splendor": {
+  "id": "Sigarda's Splendor",
+  "name": "Sigarda's Splendor",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, note your life total.\nAt the beginning of your upkeep, draw a card if your life total is greater than or equal to the last noted life total for this enchantment. Then note your life total.\nWhenever you cast a white spell, you gain 1 life."
+ },
+ "Sigarda's Summons": {
+  "id": "Sigarda's Summons",
+  "name": "Sigarda's Summons",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control with +1/+1 counters on them have base power and toughness 4/4, have flying, and are Angels in addition to their other types."
+ },
+ "Charitable Levy": {
+  "id": "Charitable Levy",
+  "name": "Charitable Levy",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Noncreature spells cost {1} more to cast.\nWhenever a player casts a noncreature spell, put a collection counter on this enchantment. Then if there are three or more collection counters on it, sacrifice it. If you do, draw a card, then you may search your library for a Plains card, put it onto the battlefield tapped, then shuffle."
+ },
+ "Legion's Initiative": {
+  "id": "Legion's Initiative",
+  "name": "Legion's Initiative",
+  "typeLine": "Enchantment",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Red creatures you control get +1/+0.\nWhite creatures you control get +0/+1.\n{R}{W}, Exile this enchantment: Exile all creatures you control. At the beginning of the next combat, return those cards to the battlefield under their owner's control and those creatures gain haste until end of turn."
+ },
+ "Feast of the Victorious Dead": {
+  "id": "Feast of the Victorious Dead",
+  "name": "Feast of the Victorious Dead",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}{B}",
+  "cmc": 2,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "At the beginning of your end step, if one or more creatures died this turn, you gain that much life and distribute that many +1/+1 counters among any number of creatures you control."
+ },
+ "Outlaws' Merriment": {
+  "id": "Outlaws' Merriment",
+  "name": "Outlaws' Merriment",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{R}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, choose one at random. Create a red and white creature token with those characteristics.\n• 3/1 Human Warrior with trample and haste.\n• 2/1 Human Cleric with lifelink and haste.\n• 1/2 Human Rogue with haste and \"When this token enters, it deals 1 damage to any target.\""
+ },
+ "Sidequest: Catch a Fish // Cooking Campsite": {
+  "id": "Sidequest: Catch a Fish // Cooking Campsite",
+  "name": "Sidequest: Catch a Fish // Cooking Campsite",
+  "typeLine": "Enchantment // Land",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Sidequest: Catch a Fish: At the beginning of your upkeep, look at the top card of your library. If it's an artifact or creature card, you may reveal it and put it into your hand. If you put a card into your hand this way, create a Food token and transform this enchantment.\n\nCooking Campsite: {T}: Add {W}.\n{3}, {T}, Sacrifice an artifact: Put a +1/+1 counter on each creature you control. Activate only as a sorcery.",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Martyr's Cause": {
+  "id": "Martyr's Cause",
+  "name": "Martyr's Cause",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Sacrifice a creature: The next time a source of your choice would deal damage to any target this turn, prevent that damage."
+ },
+ "Ashes of the Abhorrent": {
+  "id": "Ashes of the Abhorrent",
+  "name": "Ashes of the Abhorrent",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Players can't cast spells from graveyards or activate abilities of cards in graveyards.\nWhenever a creature dies, you gain 1 life."
+ },
+ "Solitary Sanctuary": {
+  "id": "Solitary Sanctuary",
+  "name": "Solitary Sanctuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, tap target creature an opponent controls and put a stun counter on it. (If a permanent with a stun counter would become untapped, remove one from it instead.)\nWhenever you tap an untapped creature an opponent controls, put a +1/+1 counter on target creature you control."
+ },
+ "Abiding Grace": {
+  "id": "Abiding Grace",
+  "name": "Abiding Grace",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your end step, choose one —\n• You gain 1 life.\n• Return target creature card with mana value 1 from your graveyard to the battlefield."
+ },
+ "Invasion of Gobakhan // Lightshield Array": {
+  "id": "Invasion of Gobakhan // Lightshield Array",
+  "name": "Invasion of Gobakhan // Lightshield Array",
+  "typeLine": "Battle — Siege // Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Invasion of Gobakhan: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, look at target opponent's hand. You may exile a nonland card from it. For as long as that card remains exiled, its owner may play it. A spell cast this way costs {2} more to cast.\n\nLightshield Array: At the beginning of your end step, put a +1/+1 counter on each creature that attacked this turn.\nSacrifice this enchantment: Creatures you control gain hexproof and indestructible until end of turn."
+ },
+ "Deification": {
+  "id": "Deification",
+  "name": "Deification",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a planeswalker type.\nPlaneswalkers you control of the chosen type have hexproof.\nAs long as you control a creature, if damage dealt to a planeswalker you control of the chosen type would result in all loyalty counters on it being removed, instead all but one of those counters are removed."
+ },
+ "The Kenriths' Royal Funeral": {
+  "id": "The Kenriths' Royal Funeral",
+  "name": "The Kenriths' Royal Funeral",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "When The Kenriths' Royal Funeral enters, exile up to two target legendary creature cards from your graveyard. You draw X cards and you lose X life, where X is the greatest mana value among cards exiled this way.\nLegendary spells you cast cost {1} less to cast for each card exiled with The Kenriths' Royal Funeral."
+ },
+ "Bleeding Effect": {
+  "id": "Bleeding Effect",
+  "name": "Bleeding Effect",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "At the beginning of combat on your turn, creatures you control gain flying until end of turn if a creature card in your graveyard has flying. The same is true for first strike, double strike, deathtouch, hexproof, indestructible, lifelink, menace, reach, trample, and vigilance."
+ },
+ "In the Trenches": {
+  "id": "In the Trenches",
+  "name": "In the Trenches",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control get +1/+1.\n{5}{W}: Exile target nonland permanent you don't control until this enchantment leaves the battlefield. Activate only as a sorcery and only once."
+ },
+ "Team Avatar": {
+  "id": "Team Avatar",
+  "name": "Team Avatar",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature you control attacks alone, it gets +X/+X until end of turn, where X is the number of creatures you control.\n{2}{W}, Discard this card: It deals damage equal to the number of creatures you control to target creature."
+ },
+ "Leader's Talent": {
+  "id": "Leader's Talent",
+  "name": "Leader's Talent",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhenever you attack, put a +1/+1 counter on target attacking creature.\n{2}{W}: Level 2\nWhenever a creature you control leaves the battlefield, if it had a counter on it, you gain 2 life.\n{3}{W}: Level 3\nWhenever you cast a spell, put a +1/+1 counter on each creature you control."
+ },
+ "Penance": {
+  "id": "Penance",
+  "name": "Penance",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put a card from your hand on top of your library: The next time a black or red source of your choice would deal damage this turn, prevent that damage."
+ },
+ "Island Sanctuary": {
+  "id": "Island Sanctuary",
+  "name": "Island Sanctuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If you would draw a card during your draw step, instead you may skip that draw. If you do, until your next turn, you can't be attacked except by creatures with flying and/or islandwalk."
+ },
+ "Builder's Talent": {
+  "id": "Builder's Talent",
+  "name": "Builder's Talent",
+  "typeLine": "Enchantment — Class",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, create a 0/4 white Wall creature token with defender.\n{W}: Level 2\nWhenever one or more noncreature, nonland permanents you control enter, put a +1/+1 counter on target creature you control.\n{4}{W}: Level 3\nWhen this Class becomes level 3, return target noncreature, nonland permanent card from your graveyard to the battlefield."
+ },
+ "Astral Slide": {
+  "id": "Astral Slide",
+  "name": "Astral Slide",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a player cycles a card, you may exile target creature. If you do, return that card to the battlefield under its owner's control at the beginning of the next end step."
+ },
+ "Lightmine Field": {
+  "id": "Lightmine Field",
+  "name": "Lightmine Field",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever one or more creatures attack, this enchantment deals damage to each of those creatures equal to the number of attacking creatures."
+ },
+ "Axis of Mortality": {
+  "id": "Axis of Mortality",
+  "name": "Axis of Mortality",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, you may have two target players exchange life totals."
+ },
+ "Hunting Grounds": {
+  "id": "Hunting Grounds",
+  "name": "Hunting Grounds",
+  "typeLine": "Enchantment",
+  "manaCost": "{G}{W}",
+  "cmc": 2,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Threshold — As long as there are seven or more cards in your graveyard, this enchantment has \"Whenever an opponent casts a spell, you may put a creature card from your hand onto the battlefield.\""
+ },
+ "Humility": {
+  "id": "Humility",
+  "name": "Humility",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "All creatures lose all abilities and have base power and toughness 1/1."
+ },
+ "Avengers Assemble!": {
+  "id": "Avengers Assemble!",
+  "name": "Avengers Assemble!",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nHeroes you control get +2/+2.\nAt the beginning of each end step, if you attacked with a Hero this turn or a Hero entered the battlefield under your control this turn, draw a card."
+ },
+ "Rent Is Due": {
+  "id": "Rent Is Due",
+  "name": "Rent Is Due",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your end step, you may tap two untapped creatures and/or Treasures you control. If you do, draw a card. Otherwise, sacrifice this enchantment."
+ },
+ "Worship": {
+  "id": "Worship",
+  "name": "Worship",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If you control a creature, damage that would reduce your life total to less than 1 reduces it to 1 instead."
+ },
+ "Transcendence": {
+  "id": "Transcendence",
+  "name": "Transcendence",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You don't lose the game for having 0 or less life.\nWhen you have 20 or more life, you lose the game.\nWhenever you lose life, you gain 2 life for each 1 life you lost. (Damage dealt to you causes you to lose life.)"
+ },
+ "Graduation Day": {
+  "id": "Graduation Day",
+  "name": "Graduation Day",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Repartee — Whenever you cast an instant or sorcery spell that targets a creature, put a +1/+1 counter on target creature you control."
+ },
+ "Crackdown": {
+  "id": "Crackdown",
+  "name": "Crackdown",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Nonwhite creatures with power 3 or greater don't untap during their controllers' untap steps."
+ },
+ "Concerted Effort": {
+  "id": "Concerted Effort",
+  "name": "Concerted Effort",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of each upkeep, creatures you control gain flying until end of turn if a creature you control has flying. The same is true for fear, first strike, double strike, landwalk, protection, trample, and vigilance."
+ },
+ "Oath of Lieges": {
+  "id": "Oath of Lieges",
+  "name": "Oath of Lieges",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of each player's upkeep, that player chooses target player who controls more lands than they do and is their opponent. The first player may search their library for a basic land card, put that card onto the battlefield, then shuffle."
+ },
+ "Undercellar Sweep": {
+  "id": "Undercellar Sweep",
+  "name": "Undercellar Sweep",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, you take the initiative.\nWhenever you attack, if you or a player you're attacking has the initiative, you create two 1/1 white Soldier creature tokens that are tapped and attacking."
+ },
+ "Remembrance": {
+  "id": "Remembrance",
+  "name": "Remembrance",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a nontoken creature you control dies, you may search your library for a card with the same name as that creature, reveal it, put it into your hand, then shuffle."
+ },
+ "Moat": {
+  "id": "Moat",
+  "name": "Moat",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures without flying can't attack."
+ },
+ "Opalescence": {
+  "id": "Opalescence",
+  "name": "Opalescence",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each other non-Aura enchantment is a creature in addition to its other types and has base power and base toughness each equal to its mana value."
+ },
+ "Consulate Surveillance": {
+  "id": "Consulate Surveillance",
+  "name": "Consulate Surveillance",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, you get {E}{E}{E}{E} (four energy counters).\nPay {E}{E}: Prevent all damage that would be dealt to you this turn by a source of your choice."
+ },
+ "Suppression Field": {
+  "id": "Suppression Field",
+  "name": "Suppression Field",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Activated abilities cost {2} more to activate unless they're mana abilities."
+ },
+ "Force of Virtue": {
+  "id": "Force of Virtue",
+  "name": "Force of Virtue",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If it's not your turn, you may exile a white card from your hand rather than pay this spell's mana cost.\nFlash\nCreatures you control get +1/+1."
+ },
+ "Dramatic Finale": {
+  "id": "Dramatic Finale",
+  "name": "Dramatic Finale",
+  "typeLine": "Enchantment",
+  "manaCost": "{W/B}{W/B}{W/B}{W/B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Creature tokens you control get +1/+1.\nWhenever one or more nontoken creatures you control die, create a 2/1 white and black Inkling creature token with flying. This ability triggers only once each turn."
+ },
+ "Warrior's Resolve": {
+  "id": "Warrior's Resolve",
+  "name": "Warrior's Resolve",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control have training. (Whenever a creature you control attacks with another creature with greater power, put a +1/+1 counter on the creature with lesser power.)\nAt the beginning of your end step, if you control a creature with a +1/+1 counter on it that attacked this turn, draw a card."
+ },
+ "Meticulous Excavation": {
+  "id": "Meticulous Excavation",
+  "name": "Meticulous Excavation",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{2}{W}: Return target permanent you control to its owner's hand. If it has unearth, instead exile it, then return that card to its owner's hand. Activate only during your turn."
+ },
+ "Oath of Kaya": {
+  "id": "Oath of Kaya",
+  "name": "Oath of Kaya",
+  "typeLine": "Legendary Enchantment",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "When Oath of Kaya enters, it deals 3 damage to any target and you gain 3 life.\nWhenever an opponent attacks a planeswalker you control with one or more creatures, Oath of Kaya deals 2 damage to that player and you gain 2 life."
+ },
+ "Righteous Aura": {
+  "id": "Righteous Aura",
+  "name": "Righteous Aura",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}, Pay 2 life: The next time a source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Aurification": {
+  "id": "Aurification",
+  "name": "Aurification",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature deals damage to you, put a gold counter on it.\nEach creature with a gold counter on it is a Wall in addition to its other creature types and has defender. (Those creatures can't attack.)\nWhen this enchantment leaves the battlefield, remove all gold counters from all creatures."
+ },
+ "Reverence": {
+  "id": "Reverence",
+  "name": "Reverence",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures with power 2 or less can't attack you."
+ },
+ "Cabaretti Ascendancy": {
+  "id": "Cabaretti Ascendancy",
+  "name": "Cabaretti Ascendancy",
+  "typeLine": "Enchantment",
+  "manaCost": "{R}{G}{W}",
+  "cmc": 3,
+  "colors": [
+   "G",
+   "R",
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, look at the top card of your library. If it's a creature or planeswalker card, you may reveal it and put it into your hand. If you don't put the card into your hand, you may put it on the bottom of your library."
+ },
+ "Nevermore": {
+  "id": "Nevermore",
+  "name": "Nevermore",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a nonland card name.\nSpells with the chosen name can't be cast."
+ },
+ "Delaying Shield": {
+  "id": "Delaying Shield",
+  "name": "Delaying Shield",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If damage would be dealt to you, put that many delay counters on this enchantment instead.\nAt the beginning of your upkeep, remove all delay counters from this enchantment. For each delay counter removed this way, you lose 1 life unless you pay {1}{W}."
+ },
+ "Endless Horizons": {
+  "id": "Endless Horizons",
+  "name": "Endless Horizons",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, search your library for any number of Plains cards, exile them, then shuffle.\nAt the beginning of your upkeep, you may put a card you own exiled with this enchantment into your hand."
+ },
+ "Near-Death Experience": {
+  "id": "Near-Death Experience",
+  "name": "Near-Death Experience",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, if you have exactly 1 life, you win the game."
+ },
+ "Noble Purpose": {
+  "id": "Noble Purpose",
+  "name": "Noble Purpose",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature you control deals combat damage, you gain that much life."
+ },
+ "Death's Oasis": {
+  "id": "Death's Oasis",
+  "name": "Death's Oasis",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}{B}{G}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "G",
+   "W"
+  ],
+  "oracle": "Whenever a nontoken creature you control dies, mill two cards. Then return a creature card with lesser mana value than the creature that died from your graveyard to your hand.\n{1}, Sacrifice this enchantment: You gain life equal to the greatest mana value among creatures you control."
+ },
+ "Doom Foretold": {
+  "id": "Doom Foretold",
+  "name": "Doom Foretold",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "At the beginning of each player's upkeep, that player sacrifices a nonland, nontoken permanent of their choice. If that player can't, they discard a card, they lose 2 life, you draw a card, you gain 2 life, you create a 2/2 white Knight creature token with vigilance, then you sacrifice this enchantment."
+ },
+ "Profane Procession // Tomb of the Dusk Rose": {
+  "id": "Profane Procession // Tomb of the Dusk Rose",
+  "name": "Profane Procession // Tomb of the Dusk Rose",
+  "typeLine": "Legendary Enchantment // Legendary Land",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Profane Procession: {3}{W}{B}: Exile target creature. Then if there are three or more cards exiled with Profane Procession, transform it.\n\nTomb of the Dusk Rose: (Transforms from Profane Procession.)\n{T}: Add one mana of any color.\n{2}{W}{B}, {T}: Put a creature card exiled with this permanent onto the battlefield under your control.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Spirit of Resistance": {
+  "id": "Spirit of Resistance",
+  "name": "Spirit of Resistance",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As long as you control a permanent of each color, prevent all damage that would be dealt to you."
+ },
+ "Hold the Gates": {
+  "id": "Hold the Gates",
+  "name": "Hold the Gates",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control get +0/+1 for each Gate you control and have vigilance."
+ },
+ "Answered Prayers": {
+  "id": "Answered Prayers",
+  "name": "Answered Prayers",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature you control enters, you gain 1 life. If this enchantment isn't a creature, it becomes a 3/3 Angel creature with flying in addition to its other types until end of turn."
+ },
+ "Fight or Flight": {
+  "id": "Fight or Flight",
+  "name": "Fight or Flight",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of combat on each opponent's turn, separate all creatures that player controls into two piles. Only creatures in the pile of their choice can attack this turn."
+ },
+ "Quest for the Holy Relic": {
+  "id": "Quest for the Holy Relic",
+  "name": "Quest for the Holy Relic",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever you cast a creature spell, you may put a quest counter on this enchantment.\nRemove five quest counters from this enchantment and sacrifice it: Search your library for an Equipment card, put it onto the battlefield, attach it to a creature you control, then shuffle."
+ },
+ "Promise of Tomorrow": {
+  "id": "Promise of Tomorrow",
+  "name": "Promise of Tomorrow",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature you control dies, exile it.\nAt the beginning of each end step, if you control no creatures, sacrifice this enchantment and return all cards exiled with it to the battlefield under your control."
+ },
+ "Words of Worship": {
+  "id": "Words of Worship",
+  "name": "Words of Worship",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next time you would draw a card this turn, you gain 5 life instead."
+ },
+ "Nahiri's Machinations": {
+  "id": "Nahiri's Machinations",
+  "name": "Nahiri's Machinations",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of combat on your turn, target creature you control gains indestructible until end of turn.\n{1}{R}: This enchantment deals 1 damage to target blocking creature."
+ },
+ "Path of Mettle // Metzali, Tower of Triumph": {
+  "id": "Path of Mettle // Metzali, Tower of Triumph",
+  "name": "Path of Mettle // Metzali, Tower of Triumph",
+  "typeLine": "Legendary Enchantment // Legendary Land",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Path of Mettle: When Path of Mettle enters, it deals 1 damage to each creature that doesn't have first strike, double strike, vigilance, or haste.\nWhenever you attack with at least two creatures that have first strike, double strike, vigilance, and/or haste, transform Path of Mettle.\n\nMetzali, Tower of Triumph: (Transforms from Path of Mettle.)\n{T}: Add one mana of any color.\n{1}{R}, {T}: Metzali deals 2 damage to each opponent.\n{2}{W}, {T}: Choose a creature at random that attacked this turn. Destroy that creature.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Case of the Gateway Express": {
+  "id": "Case of the Gateway Express",
+  "name": "Case of the Gateway Express",
+  "typeLine": "Enchantment — Case",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this Case enters, choose target creature you don't control. Each creature you control deals 1 damage to that creature.\nTo solve — Three or more creatures attacked this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — Creatures you control get +1/+0."
+ },
+ "Enduring Renewal": {
+  "id": "Enduring Renewal",
+  "name": "Enduring Renewal",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Play with your hand revealed.\nIf you would draw a card, reveal the top card of your library instead. If it's a creature card, put it into your graveyard. Otherwise, draw a card.\nWhenever a creature is put into your graveyard from the battlefield, return it to your hand."
+ },
+ "Celestial Dawn": {
+  "id": "Celestial Dawn",
+  "name": "Celestial Dawn",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Lands you control are Plains.\nNonland permanents you control are white. The same is true for spells you control and nonland cards you own that aren't on the battlefield.\nYou may spend white mana as though it were mana of any color. You may spend other mana only as though it were colorless mana."
+ },
+ "Leyline of the Meek": {
+  "id": "Leyline of the Meek",
+  "name": "Leyline of the Meek",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nCreature tokens get +1/+1."
+ },
+ "Divine Sacrament": {
+  "id": "Divine Sacrament",
+  "name": "Divine Sacrament",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "White creatures get +1/+1.\nThreshold — White creatures get an additional +1/+1 as long as there are seven or more cards in your graveyard."
+ },
+ "Orim's Prayer": {
+  "id": "Orim's Prayer",
+  "name": "Orim's Prayer",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever one or more creatures attack you, you gain 1 life for each attacking creature."
+ },
+ "Sigil of the New Dawn": {
+  "id": "Sigil of the New Dawn",
+  "name": "Sigil of the New Dawn",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature is put into your graveyard from the battlefield, you may pay {1}{W}. If you do, return that card to your hand."
+ },
+ "Barren Glory": {
+  "id": "Barren Glory",
+  "name": "Barren Glory",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, if you control no permanents other than this enchantment and have no cards in hand, you win the game."
+ },
+ "Lorehold Excavation": {
+  "id": "Lorehold Excavation",
+  "name": "Lorehold Excavation",
+  "typeLine": "Enchantment",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "At the beginning of your end step, mill a card. If a land card was milled this way, you gain 1 life. Otherwise, this enchantment deals 1 damage to each opponent. (To mill a card, put the top card of your library into your graveyard.)\n{5}, Exile a creature card from your graveyard: Create a tapped 3/2 red and white Spirit creature token."
+ },
+ "Planar Collapse": {
+  "id": "Planar Collapse",
+  "name": "Planar Collapse",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, if there are four or more creatures on the battlefield, sacrifice this enchantment and destroy all creatures. They can't be regenerated."
+ },
+ "Divine Intervention": {
+  "id": "Divine Intervention",
+  "name": "Divine Intervention",
+  "typeLine": "Enchantment",
+  "manaCost": "{6}{W}{W}",
+  "cmc": 8,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This enchantment enters with two intervention counters on it.\nAt the beginning of your upkeep, remove an intervention counter from this enchantment.\nWhen you remove the last intervention counter from this enchantment, the game is a draw."
+ },
+ "Consulate Crackdown": {
+  "id": "Consulate Crackdown",
+  "name": "Consulate Crackdown",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, exile all artifacts your opponents control until this enchantment leaves the battlefield."
+ },
+ "Temporary Lockdown": {
+  "id": "Temporary Lockdown",
+  "name": "Temporary Lockdown",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, exile each nonland permanent with mana value 2 or less until this enchantment leaves the battlefield."
+ },
+ "Hidden Retreat": {
+  "id": "Hidden Retreat",
+  "name": "Hidden Retreat",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Put a card from your hand on top of your library: Prevent all damage that would be dealt by target instant or sorcery spell this turn."
+ },
+ "First Response": {
+  "id": "First Response",
+  "name": "First Response",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of each upkeep, if you lost life last turn, create a 1/1 white Soldier creature token."
+ },
+ "Myth Realized": {
+  "id": "Myth Realized",
+  "name": "Myth Realized",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever you cast a noncreature spell, put a lore counter on this enchantment.\n{2}{W}: Put a lore counter on this enchantment.\n{W}: Until end of turn, this enchantment becomes a Monk Avatar creature in addition to its other types and gains \"This creature's power and toughness are each equal to the number of lore counters on it.\""
+ },
+ "Celestial Convergence": {
+  "id": "Celestial Convergence",
+  "name": "Celestial Convergence",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This enchantment enters with seven omen counters on it.\nAt the beginning of your upkeep, remove an omen counter from this enchantment. If there are no omen counters on this enchantment, the player with the highest life total wins the game. If two or more players are tied for highest life total, the game is a draw."
+ },
+ "Runed Halo": {
+  "id": "Runed Halo",
+  "name": "Runed Halo",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a card name.\nYou have protection from the chosen card name. (You can't be targeted, dealt damage, or enchanted by anything with that name.)"
+ },
+ "Quantum Entanglement": {
+  "id": "Quantum Entanglement",
+  "name": "Quantum Entanglement",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nWhen this enchantment enters and at the beginning of your end step, you may pay {1}{W}. When you do, exile target creature you control, then return that card to the battlefield under its owner's control."
+ },
+ "Karma": {
+  "id": "Karma",
+  "name": "Karma",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of each player's upkeep, this enchantment deals damage to that player equal to the number of Swamps they control."
+ },
+ "Circle of Protection: White": {
+  "id": "Circle of Protection: White",
+  "name": "Circle of Protection: White",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next time a white source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Powerstone Minefield": {
+  "id": "Powerstone Minefield",
+  "name": "Powerstone Minefield",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{R}{W}",
+  "cmc": 4,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "Whenever a creature attacks or blocks, this enchantment deals 2 damage to it."
+ },
+ "Quarantine Field": {
+  "id": "Quarantine Field",
+  "name": "Quarantine Field",
+  "typeLine": "Enchantment",
+  "manaCost": "{X}{X}{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This enchantment enters with X isolation counters on it.\nWhen this enchantment enters, for each isolation counter on it, exile up to one target nonland permanent an opponent controls until this enchantment leaves the battlefield."
+ },
+ "Sacred Ground": {
+  "id": "Sacred Ground",
+  "name": "Sacred Ground",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a spell or ability an opponent controls causes a land to be put into your graveyard from the battlefield, return that card to the battlefield."
+ },
+ "Séance": {
+  "id": "Séance",
+  "name": "Séance",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of each upkeep, you may exile target creature card from your graveyard. If you do, create a token that's a copy of that card, except it's a Spirit in addition to its other types. Exile it at the beginning of the next end step."
+ },
+ "Earnest Fellowship": {
+  "id": "Earnest Fellowship",
+  "name": "Earnest Fellowship",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each creature has protection from each of its colors."
+ },
+ "Case of the Pilfered Proof": {
+  "id": "Case of the Pilfered Proof",
+  "name": "Case of the Pilfered Proof",
+  "typeLine": "Enchantment — Case",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a Detective you control enters or is turned face up, put a +1/+1 counter on it.\nTo solve — You control three or more Detectives. (If unsolved, solve at the beginning of your end step.)\nSolved — If one or more tokens would be created under your control, those tokens plus a Clue token are created instead. (It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")"
+ },
+ "Story Circle": {
+  "id": "Story Circle",
+  "name": "Story Circle",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a color.\n{W}: The next time a source of your choice of the chosen color would deal damage to you this turn, prevent that damage."
+ },
+ "Circle of Protection: Red": {
+  "id": "Circle of Protection: Red",
+  "name": "Circle of Protection: Red",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next time a red source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Defensive Formation": {
+  "id": "Defensive Formation",
+  "name": "Defensive Formation",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Rather than the attacking player, you assign the combat damage of each creature attacking you. You can divide that creature's combat damage as you choose among any of the creatures blocking it."
+ },
+ "Circle of Protection: Black": {
+  "id": "Circle of Protection: Black",
+  "name": "Circle of Protection: Black",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next time a black source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Pursuit of Knowledge": {
+  "id": "Pursuit of Knowledge",
+  "name": "Pursuit of Knowledge",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If you would draw a card, you may put a study counter on this enchantment instead.\nRemove three study counters from this enchantment, Sacrifice this enchantment: Draw seven cards."
+ },
+ "Gideon's Intervention": {
+  "id": "Gideon's Intervention",
+  "name": "Gideon's Intervention",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a card name.\nYour opponents can't cast spells with the chosen name.\nPrevent all damage that would be dealt to you and permanents you control by sources with the chosen name."
+ },
+ "Circle of Protection: Green": {
+  "id": "Circle of Protection: Green",
+  "name": "Circle of Protection: Green",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next time a green source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Fortified Area": {
+  "id": "Fortified Area",
+  "name": "Fortified Area",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Wall creatures you control get +1/+0 and have banding. (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)"
+ },
+ "Cover of Winter": {
+  "id": "Cover of Winter",
+  "name": "Cover of Winter",
+  "typeLine": "Snow Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Cumulative upkeep {S} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it. {S} can be paid with one mana from a snow source.)\nIf a creature would deal combat damage to you and/or one or more creatures you control, prevent X of that damage, where X is the number of age counters on this enchantment.\n{S}: Put an age counter on this enchantment."
+ },
+ "Rune of Protection: White": {
+  "id": "Rune of Protection: White",
+  "name": "Rune of Protection: White",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}: The next time a white source of your choice would deal damage to you this turn, prevent that damage.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Gossamer Chains": {
+  "id": "Gossamer Chains",
+  "name": "Gossamer Chains",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Return this enchantment to its owner's hand: Prevent all combat damage that would be dealt by target unblocked creature this turn."
+ },
+ "Porphyry Nodes": {
+  "id": "Porphyry Nodes",
+  "name": "Porphyry Nodes",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, destroy the creature with the least power. It can't be regenerated. If two or more creatures are tied for least power, you choose one of them.\nWhen there are no creatures on the battlefield, sacrifice this enchantment."
+ },
+ "Offspring's Revenge": {
+  "id": "Offspring's Revenge",
+  "name": "Offspring's Revenge",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{R}{W}{B}",
+  "cmc": 5,
+  "colors": [
+   "B",
+   "R",
+   "W"
+  ],
+  "oracle": "At the beginning of combat on your turn, exile target red, white, or black creature card from your graveyard. Create a token that's a copy of that card, except it's 1/1. It gains haste until your next turn."
+ },
+ "Aven Shrine": {
+  "id": "Aven Shrine",
+  "name": "Aven Shrine",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a player casts a spell, that player gains X life, where X is the number of cards in all graveyards with the same name as that spell."
+ },
+ "Circle of Protection: Blue": {
+  "id": "Circle of Protection: Blue",
+  "name": "Circle of Protection: Blue",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next time a blue source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Ivory Mask": {
+  "id": "Ivory Mask",
+  "name": "Ivory Mask",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You have shroud. (You can't be the target of spells or abilities.)"
+ },
+ "Favor of the Mighty": {
+  "id": "Favor of the Mighty",
+  "name": "Favor of the Mighty",
+  "typeLine": "Kindred Enchantment — Giant",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each creature with the greatest mana value has protection from each color."
+ },
+ "Serenity": {
+  "id": "Serenity",
+  "name": "Serenity",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, destroy all artifacts and enchantments. They can't be regenerated."
+ },
+ "Spark Rupture": {
+  "id": "Spark Rupture",
+  "name": "Spark Rupture",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, draw a card.\nEach planeswalker with one or more loyalty counters on it loses all abilities and is a creature with power and toughness each equal to the number of loyalty counters on it."
+ },
+ "Ajani's Last Stand": {
+  "id": "Ajani's Last Stand",
+  "name": "Ajani's Last Stand",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature or planeswalker you control dies, you may sacrifice this enchantment. If you do, create a 4/4 white Avatar creature token with flying.\nWhen a spell or ability an opponent controls causes you to discard this card, if you control a Plains, create a 4/4 white Avatar creature token with flying."
+ },
+ "Divine Presence": {
+  "id": "Divine Presence",
+  "name": "Divine Presence",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If a source would deal 4 or more damage to a permanent or player, that source deals 3 damage to that permanent or player instead."
+ },
+ "Equipoise": {
+  "id": "Equipoise",
+  "name": "Equipoise",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, for each land target player controls in excess of the number you control, choose a land that player controls, then the chosen permanents phase out. Repeat this process for artifacts and creatures. (While they're phased out, they're treated as though they don't exist. They phase in before that player untaps during their next untap step.)"
+ },
+ "Personal Sanctuary": {
+  "id": "Personal Sanctuary",
+  "name": "Personal Sanctuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "During your turn, prevent all damage that would be dealt to you."
+ },
+ "Circle of Despair": {
+  "id": "Circle of Despair",
+  "name": "Circle of Despair",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{B}",
+  "cmc": 3,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "{1}, Sacrifice a creature: The next time a source of your choice would deal damage to any target this turn, prevent that damage."
+ },
+ "Light from Within": {
+  "id": "Light from Within",
+  "name": "Light from Within",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Chroma — Each creature you control gets +1/+1 for each white mana symbol in its mana cost."
+ },
+ "Light of Sanction": {
+  "id": "Light of Sanction",
+  "name": "Light of Sanction",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Prevent all damage that would be dealt to creatures you control by sources you control."
+ },
+ "Inner Sanctum": {
+  "id": "Inner Sanctum",
+  "name": "Inner Sanctum",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Cumulative upkeep—Pay 2 life. (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nPrevent all damage that would be dealt to creatures you control."
+ },
+ "Rune of Protection: Red": {
+  "id": "Rune of Protection: Red",
+  "name": "Rune of Protection: Red",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}: The next time a red source of your choice would deal damage to you this turn, prevent that damage.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Rune of Protection: Black": {
+  "id": "Rune of Protection: Black",
+  "name": "Rune of Protection: Black",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}: The next time a black source of your choice would deal damage to you this turn, prevent that damage.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Ajani's Aid": {
+  "id": "Ajani's Aid",
+  "name": "Ajani's Aid",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{G}{W}",
+  "cmc": 4,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "When this enchantment enters, you may search your library and/or graveyard for a card named Ajani, Valiant Protector, reveal it, and put it into your hand. If you search your library this way, shuffle.\nSacrifice this enchantment: Prevent all combat damage a creature of your choice would deal this turn."
+ },
+ "Rune of Protection: Green": {
+  "id": "Rune of Protection: Green",
+  "name": "Rune of Protection: Green",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}: The next time a green source of your choice would deal damage to you this turn, prevent that damage.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Force Bubble": {
+  "id": "Force Bubble",
+  "name": "Force Bubble",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If damage would be dealt to you, put that many depletion counters on this enchantment instead.\nWhen there are four or more depletion counters on this enchantment, sacrifice it.\nAt the beginning of each end step, remove all depletion counters from this enchantment."
+ },
+ "Soul Echo": {
+  "id": "Soul Echo",
+  "name": "Soul Echo",
+  "typeLine": "Enchantment",
+  "manaCost": "{X}{W}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This enchantment enters with X echo counters on it.\nYou don't lose the game for having 0 or less life.\nAt the beginning of your upkeep, sacrifice this enchantment if there are no echo counters on it. Otherwise, target opponent may choose that for each 1 damage that would be dealt to you until your next upkeep, you remove an echo counter from this enchantment instead."
+ },
+ "Rune of Protection: Blue": {
+  "id": "Rune of Protection: Blue",
+  "name": "Rune of Protection: Blue",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}: The next time a blue source of your choice would deal damage to you this turn, prevent that damage.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Angelic Voices": {
+  "id": "Angelic Voices",
+  "name": "Angelic Voices",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures you control get +1/+1 as long as you control no nonartifact, nonwhite creatures."
+ },
+ "Eye of Singularity": {
+  "id": "Eye of Singularity",
+  "name": "Eye of Singularity",
+  "typeLine": "World Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, destroy each permanent with the same name as another permanent, except for basic lands. They can't be regenerated.\nWhenever a permanent other than a basic land enters, destroy all other permanents with that name. They can't be regenerated."
+ },
+ "Protective Sphere": {
+  "id": "Protective Sphere",
+  "name": "Protective Sphere",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}, Pay 1 life: Prevent all damage that would be dealt to you this turn by a source of your choice that shares a color with the mana spent on this activation cost. (Colorless mana prevents no damage.)"
+ },
+ "Null Chamber": {
+  "id": "Null Chamber",
+  "name": "Null Chamber",
+  "typeLine": "World Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, you and an opponent each choose a card name other than a basic land card name.\nSpells with the chosen names can't be cast and lands with the chosen names can't be played."
+ },
+ "Spirit Mirror": {
+  "id": "Spirit Mirror",
+  "name": "Spirit Mirror",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, if there are no Reflection tokens on the battlefield, create a 2/2 white Reflection creature token.\n{0}: Destroy target Reflection."
+ },
+ "Circle of Confinement": {
+  "id": "Circle of Confinement",
+  "name": "Circle of Confinement",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, exile target creature an opponent controls with mana value 3 or less until this enchantment leaves the battlefield.\nWhenever an opponent casts a Vampire spell with the same name as a card exiled with this enchantment, you gain 2 life."
+ },
+ "Presence of the Master": {
+  "id": "Presence of the Master",
+  "name": "Presence of the Master",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a player casts an enchantment spell, counter it."
+ },
+ "Circle of Protection: Artifacts": {
+  "id": "Circle of Protection: Artifacts",
+  "name": "Circle of Protection: Artifacts",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{2}: The next time an artifact source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Royal Decree": {
+  "id": "Royal Decree",
+  "name": "Royal Decree",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Cumulative upkeep {W} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nWhenever a Swamp, Mountain, black permanent, or red permanent becomes tapped, this enchantment deals 1 damage to that permanent's controller."
+ },
+ "Lashknife Barrier": {
+  "id": "Lashknife Barrier",
+  "name": "Lashknife Barrier",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, draw a card.\nIf a source would deal damage to a creature you control, it deals that much damage minus 1 to that creature instead."
+ },
+ "Sanctimony": {
+  "id": "Sanctimony",
+  "name": "Sanctimony",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever an opponent taps a Mountain for mana, you may gain 1 life."
+ },
+ "Alms": {
+  "id": "Alms",
+  "name": "Alms",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}, Exile the top card of your graveyard: Prevent the next 1 damage that would be dealt to target creature this turn."
+ },
+ "Nature's Blessing": {
+  "id": "Nature's Blessing",
+  "name": "Nature's Blessing",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{G}{W}",
+  "cmc": 4,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "{G}{W}, Discard a card: Put a +1/+1 counter on target creature or that creature gains banding, first strike, or trample. (This effect lasts indefinitely. Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding a player controls are blocking or being blocked by a creature, that player divides that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)"
+ },
+ "Pure Reflection": {
+  "id": "Pure Reflection",
+  "name": "Pure Reflection",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a player casts a creature spell, destroy all Reflections. Then that player creates an X/X white Reflection creature token, where X is the mana value of that spell."
+ },
+ "Imperial Mask": {
+  "id": "Imperial Mask",
+  "name": "Imperial Mask",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, if it's not a token, each of your teammates creates a token that's a copy of this enchantment.\nYou have hexproof. (You can't be the target of spells or abilities your opponents control.)"
+ },
+ "Cornered Market": {
+  "id": "Cornered Market",
+  "name": "Cornered Market",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Players can't cast spells with the same name as a nontoken permanent.\nPlayers can't play nonbasic lands with the same name as a nontoken permanent."
+ },
+ "Rune of Protection: Artifacts": {
+  "id": "Rune of Protection: Artifacts",
+  "name": "Rune of Protection: Artifacts",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}: The next time an artifact source of your choice would deal damage to you this turn, prevent that damage.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Rhystic Circle": {
+  "id": "Rhystic Circle",
+  "name": "Rhystic Circle",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: Any player may pay {1}. If no one does, the next time a source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Reclamation": {
+  "id": "Reclamation",
+  "name": "Reclamation",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{G}{W}",
+  "cmc": 4,
+  "colors": [
+   "G",
+   "W"
+  ],
+  "oracle": "Black creatures can't attack unless their controller sacrifices a land of their choice for each black creature they control that's attacking. (This cost is paid as attackers are declared.)"
+ },
+ "Energy Storm": {
+  "id": "Energy Storm",
+  "name": "Energy Storm",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nPrevent all damage that would be dealt by instant and sorcery spells.\nCreatures with flying don't untap during their controllers' untap steps."
+ },
+ "Justice": {
+  "id": "Justice",
+  "name": "Justice",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you pay {W}{W}.\nWhenever a red creature or spell deals damage, this enchantment deals that much damage to that creature's or spell's controller."
+ },
+ "Dega Sanctuary": {
+  "id": "Dega Sanctuary",
+  "name": "Dega Sanctuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, if you control a black or red permanent, you gain 2 life. If you control a black permanent and a red permanent, you gain 4 life instead."
+ },
+ "Exclusion Ritual": {
+  "id": "Exclusion Ritual",
+  "name": "Exclusion Ritual",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Imprint — When this enchantment enters, exile target nonland permanent.\nPlayers can't cast spells with the same name as the exiled card."
+ },
+ "Circle of Solace": {
+  "id": "Circle of Solace",
+  "name": "Circle of Solace",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a creature type.\n{1}{W}: The next time a creature of the chosen type would deal damage to you this turn, prevent that damage."
+ },
+ "Sphere of Law": {
+  "id": "Sphere of Law",
+  "name": "Sphere of Law",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If a red source would deal damage to you, prevent 2 of that damage."
+ },
+ "Time of Heroes": {
+  "id": "Time of Heroes",
+  "name": "Time of Heroes",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Each creature you control with a level counter on it gets +2/+2."
+ },
+ "Drought": {
+  "id": "Drought",
+  "name": "Drought",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you pay {W}{W}.\nSpells cost an additional \"Sacrifice a Swamp\" to cast for each black mana symbol in their mana costs.\nActivated abilities cost an additional \"Sacrifice a Swamp\" to activate for each black mana symbol in their activation costs."
+ },
+ "Martyrs' Tomb": {
+  "id": "Martyrs' Tomb",
+  "name": "Martyrs' Tomb",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Pay 2 life: Prevent the next 1 damage that would be dealt to target creature this turn."
+ },
+ "Purgatory": {
+  "id": "Purgatory",
+  "name": "Purgatory",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{B}",
+  "cmc": 4,
+  "colors": [
+   "B",
+   "W"
+  ],
+  "oracle": "Whenever a nontoken creature is put into your graveyard from the battlefield, exile that card.\nAt the beginning of your upkeep, you may pay {4} and 2 life. If you do, return a card exiled with this enchantment to the battlefield."
+ },
+ "Sphere of Grace": {
+  "id": "Sphere of Grace",
+  "name": "Sphere of Grace",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If a black source would deal damage to you, prevent 2 of that damage."
+ },
+ "Sphere of Duty": {
+  "id": "Sphere of Duty",
+  "name": "Sphere of Duty",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If a green source would deal damage to you, prevent 2 of that damage."
+ },
+ "Touch of the Eternal": {
+  "id": "Touch of the Eternal",
+  "name": "Touch of the Eternal",
+  "typeLine": "Enchantment",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, count the number of permanents you control. Your life total becomes that number."
+ },
+ "Circle of Protection: Shadow": {
+  "id": "Circle of Protection: Shadow",
+  "name": "Circle of Protection: Shadow",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next time a creature of your choice with shadow would deal damage to you this turn, prevent that damage."
+ },
+ "Rune of Protection: Lands": {
+  "id": "Rune of Protection: Lands",
+  "name": "Rune of Protection: Lands",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}: The next time a land source of your choice would deal damage to you this turn, prevent that damage.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+ },
+ "Spiritual Focus": {
+  "id": "Spiritual Focus",
+  "name": "Spiritual Focus",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a spell or ability an opponent controls causes you to discard a card, you gain 2 life and you may draw a card."
+ },
+ "Call to Arms": {
+  "id": "Call to Arms",
+  "name": "Call to Arms",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a color and an opponent.\nWhite creatures get +1/+1 as long as the chosen color is the most common color among nontoken permanents the chosen player controls but isn't tied for most common.\nWhen the chosen color isn't the most common color among nontoken permanents the chosen player controls or is tied for most common, sacrifice this enchantment."
+ },
+ "Harsh Judgment": {
+  "id": "Harsh Judgment",
+  "name": "Harsh Judgment",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a color.\nIf an instant or sorcery spell of the chosen color would deal damage to you, it deals that damage to its controller instead."
+ },
+ "Opal Archangel": {
+  "id": "Opal Archangel",
+  "name": "Opal Archangel",
+  "typeLine": "Enchantment",
+  "manaCost": "{4}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When an opponent casts a creature spell, if this permanent is an enchantment, it becomes a 5/5 Angel creature with flying and vigilance."
+ },
+ "Common Cause": {
+  "id": "Common Cause",
+  "name": "Common Cause",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Nonartifact creatures get +2/+2 as long as they all share a color."
+ },
+ "Planeswalker's Mirth": {
+  "id": "Planeswalker's Mirth",
+  "name": "Planeswalker's Mirth",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{3}{W}: Target opponent reveals a card at random from their hand. You gain life equal to that card's mana value."
+ },
+ "Greater Realm of Preservation": {
+  "id": "Greater Realm of Preservation",
+  "name": "Greater Realm of Preservation",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}{W}: The next time a black or red source of your choice would deal damage to you this turn, prevent that damage."
+ },
+ "Hypochondria": {
+  "id": "Hypochondria",
+  "name": "Hypochondria",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}, Discard a card: Prevent the next 3 damage that would be dealt to any target this turn.\n{W}, Sacrifice this enchantment: Prevent the next 3 damage that would be dealt to any target this turn."
+ },
+ "Winter's Night": {
+  "id": "Winter's Night",
+  "name": "Winter's Night",
+  "typeLine": "World Enchantment",
+  "manaCost": "{R}{G}{W}",
+  "cmc": 3,
+  "colors": [
+   "G",
+   "R",
+   "W"
+  ],
+  "oracle": "Whenever a player taps a snow land for mana, that player adds one mana of any type that land produced. That land doesn't untap during its controller's next untap step.",
+  "producedMana": [
+   "B",
+   "G",
+   "R",
+   "U",
+   "W"
+  ]
+ },
+ "Sphere of Truth": {
+  "id": "Sphere of Truth",
+  "name": "Sphere of Truth",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If a white source would deal damage to you, prevent 2 of that damage."
+ },
+ "Opal Titan": {
+  "id": "Opal Titan",
+  "name": "Opal Titan",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When an opponent casts a creature spell, if this permanent is an enchantment, it becomes a 4/4 Giant creature with protection from each of that spell's colors."
+ },
+ "Sphere of Reason": {
+  "id": "Sphere of Reason",
+  "name": "Sphere of Reason",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If a blue source would deal damage to you, prevent 2 of that damage."
+ },
+ "Samite Sanctuary": {
+  "id": "Samite Sanctuary",
+  "name": "Samite Sanctuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{2}: Prevent the next 1 damage that would be dealt to target creature this turn. Any player may activate this ability."
+ },
+ "Fasting": {
+  "id": "Fasting",
+  "name": "Fasting",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of your upkeep, put a hunger counter on this enchantment. Then destroy this enchantment if it has five or more hunger counters on it.\nIf you would begin your draw step, you may skip that step instead. If you do, you gain 2 life.\nWhen you draw a card, destroy this enchantment."
+ },
+ "Vassal's Duty": {
+  "id": "Vassal's Duty",
+  "name": "Vassal's Duty",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{1}: The next 1 damage that would be dealt to target legendary creature you control this turn is dealt to you instead."
+ },
+ "Prismatic Circle": {
+  "id": "Prismatic Circle",
+  "name": "Prismatic Circle",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nAs this enchantment enters, choose a color.\n{1}: The next time a source of your choice of the chosen color would deal damage to you this turn, prevent that damage."
+ },
+ "Opal Gargoyle": {
+  "id": "Opal Gargoyle",
+  "name": "Opal Gargoyle",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When an opponent casts a creature spell, if this permanent is an enchantment, it becomes a 2/2 Gargoyle creature with flying."
+ },
+ "Opal Acrolith": {
+  "id": "Opal Acrolith",
+  "name": "Opal Acrolith",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever an opponent casts a creature spell, if this permanent is an enchantment, it becomes a 2/4 Soldier creature.\n{0}: This permanent becomes an enchantment."
+ },
+ "Opal Guardian": {
+  "id": "Opal Guardian",
+  "name": "Opal Guardian",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When an opponent casts a creature spell, if this permanent is an enchantment, this enchantment becomes a 3/4 Gargoyle creature with flying and protection from red."
+ },
+ "Opal Caryatid": {
+  "id": "Opal Caryatid",
+  "name": "Opal Caryatid",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When an opponent casts a creature spell, if this permanent is an enchantment, it becomes a 2/2 Soldier creature."
+ },
+ "Opal Champion": {
+  "id": "Opal Champion",
+  "name": "Opal Champion",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When an opponent casts a creature spell, if this permanent is an enchantment, it becomes a 3/3 Knight creature with first strike."
+ },
+ "Lifeblood": {
+  "id": "Lifeblood",
+  "name": "Lifeblood",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a Mountain an opponent controls becomes tapped, you gain 1 life."
+ },
+ "Sphere of Purity": {
+  "id": "Sphere of Purity",
+  "name": "Sphere of Purity",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If an artifact would deal damage to you, prevent 1 of that damage."
+ },
+ "Spiritual Sanctuary": {
+  "id": "Spiritual Sanctuary",
+  "name": "Spiritual Sanctuary",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "At the beginning of each player's upkeep, if that player controls a Plains, they gain 1 life."
+ },
+ "Great Wall": {
+  "id": "Great Wall",
+  "name": "Great Wall",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Creatures with plainswalk can be blocked as though they didn't have plainswalk."
+ },
+ "Mangara's Equity": {
+  "id": "Mangara's Equity",
+  "name": "Mangara's Equity",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose black or red.\nAt the beginning of your upkeep, sacrifice this enchantment unless you pay {1}{W}.\nWhenever a creature of the chosen color deals damage to you or a white creature you control, this enchantment deals that much damage to that creature."
+ },
+ "Safeguard": {
+  "id": "Safeguard",
+  "name": "Safeguard",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}{W}",
+  "cmc": 5,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{2}{W}: Prevent all combat damage that would be dealt by target creature this turn."
+ },
+ "Entangling Trap": {
+  "id": "Entangling Trap",
+  "name": "Entangling Trap",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever you clash, tap target creature an opponent controls. If you won, that creature doesn't untap during its controller's next untap step. (This ability triggers after the clash ends.)"
+ },
+ "Security Detail": {
+  "id": "Security Detail",
+  "name": "Security Detail",
+  "typeLine": "Enchantment",
+  "manaCost": "{3}{W}",
+  "cmc": 4,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}{W}: Create a 1/1 white Soldier creature token. Activate only if you control no creatures and only once each turn."
+ },
+ "Cold Snap": {
+  "id": "Cold Snap",
+  "name": "Cold Snap",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Cumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nAt the beginning of each player's upkeep, this enchantment deals damage to that player equal to the number of snow lands they control."
+ },
+ "Righteous Indignation": {
+  "id": "Righteous Indignation",
+  "name": "Righteous Indignation",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever a creature blocks a black or red creature, the blocking creature gets +1/+1 until end of turn."
+ },
+ "Opal Avenger": {
+  "id": "Opal Avenger",
+  "name": "Opal Avenger",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When you have 10 or less life, if this permanent is an enchantment, it becomes a 3/5 Soldier creature."
+ },
+ "Suleiman's Legacy": {
+  "id": "Suleiman's Legacy",
+  "name": "Suleiman's Legacy",
+  "typeLine": "Enchantment",
+  "manaCost": "{R}{W}",
+  "cmc": 2,
+  "colors": [
+   "R",
+   "W"
+  ],
+  "oracle": "When this enchantment enters, destroy all Djinns and Efreets. They can't be regenerated.\nWhenever a Djinn or Efreet enters, destroy it. It can't be regenerated."
+ },
+ "Heroism": {
+  "id": "Heroism",
+  "name": "Heroism",
+  "typeLine": "Enchantment",
+  "manaCost": "{2}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Sacrifice a white creature: For each attacking red creature, prevent all combat damage that would be dealt by that creature this turn unless its controller pays {2}{R}."
+ },
+ "Sheltering Prayers": {
+  "id": "Sheltering Prayers",
+  "name": "Sheltering Prayers",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Basic lands each player controls have shroud as long as that player controls three or fewer lands. (They can't be the targets of spells or abilities.)"
+ },
+ "Current Curriculum": {
+  "id": "Current Curriculum",
+  "name": "Current Curriculum",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "The first Merfolk spell you cast each turn has convoke.\nAt the beginning of your end step, if you control two or more tapped creatures, conjure a card named Stonybrook Schoolmaster onto the battlefield tapped."
+ },
+ "Intangible Vibes": {
+  "id": "Intangible Vibes",
+  "name": "Intangible Vibes",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "All creatures are tokens. (They're considered tokens for spells and abilities. After a creature leaves the battlefield, it ceases to exist.)"
+ },
+ "Jihad": {
+  "id": "Jihad",
+  "name": "Jihad",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}{W}{W}",
+  "cmc": 3,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As this enchantment enters, choose a color and an opponent.\nWhite creatures get +2/+1 as long as the chosen player controls a nontoken permanent of the chosen color.\nWhen the chosen player controls no nontoken permanents of the chosen color, sacrifice this enchantment."
+ },
+ "Limited Resources": {
+  "id": "Limited Resources",
+  "name": "Limited Resources",
+  "typeLine": "Enchantment",
+  "manaCost": "{W}",
+  "cmc": 1,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this enchantment enters, each player chooses five lands they control and sacrifices the rest.\nPlayers can't play lands as long as ten or more lands are on the battlefield."
+ },
+ "Waystone's Guidance": {
+  "id": "Waystone's Guidance",
+  "name": "Waystone's Guidance",
+  "typeLine": "Enchantment",
+  "manaCost": "{1}{W}",
+  "cmc": 2,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Attacking tokens you control get +1/+0.\nWhenever you cast your first creature spell each turn, that spell gains mobilize 1."
+ }
+}

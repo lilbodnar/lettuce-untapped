@@ -1,0 +1,629 @@
+{
+ "Ojer Taq, Deepest Foundation // Temple of Civilization": {
+  "id": "Ojer Taq, Deepest Foundation // Temple of Civilization",
+  "name": "Ojer Taq, Deepest Foundation // Temple of Civilization",
+  "typeLine": "Legendary Creature — God // Land",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Ojer Taq, Deepest Foundation: Vigilance\nIf one or more creature tokens would be created under your control, three times that many of those tokens are created instead.\nWhen Ojer Taq dies, return it to the battlefield tapped and transformed under its owner's control.\n\nTemple of Civilization: (Transforms from Ojer Taq, Deepest Foundation.)\n{T}: Add {W}.\n{2}{W}, {T}: Transform this land. Activate only if you attacked with three or more creatures this turn and only as a sorcery.",
+  "power": "6",
+  "toughness": "6",
+  "producedMana": [
+   "W"
+  ]
+ },
+ "Angelic Skirmisher": {
+  "id": "Angelic Skirmisher",
+  "name": "Angelic Skirmisher",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nAt the beginning of each combat, choose first strike, vigilance, or lifelink. Creatures you control gain that ability until end of turn.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Appa, Loyal Sky Bison": {
+  "id": "Appa, Loyal Sky Bison",
+  "name": "Appa, Loyal Sky Bison",
+  "typeLine": "Legendary Creature — Bison Ally",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever Appa enters or attacks, choose one —\n• Target creature you control gains flying until end of turn.\n• Airbend another target nonland permanent you control. (Exile it. While it's exiled, its owner may cast it for {2} rather than its mana cost.)",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Aegis Angel": {
+  "id": "Aegis Angel",
+  "name": "Aegis Angel",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying (This creature can't be blocked except by creatures with flying or reach.)\nWhen this creature enters, another target permanent gains indestructible for as long as you control this creature. (Effects that say \"destroy\" don't destroy it. A creature with indestructible can't be destroyed by damage.)",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Sanctuary Warden": {
+  "id": "Sanctuary Warden",
+  "name": "Sanctuary Warden",
+  "typeLine": "Creature — Angel Soldier",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nThis creature enters with two shield counters on it.\nWhenever this creature enters or attacks, you may remove a counter from a creature or planeswalker you control. If you do, draw a card and create a 1/1 green and white Citizen creature token.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Beatrix, Loyal General": {
+  "id": "Beatrix, Loyal General",
+  "name": "Beatrix, Loyal General",
+  "typeLine": "Legendary Creature — Human Soldier",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Vigilance (Attacking doesn't cause this creature to tap.)\nAt the beginning of combat on your turn, you may attach any number of Equipment you control to target creature you control.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Lena, Selfless Champion": {
+  "id": "Lena, Selfless Champion",
+  "name": "Lena, Selfless Champion",
+  "typeLine": "Legendary Creature — Human Knight",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When Lena enters, create a 1/1 white Soldier creature token for each nontoken creature you control.\nSacrifice Lena: Creatures you control with power less than Lena's power gain indestructible until end of turn.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Yosei, the Morning Star": {
+  "id": "Yosei, the Morning Star",
+  "name": "Yosei, the Morning Star",
+  "typeLine": "Legendary Creature — Dragon Spirit",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen Yosei dies, target player skips their next untap step. Tap up to five target permanents that player controls.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Pegasus Guardian // Rescue the Foal": {
+  "id": "Pegasus Guardian // Rescue the Foal",
+  "name": "Pegasus Guardian // Rescue the Foal",
+  "typeLine": "Creature — Pegasus // Instant — Adventure",
+  "manaCost": "{5}{W} // {1}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Pegasus Guardian: Flying\nAt the beginning of your end step, if a permanent you controlled left the battlefield this turn, create a 1/1 white Pegasus creature token with flying.\n\nRescue the Foal: Exile target creature you control, then return that card to the battlefield under its owner's control. (Then exile this card. You may cast the creature later from exile.)",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Evra, Halcyon Witness": {
+  "id": "Evra, Halcyon Witness",
+  "name": "Evra, Halcyon Witness",
+  "typeLine": "Legendary Creature — Avatar",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Lifelink\n{4}: Exchange your life total with Evra's power.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Bounding Felidar": {
+  "id": "Bounding Felidar",
+  "name": "Bounding Felidar",
+  "typeLine": "Creature — Cat Beast Mount",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever this creature attacks while saddled, put a +1/+1 counter on each other creature you control. You gain 1 life for each of those creatures.\nSaddle 2 (Tap any number of other creatures you control with total power 2 or more: This Mount becomes saddled until end of turn. Saddle only as a sorcery.)",
+  "power": "4",
+  "toughness": "7"
+ },
+ "Eagle of Deliverance": {
+  "id": "Eagle of Deliverance",
+  "name": "Eagle of Deliverance",
+  "typeLine": "Creature — Bird Soldier",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this creature enters, put an indestructible counter on another target creature you control. Draw a card if that creature's power is 2 or less.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Dawnstrike Vanguard": {
+  "id": "Dawnstrike Vanguard",
+  "name": "Dawnstrike Vanguard",
+  "typeLine": "Creature — Human Knight",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Lifelink\nAt the beginning of your end step, if you control two or more tapped creatures, put a +1/+1 counter on each creature you control other than this creature.",
+  "power": "4",
+  "toughness": "5"
+ },
+ "Regna, the Redeemer": {
+  "id": "Regna, the Redeemer",
+  "name": "Regna, the Redeemer",
+  "typeLine": "Legendary Creature — Angel",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Partner with Krav, the Unredeemed (When this creature enters, target player may put Krav into their hand from their library, then shuffle.)\nFlying\nAt the beginning of each end step, if your team gained life this turn, create two 1/1 white Warrior creature tokens.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Purity": {
+  "id": "Purity",
+  "name": "Purity",
+  "typeLine": "Creature — Elemental Incarnation",
+  "manaCost": "{3}{W}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nIf noncombat damage would be dealt to you, prevent that damage. You gain life equal to the damage prevented this way.\nWhen Purity is put into a graveyard from anywhere, shuffle it into its owner's library.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Palisade Giant": {
+  "id": "Palisade Giant",
+  "name": "Palisade Giant",
+  "typeLine": "Creature — Giant Soldier",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "All damage that would be dealt to you and other permanents you control is dealt to this creature instead.",
+  "power": "2",
+  "toughness": "7"
+ },
+ "Auratouched Mage": {
+  "id": "Auratouched Mage",
+  "name": "Auratouched Mage",
+  "typeLine": "Creature — Human Wizard",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, search your library for an Aura card that could enchant it. If this creature is still on the battlefield, put that Aura card onto the battlefield attached to it. Otherwise, reveal the Aura card and put it into your hand. Then shuffle.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Takeno, Samurai General": {
+  "id": "Takeno, Samurai General",
+  "name": "Takeno, Samurai General",
+  "typeLine": "Legendary Creature — Human Samurai",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Bushido 2 (Whenever this creature blocks or becomes blocked, it gets +2/+2 until end of turn.)\nEach other Samurai creature you control gets +1/+1 for each point of bushido it has.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Council Guardian": {
+  "id": "Council Guardian",
+  "name": "Council Guardian",
+  "typeLine": "Creature — Giant Soldier",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Will of the council — When this creature enters, starting with you, each player votes for blue, black, red, or green. This creature gains protection from each color with the most votes or tied for most votes.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Apostle of Invasion": {
+  "id": "Apostle of Invasion",
+  "name": "Apostle of Invasion",
+  "typeLine": "Creature — Phyrexian Angel",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nCorrupted — As long as an opponent has three or more poison counters, this creature has double strike.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Loxodon Lifechanter": {
+  "id": "Loxodon Lifechanter",
+  "name": "Loxodon Lifechanter",
+  "typeLine": "Creature — Elephant Cleric",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, you may have your life total become the total toughness of creatures you control.\n{5}{W}: This creature gets +X/+X until end of turn, where X is your life total.",
+  "power": "4",
+  "toughness": "6"
+ },
+ "Fear of Abduction": {
+  "id": "Fear of Abduction",
+  "name": "Fear of Abduction",
+  "typeLine": "Enchantment Creature — Nightmare",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As an additional cost to cast this spell, exile a creature you control.\nFlying\nWhen this creature enters, exile target creature an opponent controls.\nWhen this creature leaves the battlefield, put each card exiled with it into its owner's hand.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Patron of the Kitsune": {
+  "id": "Patron of the Kitsune",
+  "name": "Patron of the Kitsune",
+  "typeLine": "Legendary Creature — Spirit",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Fox offering (You may cast this spell any time you could cast an instant by sacrificing a Fox and paying the difference in mana costs between this and the sacrificed Fox. Mana cost includes color.)\nWhenever a creature attacks, you may gain 1 life.",
+  "power": "5",
+  "toughness": "6"
+ },
+ "Grasping Giant": {
+  "id": "Grasping Giant",
+  "name": "Grasping Giant",
+  "typeLine": "Creature — Giant",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Vigilance\nWhenever this creature becomes blocked by a creature, exile that creature until this creature leaves the battlefield.",
+  "power": "5",
+  "toughness": "7"
+ },
+ "Wardscale Dragon": {
+  "id": "Wardscale Dragon",
+  "name": "Wardscale Dragon",
+  "typeLine": "Creature — Dragon",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nAs long as this creature is attacking, defending player can't cast spells.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Anointer of Valor": {
+  "id": "Anointer of Valor",
+  "name": "Anointer of Valor",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever a creature attacks, you may pay {3}. When you do, put a +1/+1 counter on that creature.",
+  "power": "3",
+  "toughness": "5"
+ },
+ "Weathered Bodyguards": {
+  "id": "Weathered Bodyguards",
+  "name": "Weathered Bodyguards",
+  "typeLine": "Creature — Human Soldier",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "As long as this creature is untapped, all combat damage that would be dealt to you by unblocked creatures is dealt to this creature instead.\nMorph {3}{W} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+  "power": "2",
+  "toughness": "5"
+ },
+ "Landscaper Colos": {
+  "id": "Landscaper Colos",
+  "name": "Landscaper Colos",
+  "typeLine": "Creature — Goat Beast",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, put target card from an opponent's graveyard on the bottom of their library.\nBasic landcycling {1}{W} ({1}{W}, Discard this card: Search your library for a basic land card, reveal it, put it into your hand, then shuffle.)",
+  "power": "4",
+  "toughness": "6"
+ },
+ "Magnanimous Magistrate": {
+  "id": "Magnanimous Magistrate",
+  "name": "Magnanimous Magistrate",
+  "typeLine": "Creature — Human Advisor",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This creature enters with five reprieve counters on it.\nWhenever another nontoken creature you control dies, if its mana value was 1 or greater, you may remove that many reprieve counters from this creature. If you do, return that card to the battlefield under its owner's control.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Glarecaster": {
+  "id": "Glarecaster",
+  "name": "Glarecaster",
+  "typeLine": "Creature — Bird Cleric",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\n{5}{W}: The next time damage would be dealt to this creature and/or you this turn, that damage is dealt to any target instead.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Paladin of Prahv": {
+  "id": "Paladin of Prahv",
+  "name": "Paladin of Prahv",
+  "typeLine": "Creature — Human Knight",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever this creature deals damage, you gain that much life.\nForecast — {1}{W}, Reveal this card from your hand: Whenever target creature deals damage this turn, you gain that much life. (Activate only during your upkeep and only once each turn.)",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Kjeldoran Phalanx": {
+  "id": "Kjeldoran Phalanx",
+  "name": "Kjeldoran Phalanx",
+  "typeLine": "Creature — Human Soldier",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "First strike; banding (Any creatures with banding, and up to one without, can attack in a band. Bands are blocked as a group. If any creatures with banding you control are blocking or being blocked by a creature, you divide that creature's combat damage, not its controller, among any of the creatures it's being blocked by or is blocking.)",
+  "power": "2",
+  "toughness": "5"
+ },
+ "Shieldmage Elder": {
+  "id": "Shieldmage Elder",
+  "name": "Shieldmage Elder",
+  "typeLine": "Creature — Human Cleric Wizard",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Tap two untapped Clerics you control: Prevent all damage target creature would deal this turn.\nTap two untapped Wizards you control: Prevent all damage target spell would deal this turn.",
+  "power": "2",
+  "toughness": "3"
+ },
+ "Kami of the Palace Fields": {
+  "id": "Kami of the Palace Fields",
+  "name": "Kami of the Palace Fields",
+  "typeLine": "Creature — Spirit",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying, first strike\nSoulshift 5 (When this creature dies, you may return target Spirit card with mana value 5 or less from your graveyard to your hand.)",
+  "power": "3",
+  "toughness": "2"
+ },
+ "Auriok Survivors": {
+  "id": "Auriok Survivors",
+  "name": "Auriok Survivors",
+  "typeLine": "Creature — Human Soldier",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, you may return target Equipment card from your graveyard to the battlefield. If you do, you may attach it to this creature.",
+  "power": "4",
+  "toughness": "6"
+ },
+ "Cho-Arrim Bruiser": {
+  "id": "Cho-Arrim Bruiser",
+  "name": "Cho-Arrim Bruiser",
+  "typeLine": "Creature — Ogre Rebel",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Whenever this creature attacks, you may tap up to two target creatures.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Gempalm Avenger": {
+  "id": "Gempalm Avenger",
+  "name": "Gempalm Avenger",
+  "typeLine": "Creature — Human Soldier",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Cycling {2}{W} ({2}{W}, Discard this card: Draw a card.)\nWhen you cycle this card, Soldier creatures get +1/+1 and gain first strike until end of turn.",
+  "power": "3",
+  "toughness": "5"
+ },
+ "Lairwatch Giant": {
+  "id": "Lairwatch Giant",
+  "name": "Lairwatch Giant",
+  "typeLine": "Creature — Giant Warrior",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This creature can block an additional creature each combat.\nWhenever this creature blocks two or more creatures, it gains first strike until end of turn.",
+  "power": "5",
+  "toughness": "3"
+ },
+ "Wayward Angel": {
+  "id": "Wayward Angel",
+  "name": "Wayward Angel",
+  "typeLine": "Creature — Angel Horror",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying, vigilance\nThreshold — As long as there are seven or more cards in your graveyard, this creature gets +3/+3, is black, has trample, and has \"At the beginning of your upkeep, sacrifice a creature.\"",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Personal Incarnation": {
+  "id": "Personal Incarnation",
+  "name": "Personal Incarnation",
+  "typeLine": "Creature — Avatar Incarnation",
+  "manaCost": "{3}{W}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{0}: The next 1 damage that would be dealt to this creature this turn is dealt to its owner instead. Only this creature's owner may activate this ability.\nWhen this creature dies, its owner loses half their life, rounded up.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Graven Dominator": {
+  "id": "Graven Dominator",
+  "name": "Graven Dominator",
+  "typeLine": "Creature — Gargoyle",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nHaunt (When this creature dies, exile it haunting target creature.)\nWhen this creature enters or the creature it haunts dies, each other creature has base power and toughness 1/1 until end of turn.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Champion Lancer": {
+  "id": "Champion Lancer",
+  "name": "Champion Lancer",
+  "typeLine": "Creature — Human Knight",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Prevent all damage that would be dealt to this creature by creatures.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Dwarven Lightsmith": {
+  "id": "Dwarven Lightsmith",
+  "name": "Dwarven Lightsmith",
+  "typeLine": "Creature — Dwarf Cleric",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Assist (Another player can pay up to {5} of this spell's cost.)\nWhen this creature enters, creatures your team controls get +1/+1 until end of turn.",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Exalted Dragon": {
+  "id": "Exalted Dragon",
+  "name": "Exalted Dragon",
+  "typeLine": "Creature — Dragon",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nThis creature can't attack unless you sacrifice a land. (This cost is paid as attackers are declared.)",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Woeleecher": {
+  "id": "Woeleecher",
+  "name": "Woeleecher",
+  "typeLine": "Creature — Elemental",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{W}, {T}: Remove a -1/-1 counter from target creature. If you do, you gain 2 life.",
+  "power": "3",
+  "toughness": "5"
+ },
+ "Ivory Guardians": {
+  "id": "Ivory Guardians",
+  "name": "Ivory Guardians",
+  "typeLine": "Creature — Giant Cleric",
+  "manaCost": "{4}{W}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Protection from red\nCreatures named Ivory Guardians get +1/+1 as long as an opponent controls a nontoken red permanent.",
+  "power": "3",
+  "toughness": "3"
+ },
+ "Ruham Djinn": {
+  "id": "Ruham Djinn",
+  "name": "Ruham Djinn",
+  "typeLine": "Creature — Djinn",
+  "manaCost": "{5}{W}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "First strike\nThis creature gets -2/-2 as long as white is the most common color among all permanents or is tied for most common.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Stormkeld Curator // Giant Secrets": {
+  "id": "Stormkeld Curator // Giant Secrets",
+  "name": "Stormkeld Curator // Giant Secrets",
+  "typeLine": "Creature — Giant // Instant — Adventure",
+  "manaCost": "{4}{W}{W} // {X}{U}{U}",
+  "cmc": 6,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Stormkeld Curator: When Stormkeld Curator enters, you may put any number of Aura cards from your graveyard and/or hand onto the battlefield attached to it.\n\nGiant Secrets: Conjure X random cards from Giant Secrets's spellbook into your hand.",
+  "power": "6",
+  "toughness": "6"
+ }
+}

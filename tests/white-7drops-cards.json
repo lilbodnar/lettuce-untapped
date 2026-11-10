@@ -1,0 +1,314 @@
+{
+ "Curious Colossus": {
+  "id": "Curious Colossus",
+  "name": "Curious Colossus",
+  "typeLine": "Creature — Giant Warrior",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, each creature target opponent controls loses all abilities, becomes a Coward in addition to its other types, and has base power and toughness 1/1.",
+  "power": "7",
+  "toughness": "7"
+ },
+ "Resolute Archangel": {
+  "id": "Resolute Archangel",
+  "name": "Resolute Archangel",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhen this creature enters, if your life total is less than your starting life total, it becomes equal to your starting life total.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Chancellor of the Annex": {
+  "id": "Chancellor of the Annex",
+  "name": "Chancellor of the Annex",
+  "typeLine": "Creature — Phyrexian Angel",
+  "manaCost": "{4}{W}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "You may reveal this card from your opening hand. If you do, when each opponent casts their first spell of the game, counter that spell unless that player pays {1}.\nFlying\nWhenever an opponent casts a spell, counter it unless that player pays {1}.",
+  "power": "5",
+  "toughness": "6"
+ },
+ "Myojin of Blooming Dawn": {
+  "id": "Myojin of Blooming Dawn",
+  "name": "Myojin of Blooming Dawn",
+  "typeLine": "Legendary Creature — Spirit",
+  "manaCost": "{5}{W}{W}{W}",
+  "cmc": 8,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Myojin of Blooming Dawn enters with an indestructible counter on it if you cast it from your hand.\nRemove an indestructible counter from Myojin of Blooming Dawn: Create a 1/1 colorless Spirit creature token for each permanent you control.",
+  "power": "4",
+  "toughness": "6"
+ },
+ "Luminate Primordial": {
+  "id": "Luminate Primordial",
+  "name": "Luminate Primordial",
+  "typeLine": "Creature — Avatar",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Vigilance\nWhen this creature enters, for each opponent, exile up to one target creature that player controls and that player gains life equal to its power.",
+  "power": "4",
+  "toughness": "7"
+ },
+ "Exquisite Archangel": {
+  "id": "Exquisite Archangel",
+  "name": "Exquisite Archangel",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nIf you would lose the game, instead exile this creature and your life total becomes equal to your starting life total.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Ghalta the Immovable": {
+  "id": "Ghalta the Immovable",
+  "name": "Ghalta the Immovable",
+  "typeLine": "Legendary Creature — Elder Dinosaur",
+  "manaCost": "{8}{W}",
+  "cmc": 9,
+  "colors": [
+   "W"
+  ],
+  "oracle": "This spell costs {X} less to cast, where X is the greatest toughness among creatures you control.\nCreatures you control can attack as though they didn't have defender.\nEach creature you control with toughness greater than its power assigns combat damage equal to its toughness rather than its power.",
+  "power": "0",
+  "toughness": "7"
+ },
+ "Guardian Naga // Banishing Coils": {
+  "id": "Guardian Naga // Banishing Coils",
+  "name": "Guardian Naga // Banishing Coils",
+  "typeLine": "Creature — Snake // Instant — Adventure",
+  "manaCost": "{5}{W}{W} // {2}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Guardian Naga: Vigilance\nDuring your turn, prevent all damage that would be dealt to this creature.\n\nBanishing Coils: Exile target artifact or enchantment. (Then exile this card. You may cast the creature later from exile.)",
+  "power": "5",
+  "toughness": "6"
+ },
+ "Captain Marvel, Shooting Star": {
+  "id": "Captain Marvel, Shooting Star",
+  "name": "Captain Marvel, Shooting Star",
+  "typeLine": "Legendary Creature — Human Kree Hero",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever Captain Marvel enters or attacks, exile up to one target creature. That creature's controller gains life equal to its power.\nWhenever a creature other than Captain Marvel is exiled from the battlefield, you gain life equal to its power.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Hyperion, Supreme Hero": {
+  "id": "Hyperion, Supreme Hero",
+  "name": "Hyperion, Supreme Hero",
+  "typeLine": "Legendary Creature — Eternal Hero",
+  "manaCost": "{4}{W}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flash\nFlying\nIf a source would deal damage to you or a Hero you control, prevent all but 1 of that damage.",
+  "power": "7",
+  "toughness": "7"
+ },
+ "Radiant, Serra Archangel": {
+  "id": "Radiant, Serra Archangel",
+  "name": "Radiant, Serra Archangel",
+  "typeLine": "Legendary Creature — Angel",
+  "manaCost": "{6}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nTap another untapped creature you control with flying: Radiant gains protection from the color of your choice until end of turn.\nPartner (You can have two commanders if both have partner.)",
+  "power": "6",
+  "toughness": "4"
+ },
+ "Boonweaver Giant": {
+  "id": "Boonweaver Giant",
+  "name": "Boonweaver Giant",
+  "typeLine": "Creature — Giant Monk",
+  "manaCost": "{6}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, you may search your graveyard, hand, and/or library for an Aura card and put it onto the battlefield attached to this creature. If you search your library this way, shuffle.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Ivory Giant": {
+  "id": "Ivory Giant",
+  "name": "Ivory Giant",
+  "typeLine": "Creature — Giant",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "When this creature enters, tap all nonwhite creatures.\nSuspend 5—{W} (Rather than cast this card from your hand, you may pay {W} and exile it with five time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.)",
+  "power": "3",
+  "toughness": "4"
+ },
+ "Kami of the Honored Dead": {
+  "id": "Kami of the Honored Dead",
+  "name": "Kami of the Honored Dead",
+  "typeLine": "Creature — Spirit",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever this creature is dealt damage, you gain that much life.\nSoulshift 6 (When this creature dies, you may return target Spirit card with mana value 6 or less from your graveyard to your hand.)",
+  "power": "3",
+  "toughness": "5"
+ },
+ "Avatar of Hope": {
+  "id": "Avatar of Hope",
+  "name": "Avatar of Hope",
+  "typeLine": "Creature — Avatar",
+  "manaCost": "{6}{W}{W}",
+  "cmc": 8,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If you have 3 or less life, this spell costs {6} less to cast.\nFlying\nThis creature can block any number of creatures.",
+  "power": "4",
+  "toughness": "9"
+ },
+ "Vengeful Archon": {
+  "id": "Vengeful Archon",
+  "name": "Vengeful Archon",
+  "typeLine": "Creature — Archon",
+  "manaCost": "{4}{W}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\n{X}: Prevent the next X damage that would be dealt to you this turn. If damage is prevented this way, this creature deals that much damage to target player or planeswalker.",
+  "power": "7",
+  "toughness": "7"
+ },
+ "Silver Seraph": {
+  "id": "Silver Seraph",
+  "name": "Silver Seraph",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{5}{W}{W}{W}",
+  "cmc": 8,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nThreshold — Other creatures you control get +2/+2 as long as there are seven or more cards in your graveyard.",
+  "power": "6",
+  "toughness": "6"
+ },
+ "Kemba's Legion": {
+  "id": "Kemba's Legion",
+  "name": "Kemba's Legion",
+  "typeLine": "Creature — Cat Soldier",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Vigilance\nThis creature can block an additional creature each combat for each Equipment attached to this creature.",
+  "power": "4",
+  "toughness": "6"
+ },
+ "Akron Legionnaire": {
+  "id": "Akron Legionnaire",
+  "name": "Akron Legionnaire",
+  "typeLine": "Creature — Giant Soldier",
+  "manaCost": "{6}{W}{W}",
+  "cmc": 8,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Except for creatures named Akron Legionnaire and artifact creatures, creatures you control can't attack.",
+  "power": "8",
+  "toughness": "4"
+ },
+ "Seraph": {
+  "id": "Seraph",
+  "name": "Seraph",
+  "typeLine": "Creature — Angel",
+  "manaCost": "{6}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nWhenever a creature dealt damage by this creature this turn dies, put that card onto the battlefield under your control at the beginning of the next end step. Sacrifice the creature when you lose control of this creature.",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Ghosts of the Innocent": {
+  "id": "Ghosts of the Innocent",
+  "name": "Ghosts of the Innocent",
+  "typeLine": "Creature — Spirit",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "If a source would deal damage to a permanent or player, it deals half that damage, rounded down, to that permanent or player instead.",
+  "power": "4",
+  "toughness": "5"
+ },
+ "Elder Land Wurm": {
+  "id": "Elder Land Wurm",
+  "name": "Elder Land Wurm",
+  "typeLine": "Creature — Dragon Wurm",
+  "manaCost": "{4}{W}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Defender, trample\nWhen this creature blocks, it loses defender.",
+  "power": "5",
+  "toughness": "5"
+ },
+ "Pale Wayfarer": {
+  "id": "Pale Wayfarer",
+  "name": "Pale Wayfarer",
+  "typeLine": "Creature — Spirit Giant",
+  "manaCost": "{5}{W}{W}",
+  "cmc": 7,
+  "colors": [
+   "W"
+  ],
+  "oracle": "{2}{W}{W}, {Q}: Target creature gains protection from the color of its controller's choice until end of turn. ({Q} is the untap symbol.)",
+  "power": "4",
+  "toughness": "4"
+ },
+ "Iona, Shield of Emeria": {
+  "id": "Iona, Shield of Emeria",
+  "name": "Iona, Shield of Emeria",
+  "typeLine": "Legendary Creature — Angel",
+  "manaCost": "{6}{W}{W}{W}",
+  "cmc": 9,
+  "colors": [
+   "W"
+  ],
+  "oracle": "Flying\nAs Iona enters, choose a color.\nYour opponents can't cast spells of the chosen color.",
+  "power": "7",
+  "toughness": "7"
+ }
+}
