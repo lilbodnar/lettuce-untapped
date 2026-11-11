@@ -1,0 +1,2733 @@
+{
+  "Long List of the Ents": {
+    "id": "Long List of the Ents",
+    "name": "Long List of the Ents",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after VI.)\nI, II, III, IV, V, VI — Note a creature type that hasn't been noted for this Saga. When you next cast a creature spell of that type this turn, that creature enters with an additional +1/+1 counter on it."
+  },
+  "Azusa's Many Journeys // Likeness of the Seeker": {
+    "id": "Azusa's Many Journeys // Likeness of the Seeker",
+    "name": "Azusa's Many Journeys // Likeness of the Seeker",
+    "typeLine": "Enchantment — Saga // Enchantment Creature — Human Monk",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Azusa's Many Journeys: (As this Saga enters and after your draw step, add a lore counter.)\nI — You may play an additional land this turn.\nII — You gain 3 life.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nLikeness of the Seeker: Whenever this creature becomes blocked, untap up to three lands you control."
+  },
+  "Up the Beanstalk": {
+    "id": "Up the Beanstalk",
+    "name": "Up the Beanstalk",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters and whenever you cast a spell with mana value 5 or greater, draw a card."
+  },
+  "Afiya Grove": {
+    "id": "Afiya Grove",
+    "name": "Afiya Grove",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This enchantment enters with three +1/+1 counters on it.\nAt the beginning of your upkeep, move a +1/+1 counter from this enchantment onto target creature.\nWhen this enchantment has no +1/+1 counters on it, sacrifice it."
+  },
+  "Crown of Vigor": {
+    "id": "Crown of Vigor",
+    "name": "Crown of Vigor",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +1/+1.\nSacrifice this Aura: Enchanted creature and other creatures that share a creature type with it get +1/+1 until end of turn."
+  },
+  "Pitiless Fists": {
+    "id": "Pitiless Fists",
+    "name": "Pitiless Fists",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature you control\nWhen this Aura enters, enchanted creature fights up to one target creature an opponent controls. (Each deals damage equal to its power to the other.)\nEnchanted creature gets +2/+2."
+  },
+  "Nature's Revolt": {
+    "id": "Nature's Revolt",
+    "name": "Nature's Revolt",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All lands are 2/2 creatures that are still lands."
+  },
+  "Point the Way": {
+    "id": "Point the Way",
+    "name": "Point the Way",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Start your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\n{3}{G}, Sacrifice this enchantment: Search your library for up to X basic land cards, where X is your speed. Put those cards onto the battlefield tapped, then shuffle."
+  },
+  "Vastwood Zendikon": {
+    "id": "Vastwood Zendikon",
+    "name": "Vastwood Zendikon",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nEnchanted land is a 6/4 green Elemental creature. It's still a land.\nWhen enchanted land dies, return that card to its owner's hand."
+  },
+  "Leyline of Abundance": {
+    "id": "Leyline of Abundance",
+    "name": "Leyline of Abundance",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nWhenever you tap a creature for mana, add an additional {G}.\n{6}{G}{G}: Put a +1/+1 counter on each creature you control.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Verdant Succession": {
+    "id": "Verdant Succession",
+    "name": "Verdant Succession",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a green nontoken creature dies, that creature's controller may search their library for a card with the same name as that creature, put it onto the battlefield, then shuffle."
+  },
+  "Root Cage": {
+    "id": "Root Cage",
+    "name": "Root Cage",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Mercenaries don't untap during their controllers' untap steps."
+  },
+  "Shapers' Sanctuary": {
+    "id": "Shapers' Sanctuary",
+    "name": "Shapers' Sanctuary",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control becomes the target of a spell or ability an opponent controls, you may draw a card."
+  },
+  "Raised by Giants": {
+    "id": "Raised by Giants",
+    "name": "Raised by Giants",
+    "typeLine": "Legendary Enchantment — Background",
+    "manaCost": "{5}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Commander creatures you own have base power and toughness 10/10 and are Giants in addition to their other types."
+  },
+  "Shape of the Wiitigo": {
+    "id": "Shape of the Wiitigo",
+    "name": "Shape of the Wiitigo",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhen this Aura enters, put six +1/+1 counters on enchanted creature.\nAt the beginning of your upkeep, put a +1/+1 counter on enchanted creature if it attacked or blocked since your last upkeep. Otherwise, remove a +1/+1 counter from it."
+  },
+  "Splintering Wind": {
+    "id": "Splintering Wind",
+    "name": "Splintering Wind",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{2}{G}: This enchantment deals 1 damage to target creature. Create a 1/1 green Splinter creature token. It has flying and \"Cumulative upkeep {G}.\" When it leaves the battlefield, it deals 1 damage to you and each creature you control. (At the beginning of its controller's upkeep, that player puts an age counter on it, then sacrifices it unless they pay its upkeep cost for each age counter on it.)"
+  },
+  "Planeswalker's Favor": {
+    "id": "Planeswalker's Favor",
+    "name": "Planeswalker's Favor",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{3}{G}: Target opponent reveals a card at random from their hand. Target creature gets +X/+X until end of turn, where X is the revealed card's mana value."
+  },
+  "Ferocity": {
+    "id": "Ferocity",
+    "name": "Ferocity",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature blocks or becomes blocked, you may put a +1/+1 counter on it."
+  },
+  "Nissa's Zendikon": {
+    "id": "Nissa's Zendikon",
+    "name": "Nissa's Zendikon",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nEnchanted land is a 4/4 Elemental creature with reach and haste. It's still a land.\nWhen enchanted land dies, return that card to its owner's hand."
+  },
+  "Dormant Grove // Gnarled Grovestrider": {
+    "id": "Dormant Grove // Gnarled Grovestrider",
+    "name": "Dormant Grove // Gnarled Grovestrider",
+    "typeLine": "Enchantment // Creature — Treefolk",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Dormant Grove: At the beginning of combat on your turn, put a +1/+1 counter on target creature you control. Then if that creature has toughness 6 or greater, transform this enchantment.\n\nGnarled Grovestrider: Vigilance\nOther creatures you control have vigilance."
+  },
+  "Preferred Selection": {
+    "id": "Preferred Selection",
+    "name": "Preferred Selection",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, look at the top two cards of your library. You may sacrifice this enchantment and pay {2}{G}{G}. If you do, put one of those cards into your hand. If you don't, put one of those cards on the bottom of your library."
+  },
+  "Court of Garenbrig": {
+    "id": "Court of Garenbrig",
+    "name": "Court of Garenbrig",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, distribute two +1/+1 counters among up to two target creatures. Then if you're the monarch, double the number of +1/+1 counters on each creature you control."
+  },
+  "Elemental Resonance": {
+    "id": "Elemental Resonance",
+    "name": "Elemental Resonance",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant permanent\nAt the beginning of your first main phase, add mana equal to enchanted permanent's mana cost. (Mana cost includes color. If a mana symbol has multiple colors, choose one.)",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Glittering Frost": {
+    "id": "Glittering Frost",
+    "name": "Glittering Frost",
+    "typeLine": "Snow Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nEnchanted land is snow.\nWhenever enchanted land is tapped for mana, its controller adds an additional one mana of any color.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Vernal Equinox": {
+    "id": "Vernal Equinox",
+    "name": "Vernal Equinox",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Any player may cast creature and enchantment spells as though they had flash."
+  },
+  "Howl of the Hunt": {
+    "id": "Howl of the Hunt",
+    "name": "Howl of the Hunt",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash\nEnchant creature\nWhen this Aura enters, if enchanted creature is a Wolf or Werewolf, untap that creature.\nEnchanted creature gets +2/+2 and has vigilance."
+  },
+  "Ley Line": {
+    "id": "Ley Line",
+    "name": "Ley Line",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of each player's upkeep, that player may put a +1/+1 counter on target creature of their choice."
+  },
+  "Hidden Gibbons": {
+    "id": "Hidden Gibbons",
+    "name": "Hidden Gibbons",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When an opponent casts an instant spell, if this permanent is an enchantment, it becomes a 4/4 Ape creature."
+  },
+  "Case of the Locked Hothouse": {
+    "id": "Case of the Locked Hothouse",
+    "name": "Case of the Locked Hothouse",
+    "typeLine": "Enchantment — Case",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may play an additional land on each of your turns.\nTo solve — You control seven or more lands. (If unsolved, solve at the beginning of your end step.)\nSolved — You may look at the top card of your library any time, and you may play lands and cast creature and enchantment spells from the top of your library."
+  },
+  "Vernal Bloom": {
+    "id": "Vernal Bloom",
+    "name": "Vernal Bloom",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a Forest is tapped for mana, its controller adds an additional {G}.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Urban Burgeoning": {
+    "id": "Urban Burgeoning",
+    "name": "Urban Burgeoning",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nEnchanted land has \"Untap this land during each other player's untap step.\""
+  },
+  "Prismatic Undercurrents": {
+    "id": "Prismatic Undercurrents",
+    "name": "Prismatic Undercurrents",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Vivid — When this enchantment enters, search your library for up to X basic land cards, where X is the number of colors among permanents you control. Reveal those cards, put them into your hand, then shuffle.\nYou may play an additional land on each of your turns."
+  },
+  "Favor of the Woods": {
+    "id": "Favor of the Woods",
+    "name": "Favor of the Woods",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature blocks, you gain 3 life."
+  },
+  "Exoskeletal Armor": {
+    "id": "Exoskeletal Armor",
+    "name": "Exoskeletal Armor",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +X/+X, where X is the number of creature cards in all graveyards."
+  },
+  "Spelunking": {
+    "id": "Spelunking",
+    "name": "Spelunking",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, draw a card, then you may put a land card from your hand onto the battlefield. If you put a Cave onto the battlefield this way, you gain 4 life.\nLands you control enter untapped."
+  },
+  "Tangled Skyline": {
+    "id": "Tangled Skyline",
+    "name": "Tangled Skyline",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, you gain 5 life and incubate 5. (Create an Incubator token with five +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)\nPhyrexians you control have reach."
+  },
+  "Roots of Life": {
+    "id": "Roots of Life",
+    "name": "Roots of Life",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As this enchantment enters, choose Island or Swamp.\nWhenever a land of the chosen type an opponent controls becomes tapped, you gain 1 life."
+  },
+  "Elven Fortress": {
+    "id": "Elven Fortress",
+    "name": "Elven Fortress",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{1}{G}: Target blocking creature gets +0/+1 until end of turn."
+  },
+  "Shortcut to Mushrooms": {
+    "id": "Shortcut to Mushrooms",
+    "name": "Shortcut to Mushrooms",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, the Ring tempts you.\nAt the beginning of your end step, if a permanent you controlled left the battlefield this turn, put a +1/+1 counter on target creature you control."
+  },
+  "Arachnoform": {
+    "id": "Arachnoform",
+    "name": "Arachnoform",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +2/+2, has reach, and is every creature type."
+  },
+  "Root Maze": {
+    "id": "Root Maze",
+    "name": "Root Maze",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Artifacts and lands enter tapped."
+  },
+  "Titania's Song": {
+    "id": "Titania's Song",
+    "name": "Titania's Song",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each noncreature artifact loses all abilities and becomes an artifact creature with power and toughness each equal to its mana value. If this enchantment leaves the battlefield, this effect continues until end of turn."
+  },
+  "Living Plane": {
+    "id": "Living Plane",
+    "name": "Living Plane",
+    "typeLine": "World Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All lands are 1/1 creatures that are still lands."
+  },
+  "Quiet Disrepair": {
+    "id": "Quiet Disrepair",
+    "name": "Quiet Disrepair",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant artifact or enchantment\nAt the beginning of your upkeep, choose one —\n• Destroy enchanted permanent.\n• You gain 2 life."
+  },
+  "Virtue of Strength // Garenbrig Growth": {
+    "id": "Virtue of Strength // Garenbrig Growth",
+    "name": "Virtue of Strength // Garenbrig Growth",
+    "typeLine": "Enchantment // Sorcery — Adventure",
+    "manaCost": "{5}{G}{G} // {G}",
+    "cmc": 7,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Virtue of Strength: If you tap a basic land for mana, it produces three times as much of that mana instead.\n\nGarenbrig Growth: Return target creature or land card from your graveyard to your hand. (Then exile this card. You may cast the enchantment later from exile.)"
+  },
+  "Heroic Feast": {
+    "id": "Heroic Feast",
+    "name": "Heroic Feast",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nWhenever you gain life, choose up to that many target creatures you control. Put a +1/+1 counter on each of them."
+  },
+  "Sporogenesis": {
+    "id": "Sporogenesis",
+    "name": "Sporogenesis",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, you may put a fungus counter on target nontoken creature.\nWhenever a creature with a fungus counter on it dies, create a 1/1 green Saproling creature token for each fungus counter on that creature.\nWhen this enchantment leaves the battlefield, remove all fungus counters from all creatures."
+  },
+  "Gravity Well": {
+    "id": "Gravity Well",
+    "name": "Gravity Well",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature with flying attacks, it loses flying until end of turn."
+  },
+  "The Hunger Tide Rises": {
+    "id": "The Hunger Tide Rises",
+    "name": "The Hunger Tide Rises",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II, III — Create a 1/1 black and green Insect creature token.\nIV — Sacrifice any number of creatures. Search your library and/or graveyard for a creature card with mana value less than or equal to the number of creatures sacrificed this way and put it onto the battlefield. If you search your library this way, shuffle."
+  },
+  "Birthing Ritual": {
+    "id": "Birthing Ritual",
+    "name": "Birthing Ritual",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your end step, if you control a creature, look at the top seven cards of your library. Then you may sacrifice a creature. If you do, you may put a creature card with mana value X or less from among those cards onto the battlefield, where X is 1 plus the sacrificed creature's mana value. Put the rest on the bottom of your library in a random order."
+  },
+  "Sylvan Scavenging": {
+    "id": "Sylvan Scavenging",
+    "name": "Sylvan Scavenging",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your end step, choose one —\n• Put a +1/+1 counter on target creature you control.\n• Create a 3/3 green Raccoon creature token if you control a creature with power 4 or greater."
+  },
+  "Full Moon's Rise": {
+    "id": "Full Moon's Rise",
+    "name": "Full Moon's Rise",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Werewolf creatures you control get +1/+0 and have trample.\nSacrifice this enchantment: Regenerate all Werewolf creatures you control."
+  },
+  "Hidden Predators": {
+    "id": "Hidden Predators",
+    "name": "Hidden Predators",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When an opponent controls a creature with power 4 or greater, if this permanent is an enchantment, it becomes a 4/4 Beast creature."
+  },
+  "Hall of Gemstone": {
+    "id": "Hall of Gemstone",
+    "name": "Hall of Gemstone",
+    "typeLine": "World Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of each player's upkeep, that player chooses a color. Until end of turn, lands tapped for mana produce mana of the chosen color instead of any other color."
+  },
+  "Dredger's Insight": {
+    "id": "Dredger's Insight",
+    "name": "Dredger's Insight",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever one or more artifact and/or creature cards leave your graveyard, you gain 1 life.\nWhen this enchantment enters, mill four cards. You may put an artifact, creature, or land card from among the milled cards into your hand. (To mill four cards, put the top four cards of your library into your graveyard.)"
+  },
+  "Snowblind": {
+    "id": "Snowblind",
+    "name": "Snowblind",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets -X/-Y. If that creature is attacking, X is the number of snow lands defending player controls. Otherwise, X is the number of snow lands its controller controls. Y is equal to X or to enchanted creature's toughness minus 1, whichever is smaller."
+  },
+  "Game Preserve": {
+    "id": "Game Preserve",
+    "name": "Game Preserve",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, each player reveals the top card of their library. If all cards revealed this way are creature cards, put those cards onto the battlefield under their owners' control."
+  },
+  "Upwelling": {
+    "id": "Upwelling",
+    "name": "Upwelling",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Players don't lose unspent mana as steps and phases end."
+  },
+  "Hidden Guerrillas": {
+    "id": "Hidden Guerrillas",
+    "name": "Hidden Guerrillas",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When an opponent casts an artifact spell, if this permanent is an enchantment, it becomes a 5/3 Soldier creature with trample."
+  },
+  "Roaring Earth": {
+    "id": "Roaring Earth",
+    "name": "Roaring Earth",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature or Vehicle you control.\nChannel — {X}{G}{G}, Discard this card: Put X +1/+1 counters on target land you control. It becomes a 0/0 green Spirit creature with haste. It's still a land."
+  },
+  "Aluren": {
+    "id": "Aluren",
+    "name": "Aluren",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Any player may cast creature spells with mana value 3 or less without paying their mana costs and as though they had flash."
+  },
+  "Campsite Cuisine": {
+    "id": "Campsite Cuisine",
+    "name": "Campsite Cuisine",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this enchantment or a legendary creature you control enters, create a Food token.\nWhenever you attack, you may sacrifice X Foods. When you do, up to X target attacking creatures each get +3/+3 and gain trample and indestructible until end of turn."
+  },
+  "Compost": {
+    "id": "Compost",
+    "name": "Compost",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a black card is put into an opponent's graveyard from anywhere, you may draw a card."
+  },
+  "Manabond": {
+    "id": "Manabond",
+    "name": "Manabond",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your end step, you may reveal your hand and put all land cards from it onto the battlefield. If you do, discard your hand."
+  },
+  "Viridian Harvest": {
+    "id": "Viridian Harvest",
+    "name": "Viridian Harvest",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant artifact\nWhen enchanted artifact is put into a graveyard, you gain 6 life."
+  },
+  "Gift of the Woods": {
+    "id": "Gift of the Woods",
+    "name": "Gift of the Woods",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature blocks or becomes blocked, it gets +0/+3 until end of turn and you gain 1 life."
+  },
+  "Wall Crawl": {
+    "id": "Wall Crawl",
+    "name": "Wall Crawl",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, create a 2/1 green Spider creature token with reach, then you gain 1 life for each Spider you control.\nSpiders you control get +1/+1 and can't be blocked by creatures with defender."
+  },
+  "Pattern of Rebirth": {
+    "id": "Pattern of Rebirth",
+    "name": "Pattern of Rebirth",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhen enchanted creature dies, that creature's controller may search their library for a creature card, put that card onto the battlefield, then shuffle."
+  },
+  "Rite of Passage": {
+    "id": "Rite of Passage",
+    "name": "Rite of Passage",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control is dealt damage, put a +1/+1 counter on it. (It must survive the damage to get the counter.)"
+  },
+  "Vigorous Farming": {
+    "id": "Vigorous Farming",
+    "name": "Vigorous Farming",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Lands you control enter the battlefield untapped.\nAt the beginning of your end step, the topmost land card in your library perpetually gains \"Whenever this land is tapped for mana, add an additional {G}.\"",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Song of Serenity": {
+    "id": "Song of Serenity",
+    "name": "Song of Serenity",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures that are enchanted can't attack or block."
+  },
+  "Meandered Towershell": {
+    "id": "Meandered Towershell",
+    "name": "Meandered Towershell",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature has islandwalk and \"Whenever this creature attacks, exile it and Meandered Towershell. Return it to the battlefield under your control tapped and attacking at the beginning of the declare attackers step on your next turn, then return Meandered Towershell to the battlefield under its owner's control attached to that creature.\""
+  },
+  "Kavu Lair": {
+    "id": "Kavu Lair",
+    "name": "Kavu Lair",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature with power 4 or greater enters, its controller draws a card."
+  },
+  "Sight of the Scalelords": {
+    "id": "Sight of the Scalelords",
+    "name": "Sight of the Scalelords",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of combat on your turn, creatures you control with toughness 4 or greater get +2/+2 and gain vigilance until end of turn."
+  },
+  "Wild Pair": {
+    "id": "Wild Pair",
+    "name": "Wild Pair",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature enters, if you cast it from your hand, you may search your library for a creature card with the same total power and toughness, put it onto the battlefield, then shuffle."
+  },
+  "Fortitude": {
+    "id": "Fortitude",
+    "name": "Fortitude",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nSacrifice a Forest: Regenerate enchanted creature.\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand."
+  },
+  "Retaliation": {
+    "id": "Retaliation",
+    "name": "Retaliation",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures you control have \"Whenever this creature becomes blocked by a creature, this creature gets +1/+1 until end of turn.\""
+  },
+  "Kudzu": {
+    "id": "Kudzu",
+    "name": "Kudzu",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nWhen enchanted land becomes tapped, destroy it. That land's controller may attach this Aura to a land of their choice."
+  },
+  "Ana Sanctuary": {
+    "id": "Ana Sanctuary",
+    "name": "Ana Sanctuary",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, if you control a blue or black permanent, target creature gets +1/+1 until end of turn. If you control a blue permanent and a black permanent, that creature gets +5/+5 until end of turn instead."
+  },
+  "Favored Enemy": {
+    "id": "Favored Enemy",
+    "name": "Favored Enemy",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As this enchantment enters, note the most prevalent creature type in an opponent's library.\nWhen this enchantment enters, target creature you control fights up to one target creature you don't control.\nWhenever a creature an opponent controls of the noted type dies, put a +1/+1 counter on target creature you control."
+  },
+  "Alpha Authority": {
+    "id": "Alpha Authority",
+    "name": "Alpha Authority",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature has hexproof and can't be blocked by more than one creature."
+  },
+  "Silken Strength": {
+    "id": "Silken Strength",
+    "name": "Silken Strength",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash\nEnchant creature or Vehicle\nWhen this Aura enters, untap enchanted permanent.\nEnchanted permanent gets +1/+2 and has reach."
+  },
+  "Elephant Grass": {
+    "id": "Elephant Grass",
+    "name": "Elephant Grass",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nBlack creatures can't attack you.\nNonblack creatures can't attack you unless their controller pays {2} for each creature they control that's attacking you."
+  },
+  "Still Life": {
+    "id": "Still Life",
+    "name": "Still Life",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{G}{G}: This enchantment becomes a 4/3 Centaur creature in addition to its other types until end of turn."
+  },
+  "Awakening": {
+    "id": "Awakening",
+    "name": "Awakening",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of each upkeep, untap all creatures and lands."
+  },
+  "Hydra's Growth": {
+    "id": "Hydra's Growth",
+    "name": "Hydra's Growth",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhen this Aura enters, put a +1/+1 counter on enchanted creature.\nAt the beginning of your upkeep, double the number of +1/+1 counters on enchanted creature."
+  },
+  "Case of the Trampled Garden": {
+    "id": "Case of the Trampled Garden",
+    "name": "Case of the Trampled Garden",
+    "typeLine": "Enchantment — Case",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this Case enters, distribute two +1/+1 counters among one or two target creatures you control.\nTo solve — Creatures you control have total power 8 or greater. (If unsolved, solve at the beginning of your end step.)\nSolved — Whenever you attack, put a +1/+1 counter on target attacking creature. It gains trample until end of turn."
+  },
+  "Cycle of Life": {
+    "id": "Cycle of Life",
+    "name": "Cycle of Life",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Return this enchantment to its owner's hand: Target creature you cast this turn has base power and toughness 0/1 until your next upkeep. At the beginning of your next upkeep, put a +1/+1 counter on that creature."
+  },
+  "Support Mission": {
+    "id": "Support Mission",
+    "name": "Support Mission",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control enters, put a quest counter on this enchantment. Put a +1/+1 counter on that creature. If this enchantment has five or more quest counters on it, instead put two +1/+1 counters on that creature."
+  },
+  "Nature's Wrath": {
+    "id": "Nature's Wrath",
+    "name": "Nature's Wrath",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you pay {G}.\nWhenever a player puts an Island or blue permanent onto the battlefield, that player sacrifices an Island or blue permanent of their choice.\nWhenever a player puts a Swamp or black permanent onto the battlefield, that player sacrifices a Swamp or black permanent of their choice."
+  },
+  "Canopy Cover": {
+    "id": "Canopy Cover",
+    "name": "Canopy Cover",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature can't be blocked except by creatures with flying or reach.\nEnchanted creature can't be the target of spells or abilities your opponents control."
+  },
+  "Loose in the Park": {
+    "id": "Loose in the Park",
+    "name": "Loose in the Park",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nWhen this enchantment enters, draw a card, then draft a card from this enchantment's spellbook and exile it.\n{3}: Enchanted land becomes a copy of the exiled card until end of turn and gains haste. It's still a land."
+  },
+  "Penumbra Umbra": {
+    "id": "Penumbra Umbra",
+    "name": "Penumbra Umbra",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature you control\nWhen Penumbra Umbra is put into a graveyard from the battlefield, create a token that's a copy of enchanted creature, except the token is black.\nUmbra armor (If enchanted creature would be destroyed, instead remove all damage from it and destroy this Aura.)"
+  },
+  "Gilt-Leaf's Embrace": {
+    "id": "Gilt-Leaf's Embrace",
+    "name": "Gilt-Leaf's Embrace",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash\nEnchant creature\nWhen this Aura enters, enchanted creature gains trample and indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy it. If its toughness is 0 or less, it still dies.)\nEnchanted creature gets +2/+0."
+  },
+  "Primal Order": {
+    "id": "Primal Order",
+    "name": "Primal Order",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of each player's upkeep, this enchantment deals damage to that player equal to the number of nonbasic lands they control."
+  },
+  "Ooze Flux": {
+    "id": "Ooze Flux",
+    "name": "Ooze Flux",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{1}{G}, Remove one or more +1/+1 counters from among creatures you control: Create an X/X green Ooze creature token, where X is the number of +1/+1 counters removed this way."
+  },
+  "City of Solitude": {
+    "id": "City of Solitude",
+    "name": "City of Solitude",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Players can cast spells and activate abilities only during their own turns."
+  },
+  "Blizzard": {
+    "id": "Blizzard",
+    "name": "Blizzard",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only if you control a snow land.\nCumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nCreatures with flying don't untap during their controllers' untap steps."
+  },
+  "The Aesir Escape Valhalla": {
+    "id": "The Aesir Escape Valhalla",
+    "name": "The Aesir Escape Valhalla",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter.)\nI — Exile a permanent card from your graveyard. You gain life equal to its mana value.\nII — Put a number of +1/+1 counters on target creature you control equal to the mana value of the exiled card.\nIII — Return this Saga and the exiled card to their owner's hand."
+  },
+  "Sylvan Echoes": {
+    "id": "Sylvan Echoes",
+    "name": "Sylvan Echoes",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever you clash and win, you may draw a card. (This ability triggers after the clash ends.)"
+  },
+  "Monstrous Vortex": {
+    "id": "Monstrous Vortex",
+    "name": "Monstrous Vortex",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever you cast a creature spell with power 5 or greater, discover X, where X is that spell's mana value. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)"
+  },
+  "Elfhame Sanctuary": {
+    "id": "Elfhame Sanctuary",
+    "name": "Elfhame Sanctuary",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, you may search your library for a basic land card, reveal that card, put it into your hand, then shuffle. If you do, you skip your draw step this turn."
+  },
+  "Meltstrider's Resolve": {
+    "id": "Meltstrider's Resolve",
+    "name": "Meltstrider's Resolve",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature you control\nWhen this Aura enters, enchanted creature fights up to one target creature an opponent controls. (Each deals damage equal to its power to the other.)\nEnchanted creature gets +0/+2 and can't be blocked by more than one creature."
+  },
+  "Bioengineered Future": {
+    "id": "Bioengineered Future",
+    "name": "Bioengineered Future",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")\nEach creature you control enters with an additional +1/+1 counter on it for each land that entered the battlefield under your control this turn."
+  },
+  "Katabatic Winds": {
+    "id": "Katabatic Winds",
+    "name": "Katabatic Winds",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Phasing (This phases in or out before you untap during each of your untap steps. While it's phased out, it's treated as though it doesn't exist.)\nCreatures with flying can't attack or block, and their activated abilities with {T} in their costs can't be activated."
+  },
+  "Hidden Stag": {
+    "id": "Hidden Stag",
+    "name": "Hidden Stag",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever an opponent plays a land, if this permanent is an enchantment, it becomes a 3/2 Elk Beast creature.\nWhenever you play a land, if this permanent is a creature, it becomes an enchantment."
+  },
+  "Tribute to the World Tree": {
+    "id": "Tribute to the World Tree",
+    "name": "Tribute to the World Tree",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control enters, draw a card if its power is 3 or greater. Otherwise, put two +1/+1 counters on it."
+  },
+  "Wanderlust": {
+    "id": "Wanderlust",
+    "name": "Wanderlust",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nAt the beginning of the upkeep of enchanted creature's controller, this Aura deals 1 damage to that player."
+  },
+  "Twists and Turns // Mycoid Maze": {
+    "id": "Twists and Turns // Mycoid Maze",
+    "name": "Twists and Turns // Mycoid Maze",
+    "typeLine": "Enchantment // Land — Cave",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Twists and Turns: If a creature you control would explore, instead you scry 1, then that creature explores.\nWhen this enchantment enters, target creature you control explores.\nWhen a land you control enters, if you control seven or more lands, transform this enchantment.\n\nMycoid Maze: (Transforms from Twists and Turns.)\n{T}: Add {G}.\n{3}{G}, {T}: Look at the top four cards of your library. You may reveal a creature card from among them and put that card into your hand. Put the rest on the bottom of your library in a random order.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Seed the Land": {
+    "id": "Seed the Land",
+    "name": "Seed the Land",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a land enters, its controller creates a 1/1 green Snake creature token."
+  },
+  "Raking Canopy": {
+    "id": "Raking Canopy",
+    "name": "Raking Canopy",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature with flying attacks you, this enchantment deals 4 damage to it."
+  },
+  "Wild Defiance": {
+    "id": "Wild Defiance",
+    "name": "Wild Defiance",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control becomes the target of an instant or sorcery spell, that creature gets +3/+3 until end of turn."
+  },
+  "Way of the Paradox": {
+    "id": "Way of the Paradox",
+    "name": "Way of the Paradox",
+    "typeLine": "Legendary Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When Way of the Paradox enters, empower Jace 5. (Put five loyalty counters on a Jace token you control. If you don't control one, first create a blue Jace planeswalker token with \"[−1]: Surveil 1\" and \"[−3]: Draw a card.\")\nWhenever you activate a loyalty ability, you gain 1 life. You may play an additional land this turn."
+  },
+  "Seton's Desire": {
+    "id": "Seton's Desire",
+    "name": "Seton's Desire",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +2/+2.\nThreshold — As long as there are seven or more cards in your graveyard, all creatures able to block enchanted creature do so."
+  },
+  "Aspect of Wolf": {
+    "id": "Aspect of Wolf",
+    "name": "Aspect of Wolf",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +X/+Y, where X is half the number of Forests you control, rounded down, and Y is half the number of Forests you control, rounded up."
+  },
+  "Rune of Might": {
+    "id": "Rune of Might",
+    "name": "Rune of Might",
+    "typeLine": "Enchantment — Aura Rune",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant permanent\nWhen this Aura enters, draw a card.\nAs long as enchanted permanent is a creature, it gets +1/+1 and has trample.\nAs long as enchanted permanent is an Equipment, it has \"Equipped creature gets +1/+1 and has trample.\""
+  },
+  "A Killer Among Us": {
+    "id": "A Killer Among Us",
+    "name": "A Killer Among Us",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, create a 1/1 white Human creature token, a 1/1 blue Merfolk creature token, and a 1/1 red Goblin creature token. Then secretly choose Human, Merfolk, or Goblin.\nSacrifice this enchantment, Reveal the creature type you chose: If target attacking creature token is the chosen type, put three +1/+1 counters on it and it gains deathtouch until end of turn."
+  },
+  "Primal Cocoon": {
+    "id": "Primal Cocoon",
+    "name": "Primal Cocoon",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nAt the beginning of your upkeep, put a +1/+1 counter on enchanted creature.\nWhen enchanted creature attacks or blocks, sacrifice this Aura."
+  },
+  "Lure": {
+    "id": "Lure",
+    "name": "Lure",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nAll creatures able to block enchanted creature do so."
+  },
+  "Dual Nature": {
+    "id": "Dual Nature",
+    "name": "Dual Nature",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a nontoken creature enters, its controller creates a token that's a copy of that creature.\nWhenever a nontoken creature leaves the battlefield, exile all tokens with the same name as that creature.\nWhen this enchantment leaves the battlefield, exile all tokens created with this enchantment."
+  },
+  "Saproling Burst": {
+    "id": "Saproling Burst",
+    "name": "Saproling Burst",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Fading 7 (This enchantment enters with seven fade counters on it. At the beginning of your upkeep, remove a fade counter from it. If you can't, sacrifice it.)\nRemove a fade counter from this enchantment: Create a green Saproling creature token. It has \"This token's power and toughness are each equal to the number of fade counters on Saproling Burst.\"\nWhen this enchantment leaves the battlefield, destroy all tokens created with this enchantment. They can't be regenerated."
+  },
+  "Historian's Wisdom": {
+    "id": "Historian's Wisdom",
+    "name": "Historian's Wisdom",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant artifact or creature\nWhen this Aura enters, if enchanted permanent is a creature with the greatest power among creatures on the battlefield, draw a card.\nAs long as enchanted permanent is a creature, it gets +2/+1."
+  },
+  "Tale of Katara and Toph": {
+    "id": "Tale of Katara and Toph",
+    "name": "Tale of Katara and Toph",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures you control have \"Whenever this creature becomes tapped for the first time during each of your turns, put a +1/+1 counter on it.\""
+  },
+  "Leaves from the Vine": {
+    "id": "Leaves from the Vine",
+    "name": "Leaves from the Vine",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Mill three cards, then create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nII — Put a +1/+1 counter on each of up to two target creatures you control.\nIII — Draw a card if there's a creature or Lesson card in your graveyard."
+  },
+  "The Weatherseed Treaty": {
+    "id": "The Weatherseed Treaty",
+    "name": "The Weatherseed Treaty",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI — Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\nII — Create a 1/1 green Saproling creature token.\nIII — Domain — Target creature you control gets +X/+X and gains trample until end of turn, where X is the number of basic land types among lands you control."
+  },
+  "Holistic Wisdom": {
+    "id": "Holistic Wisdom",
+    "name": "Holistic Wisdom",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{2}, Exile a card from your hand: Return target card from your graveyard to your hand if it shares a card type with the card exiled this way. (Artifact, battle, creature, enchantment, kindred, instant, land, planeswalker, and sorcery are card types.)"
+  },
+  "Nature's Chosen": {
+    "id": "Nature's Chosen",
+    "name": "Nature's Chosen",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature you control\n{0}: Untap enchanted creature. Activate only during your turn and only once each turn.\nTap enchanted creature: Untap target artifact, creature, or land. Activate only if enchanted creature is white and untapped and only once each turn."
+  },
+  "Ride the Shoopuf": {
+    "id": "Ride the Shoopuf",
+    "name": "Ride the Shoopuf",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature you control.\n{5}{G}{G}: This enchantment becomes a 7/7 Beast creature in addition to its other types."
+  },
+  "Glorious Sunrise": {
+    "id": "Glorious Sunrise",
+    "name": "Glorious Sunrise",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of combat on your turn, choose one —\n• Creatures you control get +1/+1 and gain trample until end of turn.\n• Target land gains \"{T}: Add {G}{G}{G}\" until end of turn.\n• Draw a card if you control a creature with power 3 or greater.\n• You gain 3 life.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Instill Energy": {
+    "id": "Instill Energy",
+    "name": "Instill Energy",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature can attack as though it had haste.\n{0}: Untap enchanted creature. Activate only during your turn and only once each turn."
+  },
+  "Powerleech": {
+    "id": "Powerleech",
+    "name": "Powerleech",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever an artifact an opponent controls becomes tapped or an opponent activates an artifact's ability without {T} in its activation cost, you gain 1 life."
+  },
+  "Call of the Wild": {
+    "id": "Call of the Wild",
+    "name": "Call of the Wild",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{2}{G}{G}: Reveal the top card of your library. If it's a creature card, put it onto the battlefield. Otherwise, put it into your graveyard."
+  },
+  "Fae Offering": {
+    "id": "Fae Offering",
+    "name": "Fae Offering",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of each end step, if you've cast both a creature spell and a noncreature spell this turn, create a Clue token, a Food token, and a Treasure token."
+  },
+  "Words of Wilding": {
+    "id": "Words of Wilding",
+    "name": "Words of Wilding",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{1}: The next time you would draw a card this turn, create a 2/2 green Bear creature token instead."
+  },
+  "Runaway Growth": {
+    "id": "Runaway Growth",
+    "name": "Runaway Growth",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Starting intensity 1\nEnchant land\nWhenever enchanted land is tapped for mana, its controller adds an additional amount of {G} equal to this enchantment's intensity. Then this enchantment intensifies by 1."
+  },
+  "Regeneration": {
+    "id": "Regeneration",
+    "name": "Regeneration",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature (Target a creature as you cast this. This card enters attached to that creature.)\n{G}: Regenerate enchanted creature. (The next time that creature would be destroyed this turn, instead tap it, remove it from combat, and heal all damage on it.)"
+  },
+  "Omenpath Journey": {
+    "id": "Omenpath Journey",
+    "name": "Omenpath Journey",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, search your library for up to five land cards that have different names, exile them, then shuffle.\nAt the beginning of your end step, choose a card at random exiled with this enchantment and put it onto the battlefield tapped."
+  },
+  "Arachnus Web": {
+    "id": "Arachnus Web",
+    "name": "Arachnus Web",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature can't attack or block, and its activated abilities can't be activated.\nAt the beginning of the end step, if enchanted creature's power is 4 or greater, destroy this Aura."
+  },
+  "World War Hulk": {
+    "id": "World War Hulk",
+    "name": "World War Hulk",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — The next red or green creature spell you cast this turn can be cast without paying its mana cost.\nII — Put three +1/+1 counters on target creature you control.\nIII — Choose target creature you control. Until end of turn, double its power and toughness and it gains trample."
+  },
+  "Equestrian Skill": {
+    "id": "Equestrian Skill",
+    "name": "Equestrian Skill",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +3/+3.\nAs long as enchanted creature is a Human, it has trample."
+  },
+  "Primal Prayers": {
+    "id": "Primal Prayers",
+    "name": "Primal Prayers",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, you get {E}{E} (two energy counters).\nYou may cast creature spells with mana value 3 or less by paying {E} rather than paying their mana costs. If you cast a spell this way, you may cast it as though it had flash."
+  },
+  "Fruit of the First Tree": {
+    "id": "Fruit of the First Tree",
+    "name": "Fruit of the First Tree",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhen enchanted creature dies, you gain X life and draw X cards, where X is its toughness."
+  },
+  "Elvish Guidance": {
+    "id": "Elvish Guidance",
+    "name": "Elvish Guidance",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nWhenever enchanted land is tapped for mana, its controller adds an additional {G} for each Elf on the battlefield.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Omnipresence": {
+    "id": "Omnipresence",
+    "name": "Omnipresence",
+    "typeLine": "Enchantment",
+    "manaCost": "{5}{G}{G}{G}",
+    "cmc": 8,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may cast spells with mana value less than or equal to the number of creatures you control from your hand without paying their mana costs."
+  },
+  "Party Dude": {
+    "id": "Party Dude",
+    "name": "Party Dude",
+    "typeLine": "Enchantment — Class",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, each player creates a Food token.\n{1}{G}: Level 2\nWhenever an artifact an opponent controls is put into a graveyard from the battlefield, draw a card.\n{4}{G}: Level 3\nWhenever one or more of your opponents are attacked, up to one target attacking creature gets +X/+X until end of turn, where X is the number of cards in your hand."
+  },
+  "Hidden Herd": {
+    "id": "Hidden Herd",
+    "name": "Hidden Herd",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When an opponent plays a nonbasic land, if this permanent is an enchantment, it becomes a 3/3 Beast creature."
+  },
+  "Living Lands": {
+    "id": "Living Lands",
+    "name": "Living Lands",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All Forests are 1/1 creatures that are still lands."
+  },
+  "Innkeeper's Talent": {
+    "id": "Innkeeper's Talent",
+    "name": "Innkeeper's Talent",
+    "typeLine": "Enchantment — Class",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(Gain the next level as a sorcery to add its ability.)\nAt the beginning of combat on your turn, put a +1/+1 counter on target creature you control.\n{G}: Level 2\nPermanents you control with counters on them have ward {1}.\n{3}{G}: Level 3\nIf you would put one or more counters on a permanent or player, put twice that many of each of those kinds of counters on that permanent or player instead."
+  },
+  "Earthlore": {
+    "id": "Earthlore",
+    "name": "Earthlore",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land you control\nTap enchanted land: Target blocking creature gets +1/+2 until end of turn. Activate only if enchanted land is untapped."
+  },
+  "Nylea's Presence": {
+    "id": "Nylea's Presence",
+    "name": "Nylea's Presence",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nWhen this Aura enters, draw a card.\nEnchanted land is every basic land type in addition to its other types."
+  },
+  "Hum of the Radix": {
+    "id": "Hum of the Radix",
+    "name": "Hum of the Radix",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each artifact spell costs {1} more to cast for each artifact its controller controls."
+  },
+  "Vivien's Talent": {
+    "id": "Vivien's Talent",
+    "name": "Vivien's Talent",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant planeswalker\nEnchanted planeswalker has \"[+1]: Look at the top four cards of your library. You may reveal a creature or land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order.\"\nWhenever a nontoken creature you control enters, put a loyalty counter on enchanted planeswalker."
+  },
+  "Aether Web": {
+    "id": "Aether Web",
+    "name": "Aether Web",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash (You may cast this spell any time you could cast an instant.)\nEnchant creature\nEnchanted creature gets +1/+1, has reach, and can block creatures with shadow as though they didn't have shadow. (Creatures with reach can block creatures with flying.)"
+  },
+  "Nature's Will": {
+    "id": "Nature's Will",
+    "name": "Nature's Will",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever one or more creatures you control deal combat damage to a player, tap all lands that player controls and untap all lands you control."
+  },
+  "Leyline of Lifeforce": {
+    "id": "Leyline of Lifeforce",
+    "name": "Leyline of Lifeforce",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nCreature spells can't be countered."
+  },
+  "Nature's Embrace": {
+    "id": "Nature's Embrace",
+    "name": "Nature's Embrace",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature or land\nAs long as enchanted permanent is a creature, it gets +2/+2.\nAs long as enchanted permanent is a land, it has \"{T}: Add two mana of any one color.\"",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Briar Shield": {
+    "id": "Briar Shield",
+    "name": "Briar Shield",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +1/+1.\nSacrifice this Aura: Enchanted creature gets +3/+3 until end of turn."
+  },
+  "Cocoon": {
+    "id": "Cocoon",
+    "name": "Cocoon",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature you control\nWhen this Aura enters, tap enchanted creature and put three pupa counters on this Aura.\nEnchanted creature doesn't untap during your untap step if this Aura has a pupa counter on it.\nAt the beginning of your upkeep, remove a pupa counter from this Aura. If you can't, sacrifice it, put a +1/+1 counter on enchanted creature, and that creature gains flying."
+  },
+  "Forgotten Harvest": {
+    "id": "Forgotten Harvest",
+    "name": "Forgotten Harvest",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, you may exile a land card from your graveyard. If you do, put a +1/+1 counter on target creature."
+  },
+  "March of the World Ooze": {
+    "id": "March of the World Ooze",
+    "name": "March of the World Ooze",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures you control have base power and toughness 6/6 and are Oozes in addition to their other types.\nWhenever an opponent casts a spell, if it's not their turn, you create a 3/3 green Elephant creature token."
+  },
+  "Venomous Fangs": {
+    "id": "Venomous Fangs",
+    "name": "Venomous Fangs",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature deals damage to a creature, destroy the other creature."
+  },
+  "Lost in the Woods": {
+    "id": "Lost in the Woods",
+    "name": "Lost in the Woods",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature attacks you or a planeswalker you control, reveal the top card of your library. If it's a Forest card, remove that creature from combat. Then put the revealed card on the bottom of your library."
+  },
+  "Return of the Mole Man": {
+    "id": "Return of the Mole Man",
+    "name": "Return of the Mole Man",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, you may mill two cards.\n{5}{G}, Sacrifice this enchantment: Create X 1/1 green Minion creature tokens named Moloid, where X is the number of permanent cards in your graveyard. The tokens have \"Whenever this token attacks, you may mill a card.\" Activate only as a sorcery."
+  },
+  "Crawling Infestation": {
+    "id": "Crawling Infestation",
+    "name": "Crawling Infestation",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, you may mill two cards. (You may put the top two cards of your library into your graveyard.)\nWhenever one or more creature cards are put into your graveyard from anywhere during your turn, create a 1/1 green Insect creature token. This ability triggers only once each turn."
+  },
+  "Welcome to . . . // Jurassic Park": {
+    "id": "Welcome to . . . // Jurassic Park",
+    "name": "Welcome to . . . // Jurassic Park",
+    "typeLine": "Enchantment — Saga // Legendary Land",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Welcome to . . .: (As this Saga enters and after your draw step, add a lore counter.)\nI — For each opponent, up to one target noncreature artifact they control becomes a 0/4 Wall artifact creature with defender for as long as you control this Saga.\nII — Create a 3/3 green Dinosaur creature token with trample. It gains haste until end of turn.\nIII — Destroy all Walls. Exile this Saga, then return it to the battlefield transformed under your control.\n\nJurassic Park: (Transforms from Welcome to ....)\nEach Dinosaur card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)\n{T}: Add {G} for each Dinosaur you control.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "In Search of Greatness": {
+    "id": "In Search of Greatness",
+    "name": "In Search of Greatness",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, you may cast a permanent spell from your hand with mana value equal to 1 plus the greatest mana value among other permanents you control without paying its mana cost. If you don't, scry 1."
+  },
+  "Leyline Immersion": {
+    "id": "Leyline Immersion",
+    "name": "Leyline Immersion",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant legendary creature\nEnchanted creature has ward {2} and \"{T}: Add five mana in any combination of colors. Spend this mana only to cast spells.\"",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Genju of the Cedars": {
+    "id": "Genju of the Cedars",
+    "name": "Genju of the Cedars",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant Forest\n{2}: Enchanted Forest becomes a 4/4 green Spirit creature until end of turn. It's still a land.\nWhen enchanted Forest is put into a graveyard, you may return this card from your graveyard to your hand."
+  },
+  "Multani's Presence": {
+    "id": "Multani's Presence",
+    "name": "Multani's Presence",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a spell you've cast is countered, draw a card."
+  },
+  "The Huntsman's Redemption": {
+    "id": "The Huntsman's Redemption",
+    "name": "The Huntsman's Redemption",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create a 3/3 green Beast creature token.\nII — You may sacrifice a creature. If you do, search your library for a creature or basic land card, reveal it, put it into your hand, then shuffle.\nIII — Up to two target creatures each get +2/+2 and gain trample until end of turn."
+  },
+  "Sidequest: Raise a Chocobo // Black Chocobo": {
+    "id": "Sidequest: Raise a Chocobo // Black Chocobo",
+    "name": "Sidequest: Raise a Chocobo // Black Chocobo",
+    "typeLine": "Enchantment // Creature — Bird",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Sidequest: Raise a Chocobo: When this enchantment enters, create a 2/2 green Bird creature token with \"Whenever a land you control enters, this token gets +1/+0 until end of turn.\"\nAt the beginning of your first main phase, if you control four or more Birds, transform this enchantment.\n\nBlack Chocobo: When this permanent transforms into Black Chocobo, search your library for a land card, put it onto the battlefield tapped, then shuffle.\nLandfall — Whenever a land you control enters, Birds you control get +1/+0 until end of turn."
+  },
+  "Hidden Spider": {
+    "id": "Hidden Spider",
+    "name": "Hidden Spider",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When an opponent casts a creature spell with flying, if this permanent is an enchantment, it becomes a 3/5 Spider creature with reach. (It can block creatures with flying.)"
+  },
+  "Wreath of Geists": {
+    "id": "Wreath of Geists",
+    "name": "Wreath of Geists",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +X/+X, where X is the number of creature cards in your graveyard."
+  },
+  "Gaea's Embrace": {
+    "id": "Gaea's Embrace",
+    "name": "Gaea's Embrace",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +3/+3 and has trample.\n{G}: Regenerate enchanted creature."
+  },
+  "Maze's Mantle": {
+    "id": "Maze's Mantle",
+    "name": "Maze's Mantle",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash\nEnchant creature\nWhen this Aura enters, if enchanted creature has toxic, that creature gains hexproof until end of turn.\nEnchanted creature gets +2/+2."
+  },
+  "All-You-Can-Eat Buffet": {
+    "id": "All-You-Can-Eat Buffet",
+    "name": "All-You-Can-Eat Buffet",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may look at the top card of your library any time.\nYou may play lands and cast creature spells from the top of your library.\nThe top card of your library is a Food token. It's still a card. (It has \"{2},{T}, Sacrifice this token: You gain 3 life.\")"
+  },
+  "Tectonic Split": {
+    "id": "Tectonic Split",
+    "name": "Tectonic Split",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice half the lands you control, rounded up.\nHexproof\nLands you control have \"{T}: Add three mana of any one color.\"",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Thoughtleech": {
+    "id": "Thoughtleech",
+    "name": "Thoughtleech",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever an Island an opponent controls becomes tapped, you may gain 1 life."
+  },
+  "Serpent Skin": {
+    "id": "Serpent Skin",
+    "name": "Serpent Skin",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash\nEnchant creature\nEnchanted creature gets +1/+1.\n{G}: Regenerate enchanted creature."
+  },
+  "Jolrael's Favor": {
+    "id": "Jolrael's Favor",
+    "name": "Jolrael's Favor",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash\nEnchant creature\n{1}{G}: Regenerate enchanted creature."
+  },
+  "Kyoshi Island Plaza": {
+    "id": "Kyoshi Island Plaza",
+    "name": "Kyoshi Island Plaza",
+    "typeLine": "Legendary Enchantment — Shrine",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When Kyoshi Island Plaza enters, search your library for up to X basic land cards, where X is the number of Shrines you control. Put those cards onto the battlefield tapped, then shuffle.\nWhenever another Shrine you control enters, search your library for a basic land card, put it onto the battlefield tapped, then shuffle."
+  },
+  "Fall of Gil-galad": {
+    "id": "Fall of Gil-galad",
+    "name": "Fall of Gil-galad",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Scry 2.\nII — Put two +1/+1 counters on target creature you control.\nIII — Until end of turn, target creature you control gains \"When this creature dies, draw two cards.\" Then that creature fights up to one other target creature."
+  },
+  "Viridian Revel": {
+    "id": "Viridian Revel",
+    "name": "Viridian Revel",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever an artifact is put into an opponent's graveyard from the battlefield, you may draw a card."
+  },
+  "The Dragon-Kami Reborn // Dragon-Kami's Egg": {
+    "id": "The Dragon-Kami Reborn // Dragon-Kami's Egg",
+    "name": "The Dragon-Kami Reborn // Dragon-Kami's Egg",
+    "typeLine": "Enchantment — Saga // Enchantment Creature — Egg",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "The Dragon-Kami Reborn: (As this Saga enters and after your draw step, add a lore counter.)\nI, II — You gain 2 life. Look at the top three cards of your library. Exile one of them face down with a hatching counter on it, then put the rest on the bottom of your library in any order.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nDragon-Kami's Egg: Whenever this creature or a Dragon you control dies, you may cast a creature spell from among cards you own in exile with hatching counters on them without paying its mana cost."
+  },
+  "Goliath Hatchery": {
+    "id": "Goliath Hatchery",
+    "name": "Goliath Hatchery",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, create two 3/3 green Phyrexian Beast creature tokens with toxic 1. (Players dealt combat damage by them also get a poison counter.)\nCorrupted — At the beginning of your upkeep, if an opponent has three or more poison counters, choose a creature you control, then draw cards equal to its total toxic value."
+  },
+  "Oath of Nissa": {
+    "id": "Oath of Nissa",
+    "name": "Oath of Nissa",
+    "typeLine": "Legendary Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When Oath of Nissa enters, look at the top three cards of your library. You may reveal a creature, land, or planeswalker card from among them and put it into your hand. Put the rest on the bottom of your library in any order.\nYou may spend mana as though it were mana of any color to cast planeswalker spells."
+  },
+  "Shimmerwilds Growth": {
+    "id": "Shimmerwilds Growth",
+    "name": "Shimmerwilds Growth",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nAs this Aura enters, choose a color.\nEnchanted land is the chosen color.\nWhenever enchanted land is tapped for mana, its controller adds an additional one mana of the chosen color.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Quest for the Gemblades": {
+    "id": "Quest for the Gemblades",
+    "name": "Quest for the Gemblades",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control deals combat damage to a creature, you may put a quest counter on this enchantment.\nRemove a quest counter from this enchantment and sacrifice it: Put four +1/+1 counters on target creature."
+  },
+  "Lush Growth": {
+    "id": "Lush Growth",
+    "name": "Lush Growth",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nEnchanted land is a Mountain, Forest, and Plains."
+  },
+  "Advancing the Spirit": {
+    "id": "Advancing the Spirit",
+    "name": "Advancing the Spirit",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, draw a card.\nYou may pay {0} rather than pay the power-up cost of the first power-up ability you activate during each of your turns."
+  },
+  "Airtight Alibi": {
+    "id": "Airtight Alibi",
+    "name": "Airtight Alibi",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash\nEnchant creature\nWhen this Aura enters, untap enchanted creature. It gains hexproof until end of turn. If it's suspected, it's no longer suspected.\nEnchanted creature gets +2/+2 and can't become suspected."
+  },
+  "Teachings of the Kirin // Kirin-Touched Orochi": {
+    "id": "Teachings of the Kirin // Kirin-Touched Orochi",
+    "name": "Teachings of the Kirin // Kirin-Touched Orochi",
+    "typeLine": "Enchantment — Saga // Enchantment Creature — Snake Monk",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Teachings of the Kirin: (As this Saga enters and after your draw step, add a lore counter.)\nI — Mill three cards. Create a 1/1 colorless Spirit creature token.\nII — Put a +1/+1 counter on target creature you control.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nKirin-Touched Orochi: Whenever this creature attacks, choose one —\n• Exile target creature card from a graveyard. When you do, create a 1/1 colorless Spirit creature token.\n• Exile target noncreature card from a graveyard. When you do, put a +1/+1 counter on target creature you control."
+  },
+  "Quest for Renewal": {
+    "id": "Quest for Renewal",
+    "name": "Quest for Renewal",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control becomes tapped, you may put a quest counter on this enchantment.\nAs long as there are four or more quest counters on this enchantment, untap all creatures you control during each other player's untap step."
+  },
+  "Cartouche of Strength": {
+    "id": "Cartouche of Strength",
+    "name": "Cartouche of Strength",
+    "typeLine": "Enchantment — Aura Cartouche",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature you control\nWhen this Aura enters, you may have enchanted creature fight target creature an opponent controls. (Each deals damage equal to its power to the other.)\nEnchanted creature gets +1/+1 and has trample."
+  },
+  "Grounded": {
+    "id": "Grounded",
+    "name": "Grounded",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature loses flying."
+  },
+  "Hibernation's End": {
+    "id": "Hibernation's End",
+    "name": "Hibernation's End",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cumulative upkeep {1} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nWhenever you pay this enchantment's cumulative upkeep, you may search your library for a creature card with mana value equal to the number of age counters on this enchantment, put it onto the battlefield, then shuffle."
+  },
+  "Invigorating Boon": {
+    "id": "Invigorating Boon",
+    "name": "Invigorating Boon",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a player cycles a card, you may put a +1/+1 counter on target creature."
+  },
+  "Life and Limb": {
+    "id": "Life and Limb",
+    "name": "Life and Limb",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All Forests and all Saprolings are 1/1 green Saproling creatures and Forest lands in addition to their other types. (They're affected by summoning sickness.)"
+  },
+  "Puppet Crafting": {
+    "id": "Puppet Crafting",
+    "name": "Puppet Crafting",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant artifact or non-Aura enchantment\nEnchanted permanent is a Construct creature with base power and toughness 5/5 in addition to its other types.\n{4}{G}: Return this card from your graveyard to your hand."
+  },
+  "Perilous Forays": {
+    "id": "Perilous Forays",
+    "name": "Perilous Forays",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{1}, Sacrifice a creature: Search your library for a land card with a basic land type, put it onto the battlefield tapped, then shuffle."
+  },
+  "Freyalise's Radiance": {
+    "id": "Freyalise's Radiance",
+    "name": "Freyalise's Radiance",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nSnow permanents don't untap during their controllers' untap steps."
+  },
+  "Bonds of Mortality": {
+    "id": "Bonds of Mortality",
+    "name": "Bonds of Mortality",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, draw a card.\n{G}: Creatures your opponents control lose hexproof and indestructible until end of turn."
+  },
+  "Gigantiform": {
+    "id": "Gigantiform",
+    "name": "Gigantiform",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {4}\nEnchant creature\nEnchanted creature has base power and toughness 8/8 and has trample.\nWhen this Aura enters, if it was kicked, you may search your library for a card named Gigantiform, put it onto the battlefield, then shuffle."
+  },
+  "Beorn's Hospitality": {
+    "id": "Beorn's Hospitality",
+    "name": "Beorn's Hospitality",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, put a +1/+1 counter on target creature you control.\n{5}{G}{G}: This enchantment becomes a Bear creature in addition to its other types and gains \"This creature's power and toughness are each equal to the number of lands you control.\" (This effect doesn't end.)"
+  },
+  "Reins of the Vinesteed": {
+    "id": "Reins of the Vinesteed",
+    "name": "Reins of the Vinesteed",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +2/+2.\nWhen enchanted creature dies, you may return this card from your graveyard to the battlefield attached to a creature that shares a creature type with that creature."
+  },
+  "Hidden Ancients": {
+    "id": "Hidden Ancients",
+    "name": "Hidden Ancients",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When an opponent casts an enchantment spell, if this permanent is an enchantment, it becomes a 5/5 Treefolk creature."
+  },
+  "Druid Class": {
+    "id": "Druid Class",
+    "name": "Druid Class",
+    "typeLine": "Enchantment — Class",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(Gain the next level as a sorcery to add its ability.)\nLandfall — Whenever a land you control enters, you gain 1 life.\n{2}{G}: Level 2\nYou may play an additional land on each of your turns.\n{4}{G}: Level 3\nWhen this Class becomes level 3, target land you control becomes a creature with haste and \"This creature's power and toughness are each equal to the number of lands you control.\" It's still a land."
+  },
+  "Pulse of Llanowar": {
+    "id": "Pulse of Llanowar",
+    "name": "Pulse of Llanowar",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If a basic land you control is tapped for mana, it produces mana of a color of your choice instead of any other type."
+  },
+  "Saproling Infestation": {
+    "id": "Saproling Infestation",
+    "name": "Saproling Infestation",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a player kicks a spell, you create a 1/1 green Saproling creature token."
+  },
+  "Tornado": {
+    "id": "Tornado",
+    "name": "Tornado",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cumulative upkeep {G} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\n{2}{G}, Pay 3 life for each velocity counter on this enchantment: Destroy target permanent and put a velocity counter on this enchantment. Activate only once each turn."
+  },
+  "Primitive Etchings": {
+    "id": "Primitive Etchings",
+    "name": "Primitive Etchings",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the first card you draw each turn. Whenever you reveal a creature card this way, draw a card."
+  },
+  "Ritual of Subdual": {
+    "id": "Ritual of Subdual",
+    "name": "Ritual of Subdual",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nIf a land is tapped for mana, it produces colorless mana instead of any other type."
+  },
+  "Part in Friendship": {
+    "id": "Part in Friendship",
+    "name": "Part in Friendship",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a nontoken creature you control dies, reveal cards from the top of your library until you reveal a creature card. If its mana value is less than or equal to the number of lands you control, put it onto the battlefield. Otherwise, put it into your hand. Put the rest on the bottom of your library in a random order. This ability triggers only once each turn."
+  },
+  "Fastbond": {
+    "id": "Fastbond",
+    "name": "Fastbond",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may play any number of lands on each of your turns.\nWhenever you play a land, if it wasn't the first land you played this turn, this enchantment deals 1 damage to you."
+  },
+  "Nature's Kiss": {
+    "id": "Nature's Kiss",
+    "name": "Nature's Kiss",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\n{1}, Exile the top card of your graveyard: Enchanted creature gets +1/+1 until end of turn."
+  },
+  "The Legend of Kyoshi // Avatar Kyoshi": {
+    "id": "The Legend of Kyoshi // Avatar Kyoshi",
+    "name": "The Legend of Kyoshi // Avatar Kyoshi",
+    "typeLine": "Enchantment — Saga // Legendary Creature — Avatar",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "The Legend of Kyoshi: (As this Saga enters and after your draw step, add a lore counter.)\nI — Draw cards equal to the greatest power among creatures you control.\nII — Earthbend X, where X is the number of cards in your hand. That land becomes an Island in addition to its other types.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nAvatar Kyoshi: Lands you control have trample and hexproof.\n{T}: Add X mana of any one color, where X is the greatest power among creatures you control.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Court of Bounty": {
+    "id": "Court of Bounty",
+    "name": "Court of Bounty",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, you become the monarch.\nAt the beginning of your upkeep, you may put a land card from your hand onto the battlefield. If you're the monarch, instead you may put a creature or land card from your hand onto the battlefield."
+  },
+  "Overlaid Terrain": {
+    "id": "Overlaid Terrain",
+    "name": "Overlaid Terrain",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As this enchantment enters, sacrifice all lands you control.\nLands you control have \"{T}: Add two mana of any one color.\"",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Muraganda Petroglyphs": {
+    "id": "Muraganda Petroglyphs",
+    "name": "Muraganda Petroglyphs",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures with no abilities get +2/+2."
+  },
+  "Jugan Defends the Temple // Remnant of the Rising Star": {
+    "id": "Jugan Defends the Temple // Remnant of the Rising Star",
+    "name": "Jugan Defends the Temple // Remnant of the Rising Star",
+    "typeLine": "Enchantment — Saga // Enchantment Creature — Dragon Spirit",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Jugan Defends the Temple: (As this Saga enters and after your draw step, add a lore counter.)\nI — Create a 1/1 green Human Monk creature token with \"{T}: Add {G}.\"\nII — Put a +1/+1 counter on each of up to two target creatures.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nRemnant of the Rising Star: Flying\nWhenever another creature you control enters, you may pay {X}. When you do, put X +1/+1 counters on that creature.\nAs long as you control five or more modified creatures, this creature gets +5/+5 and has trample. (Equipment, Auras you control, and counters are modifications.)",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Druid's Call": {
+    "id": "Druid's Call",
+    "name": "Druid's Call",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature is dealt damage, its controller creates that many 1/1 green Squirrel creature tokens."
+  },
+  "Kraven's Last Hunt": {
+    "id": "Kraven's Last Hunt",
+    "name": "Kraven's Last Hunt",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Mill five cards. When you do, this Saga deals damage equal to the greatest power among creature cards in your graveyard to target creature.\nII — Target creature you control gets +2/+2 until end of turn.\nIII — Return target creature card from your graveyard to your hand."
+  },
+  "Defense of the Heart": {
+    "id": "Defense of the Heart",
+    "name": "Defense of the Heart",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, if an opponent controls three or more creatures, sacrifice this enchantment, search your library for up to two creature cards, put those cards onto the battlefield, then shuffle."
+  },
+  "Rowen": {
+    "id": "Rowen",
+    "name": "Rowen",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the first card you draw each turn. Whenever you reveal a basic land card this way, draw a card."
+  },
+  "Avatar Destiny": {
+    "id": "Avatar Destiny",
+    "name": "Avatar Destiny",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature you control\nEnchanted creature gets +1/+1 for each creature card in your graveyard and is an Avatar in addition to its other types.\nWhen enchanted creature dies, mill cards equal to its power. Return this card to its owner's hand and up to one creature card milled this way to the battlefield under your control."
+  },
+  "Venom": {
+    "id": "Venom",
+    "name": "Venom",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature blocks or becomes blocked by a non-Wall creature, destroy the other creature at end of combat."
+  },
+  "Mammoth Harness": {
+    "id": "Mammoth Harness",
+    "name": "Mammoth Harness",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature loses flying.\nWhenever enchanted creature blocks or becomes blocked by a creature, the other creature gains first strike until end of turn."
+  },
+  "Training Regimen": {
+    "id": "Training Regimen",
+    "name": "Training Regimen",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures you control with +1/+1 counters on them have trample.\nAt the beginning of combat on your turn, put a +1/+1 counter on target creature you control."
+  },
+  "Thelon's Curse": {
+    "id": "Thelon's Curse",
+    "name": "Thelon's Curse",
+    "typeLine": "Enchantment",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Blue creatures don't untap during their controllers' untap steps.\nAt the beginning of each player's upkeep, that player may choose any number of tapped blue creatures they control and pay {U} for each creature chosen this way. If the player does, untap those creatures."
+  },
+  "Beastmaster's Magemark": {
+    "id": "Beastmaster's Magemark",
+    "name": "Beastmaster's Magemark",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant creature\nCreatures you control that are enchanted get +1/+1.\nWhenever a creature you control that's enchanted becomes blocked, it gets +1/+1 until end of turn for each creature blocking it."
+  },
+  "Earthbender Ascension": {
+    "id": "Earthbender Ascension",
+    "name": "Earthbender Ascension",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this enchantment enters, earthbend 2. Then search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\nLandfall — Whenever a land you control enters, put a quest counter on this enchantment. When you do, if it has four or more quest counters on it, put a +1/+1 counter on target creature you control. It gains trample until end of turn."
+  },
+  "Bower Passage": {
+    "id": "Bower Passage",
+    "name": "Bower Passage",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures with flying can't block creatures you control."
+  },
+  "Barbed Foliage": {
+    "id": "Barbed Foliage",
+    "name": "Barbed Foliage",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature attacks you, it loses flanking until end of turn.\nWhenever a creature without flying attacks you, this enchantment deals 1 damage to it."
+  },
+  "Greener Pastures": {
+    "id": "Greener Pastures",
+    "name": "Greener Pastures",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of each player's upkeep, if that player controls more lands than each other player, the player creates a 1/1 green Saproling creature token."
+  },
+  "Dense Foliage": {
+    "id": "Dense Foliage",
+    "name": "Dense Foliage",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures can't be the targets of spells."
+  },
+  "Earth Surge": {
+    "id": "Earth Surge",
+    "name": "Earth Surge",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each land gets +2/+2 as long as it's a creature."
+  },
+  "Nantuko Shrine": {
+    "id": "Nantuko Shrine",
+    "name": "Nantuko Shrine",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a player casts a spell, that player creates X 1/1 green Squirrel creature tokens, where X is the number of cards in all graveyards with the same name as that spell."
+  },
+  "Cyclone": {
+    "id": "Cyclone",
+    "name": "Cyclone",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, put a wind counter on this enchantment, then sacrifice this enchantment unless you pay {G} for each wind counter on it. If you pay, this enchantment deals damage equal to the number of wind counters on it to each creature and each player."
+  },
+  "Thelon's Chant": {
+    "id": "Thelon's Chant",
+    "name": "Thelon's Chant",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your upkeep, sacrifice this enchantment unless you pay {G}.\nWhenever a player puts a Swamp onto the battlefield, this enchantment deals 3 damage to that player unless the player puts a -1/-1 counter on a creature they control."
+  },
+  "Living Terrain": {
+    "id": "Living Terrain",
+    "name": "Living Terrain",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Enchant land\nEnchanted land is a 5/6 green Treefolk creature that's still a land."
+  },
+  "Freyalise's Winds": {
+    "id": "Freyalise's Winds",
+    "name": "Freyalise's Winds",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a permanent becomes tapped, put a wind counter on it.\nIf a permanent with a wind counter on it would untap during its controller's untap step, remove all wind counters from it instead."
+  }
+}

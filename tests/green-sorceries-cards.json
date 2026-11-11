@@ -1,0 +1,2797 @@
+{
+  "Hunt the Hunter": {
+    "id": "Hunt the Hunter",
+    "name": "Hunt the Hunter",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target green creature you control gets +2/+2 until end of turn. It fights target green creature an opponent controls."
+  },
+  "Pir's Whim": {
+    "id": "Pir's Whim",
+    "name": "Pir's Whim",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "For each player, choose friend or foe. Each friend searches their library for a land card, puts it onto the battlefield tapped, then shuffles. Each foe sacrifices an artifact or enchantment of their choice."
+  },
+  "Green Sun's Twilight": {
+    "id": "Green Sun's Twilight",
+    "name": "Green Sun's Twilight",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top X plus one cards of your library. Choose a creature card and/or a land card from among them. Put those cards into your hand and the rest on the bottom of your library in a random order. If X is 5 or more, instead put the chosen cards onto the battlefield or into your hand and the rest on the bottom of your library in a random order."
+  },
+  "Nature's Rhythm": {
+    "id": "Nature's Rhythm",
+    "name": "Nature's Rhythm",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a creature card with mana value X or less, put it onto the battlefield, then shuffle.\nHarmonize {X}{G}{G}{G}{G} (You may cast this card from your graveyard for its harmonize cost. You may tap a creature you control to reduce that cost by an amount of generic mana equal to its power. Then exile this spell.)"
+  },
+  "Combo Attack": {
+    "id": "Combo Attack",
+    "name": "Combo Attack",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Two target creatures your team controls each deal damage equal to their power to target creature."
+  },
+  "Containment Breach": {
+    "id": "Containment Breach",
+    "name": "Containment Breach",
+    "typeLine": "Sorcery — Lesson",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target artifact or enchantment. If its mana value is 2 or less, create a 1/1 black and green Pest creature token with \"When this token dies, you gain 1 life.\""
+  },
+  "Spry and Mighty": {
+    "id": "Spry and Mighty",
+    "name": "Spry and Mighty",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose exactly two creatures you control. You draw X cards and the chosen creatures get +X/+X and gain trample until end of turn, where X is the difference between the chosen creatures' powers."
+  },
+  "Fallow Earth": {
+    "id": "Fallow Earth",
+    "name": "Fallow Earth",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put target land on top of its owner's library."
+  },
+  "Ecological Appreciation": {
+    "id": "Ecological Appreciation",
+    "name": "Ecological Appreciation",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library and graveyard for up to four creature cards with different names that each have mana value X or less and reveal them. An opponent chooses two of those cards. Shuffle the chosen cards into your library and put the rest onto the battlefield. Exile Ecological Appreciation."
+  },
+  "Harrowing Swarm": {
+    "id": "Harrowing Swarm",
+    "name": "Harrowing Swarm",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Manifest dread. Then each face-down creature you control gains \"This permanent costs {2} less to turn face up\" and \"When this permanent is turned face up, if it's a creature, put a +1/+1 counter on it.\""
+  },
+  "Thunderous Debut": {
+    "id": "Thunderous Debut",
+    "name": "Thunderous Debut",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{G}{G}",
+    "cmc": 8,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)\nLook at the top twenty cards of your library. You may reveal up to two creature cards from among them. If this spell was bargained, put the revealed cards onto the battlefield. Otherwise, put the revealed cards into your hand. Then shuffle."
+  },
+  "Chain of Acid": {
+    "id": "Chain of Acid",
+    "name": "Chain of Acid",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target noncreature permanent. Then that permanent's controller may copy this spell and may choose a new target for that copy."
+  },
+  "Green Sun's Zenith": {
+    "id": "Green Sun's Zenith",
+    "name": "Green Sun's Zenith",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a green creature card with mana value X or less, put it onto the battlefield, then shuffle. Shuffle Green Sun's Zenith into its owner's library."
+  },
+  "Cathartic Parting": {
+    "id": "Cathartic Parting",
+    "name": "Cathartic Parting",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "The owner of target artifact or enchantment an opponent controls shuffles it into their library. You may shuffle up to four target cards from your graveyard into your library."
+  },
+  "Explore the Underdark": {
+    "id": "Explore the Underdark",
+    "name": "Explore the Underdark",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to two basic land cards and/or Gate cards, put them onto the battlefield tapped, then shuffle.\nYou take the initiative."
+  },
+  "Glistening Dawn": {
+    "id": "Glistening Dawn",
+    "name": "Glistening Dawn",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Incubate X twice, where X is the number of lands you control. (To incubate X, create an Incubator token with X +1/+1 counters on it and \"{2}: Transform this token.\" It transforms into a 0/0 Phyrexian artifact creature.)"
+  },
+  "Nissa's Judgment": {
+    "id": "Nissa's Judgment",
+    "name": "Nissa's Judgment",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Support 2. (Put a +1/+1 counter on each of up to two target creatures.)\nChoose up to one target creature an opponent controls. Each creature you control with a +1/+1 counter on it deals damage equal to its power to that creature."
+  },
+  "Mythos of Brokkos": {
+    "id": "Mythos of Brokkos",
+    "name": "Mythos of Brokkos",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If {U}{B} was spent to cast this spell, search your library for a card, put that card into your graveyard, then shuffle.\nReturn up to two permanent cards from your graveyard to your hand."
+  },
+  "Reach the Horizon": {
+    "id": "Reach the Horizon",
+    "name": "Reach the Horizon",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to two basic land cards and/or Town cards with different names, put them onto the battlefield tapped, then shuffle."
+  },
+  "Majestic Genesis": {
+    "id": "Majestic Genesis",
+    "name": "Majestic Genesis",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{G}{G}",
+    "cmc": 8,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top X cards of your library, where X is the greatest mana value of a commander you own on the battlefield or in the command zone. You may put any number of permanent cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order."
+  },
+  "Flare of Cultivation": {
+    "id": "Flare of Cultivation",
+    "name": "Flare of Cultivation",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may sacrifice a nontoken green creature rather than pay this spell's mana cost.\nSearch your library for up to two basic land cards, reveal those cards, put one onto the battlefield tapped and the other into your hand, then shuffle."
+  },
+  "Outmuscle": {
+    "id": "Outmuscle",
+    "name": "Outmuscle",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control, then it fights target creature you don't control. (Each deals damage equal to its power to the other.)\nAdamant — If at least three green mana was spent to cast this spell, the creature you control gains indestructible until end of turn."
+  },
+  "Exponential Growth": {
+    "id": "Exponential Growth",
+    "name": "Exponential Growth",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, double target creature's power X times."
+  },
+  "Tracker's Instincts": {
+    "id": "Tracker's Instincts",
+    "name": "Tracker's Instincts",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top four cards of your library. Put a creature card from among them into your hand and the rest into your graveyard.\nFlashback {2}{U} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Renewing Touch": {
+    "id": "Renewing Touch",
+    "name": "Renewing Touch",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Shuffle any number of target creature cards from your graveyard into your library."
+  },
+  "Journey of Discovery": {
+    "id": "Journey of Discovery",
+    "name": "Journey of Discovery",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Search your library for up to two basic land cards, reveal them, put them into your hand, then shuffle.\n• You may play up to two additional lands this turn.\nEntwine {2}{G} (Choose both if you pay the entwine cost.)"
+  },
+  "Piper's Melody": {
+    "id": "Piper's Melody",
+    "name": "Piper's Melody",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Shuffle any number of target creature cards from your graveyard into your library."
+  },
+  "The Crowd Goes Wild": {
+    "id": "The Crowd Goes Wild",
+    "name": "The Crowd Goes Wild",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Assist (Another player can pay up to {X} of this spell's cost. You choose the value of X.)\nSupport X. (Put a +1/+1 counter on each of up to X target creatures.)\nEach creature with a +1/+1 counter on it gains trample until end of turn."
+  },
+  "Joraga Invocation": {
+    "id": "Joraga Invocation",
+    "name": "Joraga Invocation",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each creature you control gets +3/+3 until end of turn and must be blocked this turn if able."
+  },
+  "Plow Under": {
+    "id": "Plow Under",
+    "name": "Plow Under",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put two target lands on top of their owners' libraries."
+  },
+  "Blessing of Frost": {
+    "id": "Blessing of Frost",
+    "name": "Blessing of Frost",
+    "typeLine": "Snow Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Distribute X +1/+1 counters among any number of creatures you control, where X is the amount of {S} spent to cast this spell. Then draw a card for each creature you control with power 4 or greater."
+  },
+  "Threats Undetected": {
+    "id": "Threats Undetected",
+    "name": "Threats Undetected",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to four creature cards with different powers and reveal them. An opponent chooses two of those cards. Shuffle the chosen cards into your library and put the rest into your hand."
+  },
+  "Compelled Duel": {
+    "id": "Compelled Duel",
+    "name": "Compelled Duel",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +3/+3 until end of turn and must be blocked this turn if able."
+  },
+  "Blizzard Brawl": {
+    "id": "Blizzard Brawl",
+    "name": "Blizzard Brawl",
+    "typeLine": "Snow Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target creature you control and target creature you don't control. If you control three or more snow permanents, the creature you control gets +1/+0 and gains indestructible until end of turn. Then those creatures fight each other. (Each deals damage equal to its power to the other.)"
+  },
+  "Over the Edge": {
+    "id": "Over the Edge",
+    "name": "Over the Edge",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Destroy target artifact or enchantment.\n• Target creature you control explores, then it explores again. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on that creature, then put the card back or put it into your graveyard. Then repeat this process.)"
+  },
+  "Nature's Resurgence": {
+    "id": "Nature's Resurgence",
+    "name": "Nature's Resurgence",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player draws a card for each creature card in their graveyard."
+  },
+  "Hunt Down": {
+    "id": "Hunt Down",
+    "name": "Hunt Down",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature blocks target creature this turn if able."
+  },
+  "Emergent Growth": {
+    "id": "Emergent Growth",
+    "name": "Emergent Growth",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +5/+5 until end of turn and must be blocked this turn if able."
+  },
+  "Peregrination": {
+    "id": "Peregrination",
+    "name": "Peregrination",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to two basic land cards, reveal those cards, and put one onto the battlefield tapped and the other into your hand. Shuffle, then scry 1. (Look at the top card of your library. You may put that card on the bottom.)"
+  },
+  "Earth's Mightiest Heroes": {
+    "id": "Earth's Mightiest Heroes",
+    "name": "Earth's Mightiest Heroes",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Teamwork 5 (As an additional cost to cast this spell, you may tap any number of creatures you control with total power 5 or more.)\nReveal the top eight cards of your library. You may put a creature card from among them onto the battlefield. If this spell was cast using teamwork, put any number of creature cards from among them onto the battlefield instead. Put the rest into your graveyard."
+  },
+  "Viewpoint Synchronization": {
+    "id": "Viewpoint Synchronization",
+    "name": "Viewpoint Synchronization",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Freerunning {2}{G} (You may cast this spell for its freerunning cost if you dealt combat damage to a player this turn with an Assassin or commander.)\nSearch your library for up to three basic land cards and reveal them. Put two of them onto the battlefield tapped and the other into your hand, then shuffle."
+  },
+  "Scale Up": {
+    "id": "Scale Up",
+    "name": "Scale Up",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, target creature you control becomes a green Wurm with base power and toughness 6/4.\nOverload {4}{G}{G} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")"
+  },
+  "Epic Confrontation": {
+    "id": "Epic Confrontation",
+    "name": "Epic Confrontation",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +1/+2 until end of turn. It fights target creature you don't control. (Each deals damage equal to its power to the other.)"
+  },
+  "Abundant Harvest": {
+    "id": "Abundant Harvest",
+    "name": "Abundant Harvest",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose land or nonland. Reveal cards from the top of your library until you reveal a card of the chosen kind. Put that card into your hand and the rest on the bottom of your library in a random order."
+  },
+  "Primal Command": {
+    "id": "Primal Command",
+    "name": "Primal Command",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose two —\n• Target player gains 7 life.\n• Put target noncreature permanent on top of its owner's library.\n• Target player shuffles their graveyard into their library.\n• Search your library for a creature card, reveal it, put it into your hand, then shuffle."
+  },
+  "Giant Opportunity": {
+    "id": "Giant Opportunity",
+    "name": "Giant Opportunity",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may sacrifice two Foods. If you do, create a 7/7 green Giant creature token. Otherwise, create three Food tokens. (They're artifacts with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")"
+  },
+  "Snarl Song": {
+    "id": "Snarl Song",
+    "name": "Snarl Song",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Converge — Create two 0/0 green and blue Fractal creature tokens. Put X +1/+1 counters on each of them and you gain X life, where X is the number of colors of mana spent to cast this spell."
+  },
+  "Fork in the Road": {
+    "id": "Fork in the Road",
+    "name": "Fork in the Road",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to two basic land cards and reveal them. Put one into your hand and the other into your graveyard. Then shuffle."
+  },
+  "Savage Punch": {
+    "id": "Savage Punch",
+    "name": "Savage Punch",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control fights target creature you don't control.\nFerocious — The creature you control gets +2/+2 until end of turn before it fights if you control a creature with power 4 or greater."
+  },
+  "An-Havva Inn": {
+    "id": "An-Havva Inn",
+    "name": "An-Havva Inn",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You gain X plus 1 life, where X is the number of green creatures on the battlefield."
+  },
+  "The Ring Goes South": {
+    "id": "The Ring Goes South",
+    "name": "The Ring Goes South",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "The Ring tempts you. Then reveal cards from the top of your library until you reveal X land cards, where X is the number of legendary creatures you control. Put those land cards onto the battlefield tapped and the rest on the bottom of your library in a random order."
+  },
+  "Pack Hunt": {
+    "id": "Pack Hunt",
+    "name": "Pack Hunt",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to three cards with the same name as target creature, reveal them, put them into your hand, then shuffle."
+  },
+  "Turntimber Symbiosis // Turntimber, Serpentine Wood": {
+    "id": "Turntimber Symbiosis // Turntimber, Serpentine Wood",
+    "name": "Turntimber Symbiosis // Turntimber, Serpentine Wood",
+    "typeLine": "Sorcery // Land",
+    "manaCost": "{4}{G}{G}{G}",
+    "cmc": 7,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Turntimber Symbiosis: Look at the top seven cards of your library. You may put a creature card from among them onto the battlefield. If that card has mana value 3 or less, it enters with three additional +1/+1 counters on it. Put the rest on the bottom of your library in a random order.\n\nTurntimber, Serpentine Wood: As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {G}.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Enlarge": {
+    "id": "Enlarge",
+    "name": "Enlarge",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +7/+7 and gains trample until end of turn. It must be blocked this turn if able. (A creature with trample can deal excess combat damage to the player or planeswalker it's attacking.)"
+  },
+  "Edge of Autumn": {
+    "id": "Edge of Autumn",
+    "name": "Edge of Autumn",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If you control four or fewer lands, search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\nCycling—Sacrifice a land. (Sacrifice a land, Discard this card: Draw a card.)"
+  },
+  "Michelangelo's Technique": {
+    "id": "Michelangelo's Technique",
+    "name": "Michelangelo's Technique",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Sneak {3}{G} (You may cast this spell for {3}{G} if you also return an unblocked attacker you control to hand during the declare blockers step.)\nLook at the top eight cards of your library. Put up to two creature cards with total mana value 6 or less from among them onto the battlefield and the rest on the bottom of your library in a random order."
+  },
+  "Biorhythm": {
+    "id": "Biorhythm",
+    "name": "Biorhythm",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{G}{G}",
+    "cmc": 8,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player's life total becomes the number of creatures they control."
+  },
+  "Primal Surge": {
+    "id": "Primal Surge",
+    "name": "Primal Surge",
+    "typeLine": "Sorcery",
+    "manaCost": "{8}{G}{G}",
+    "cmc": 10,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Exile the top card of your library. If it's a permanent card, you may put it onto the battlefield. If you do, repeat this process."
+  },
+  "Clear the Land": {
+    "id": "Clear the Land",
+    "name": "Clear the Land",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player reveals the top five cards of their library, puts all land cards revealed this way onto the battlefield tapped, and exiles the rest."
+  },
+  "Say Its Name": {
+    "id": "Say Its Name",
+    "name": "Say Its Name",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Mill three cards. Then you may return a creature or land card from your graveyard to your hand.\nExile this card and two other cards named Say Its Name from your graveyard: Search your graveyard, hand, and/or library for a card named Altanak, the Thrice-Called and put it onto the battlefield. If you search your library this way, shuffle. Activate only as a sorcery."
+  },
+  "Ruthless Predation": {
+    "id": "Ruthless Predation",
+    "name": "Ruthless Predation",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +1/+2 until end of turn. It fights target creature you don't control. (Each deals damage equal to its power to the other.)"
+  },
+  "Malamet Battle Glyph": {
+    "id": "Malamet Battle Glyph",
+    "name": "Malamet Battle Glyph",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target creature you control and target creature you don't control. If the creature you control entered this turn, put a +1/+1 counter on it. Then those creatures fight each other."
+  },
+  "Split the Spoils": {
+    "id": "Split the Spoils",
+    "name": "Split the Spoils",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Exile up to five target permanent cards from your graveyard and separate them into two piles. An opponent chooses one of those piles. Put that pile into your hand and the other into your graveyard. (Piles can be empty.)"
+  },
+  "Turtle Tracks": {
+    "id": "Turtle Tracks",
+    "name": "Turtle Tracks",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Any number of target players may each search their library for a basic land card, put it onto the battlefield under their control, then shuffle."
+  },
+  "Animist's Might": {
+    "id": "Animist's Might",
+    "name": "Animist's Might",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {2} less to cast if it targets a legendary creature you control.\nTarget creature you control deals damage equal to twice its power to target creature or planeswalker you don't control."
+  },
+  "Call Damage Control": {
+    "id": "Call Damage Control",
+    "name": "Call Damage Control",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose up to two. Return those cards from your graveyard to your hand.\n• Target artifact card.\n• Target creature card.\n• Target enchantment card.\n• Target land card."
+  },
+  "Brave the Wilds": {
+    "id": "Brave the Wilds",
+    "name": "Brave the Wilds",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Bargain (You may sacrifice an artifact, enchantment, or token as you cast this spell.)\nIf this spell was bargained, target land you control becomes a 3/3 Elemental creature with haste that's still a land.\nSearch your library for a basic land card, reveal it, put it into your hand, then shuffle."
+  },
+  "Claws of Wirewood": {
+    "id": "Claws of Wirewood",
+    "name": "Claws of Wirewood",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Claws of Wirewood deals 3 damage to each creature with flying and each player.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+  },
+  "Taunting Challenge": {
+    "id": "Taunting Challenge",
+    "name": "Taunting Challenge",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All creatures able to block target creature this turn do so."
+  },
+  "Insist": {
+    "id": "Insist",
+    "name": "Insist",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "The next creature spell you cast this turn can't be countered.\nDraw a card."
+  },
+  "Fade from History": {
+    "id": "Fade from History",
+    "name": "Fade from History",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player who controls an artifact or enchantment creates a 2/2 green Bear creature token. Then destroy all artifacts and enchantments."
+  },
+  "Monstrous Emergence": {
+    "id": "Monstrous Emergence",
+    "name": "Monstrous Emergence",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, choose a creature you control or reveal a creature card from your hand.\nMonstrous Emergence deals damage equal to the power of the creature you chose or the card you revealed to target creature."
+  },
+  "Nissa's Encouragement": {
+    "id": "Nissa's Encouragement",
+    "name": "Nissa's Encouragement",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library and graveyard for a card named Forest, a card named Brambleweft Behemoth, and a card named Nissa, Genesis Mage. Reveal those cards, put them into your hand, then shuffle."
+  },
+  "Winter Blast": {
+    "id": "Winter Blast",
+    "name": "Winter Blast",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Tap X target creatures. Winter Blast deals 2 damage to each of those creatures with flying."
+  },
+  "Time to Feed": {
+    "id": "Time to Feed",
+    "name": "Time to Feed",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target creature an opponent controls. When that creature dies this turn, you gain 3 life. Target creature you control fights that creature. (Each deals damage equal to its power to the other.)"
+  },
+  "Waiting in the Weeds": {
+    "id": "Waiting in the Weeds",
+    "name": "Waiting in the Weeds",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player creates a 1/1 green Cat creature token for each untapped Forest they control."
+  },
+  "Feral Encounter": {
+    "id": "Feral Encounter",
+    "name": "Feral Encounter",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top five cards of your library. You may exile a creature card from among them. Put the rest on the bottom of your library in a random order. You may cast the exiled card this turn. At the beginning of the next combat phase this turn, target creature you control deals damage equal to its power to up to one target creature you don't control."
+  },
+  "Gaea's Balance": {
+    "id": "Gaea's Balance",
+    "name": "Gaea's Balance",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice five lands.\nSearch your library for a land card of each basic land type, put those cards onto the battlefield, then shuffle."
+  },
+  "Tromp the Domains": {
+    "id": "Tromp the Domains",
+    "name": "Tromp the Domains",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Domain — Until end of turn, creatures you control gain trample and get +1/+1 for each basic land type among lands you control."
+  },
+  "Follow the Lumarets": {
+    "id": "Follow the Lumarets",
+    "name": "Follow the Lumarets",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Infusion — Look at the top four cards of your library. You may reveal a creature or land card from among them and put it into your hand. If you gained life this turn, you may instead reveal two creature and/or land cards from among them and put them into your hand. Put the rest on the bottom of your library in a random order."
+  },
+  "Storm the Festival": {
+    "id": "Storm the Festival",
+    "name": "Storm the Festival",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top five cards of your library. You may put up to two permanent cards with mana value 5 or less from among them onto the battlefield. Put the rest on the bottom of your library in a random order.\nFlashback {7}{G}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Vivien's Invocation": {
+    "id": "Vivien's Invocation",
+    "name": "Vivien's Invocation",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{G}{G}",
+    "cmc": 7,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top seven cards of your library. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order. When a creature is put onto the battlefield this way, it deals damage equal to its power to target creature an opponent controls."
+  },
+  "Settle the Wilds": {
+    "id": "Settle the Wilds",
+    "name": "Settle the Wilds",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Seek a basic land card and put it onto the battlefield tapped. Then seek a permanent card with mana value equal to the number of lands you control."
+  },
+  "Nissa's Defeat": {
+    "id": "Nissa's Defeat",
+    "name": "Nissa's Defeat",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target Forest, green enchantment, or green planeswalker. If that permanent was a Nissa planeswalker, draw a card."
+  },
+  "Zimone's Experiment": {
+    "id": "Zimone's Experiment",
+    "name": "Zimone's Experiment",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top five cards of your library. You may reveal up to two creature and/or land cards from among them, then put the rest on the bottom of your library in a random order. Put all land cards revealed this way onto the battlefield tapped and put all creature cards revealed this way into your hand."
+  },
+  "Glimpse of Nature": {
+    "id": "Glimpse of Nature",
+    "name": "Glimpse of Nature",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever you cast a creature spell this turn, draw a card."
+  },
+  "Increasing Savagery": {
+    "id": "Increasing Savagery",
+    "name": "Increasing Savagery",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put five +1/+1 counters on target creature. If this spell was cast from a graveyard, put ten +1/+1 counters on that creature instead.\nFlashback {5}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Grow from the Ashes": {
+    "id": "Grow from the Ashes",
+    "name": "Grow from the Ashes",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {2} (You may pay an additional {2} as you cast this spell.)\nSearch your library for a basic land card, put it onto the battlefield, then shuffle. If this spell was kicked, instead search your library for two basic land cards, put them onto the battlefield, then shuffle."
+  },
+  "Curse of the Werefox": {
+    "id": "Curse of the Werefox",
+    "name": "Curse of the Werefox",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create a Monster Role token attached to target creature you control. When you do, that creature fights up to one target creature you don't control. (If you control another Role on it, put that one into the graveyard. Enchanted creature gets +1/+1 and has trample. Creatures that fight each deal damage equal to their power to the other.)"
+  },
+  "Full Steam Ahead": {
+    "id": "Full Steam Ahead",
+    "name": "Full Steam Ahead",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, each creature you control gets +2/+2 and gains trample and \"This creature can't be blocked by more than one creature.\""
+  },
+  "Valgavoth's Onslaught": {
+    "id": "Valgavoth's Onslaught",
+    "name": "Valgavoth's Onslaught",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Manifest dread X times, then put X +1/+1 counters on each of those creatures. (To manifest dread, look at the top two cards of your library, then put one onto the battlefield face down as a 2/2 creature and the other into your graveyard. Turn it face up any time for its mana cost if it's a creature card.)"
+  },
+  "Sylvan Awakening": {
+    "id": "Sylvan Awakening",
+    "name": "Sylvan Awakening",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until your next turn, all lands you control become 2/2 Elemental creatures with reach, indestructible, and haste. They're still lands."
+  },
+  "Rude Awakening": {
+    "id": "Rude Awakening",
+    "name": "Rude Awakening",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Untap all lands you control.\n• Until end of turn, lands you control become 2/2 creatures that are still lands.\nEntwine {2}{G} (Choose both if you pay the entwine cost.)"
+  },
+  "Verdant Touch": {
+    "id": "Verdant Touch",
+    "name": "Verdant Touch",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Buyback {3} (You may pay an additional {3} as you cast this spell. If you do, put this card into your hand as it resolves.)\nTarget land becomes a 2/2 creature that's still a land. (This effect lasts indefinitely.)"
+  },
+  "Natural Balance": {
+    "id": "Natural Balance",
+    "name": "Natural Balance",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player who controls six or more lands chooses five lands they control and sacrifices the rest. Each player who controls four or fewer lands may search their library for up to X basic land cards and put them onto the battlefield, where X is five minus the number of lands they control. Then each player who searched their library this way shuffles."
+  },
+  "Ent's Fury": {
+    "id": "Ent's Fury",
+    "name": "Ent's Fury",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control if its power is 4 or greater. Then that creature gets +1/+1 until end of turn and fights target creature you don't control."
+  },
+  "Harmony of Nature": {
+    "id": "Harmony of Nature",
+    "name": "Harmony of Nature",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Tap any number of untapped creatures you control. You gain 4 life for each creature tapped this way."
+  },
+  "Traverse Valley": {
+    "id": "Traverse Valley",
+    "name": "Traverse Valley",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker—Forage.\nSeek a nonbasic land card. If this spell was kicked, put that card onto the battlefield tapped."
+  },
+  "Adventure Awaits": {
+    "id": "Adventure Awaits",
+    "name": "Adventure Awaits",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top five cards of your library. You may reveal a creature card from among them and put it into your hand. Put the rest on the bottom of your library in a random order. If you didn't put a card into your hand this way, draw a card."
+  },
+  "New Frontiers": {
+    "id": "New Frontiers",
+    "name": "New Frontiers",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player may search their library for up to X basic land cards and put them onto the battlefield tapped. Then each player who searched their library this way shuffles."
+  },
+  "Splendid Genesis": {
+    "id": "Splendid Genesis",
+    "name": "Splendid Genesis",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}{G}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Shuffle all cards in the game together and deal them into three decks. The game continues with a new player."
+  },
+  "Mage Duel": {
+    "id": "Mage Duel",
+    "name": "Mage Duel",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {2} less to cast if you've cast another instant or sorcery spell this turn.\nTarget creature you control gets +1/+2 until end of turn. Then it fights target creature you don't control. (Each deals damage equal to its power to the other.)"
+  },
+  "Weird Harvest": {
+    "id": "Weird Harvest",
+    "name": "Weird Harvest",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player may search their library for up to X creature cards, reveal those cards, put them into their hand, then shuffle."
+  },
+  "Borrowing the East Wind": {
+    "id": "Borrowing the East Wind",
+    "name": "Borrowing the East Wind",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Borrowing the East Wind deals X damage to each creature with horsemanship and each player."
+  },
+  "Cosmium Confluence": {
+    "id": "Cosmium Confluence",
+    "name": "Cosmium Confluence",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose three. You may choose the same mode more than once.\n• Search your library for a Cave card, put it onto the battlefield tapped, then shuffle.\n• Put three +1/+1 counters on a Cave you control. It becomes a 0/0 Elemental creature with haste. It's still a land.\n• Destroy target enchantment."
+  },
+  "Druidic Ritual": {
+    "id": "Druidic Ritual",
+    "name": "Druidic Ritual",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may mill three cards. Then return up to one creature card and up to one land card from your graveyard to your hand. (To mill a card, put the top card of your library into your graveyard.)"
+  },
+  "Rofellos's Gift": {
+    "id": "Rofellos's Gift",
+    "name": "Rofellos's Gift",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal any number of green cards in your hand. Return an enchantment card from your graveyard to your hand for each card revealed this way."
+  },
+  "Dance of the Tumbleweeds": {
+    "id": "Dance of the Tumbleweeds",
+    "name": "Dance of the Tumbleweeds",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Spree (Choose one or more additional costs.)\n+ {1} — Search your library for a basic land card or a Desert card, put it onto the battlefield, then shuffle.\n+ {3} — Create an X/X green Elemental creature token, where X is the number of lands you control."
+  },
+  "Kamahl's Druidic Vow": {
+    "id": "Kamahl's Druidic Vow",
+    "name": "Kamahl's Druidic Vow",
+    "typeLine": "Legendary Sorcery",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nLook at the top X cards of your library. You may put any number of land and/or legendary permanent cards with mana value X or less from among them onto the battlefield. Put the rest into your graveyard."
+  },
+  "Selvala's Charge": {
+    "id": "Selvala's Charge",
+    "name": "Selvala's Charge",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Parley — Each player reveals the top card of their library. For each nonland card revealed this way, you create a 3/3 green Elephant creature token. Then each player draws a card."
+  },
+  "Mischief and Mayhem": {
+    "id": "Mischief and Mayhem",
+    "name": "Mischief and Mayhem",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Up to two target creatures each get +4/+4 until end of turn."
+  },
+  "Invoke the Ancients": {
+    "id": "Invoke the Ancients",
+    "name": "Invoke the Ancients",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create two 4/5 green Spirit creature tokens. For each of them, put your choice of a reach counter, a vigilance counter, or a trample counter on it."
+  },
+  "Fertile Imagination": {
+    "id": "Fertile Imagination",
+    "name": "Fertile Imagination",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose a card type. Target opponent reveals their hand. Create two 1/1 green Saproling creature tokens for each card of the chosen type revealed this way. (Artifact, battle, creature, enchantment, instant, kindred, land, planeswalker, and sorcery are card types.)"
+  },
+  "Make a Wish": {
+    "id": "Make a Wish",
+    "name": "Make a Wish",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Return two cards at random from your graveyard to your hand."
+  },
+  "Uproot": {
+    "id": "Uproot",
+    "name": "Uproot",
+    "typeLine": "Sorcery — Arcane",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put target land on top of its owner's library."
+  },
+  "Slimefoot's Survey": {
+    "id": "Slimefoot's Survey",
+    "name": "Slimefoot's Survey",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Domain — Search your library for up to two land cards that each have a basic land type, put them onto the battlefield tapped, then shuffle. Look at the top X cards of your library, where X is the number of basic land types among lands you control. Put up to one of them on top of your library and the rest on the bottom of your library in a random order."
+  },
+  "Kamahl's Summons": {
+    "id": "Kamahl's Summons",
+    "name": "Kamahl's Summons",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player may reveal any number of creature cards from their hand. Then each player creates a 2/2 green Bear creature token for each card they revealed this way."
+  },
+  "Natural Order": {
+    "id": "Natural Order",
+    "name": "Natural Order",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice a green creature.\nSearch your library for a green creature card, put it onto the battlefield, then shuffle."
+  },
+  "Nissa's Triumph": {
+    "id": "Nissa's Triumph",
+    "name": "Nissa's Triumph",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to two basic Forest cards. If you control a Nissa planeswalker, instead search your library for up to three land cards. Reveal those cards, put them into your hand, then shuffle."
+  },
+  "Lair Delve": {
+    "id": "Lair Delve",
+    "name": "Lair Delve",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top two cards of your library. Put all creature and land cards revealed this way into your hand and the rest on the bottom of your library in any order."
+  },
+  "Fangs of Kalonia": {
+    "id": "Fangs of Kalonia",
+    "name": "Fangs of Kalonia",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control, then double the number of +1/+1 counters on each creature that had a +1/+1 counter put on it this way.\nOverload {4}{G}{G} (You may cast this spell for its overload cost. If you do, change \"target\" in its text to \"each.\")"
+  },
+  "Savage Order": {
+    "id": "Savage Order",
+    "name": "Savage Order",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice a creature with power 4 or greater.\nSearch your library for a Dinosaur creature card, put it onto the battlefield, then shuffle. It gains indestructible until your next turn."
+  },
+  "Rise from the Wreck": {
+    "id": "Rise from the Wreck",
+    "name": "Rise from the Wreck",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Return up to one target creature card, up to one target Mount card, up to one target Vehicle card, and up to one target creature card with no abilities from your graveyard to your hand."
+  },
+  "Track Down": {
+    "id": "Track Down",
+    "name": "Track Down",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Scry 3, then reveal the top card of your library. If it's a creature or land card, draw a card. (To scry 3, look at the top three cards of your library, then put any number of them on the bottom and the rest on top in any order.)"
+  },
+  "Gather the Pack": {
+    "id": "Gather the Pack",
+    "name": "Gather the Pack",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top five cards of your library. You may put a creature card from among them into your hand. Put the rest into your graveyard.\nSpell mastery — If there are two or more instant and/or sorcery cards in your graveyard, put up to two creature cards from among the revealed cards into your hand instead of one."
+  },
+  "Feast of Worms": {
+    "id": "Feast of Worms",
+    "name": "Feast of Worms",
+    "typeLine": "Sorcery — Arcane",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target land. If that land was legendary, its controller sacrifices another land of their choice."
+  },
+  "Splinter": {
+    "id": "Splinter",
+    "name": "Splinter",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Exile target artifact. Search its controller's graveyard, hand, and library for all cards with the same name as that artifact and exile them. Then that player shuffles."
+  },
+  "Eureka": {
+    "id": "Eureka",
+    "name": "Eureka",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Starting with you, each player may put a permanent card from their hand onto the battlefield. Repeat this process until no one puts a card onto the battlefield."
+  },
+  "Glacial Revelation": {
+    "id": "Glacial Revelation",
+    "name": "Glacial Revelation",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top six cards of your library. You may put any number of snow permanent cards from among them into your hand. Put the rest into your graveyard."
+  },
+  "Caravan Vigil": {
+    "id": "Caravan Vigil",
+    "name": "Caravan Vigil",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card, reveal it, put it into your hand, then shuffle.\nMorbid — You may put that card onto the battlefield instead of putting it into your hand if a creature died this turn."
+  },
+  "Scouting Trek": {
+    "id": "Scouting Trek",
+    "name": "Scouting Trek",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for any number of basic land cards, reveal those cards, then shuffle and put them on top."
+  },
+  "Charge of the Forever-Beast": {
+    "id": "Charge of the Forever-Beast",
+    "name": "Charge of the Forever-Beast",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, reveal a creature card from your hand.\nCharge of the Forever-Beast deals damage to target creature or planeswalker equal to the revealed card's power."
+  },
+  "Esper Origins // Summon: Esper Maduin": {
+    "id": "Esper Origins // Summon: Esper Maduin",
+    "name": "Esper Origins // Summon: Esper Maduin",
+    "typeLine": "Sorcery // Enchantment Creature — Saga Elemental",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Esper Origins: Surveil 2. You gain 2 life. If this spell was cast from a graveyard, exile it, then put it onto the battlefield transformed under its owner's control with a finality counter on it. (If a creature with a finality counter on it would die, exile it instead.)\nFlashback {3}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)\n\nSummon: Esper Maduin: (As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Reveal the top card of your library. If it's a permanent card, put it into your hand.\nII — Add {G}{G}.\nIII — Other creatures you control get +2/+2 and gain trample until end of turn.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Hide in Plain Sight": {
+    "id": "Hide in Plain Sight",
+    "name": "Hide in Plain Sight",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top five cards of your library, cloak two of them, and put the rest on the bottom of your library in a random order. (To cloak a card, put it onto the battlefield face down as a 2/2 creature with ward {2}. Turn it face up any time for its mana cost if it's a creature card.)"
+  },
+  "Parallel Evolution": {
+    "id": "Parallel Evolution",
+    "name": "Parallel Evolution",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "For each creature token on the battlefield, its controller creates a token that's a copy of that creature.\nFlashback {4}{G}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Viral Spawning": {
+    "id": "Viral Spawning",
+    "name": "Viral Spawning",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create a 3/3 green Phyrexian Beast creature token with toxic 1. (Players dealt combat damage by it also get a poison counter.)\nCorrupted — As long as an opponent has three or more poison counters and this card is in your graveyard, it has flashback {2}{G}. (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Wild Instincts": {
+    "id": "Wild Instincts",
+    "name": "Wild Instincts",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +2/+2 until end of turn. It fights target creature an opponent controls. (Each deals damage equal to its power to the other.)"
+  },
+  "Plant a Sapling // Fully-Grown Treefolk": {
+    "id": "Plant a Sapling // Fully-Grown Treefolk",
+    "name": "Plant a Sapling // Fully-Grown Treefolk",
+    "typeLine": "Sorcery // Creature — Treefolk",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Plant a Sapling: Search your library for a basic land card, reveal it, put it into your hand, then shuffle this spell into its owner's library transformed. (For playtesting purposes, put it into its sleeve upside down.)\n\nFully-Grown Treefolk: (You can't cast this face unless it's been transformed by the front face.)\nFully-Grown Treefolk's power and toughness are each equal to the number of lands you control."
+  },
+  "Rolling Spoil": {
+    "id": "Rolling Spoil",
+    "name": "Rolling Spoil",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target land. If {B} was spent to cast this spell, all creatures get -1/-1 until end of turn."
+  },
+  "Tropical Storm": {
+    "id": "Tropical Storm",
+    "name": "Tropical Storm",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Tropical Storm deals X damage to each creature with flying and 1 additional damage to each blue creature."
+  },
+  "Hurricane": {
+    "id": "Hurricane",
+    "name": "Hurricane",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Hurricane deals X damage to each creature with flying and each player."
+  },
+  "Bridgeworks Battle // Tanglespan Bridgeworks": {
+    "id": "Bridgeworks Battle // Tanglespan Bridgeworks",
+    "name": "Bridgeworks Battle // Tanglespan Bridgeworks",
+    "typeLine": "Sorcery // Land",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Bridgeworks Battle: Target creature you control gets +2/+2 until end of turn. It fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)\n\nTanglespan Bridgeworks: As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {G}.",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Seismic Sense": {
+    "id": "Seismic Sense",
+    "name": "Seismic Sense",
+    "typeLine": "Sorcery — Lesson",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top X cards of your library, where X is the number of lands you control. You may reveal a creature or land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+  },
+  "Roar of Challenge": {
+    "id": "Roar of Challenge",
+    "name": "Roar of Challenge",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All creatures able to block target creature this turn do so.\nFerocious — That creature gains indestructible until end of turn if you control a creature with power 4 or greater."
+  },
+  "Canopy Surge": {
+    "id": "Canopy Surge",
+    "name": "Canopy Surge",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {2} (You may pay an additional {2} as you cast this spell.)\nCanopy Surge deals 1 damage to each creature with flying and each player. If this spell was kicked, it deals 4 damage to each creature with flying and each player instead."
+  },
+  "Animal Magnetism": {
+    "id": "Animal Magnetism",
+    "name": "Animal Magnetism",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top five cards of your library. An opponent chooses a creature card from among them. Put that card onto the battlefield and the rest into your graveyard."
+  },
+  "Struggle for Skemfar": {
+    "id": "Struggle for Skemfar",
+    "name": "Struggle for Skemfar",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control. Then that creature fights up to one target creature you don't control. (Each deals damage equal to its power to the other.)\nForetell {G} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)"
+  },
+  "Rites of Spring": {
+    "id": "Rites of Spring",
+    "name": "Rites of Spring",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Discard any number of cards. Search your library for up to that many basic land cards, reveal them, put them into your hand, then shuffle."
+  },
+  "All Suns' Dawn": {
+    "id": "All Suns' Dawn",
+    "name": "All Suns' Dawn",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "For each color, return up to one target card of that color from your graveyard to your hand. Exile All Suns' Dawn."
+  },
+  "Chocobo Kick": {
+    "id": "Chocobo Kick",
+    "name": "Chocobo Kick",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker—Return a land you control to its owner's hand. (You may return a land you control to its owner's hand in addition to any other costs as you cast this spell.)\nTarget creature you control deals damage equal to its power to target creature an opponent controls. If this spell was kicked, the creature you control deals twice that much damage instead."
+  },
+  "You Find a Cursed Idol": {
+    "id": "You Find a Cursed Idol",
+    "name": "You Find a Cursed Idol",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Smash It — Destroy target artifact.\n• Lift the Curse — Destroy target enchantment.\n• Steal Its Eyes — Create a Treasure token and venture into the dungeon. (Enter the first room or advance to the next room.)"
+  },
+  "Nylea's Intervention": {
+    "id": "Nylea's Intervention",
+    "name": "Nylea's Intervention",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Search your library for up to X land cards, reveal them, put them into your hand, then shuffle.\n• Nylea's Intervention deals twice X damage to each creature with flying."
+  },
+  "Through the Forest Gate": {
+    "id": "Through the Forest Gate",
+    "name": "Through the Forest Gate",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{G}{G}",
+    "cmc": 8,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top twenty cards of your library, put any number of land cards from among them onto the battlefield tapped, then shuffle. You gain 8 life."
+  },
+  "Alluring Scent": {
+    "id": "Alluring Scent",
+    "name": "Alluring Scent",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All creatures able to block target creature this turn do so."
+  },
+  "Longstalk Brawl": {
+    "id": "Longstalk Brawl",
+    "name": "Longstalk Brawl",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Gift a tapped Fish (You may promise an opponent a gift as you cast this spell. If you do, they create a tapped 1/1 blue Fish creature token before its other effects.)\nChoose target creature you control and target creature you don't control. Put a +1/+1 counter on the creature you control if the gift was promised. Then those creatures fight each other."
+  },
+  "Storm the Seedcore": {
+    "id": "Storm the Seedcore",
+    "name": "Storm the Seedcore",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Distribute four +1/+1 counters among up to four target creatures you control. Creatures you control gain vigilance and trample until end of turn."
+  },
+  "Dig Up": {
+    "id": "Dig Up",
+    "name": "Dig Up",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cleave {1}{B}{B}{G} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nSearch your library for a [basic land] card, [reveal it,] put it into your hand, then shuffle."
+  },
+  "Monstrous Step": {
+    "id": "Monstrous Step",
+    "name": "Monstrous Step",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +7/+7 until end of turn. Up to one other target creature blocks it this turn if able.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+  },
+  "See the Unwritten": {
+    "id": "See the Unwritten",
+    "name": "See the Unwritten",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top eight cards of your library. You may put a creature card from among them onto the battlefield. Put the rest into your graveyard.\nFerocious — If you control a creature with power 4 or greater, you may put two creature cards onto the battlefield instead of one."
+  },
+  "Verdant Crescendo": {
+    "id": "Verdant Crescendo",
+    "name": "Verdant Crescendo",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card and put it onto the battlefield tapped. Search your library and graveyard for a card named Nissa, Nature's Artisan, reveal it, put it into your hand, then shuffle."
+  },
+  "Clash of the Eikons": {
+    "id": "Clash of the Eikons",
+    "name": "Clash of the Eikons",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one or more —\n• Target creature you control fights target creature an opponent controls.\n• Remove a lore counter from target Saga you control. (Removing lore counters doesn't cause chapter abilities to trigger.)\n• Put a lore counter on target Saga you control."
+  },
+  "Multani's Decree": {
+    "id": "Multani's Decree",
+    "name": "Multani's Decree",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy all enchantments. You gain 2 life for each enchantment destroyed this way."
+  },
+  "Coordinated Clobbering": {
+    "id": "Coordinated Clobbering",
+    "name": "Coordinated Clobbering",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Tap one or two target untapped creatures you control. They each deal damage equal to their power to target creature an opponent controls."
+  },
+  "Carnivorous Canopy": {
+    "id": "Carnivorous Canopy",
+    "name": "Carnivorous Canopy",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target artifact, enchantment, or creature with flying. If that permanent's mana value was 3 or less, proliferate. (Choose any number of permanents and/or players, then give each another counter of each kind already there.)"
+  },
+  "Take to the Streets": {
+    "id": "Take to the Streets",
+    "name": "Take to the Streets",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures you control get +2/+2 until end of turn. Citizens you control get an additional +1/+1 and gain vigilance until end of turn."
+  },
+  "Verdant Mastery": {
+    "id": "Verdant Mastery",
+    "name": "Verdant Mastery",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may pay {3}{G} rather than pay this spell's mana cost.\nSearch your library for up to four basic land cards and reveal them. Put one of them onto the battlefield tapped under an opponent's control if the {3}{G} cost was paid. Put two of them onto the battlefield tapped under your control and the rest into your hand. Then shuffle."
+  },
+  "Primeval Light": {
+    "id": "Primeval Light",
+    "name": "Primeval Light",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy all enchantments target player controls."
+  },
+  "Slime Against Humanity": {
+    "id": "Slime Against Humanity",
+    "name": "Slime Against Humanity",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create a 0/0 green Ooze creature token with trample. Put X +1/+1 counters on it, where X is two plus the total number of cards you own in exile and in your graveyard that are Oozes or are named Slime Against Humanity.\nA deck can have any number of cards named Slime Against Humanity."
+  },
+  "Graceful Takedown": {
+    "id": "Graceful Takedown",
+    "name": "Graceful Takedown",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Any number of target enchanted creatures you control and up to one other target creature you control each deal damage equal to their power to target creature you don't control."
+  },
+  "Riding the Dilu Horse": {
+    "id": "Riding the Dilu Horse",
+    "name": "Riding the Dilu Horse",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 and gains horsemanship. (It can't be blocked except by creatures with horsemanship. This effect lasts indefinitely.)"
+  },
+  "Superior Numbers": {
+    "id": "Superior Numbers",
+    "name": "Superior Numbers",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Superior Numbers deals damage to target creature equal to the number of creatures you control in excess of the number of creatures target opponent controls."
+  },
+  "Living Wish": {
+    "id": "Living Wish",
+    "name": "Living Wish",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may reveal a creature or land card you own from outside the game and put it into your hand. Exile Living Wish."
+  },
+  "The Great Aurora": {
+    "id": "The Great Aurora",
+    "name": "The Great Aurora",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{G}{G}{G}",
+    "cmc": 9,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player shuffles all cards from their hand and all permanents they own into their library, then draws that many cards. Each player may put any number of land cards from their hand onto the battlefield. Exile The Great Aurora."
+  },
+  "Essence Filter": {
+    "id": "Essence Filter",
+    "name": "Essence Filter",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy all enchantments or all nonwhite enchantments."
+  },
+  "Celestial Reunion": {
+    "id": "Celestial Reunion",
+    "name": "Celestial Reunion",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may choose a creature type and behold two creatures of that type.\nSearch your library for a creature card with mana value X or less, reveal it, put it into your hand, then shuffle. If this spell's additional cost was paid and the revealed card is the chosen type, put that card onto the battlefield instead of putting it into your hand."
+  },
+  "Nissa's Revelation": {
+    "id": "Nissa's Revelation",
+    "name": "Nissa's Revelation",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{G}{G}",
+    "cmc": 7,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Scry 5, then reveal the top card of your library. If it's a creature card, you draw cards equal to its power and you gain life equal to its toughness."
+  },
+  "Saproling Migration": {
+    "id": "Saproling Migration",
+    "name": "Saproling Migration",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {4} (You may pay an additional {4} as you cast this spell.)\nCreate two 1/1 green Saproling creature tokens. If this spell was kicked, create four of those tokens instead."
+  },
+  "Sunbringer's Touch": {
+    "id": "Sunbringer's Touch",
+    "name": "Sunbringer's Touch",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Bolster X, where X is the number of cards in your hand. Each creature you control with a +1/+1 counter on it gains trample until end of turn. (To bolster X, choose a creature with the least toughness among creatures you control and put X +1/+1 counters on it.)"
+  },
+  "King Harald's Revenge": {
+    "id": "King Harald's Revenge",
+    "name": "King Harald's Revenge",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, target creature gets +1/+1 for each creature you control and gains trample. It must be blocked this turn if able."
+  },
+  "Storm the Citadel": {
+    "id": "Storm the Citadel",
+    "name": "Storm the Citadel",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, creatures you control get +2/+2 and gain \"Whenever this creature deals combat damage to a player or planeswalker, destroy target artifact or enchantment defending player controls.\""
+  },
+  "Gaea's Blessing": {
+    "id": "Gaea's Blessing",
+    "name": "Gaea's Blessing",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target player shuffles up to three target cards from their graveyard into their library.\nDraw a card.\nWhen this card is put into your graveyard from your library, shuffle your graveyard into your library."
+  },
+  "Doubling Chant": {
+    "id": "Doubling Chant",
+    "name": "Doubling Chant",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "For each creature you control, you may search your library for a creature card with the same name as that creature. Put those cards onto the battlefield, then shuffle."
+  },
+  "Study the Classics": {
+    "id": "Study the Classics",
+    "name": "Study the Classics",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature, then double the number of +1/+1 counters on it. You gain life equal to the number of +1/+1 counters on that creature."
+  },
+  "Devouring Tendrils": {
+    "id": "Devouring Tendrils",
+    "name": "Devouring Tendrils",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control deals damage equal to its power to target creature or planeswalker you don't control. When the permanent you don't control dies this turn, you gain 2 life."
+  },
+  "Undercity Upheaval": {
+    "id": "Undercity Upheaval",
+    "name": "Undercity Upheaval",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Undergrowth — Distribute X +1/+1 counters among any number of target creatures you control, where X is the number of creature cards in your graveyard as you cast this spell. Creatures you control gain vigilance until end of turn."
+  },
+  "Scapeshift": {
+    "id": "Scapeshift",
+    "name": "Scapeshift",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Sacrifice any number of lands. Search your library for up to that many land cards, put them onto the battlefield tapped, then shuffle."
+  },
+  "Seasons Past": {
+    "id": "Seasons Past",
+    "name": "Seasons Past",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Return any number of cards with different mana values from your graveyard to your hand. Put Seasons Past on the bottom of its owner's library."
+  },
+  "Venom Blast": {
+    "id": "Venom Blast",
+    "name": "Venom Blast",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put two +1/+1 counters on target creature you control. It deals damage equal to its power to up to one other target creature."
+  },
+  "Shard Convergence": {
+    "id": "Shard Convergence",
+    "name": "Shard Convergence",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a Plains card, an Island card, a Swamp card, and a Mountain card. Reveal those cards, put them into your hand, then shuffle."
+  },
+  "Predatory Focus": {
+    "id": "Predatory Focus",
+    "name": "Predatory Focus",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may have creatures you control assign their combat damage this turn as though they weren't blocked."
+  },
+  "Wing Storm": {
+    "id": "Wing Storm",
+    "name": "Wing Storm",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Wing Storm deals damage to each player equal to twice the number of creatures that player controls with flying."
+  },
+  "Invigorating Falls": {
+    "id": "Invigorating Falls",
+    "name": "Invigorating Falls",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You gain life equal to the number of creature cards in all graveyards."
+  },
+  "Calming Verse": {
+    "id": "Calming Verse",
+    "name": "Calming Verse",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy all enchantments you don't control. Then if you control an untapped land, destroy all enchantments you control."
+  },
+  "Savage Swipe": {
+    "id": "Savage Swipe",
+    "name": "Savage Swipe",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +2/+2 until end of turn if its power is 2. Then it fights target creature you don't control. (Each deals damage equal to its power to the other.)"
+  },
+  "Taste of Paradise": {
+    "id": "Taste of Paradise",
+    "name": "Taste of Paradise",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may pay {1}{G} any number of times.\nYou gain 3 life plus an additional 3 life for each additional {1}{G} you paid."
+  },
+  "Traverse the Ulvenwald": {
+    "id": "Traverse the Ulvenwald",
+    "name": "Traverse the Ulvenwald",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card, reveal it, put it into your hand, then shuffle.\nDelirium — If there are four or more card types among cards in your graveyard, instead search your library for a creature or land card, reveal it, put it into your hand, then shuffle."
+  },
+  "Forgotten Lore": {
+    "id": "Forgotten Lore",
+    "name": "Forgotten Lore",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target opponent chooses a card in your graveyard. You may pay {G}. If you do, repeat this process except that opponent can't choose a card already chosen for Forgotten Lore. Then put the last chosen card into your hand."
+  },
+  "Irresistible Prey": {
+    "id": "Irresistible Prey",
+    "name": "Irresistible Prey",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature must be blocked this turn if able.\nDraw a card."
+  },
+  "Audience with Trostani": {
+    "id": "Audience with Trostani",
+    "name": "Audience with Trostani",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create a 0/1 green Plant creature token, then draw cards equal to the number of differently named creature tokens you control."
+  },
+  "Verdant Rejuvenation": {
+    "id": "Verdant Rejuvenation",
+    "name": "Verdant Rejuvenation",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{G}{G}",
+    "cmc": 8,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Seek X creature, enchantment, and/or planeswalker cards, where X is the highest mana value among creatures you control. Put those cards onto the battlefield."
+  },
+  "Reclaim the Wastes": {
+    "id": "Reclaim the Wastes",
+    "name": "Reclaim the Wastes",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {3} (You may pay an additional {3} as you cast this spell.)\nSearch your library for a basic land card, reveal it, put it into your hand, then shuffle. If this spell was kicked, search your library for two basic land cards instead of one."
+  },
+  "Hypergenesis": {
+    "id": "Hypergenesis",
+    "name": "Hypergenesis",
+    "typeLine": "Sorcery",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Suspend 3—{1}{G}{G}\nStarting with you, each player may put an artifact, creature, enchantment, or land card from their hand onto the battlefield. Repeat this process until no one puts a card onto the battlefield."
+  },
+  "Rebirth": {
+    "id": "Rebirth",
+    "name": "Rebirth",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Remove this card from your deck before playing if you're not playing for ante.\nEach player may ante the top card of their library. If a player does, that player's life total becomes 20."
+  },
+  "Barroom Brawl": {
+    "id": "Barroom Brawl",
+    "name": "Barroom Brawl",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control fights target creature the opponent to your left controls. Then that player may copy this spell and may choose new targets for the copy."
+  },
+  "Uncage the Menagerie": {
+    "id": "Uncage the Menagerie",
+    "name": "Uncage the Menagerie",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to X creature cards with different names that each have mana value X, reveal them, put them into your hand, then shuffle."
+  },
+  "Malevolent Rumble": {
+    "id": "Malevolent Rumble",
+    "name": "Malevolent Rumble",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal the top four cards of your library. You may put a permanent card from among them into your hand. Put the rest into your graveyard. Create a 0/1 colorless Eldrazi Spawn creature token with \"Sacrifice this token: Add {C}.\"",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Common Goal": {
+    "id": "Common Goal",
+    "name": "Common Goal",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "One or two target creatures you control each deal damage equal to their power to target creature an opponent controls."
+  },
+  "Tapping at the Window": {
+    "id": "Tapping at the Window",
+    "name": "Tapping at the Window",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top three cards of your library. You may reveal a creature card from among them and put it into your hand. Put the rest into your graveyard.\nFlashback {2}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Throw from the Saddle": {
+    "id": "Throw from the Saddle",
+    "name": "Throw from the Saddle",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +1/+1 until end of turn. Put a +1/+1 counter on it instead if it's a Mount. Then it deals damage equal to its power to target creature you don't control."
+  },
+  "Kapow!": {
+    "id": "Kapow!",
+    "name": "Kapow!",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control. It fights target creature an opponent controls. (Each deals damage equal to its power to the other.)"
+  },
+  "Declare Dominance": {
+    "id": "Declare Dominance",
+    "name": "Declare Dominance",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +3/+3 until end of turn. All creatures able to block it this turn do so."
+  },
+  "Planar Engineering": {
+    "id": "Planar Engineering",
+    "name": "Planar Engineering",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Sacrifice two lands. Search your library for four basic land cards, put them onto the battlefield tapped, then shuffle."
+  },
+  "Emergent Sequence": {
+    "id": "Emergent Sequence",
+    "name": "Emergent Sequence",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card, put it onto the battlefield tapped, then shuffle. That land becomes a 0/0 green and blue Fractal creature that's still a land. Put a +1/+1 counter on it for each land you had enter the battlefield under your control this turn."
+  },
+  "Skyreaping": {
+    "id": "Skyreaping",
+    "name": "Skyreaping",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Skyreaping deals damage to each creature with flying equal to your devotion to green. (Each {G} in the mana costs of permanents you control counts toward your devotion to green.)"
+  },
+  "Rebuking Ceremony": {
+    "id": "Rebuking Ceremony",
+    "name": "Rebuking Ceremony",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put two target artifacts on top of their owners' libraries."
+  },
+  "For the Common Good": {
+    "id": "For the Common Good",
+    "name": "For the Common Good",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create X tokens that are copies of target token you control. Then tokens you control gain indestructible until your next turn. You gain 1 life for each token you control."
+  },
+  "Hunters' Feast": {
+    "id": "Hunters' Feast",
+    "name": "Hunters' Feast",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Any number of target players each gain 6 life."
+  },
+  "Cartographer's Survey": {
+    "id": "Cartographer's Survey",
+    "name": "Cartographer's Survey",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top seven cards of your library. Put up to two land cards from among them onto the battlefield tapped. Put the rest on the bottom of your library in a random order."
+  },
+  "Elephant Resurgence": {
+    "id": "Elephant Resurgence",
+    "name": "Elephant Resurgence",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each player creates a green Elephant creature token. Those creatures have \"This token's power and toughness are each equal to the number of creature cards in its controller's graveyard.\""
+  },
+  "Contest of Claws": {
+    "id": "Contest of Claws",
+    "name": "Contest of Claws",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control deals damage equal to its power to another target creature. If excess damage was dealt this way, discover X, where X is that excess damage. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)"
+  },
+  "Stunted Growth": {
+    "id": "Stunted Growth",
+    "name": "Stunted Growth",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target player chooses three cards from their hand and puts them on top of their library in any order."
+  },
+  "Land Grant": {
+    "id": "Land Grant",
+    "name": "Land Grant",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If you have no land cards in hand, you may reveal your hand rather than pay this spell's mana cost.\nSearch your library for a Forest card, reveal that card, put it into your hand, then shuffle."
+  },
+  "Hulk's Thunderclap": {
+    "id": "Hulk's Thunderclap",
+    "name": "Hulk's Thunderclap",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may behold a Gamma creature. (You may choose a Gamma creature you control or reveal a Gamma creature card from your hand.)\nTarget creature you control deals damage equal to its power to another target creature. If this spell's additional cost was paid, destroy target noncreature artifact or noncreature enchantment."
+  },
+  "Path to the Festival": {
+    "id": "Path to the Festival",
+    "name": "Path to the Festival",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card, put that card onto the battlefield tapped, then shuffle. Then if there are three or more basic land types among lands you control, scry 1. (Look at the top card of your library. You may put that card on the bottom.)\nFlashback {4}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Summer Bloom": {
+    "id": "Summer Bloom",
+    "name": "Summer Bloom",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may play up to three additional lands this turn."
+  },
+  "Reverent Silence": {
+    "id": "Reverent Silence",
+    "name": "Reverent Silence",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If you control a Forest, rather than pay this spell's mana cost, you may have each other player gain 6 life.\nDestroy all enchantments."
+  },
+  "Phosphorescent Feast": {
+    "id": "Phosphorescent Feast",
+    "name": "Phosphorescent Feast",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Chroma — Reveal any number of cards in your hand. You gain 2 life for each green mana symbol in those cards' mana costs."
+  },
+  "Journey for the Elixir": {
+    "id": "Journey for the Elixir",
+    "name": "Journey for the Elixir",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library and graveyard for a basic land card and a card named Jiang Yanggu, reveal them, put them into your hand, then shuffle."
+  },
+  "Wallop": {
+    "id": "Wallop",
+    "name": "Wallop",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target blue or black creature with flying."
+  },
+  "Bond of Flourishing": {
+    "id": "Bond of Flourishing",
+    "name": "Bond of Flourishing",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top three cards of your library. You may reveal a permanent card from among them and put it into your hand. Put the rest on the bottom of your library in any order. You gain 3 life."
+  },
+  "Analyze the Pollen": {
+    "id": "Analyze the Pollen",
+    "name": "Analyze the Pollen",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may collect evidence 8. (Exile cards with total mana value 8 or greater from your graveyard.)\nSearch your library for a basic land card. If evidence was collected, instead search your library for a creature or land card. Reveal that card, put it into your hand, then shuffle."
+  },
+  "Scout the City": {
+    "id": "Scout the City",
+    "name": "Scout the City",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Look Around — Mill three cards. You may put a permanent card from among them into your hand. You gain 3 life. (To mill three cards, put the top three cards of your library into your graveyard.)\n• Bring Down — Destroy target creature with flying."
+  },
+  "Assert Perfection": {
+    "id": "Assert Perfection",
+    "name": "Assert Perfection",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +1/+0 until end of turn. It deals damage equal to its power to up to one target creature an opponent controls."
+  },
+  "Spinning Wheel Kick": {
+    "id": "Spinning Wheel Kick",
+    "name": "Spinning Wheel Kick",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control deals damage equal to its power to each of X target creatures and/or planeswalkers."
+  },
+  "Reshape the Earth": {
+    "id": "Reshape the Earth",
+    "name": "Reshape the Earth",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{G}{G}{G}",
+    "cmc": 9,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to ten land cards, put them onto the battlefield tapped, then shuffle."
+  },
+  "Predatory Rampage": {
+    "id": "Predatory Rampage",
+    "name": "Predatory Rampage",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures you control get +3/+3 until end of turn. Each creature your opponents control blocks this turn if able."
+  },
+  "Typhoon": {
+    "id": "Typhoon",
+    "name": "Typhoon",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Typhoon deals damage to each opponent equal to the number of Islands that player controls."
+  },
+  "Feral Contest": {
+    "id": "Feral Contest",
+    "name": "Feral Contest",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control. Another target creature blocks it this turn if able."
+  },
+  "Earth Rumble": {
+    "id": "Earth Rumble",
+    "name": "Earth Rumble",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Earthbend 2. When you do, up to one target creature you control fights target creature an opponent controls. (To earthbend 2, target land you control becomes a 0/0 creature with haste that's still a land. Put two +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped. Creatures that fight each deal damage equal to their power to the other.)"
+  },
+  "Bifurcate": {
+    "id": "Bifurcate",
+    "name": "Bifurcate",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a permanent card with the same name as target nontoken creature, put that card onto the battlefield, then shuffle."
+  },
+  "Grizzly Fate": {
+    "id": "Grizzly Fate",
+    "name": "Grizzly Fate",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create two 2/2 green Bear creature tokens.\nThreshold — Create four 2/2 green Bear creature tokens instead if there are seven or more cards in your graveyard.\nFlashback {5}{G}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Open the Gates": {
+    "id": "Open the Gates",
+    "name": "Open the Gates",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card or Gate card, reveal it, put it into your hand, then shuffle."
+  },
+  "Thermokarst": {
+    "id": "Thermokarst",
+    "name": "Thermokarst",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target land. If that land was a snow land, you gain 1 life."
+  },
+  "Seeds of Innocence": {
+    "id": "Seeds of Innocence",
+    "name": "Seeds of Innocence",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy all artifacts. They can't be regenerated. The controller of each of those artifacts gains life equal to its mana value."
+  },
+  "Dubious Challenge": {
+    "id": "Dubious Challenge",
+    "name": "Dubious Challenge",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top ten cards of your library, exile up to two creature cards from among them, then shuffle. Target opponent may choose one of the exiled cards and put it onto the battlefield under their control. Put the rest onto the battlefield under your control."
+  },
+  "Restorative Technique": {
+    "id": "Restorative Technique",
+    "name": "Restorative Technique",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target player gains 2 life, then searches their library for a basic land card, puts it onto the battlefield tapped, then shuffles. Put a +1/+1 counter on up to one target creature."
+  },
+  "Marshaling the Troops": {
+    "id": "Marshaling the Troops",
+    "name": "Marshaling the Troops",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Tap any number of untapped creatures you control. You gain 4 life for each creature tapped this way."
+  },
+  "Strength of Solidarity": {
+    "id": "Strength of Solidarity",
+    "name": "Strength of Solidarity",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target creature you control. Put a +1/+1 counter on it for each creature in your party. (Your party consists of up to one each of Cleric, Rogue, Warrior, and Wizard.)"
+  },
+  "Serene Remembrance": {
+    "id": "Serene Remembrance",
+    "name": "Serene Remembrance",
+    "typeLine": "Sorcery",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Shuffle Serene Remembrance and up to three target cards from a single graveyard into their owners' libraries."
+  },
+  "Synchronized Charge": {
+    "id": "Synchronized Charge",
+    "name": "Synchronized Charge",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Distribute two +1/+1 counters among one or two target creatures you control. Creatures you control with counters on them gain vigilance and trample until end of turn.\nHarmonize {4}{G} (You may cast this card from your graveyard for its harmonize cost. You may tap a creature you control to reduce that cost by {X}, where X is its power. Then exile this spell.)"
+  },
+  "Long Rest": {
+    "id": "Long Rest",
+    "name": "Long Rest",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Return X target cards with different mana values from your graveyard to your hand. If eight or more cards were returned to your hand this way, your life total becomes equal to your starting life total. Exile Long Rest."
+  },
+  "Thrive": {
+    "id": "Thrive",
+    "name": "Thrive",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on each of X target creatures."
+  },
+  "Bite Down on Crime": {
+    "id": "Bite Down on Crime",
+    "name": "Bite Down on Crime",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may collect evidence 6. This spell costs {2} less to cast if evidence was collected. (To collect evidence 6, exile cards with total mana value 6 or greater from your graveyard.)\nTarget creature you control gets +2/+0 until end of turn. It deals damage equal to its power to target creature you don't control."
+  }
+}

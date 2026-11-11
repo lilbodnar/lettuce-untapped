@@ -1,0 +1,2286 @@
+{
+  "Veil of Summer": {
+    "id": "Veil of Summer",
+    "name": "Veil of Summer",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Draw a card if an opponent has cast a blue or black spell this turn. Spells you control can't be countered this turn. You and permanents you control gain hexproof from blue and from black until end of turn. (You and they can't be the targets of blue or black spells or abilities your opponents control.)"
+  },
+  "Strength of Night": {
+    "id": "Strength of Night",
+    "name": "Strength of Night",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {B} (You may pay an additional {B} as you cast this spell.)\nCreatures you control get +1/+1 until end of turn. If this spell was kicked, Zombie creatures you control get an additional +2/+2 until end of turn."
+  },
+  "Divergent Growth": {
+    "id": "Divergent Growth",
+    "name": "Divergent Growth",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, lands you control gain \"{T}: Add one mana of any color.\"",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Close Encounter": {
+    "id": "Close Encounter",
+    "name": "Close Encounter",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, choose a creature you control or a warped creature card you own in exile.\nClose Encounter deals damage equal to the power of the chosen creature or card to target creature."
+  },
+  "Autumn's Veil": {
+    "id": "Autumn's Veil",
+    "name": "Autumn's Veil",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Spells you control can't be countered by blue or black spells this turn, and creatures you control can't be the targets of blue or black spells this turn."
+  },
+  "Deglamer": {
+    "id": "Deglamer",
+    "name": "Deglamer",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target artifact or enchantment. Its owner shuffles it into their library."
+  },
+  "Howling Gale": {
+    "id": "Howling Gale",
+    "name": "Howling Gale",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Howling Gale deals 1 damage to each creature with flying and each player.\nFlashback {1}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Colossal Growth": {
+    "id": "Colossal Growth",
+    "name": "Colossal Growth",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {R} (You may pay an additional {R} as you cast this spell.)\nTarget creature gets +3/+3 until end of turn. If this spell was kicked, instead that creature gets +4/+4 and gains trample and haste until end of turn."
+  },
+  "Chorus of Might": {
+    "id": "Chorus of Might",
+    "name": "Chorus of Might",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, target creature gets +1/+1 for each creature you control and gains trample."
+  },
+  "Natural Affinity": {
+    "id": "Natural Affinity",
+    "name": "Natural Affinity",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All lands become 2/2 creatures until end of turn. They're still lands."
+  },
+  "Collected Company": {
+    "id": "Collected Company",
+    "name": "Collected Company",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top six cards of your library. Put up to two creature cards with mana value 3 or less from among them onto the battlefield. Put the rest on the bottom of your library in any order."
+  },
+  "Joint Assault": {
+    "id": "Joint Assault",
+    "name": "Joint Assault",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 until end of turn. If it's paired with a creature, that creature also gets +2/+2 until end of turn."
+  },
+  "Fog of War": {
+    "id": "Fog of War",
+    "name": "Fog of War",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You gain 1 life for each creature on the battlefield. Prevent all combat damage that would be dealt this turn by creatures with power 3 or less."
+  },
+  "Baloth Cage Trap": {
+    "id": "Baloth Cage Trap",
+    "name": "Baloth Cage Trap",
+    "typeLine": "Instant — Trap",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If an opponent had an artifact enter the battlefield under their control this turn, you may pay {1}{G} rather than pay this spell's mana cost.\nCreate a 4/4 green Beast creature token."
+  },
+  "Unravel the Aether": {
+    "id": "Unravel the Aether",
+    "name": "Unravel the Aether",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target artifact or enchantment. Its owner shuffles it into their library."
+  },
+  "Pistus Strike": {
+    "id": "Pistus Strike",
+    "name": "Pistus Strike",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target creature with flying. Its controller gets a poison counter."
+  },
+  "Life Goes On": {
+    "id": "Life Goes On",
+    "name": "Life Goes On",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You gain 4 life. If a creature died this turn, you gain 8 life instead."
+  },
+  "Efflorescence": {
+    "id": "Efflorescence",
+    "name": "Efflorescence",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put two +1/+1 counters on target creature.\nInfusion — If you gained life this turn, that creature also gains trample and indestructible until end of turn."
+  },
+  "Jaheira's Respite": {
+    "id": "Jaheira's Respite",
+    "name": "Jaheira's Respite",
+    "typeLine": "Instant",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to X basic land cards, where X is the number of creatures attacking you, put those cards onto the battlefield tapped, then shuffle.\nPrevent all combat damage that would be dealt this turn."
+  },
+  "Warriors' Lesson": {
+    "id": "Warriors' Lesson",
+    "name": "Warriors' Lesson",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, up to two target creatures you control each gain \"Whenever this creature deals combat damage to a player, draw a card.\""
+  },
+  "Defend the Hearth": {
+    "id": "Defend the Hearth",
+    "name": "Defend the Hearth",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt to players this turn."
+  },
+  "Hunter's Ambush": {
+    "id": "Hunter's Ambush",
+    "name": "Hunter's Ambush",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt by nongreen creatures this turn."
+  },
+  "You Look Upon the Tarrasque": {
+    "id": "You Look Upon the Tarrasque",
+    "name": "You Look Upon the Tarrasque",
+    "typeLine": "Instant",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Run and Hide — Prevent all combat damage that would be dealt to you and creatures you control this turn.\n• Gather Your Courage — Target creature gets +5/+5 and gains indestructible until end of turn. All creatures your opponents control able to block that creature this turn do so."
+  },
+  "Vengeant Earth": {
+    "id": "Vengeant Earth",
+    "name": "Vengeant Earth",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature or land you control becomes a 4/4 Elemental creature with haste in addition to its other types until end of turn. It must be blocked this turn if able."
+  },
+  "Hunger of the Howlpack": {
+    "id": "Hunger of the Howlpack",
+    "name": "Hunger of the Howlpack",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature.\nMorbid — Put three +1/+1 counters on that creature instead if a creature died this turn."
+  },
+  "Nourishing Shoal": {
+    "id": "Nourishing Shoal",
+    "name": "Nourishing Shoal",
+    "typeLine": "Instant — Arcane",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may exile a green card with mana value X from your hand rather than pay this spell's mana cost.\nYou gain X life."
+  },
+  "Run Over": {
+    "id": "Run Over",
+    "name": "Run Over",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {1} less to cast if it targets a Mount or Vehicle you control.\nTarget creature you control deals damage equal to its power to target creature an opponent controls."
+  },
+  "Resize": {
+    "id": "Resize",
+    "name": "Resize",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +3/+3 until end of turn.\nRecover {1}{G} (When a creature is put into your graveyard from the battlefield, you may pay {1}{G}. If you do, return this card from your graveyard to your hand. Otherwise, exile this card.)"
+  },
+  "Moonmist": {
+    "id": "Moonmist",
+    "name": "Moonmist",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Transform all Humans. Prevent all combat damage that would be dealt this turn by creatures other than Werewolves and Wolves. (Only double-faced cards can be transformed.)"
+  },
+  "Summoning Trap": {
+    "id": "Summoning Trap",
+    "name": "Summoning Trap",
+    "typeLine": "Instant — Trap",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If a creature spell you cast this turn was countered by a spell or ability an opponent controlled, you may pay {0} rather than pay this spell's mana cost.\nLook at the top seven cards of your library. You may put a creature card from among them onto the battlefield. Put the rest on the bottom of your library in any order."
+  },
+  "Savage Summoning": {
+    "id": "Savage Summoning",
+    "name": "Savage Summoning",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell can't be countered.\nThe next creature spell you cast this turn can be cast as though it had flash. That spell can't be countered. That creature enters with an additional +1/+1 counter on it."
+  },
+  "Early Harvest": {
+    "id": "Early Harvest",
+    "name": "Early Harvest",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target player untaps all basic lands they control."
+  },
+  "Wolf Strike": {
+    "id": "Wolf Strike",
+    "name": "Wolf Strike",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +2/+0 until end of turn if it's night. Then it deals damage equal to its power to target creature you don't control."
+  },
+  "Mirran Mettle": {
+    "id": "Mirran Mettle",
+    "name": "Mirran Mettle",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 until end of turn.\nMetalcraft — That creature gets +4/+4 until end of turn instead if you control three or more artifacts."
+  },
+  "Echoing Courage": {
+    "id": "Echoing Courage",
+    "name": "Echoing Courage",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature and all other creatures with the same name as that creature get +2/+2 until end of turn."
+  },
+  "Bouncer's Beatdown": {
+    "id": "Bouncer's Beatdown",
+    "name": "Bouncer's Beatdown",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {2} less to cast if it targets a black permanent.\nBouncer's Beatdown deals X damage to target creature or planeswalker, where X is the greatest power among creatures you control. If that creature or planeswalker would die this turn, exile it instead."
+  },
+  "Spore Cloud": {
+    "id": "Spore Cloud",
+    "name": "Spore Cloud",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Tap all blocking creatures. Prevent all combat damage that would be dealt this turn. Each attacking creature and each blocking creature doesn't untap during its controller's next untap step."
+  },
+  "Mutant's Prey": {
+    "id": "Mutant's Prey",
+    "name": "Mutant's Prey",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control with a +1/+1 counter on it fights target creature an opponent controls. (Each deals damage equal to its power to the other.)"
+  },
+  "Repopulate": {
+    "id": "Repopulate",
+    "name": "Repopulate",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Shuffle all creature cards from target player's graveyard into that player's library.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+  },
+  "Compel Brutality": {
+    "id": "Compel Brutality",
+    "name": "Compel Brutality",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Target creature you control deals damage equal to its power to target creature or planeswalker an opponent controls.\n• Target planeswalker you control deals damage equal to its loyalty to target creature or planeswalker an opponent controls."
+  },
+  "Choking Vines": {
+    "id": "Choking Vines",
+    "name": "Choking Vines",
+    "typeLine": "Instant",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only during the declare blockers step.\nX target attacking creatures become blocked. Choking Vines deals 1 damage to each of those creatures. (This spell works on creatures that can't be blocked.)"
+  },
+  "Seedtime": {
+    "id": "Seedtime",
+    "name": "Seedtime",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only during your turn.\nTake an extra turn after this one if an opponent cast a blue spell this turn."
+  },
+  "Archdruid's Charm": {
+    "id": "Archdruid's Charm",
+    "name": "Archdruid's Charm",
+    "typeLine": "Instant",
+    "manaCost": "{G}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Search your library for a creature or land card and reveal it. Put it onto the battlefield tapped if it's a land card. Otherwise, put it into your hand. Then shuffle.\n• Put a +1/+1 counter on target creature you control. It deals damage equal to its power to target creature you don't control.\n• Exile target artifact or enchantment."
+  },
+  "Lure of Prey": {
+    "id": "Lure of Prey",
+    "name": "Lure of Prey",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only if an opponent cast a creature spell this turn.\nYou may put a green creature card from your hand onto the battlefield."
+  },
+  "Gloomwidow's Feast": {
+    "id": "Gloomwidow's Feast",
+    "name": "Gloomwidow's Feast",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target creature with flying. If that creature was blue or black, create a 1/2 green Spider creature token with reach. (It can block creatures with flying.)"
+  },
+  "Deep Wood": {
+    "id": "Deep Wood",
+    "name": "Deep Wood",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only during the declare attackers step and only if you've been attacked this step.\nPrevent all damage that would be dealt to you this turn by attacking creatures."
+  },
+  "Wild Might": {
+    "id": "Wild Might",
+    "name": "Wild Might",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +1/+1 until end of turn. That creature gets an additional +4/+4 until end of turn unless any player pays {2}."
+  },
+  "Harmonic Convergence": {
+    "id": "Harmonic Convergence",
+    "name": "Harmonic Convergence",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put all enchantments on top of their owners' libraries."
+  },
+  "Terrific Team-Up": {
+    "id": "Terrific Team-Up",
+    "name": "Terrific Team-Up",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {2} less to cast if you control a permanent with mana value 4 or greater.\nOne or two target creatures you control each get +1/+0 until end of turn. They each deal damage equal to their power to target creature an opponent controls."
+  },
+  "Resuscitate": {
+    "id": "Resuscitate",
+    "name": "Resuscitate",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, creatures you control gain \"{1}: Regenerate this creature.\""
+  },
+  "Punishing Punch": {
+    "id": "Punishing Punch",
+    "name": "Punishing Punch",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {2} less to cast if there are two or more creature cards in your graveyard.\nTarget creature you control deals damage equal to twice its power to target creature an opponent controls."
+  },
+  "Gold Rush": {
+    "id": "Gold Rush",
+    "name": "Gold Rush",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create a Treasure token. Until end of turn, up to one target creature gets +2/+2 for each Treasure you control."
+  },
+  "Something Worth Saving": {
+    "id": "Something Worth Saving",
+    "name": "Something Worth Saving",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Mill four cards. You may put a permanent card from among them into your hand. You gain 1 life. (To mill four cards, put the top four cards of your library into your graveyard.)"
+  },
+  "Stampede": {
+    "id": "Stampede",
+    "name": "Stampede",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Attacking creatures get +1/+0 and gain trample until end of turn."
+  },
+  "Display of Dominance": {
+    "id": "Display of Dominance",
+    "name": "Display of Dominance",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Destroy target blue or black noncreature permanent.\n• Permanents you control can't be the targets of blue or black spells your opponents control this turn."
+  },
+  "Ancient Animus": {
+    "id": "Ancient Animus",
+    "name": "Ancient Animus",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control if it's legendary. Then it fights target creature an opponent controls. (Each deals damage equal to its power to the other.)"
+  },
+  "Falling Timber": {
+    "id": "Falling Timber",
+    "name": "Falling Timber",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker—Sacrifice a land. (You may sacrifice a land in addition to any other costs as you cast this spell.)\nPrevent all combat damage target creature would deal this turn. If this spell was kicked, prevent all combat damage another target creature would deal this turn."
+  },
+  "Might of the Nephilim": {
+    "id": "Might of the Nephilim",
+    "name": "Might of the Nephilim",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 until end of turn for each of its colors."
+  },
+  "Blinding Fog": {
+    "id": "Blinding Fog",
+    "name": "Blinding Fog",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all damage that would be dealt to creatures this turn. Creatures you control gain hexproof until end of turn. (They can't be the targets of spells or abilities your opponents control.)"
+  },
+  "Duel for Dominance": {
+    "id": "Duel for Dominance",
+    "name": "Duel for Dominance",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Coven — Choose target creature you control and target creature you don't control. If you control three or more creatures with different powers, put a +1/+1 counter on the chosen creature you control. Then the chosen creatures fight each other. (Each deals damage equal to its power to the other.)"
+  },
+  "Tail Swipe": {
+    "id": "Tail Swipe",
+    "name": "Tail Swipe",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target creature you control and target creature you don't control. If you cast this spell during your main phase, the creature you control gets +1/+1 until end of turn. Then those creatures fight each other. (Each deals damage equal to its power to the other.)"
+  },
+  "Grow Extra Arms": {
+    "id": "Grow Extra Arms",
+    "name": "Grow Extra Arms",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {1} less to cast if it targets a Spider.\nTarget creature gets +4/+4 until end of turn."
+  },
+  "Insatiable Appetite": {
+    "id": "Insatiable Appetite",
+    "name": "Insatiable Appetite",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may sacrifice a Food. If you do, target creature gets +5/+5 until end of turn. Otherwise, that creature gets +3/+3 until end of turn."
+  },
+  "Run Afoul": {
+    "id": "Run Afoul",
+    "name": "Run Afoul",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target opponent sacrifices a creature of their choice with flying."
+  },
+  "Stand Together": {
+    "id": "Stand Together",
+    "name": "Stand Together",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put two +1/+1 counters on target creature and two +1/+1 counters on another target creature."
+  },
+  "Might Beyond Reason": {
+    "id": "Might Beyond Reason",
+    "name": "Might Beyond Reason",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put two +1/+1 counters on target creature.\nDelirium — Put three +1/+1 counters on that creature instead if there are four or more card types among cards in your graveyard."
+  },
+  "Commencement of Festivities": {
+    "id": "Commencement of Festivities",
+    "name": "Commencement of Festivities",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt to players this turn."
+  },
+  "Natural Selection": {
+    "id": "Natural Selection",
+    "name": "Natural Selection",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Look at the top three cards of target player's library, then put them back in any order. You may have that player shuffle."
+  },
+  "Legolas's Quick Reflexes": {
+    "id": "Legolas's Quick Reflexes",
+    "name": "Legolas's Quick Reflexes",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Split second (As long as this spell is on the stack, players can't cast spells or activate abilities that aren't mana abilities.)\nUntap target creature. Until end of turn, it gains reach, hexproof, and \"Whenever this creature becomes tapped, it deals damage equal to its power to up to one target creature.\""
+  },
+  "Rust": {
+    "id": "Rust",
+    "name": "Rust",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Counter target activated ability from an artifact source. (Mana abilities can't be targeted.)"
+  },
+  "Verdant Command": {
+    "id": "Verdant Command",
+    "name": "Verdant Command",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose two —\n• Target player creates two tapped 1/1 green Squirrel creature tokens.\n• Counter target loyalty ability of a planeswalker.\n• Exile target card from a graveyard.\n• Target player gains 3 life."
+  },
+  "Signature Slam": {
+    "id": "Signature Slam",
+    "name": "Signature Slam",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control, then each modified creature you control deals damage equal to its power to target creature you don't control. (Equipment, Auras you control, and counters are modifications.)"
+  },
+  "Colossal Heroics": {
+    "id": "Colossal Heroics",
+    "name": "Colossal Heroics",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Strive — This spell costs {1}{G} more to cast for each target beyond the first.\nAny number of target creatures each get +2/+2 until end of turn. Untap those creatures."
+  },
+  "Awakening of Vitu-Ghazi": {
+    "id": "Awakening of Vitu-Ghazi",
+    "name": "Awakening of Vitu-Ghazi",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put nine +1/+1 counters on target land you control. It becomes a legendary 0/0 Elemental creature with haste named Vitu-Ghazi. It's still a land."
+  },
+  "Crash Landing": {
+    "id": "Crash Landing",
+    "name": "Crash Landing",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature with flying loses flying until end of turn. Crash Landing deals damage to that creature equal to the number of Forests you control."
+  },
+  "Rampage of the Clans": {
+    "id": "Rampage of the Clans",
+    "name": "Rampage of the Clans",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy all artifacts and enchantments. For each permanent destroyed this way, its controller creates a 3/3 green Centaur creature token."
+  },
+  "Wing Puncture": {
+    "id": "Wing Puncture",
+    "name": "Wing Puncture",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control deals damage equal to its power to target creature with flying."
+  },
+  "Force of Vigor": {
+    "id": "Force of Vigor",
+    "name": "Force of Vigor",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If it's not your turn, you may exile a green card from your hand rather than pay this spell's mana cost.\nDestroy up to two target artifacts and/or enchantments."
+  },
+  "Lifecrafter's Gift": {
+    "id": "Lifecrafter's Gift",
+    "name": "Lifecrafter's Gift",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature, then put a +1/+1 counter on each creature you control with a +1/+1 counter on it."
+  },
+  "Smuggler's Surprise": {
+    "id": "Smuggler's Surprise",
+    "name": "Smuggler's Surprise",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Spree (Choose one or more additional costs.)\n+ {2} — Mill four cards. You may put up to two creature and/or land cards from among the milled cards into your hand.\n+ {4}{G} — You may put up to two creature cards from your hand onto the battlefield.\n+ {1} — Creatures you control with power 4 or greater gain hexproof and indestructible until end of turn."
+  },
+  "Rending Vines": {
+    "id": "Rending Vines",
+    "name": "Rending Vines",
+    "typeLine": "Instant — Arcane",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target artifact or enchantment if its mana value is less than or equal to the number of cards in your hand.\nDraw a card."
+  },
+  "Slingbow Trap": {
+    "id": "Slingbow Trap",
+    "name": "Slingbow Trap",
+    "typeLine": "Instant — Trap",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If a black creature with flying is attacking, you may pay {G} rather than pay this spell's mana cost.\nDestroy target attacking creature with flying."
+  },
+  "Chord of Calling": {
+    "id": "Chord of Calling",
+    "name": "Chord of Calling",
+    "typeLine": "Instant",
+    "manaCost": "{X}{G}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nSearch your library for a creature card with mana value X or less, put it onto the battlefield, then shuffle."
+  },
+  "River Heralds' Boon": {
+    "id": "River Heralds' Boon",
+    "name": "River Heralds' Boon",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature and a +1/+1 counter on up to one target Merfolk."
+  },
+  "Disturbed Slumber": {
+    "id": "Disturbed Slumber",
+    "name": "Disturbed Slumber",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, target land you control becomes a 4/4 Dinosaur creature with reach and haste. It's still a land. It must be blocked this turn if able."
+  },
+  "Chameleon Blur": {
+    "id": "Chameleon Blur",
+    "name": "Chameleon Blur",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all damage that creatures would deal to players this turn."
+  },
+  "Tribal Unity": {
+    "id": "Tribal Unity",
+    "name": "Tribal Unity",
+    "typeLine": "Instant",
+    "manaCost": "{X}{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures of the creature type of your choice get +X/+X until end of turn."
+  },
+  "Flourishing Grapple": {
+    "id": "Flourishing Grapple",
+    "name": "Flourishing Grapple",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature or planeswalker an opponent controls that's red or white loses all abilities until end of turn. Target creature you control deals damage equal to its power to that permanent."
+  },
+  "Foxfire": {
+    "id": "Foxfire",
+    "name": "Foxfire",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Untap target attacking creature. Prevent all combat damage that would be dealt to and dealt by that creature this turn.\nDraw a card at the beginning of the next turn's upkeep."
+  },
+  "Fated Intervention": {
+    "id": "Fated Intervention",
+    "name": "Fated Intervention",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Create two 3/3 green Centaur enchantment creature tokens. If it's your turn, scry 2."
+  },
+  "Predator's Rapport": {
+    "id": "Predator's Rapport",
+    "name": "Predator's Rapport",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target creature you control. You gain life equal to that creature's power plus its toughness."
+  },
+  "Elemental Teachings": {
+    "id": "Elemental Teachings",
+    "name": "Elemental Teachings",
+    "typeLine": "Instant — Lesson",
+    "manaCost": "{4}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to four land cards with different names and reveal them. An opponent chooses two of those cards. Put the chosen cards into your graveyard and the rest onto the battlefield tapped, then shuffle."
+  },
+  "Provoke": {
+    "id": "Provoke",
+    "name": "Provoke",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Untap target creature you don't control. That creature blocks this turn if able.\nDraw a card."
+  },
+  "Entish Restoration": {
+    "id": "Entish Restoration",
+    "name": "Entish Restoration",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Sacrifice a land. Search your library for up to two basic land cards, put them onto the battlefield tapped, then shuffle. If you control a creature with power 4 or greater, instead search your library for up to three basic land cards, put them onto the battlefield tapped, then shuffle."
+  },
+  "Tel-Jilad Defiance": {
+    "id": "Tel-Jilad Defiance",
+    "name": "Tel-Jilad Defiance",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gains protection from artifacts until end of turn.\nDraw a card."
+  },
+  "Hail Storm": {
+    "id": "Hail Storm",
+    "name": "Hail Storm",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Hail Storm deals 2 damage to each attacking creature and 1 damage to you and each creature you control."
+  },
+  "Lammastide Weave": {
+    "id": "Lammastide Weave",
+    "name": "Lammastide Weave",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose a card name, then target player mills a card. If a card with the chosen name was milled this way, you gain life equal to its mana value.\nDraw a card."
+  },
+  "Setessan Tactics": {
+    "id": "Setessan Tactics",
+    "name": "Setessan Tactics",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Strive — This spell costs {G} more to cast for each target beyond the first.\nUntil end of turn, any number of target creatures each get +1/+1 and gain \"{T}: This creature fights another target creature.\""
+  },
+  "Dathon and Picard at El-Adrel": {
+    "id": "Dathon and Picard at El-Adrel",
+    "name": "Dathon and Picard at El-Adrel",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Temba, His Arms Wide — Target creature gets +3/+3 and gains trample until end of turn.\n• Shaka, When the Walls Fell — Each opponent sacrifices a nontoken artifact or enchantment of their choice."
+  },
+  "Bounty of the Hunt": {
+    "id": "Bounty of the Hunt",
+    "name": "Bounty of the Hunt",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may exile a green card from your hand rather than pay this spell's mana cost.\nDistribute three +1/+1 counters among one, two, or three target creatures. For each +1/+1 counter you put on a creature this way, remove a +1/+1 counter from that creature at the beginning of the next cleanup step."
+  },
+  "Summoner's Pact": {
+    "id": "Summoner's Pact",
+    "name": "Summoner's Pact",
+    "typeLine": "Instant",
+    "manaCost": "{0}",
+    "cmc": 0,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a green creature card, reveal it, put it into your hand, then shuffle.\nAt the beginning of your next upkeep, pay {2}{G}{G}. If you don't, you lose the game."
+  },
+  "Symbiosis": {
+    "id": "Symbiosis",
+    "name": "Symbiosis",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Two target creatures each get +2/+2 until end of turn."
+  },
+  "Midnight Tilling": {
+    "id": "Midnight Tilling",
+    "name": "Midnight Tilling",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Mill four cards, then you may return a permanent card from among them to your hand. (To mill four cards, put the top four cards of your library into your graveyard.)"
+  },
+  "Press the Advantage": {
+    "id": "Press the Advantage",
+    "name": "Press the Advantage",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Up to two target creatures each get +2/+2 and gain trample until end of turn."
+  },
+  "Gift of the Viper": {
+    "id": "Gift of the Viper",
+    "name": "Gift of the Viper",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter, a reach counter, and a deathtouch counter on target creature. Untap it."
+  },
+  "Vivify": {
+    "id": "Vivify",
+    "name": "Vivify",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target land becomes a 3/3 creature until end of turn. It's still a land.\nDraw a card."
+  },
+  "Sandstorm": {
+    "id": "Sandstorm",
+    "name": "Sandstorm",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Sandstorm deals 1 damage to each attacking creature."
+  },
+  "Wild Onslaught": {
+    "id": "Wild Onslaught",
+    "name": "Wild Onslaught",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {4} (You may pay an additional {4} as you cast this spell.)\nPut a +1/+1 counter on each creature you control. If this spell was kicked, put two +1/+1 counters on each creature you control instead."
+  },
+  "Hunter's Mark": {
+    "id": "Hunter's Mark",
+    "name": "Hunter's Mark",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {3} less to cast if it targets a blue permanent you don't control.\nThis spell can't be countered.\nTarget creature you control gets +1/+1 until end of turn. Then it deals damage equal to its power to target creature or planeswalker you don't control."
+  },
+  "Dryad's Caress": {
+    "id": "Dryad's Caress",
+    "name": "Dryad's Caress",
+    "typeLine": "Instant",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You gain 1 life for each creature on the battlefield. If {W} was spent to cast this spell, untap all creatures you control."
+  },
+  "Luminescent Rain": {
+    "id": "Luminescent Rain",
+    "name": "Luminescent Rain",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose a creature type. You gain 2 life for each permanent you control of that type."
+  },
+  "Reap": {
+    "id": "Reap",
+    "name": "Reap",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Return up to X target cards from your graveyard to your hand, where X is the number of black permanents target opponent controls as you cast this spell."
+  },
+  "First Contact": {
+    "id": "First Contact",
+    "name": "First Contact",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Mill four cards. You may put a permanent card from among them into your hand. If this spell is the first spell you've cast this game, you gain 2 life. (To mill four cards, put the top four cards of your library into your graveyard.)"
+  },
+  "Fistful of Force": {
+    "id": "Fistful of Force",
+    "name": "Fistful of Force",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 until end of turn. Clash with an opponent. If you win, that creature gets an additional +2/+2 and gains trample until end of turn. (Each clashing player reveals the top card of their library, then puts that card on their choice of the top or bottom. A player wins if their card had a greater mana value.)"
+  },
+  "Subdue": {
+    "id": "Subdue",
+    "name": "Subdue",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt by target creature this turn. That creature gets +0/+X until end of turn, where X is its mana value."
+  },
+  "Touch of Vitae": {
+    "id": "Touch of Vitae",
+    "name": "Touch of Vitae",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, target creature gains haste and \"{0}: Untap this creature. Activate only once.\"\nDraw a card at the beginning of the next turn's upkeep."
+  },
+  "Tranquil Domain": {
+    "id": "Tranquil Domain",
+    "name": "Tranquil Domain",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy all non-Aura enchantments."
+  },
+  "Lifecraft Awakening": {
+    "id": "Lifecraft Awakening",
+    "name": "Lifecraft Awakening",
+    "typeLine": "Instant",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put X +1/+1 counters on target artifact you control. If it isn't a creature or Vehicle, it becomes a 0/0 Construct artifact creature."
+  },
+  "Vines of Vastwood": {
+    "id": "Vines of Vastwood",
+    "name": "Vines of Vastwood",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {G} (You may pay an additional {G} as you cast this spell.)\nTarget creature can't be the target of spells or abilities your opponents control this turn. If this spell was kicked, that creature gets +4/+4 until end of turn."
+  },
+  "Berserk": {
+    "id": "Berserk",
+    "name": "Berserk",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only before the combat damage step.\nTarget creature gains trample and gets +X/+0 until end of turn, where X is its power. At the beginning of the next end step, destroy that creature if it attacked this turn."
+  },
+  "Crumble": {
+    "id": "Crumble",
+    "name": "Crumble",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target artifact. It can't be regenerated. That artifact's controller gains life equal to its mana value."
+  },
+  "Primal Boost": {
+    "id": "Primal Boost",
+    "name": "Primal Boost",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +4/+4 until end of turn.\nCycling {2}{G} ({2}{G}, Discard this card: Draw a card.)\nWhen you cycle this card, you may have target creature get +1/+1 until end of turn."
+  },
+  "Might of Murasa": {
+    "id": "Might of Murasa",
+    "name": "Might of Murasa",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {2}{G} (You may pay an additional {2}{G} as you cast this spell.)\nTarget creature gets +3/+3 until end of turn. If this spell was kicked, that creature gets +5/+5 until end of turn instead."
+  },
+  "Revealing Wind": {
+    "id": "Revealing Wind",
+    "name": "Revealing Wind",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt this turn. You may look at each face-down creature that's attacking or blocking."
+  },
+  "Sylvan Paradise": {
+    "id": "Sylvan Paradise",
+    "name": "Sylvan Paradise",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "One or more target creatures become green until end of turn."
+  },
+  "Glyph of Reincarnation": {
+    "id": "Glyph of Reincarnation",
+    "name": "Glyph of Reincarnation",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only after combat.\nDestroy all creatures that were blocked by target Wall this turn. They can't be regenerated. For each creature that died this way, put a creature card from the graveyard of the player who controlled that creature the last time it became blocked by that Wall onto the battlefield under its owner's control."
+  },
+  "Storyweave": {
+    "id": "Storyweave",
+    "name": "Storyweave",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one —\n• Put two +1/+1 counters on target creature you control.\n• Put two lore counters on target Saga you control. The next time one or more enchantment creatures you control enter this turn, each enters with two additional +1/+1 counters on it."
+  },
+  "Explosive Growth": {
+    "id": "Explosive Growth",
+    "name": "Explosive Growth",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {5} (You may pay an additional {5} as you cast this spell.)\nTarget creature gets +2/+2 until end of turn. If this spell was kicked, that creature gets +5/+5 until end of turn instead."
+  },
+  "Muscle Burst": {
+    "id": "Muscle Burst",
+    "name": "Muscle Burst",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +X/+X until end of turn, where X is 3 plus the number of cards named Muscle Burst in all graveyards."
+  },
+  "Wild Shape": {
+    "id": "Wild Shape",
+    "name": "Wild Shape",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one. Until end of turn, target creature you control has that base power and toughness, becomes that creature type, and gains that ability.\n• 1/3 Turtle with hexproof.\n• 1/5 Spider with reach.\n• 3/3 Elephant with trample."
+  },
+  "Clinging Mists": {
+    "id": "Clinging Mists",
+    "name": "Clinging Mists",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt this turn.\nFateful hour — If you have 5 or less life, tap all attacking creatures. Those creatures don't untap during their controller's next untap step."
+  },
+  "Inspire Awe": {
+    "id": "Inspire Awe",
+    "name": "Inspire Awe",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt this turn except combat damage that would be dealt by enchanted creatures and enchantment creatures. Scry 2."
+  },
+  "Camouflage": {
+    "id": "Camouflage",
+    "name": "Camouflage",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only during your declare attackers step.\nThis turn, instead of declaring blockers, each defending player chooses any number of creatures they control and divides them into a number of piles equal to the number of attacking creatures for whom that player is the defending player. Creatures those players control that can block additional creatures may likewise be put into additional piles. Assign each pile to a different one of those attacking creatures at random. Each creature in a pile that can block the creature that pile is assigned to does so. (Piles can be empty.)"
+  },
+  "Whiteout": {
+    "id": "Whiteout",
+    "name": "Whiteout",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All creatures lose flying until end of turn.\nSacrifice a snow land: Return this card from your graveyard to your hand."
+  },
+  "Heavy Fog": {
+    "id": "Heavy Fog",
+    "name": "Heavy Fog",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only during the declare attackers step and only if you've been attacked this step.\nPrevent all damage that would be dealt to you this turn by attacking creatures."
+  },
+  "Kamahl's Will": {
+    "id": "Kamahl's Will",
+    "name": "Kamahl's Will",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose one. If you control a commander as you cast this spell, you may choose both instead.\n• Until end of turn, any number of target lands you control become 1/1 Elemental creatures with vigilance, indestructible, and haste. They're still lands.\n• Choose target creature you don't control. Each creature you control deals damage equal to its power to that creature."
+  },
+  "Beast Mode": {
+    "id": "Beast Mode",
+    "name": "Beast Mode",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Teamwork 1 (As an additional cost to cast this spell, you may tap any number of creatures you control with total power 1 or more.)\nTarget creature gets +2/+2 and gains trample until end of turn. Also put a +1/+1 counter on that creature if this spell was cast using teamwork."
+  },
+  "Tanglesap": {
+    "id": "Tanglesap",
+    "name": "Tanglesap",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt this turn by creatures without trample."
+  },
+  "Reality Anchor": {
+    "id": "Reality Anchor",
+    "name": "Reality Anchor",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature loses shadow until end of turn.\nDraw a card."
+  },
+  "Get a Leg Up": {
+    "id": "Get a Leg Up",
+    "name": "Get a Leg Up",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, target creature gets +1/+1 for each creature you control and gains reach."
+  },
+  "March of Burgeoning Life": {
+    "id": "March of Burgeoning Life",
+    "name": "March of Burgeoning Life",
+    "typeLine": "Instant",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may exile any number of green cards from your hand. This spell costs {2} less to cast for each card exiled this way.\nChoose target creature with mana value less than X. Search your library for a creature card with the same name as that creature, put it onto the battlefield tapped, then shuffle."
+  },
+  "Band Together": {
+    "id": "Band Together",
+    "name": "Band Together",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Up to two target creatures you control each deal damage equal to their power to another target creature."
+  },
+  "Aerial Volley": {
+    "id": "Aerial Volley",
+    "name": "Aerial Volley",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Aerial Volley deals 3 damage divided as you choose among one, two, or three target creatures with flying."
+  },
+  "Rampaging Growth": {
+    "id": "Rampaging Growth",
+    "name": "Rampaging Growth",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card, put it onto the battlefield, then shuffle. Until end of turn, that land becomes a 4/3 Insect creature with reach and haste. It's still a land."
+  },
+  "I'm a Doctor, Not a . . .": {
+    "id": "I'm a Doctor, Not a . . .",
+    "name": "I'm a Doctor, Not a . . .",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control. Untap it. Until end of turn, it gets +1/+1 and becomes a Doctor. (It loses all other creature types.)"
+  },
+  "Bloodscent": {
+    "id": "Bloodscent",
+    "name": "Bloodscent",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All creatures able to block target creature this turn do so."
+  },
+  "Animate Land": {
+    "id": "Animate Land",
+    "name": "Animate Land",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, target land becomes a 3/3 creature that's still a land."
+  },
+  "Nature's Panoply": {
+    "id": "Nature's Panoply",
+    "name": "Nature's Panoply",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Strive — This spell costs {2}{G} more to cast for each target beyond the first.\nChoose any number of target creatures. Put a +1/+1 counter on each of them."
+  },
+  "Trash the Town": {
+    "id": "Trash the Town",
+    "name": "Trash the Town",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Spree (Choose one or more additional costs.)\n+ {2} — Put two +1/+1 counters on target creature.\n+ {1} — Target creature gains trample until end of turn.\n+ {1} — Until end of turn, target creature gains \"Whenever this creature deals combat damage to a player, draw two cards.\""
+  },
+  "Might of Old Krosa": {
+    "id": "Might of Old Krosa",
+    "name": "Might of Old Krosa",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 until end of turn. If you cast this spell during your main phase, that creature gets +4/+4 until end of turn instead."
+  },
+  "Scent of Ivy": {
+    "id": "Scent of Ivy",
+    "name": "Scent of Ivy",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reveal any number of green cards in your hand. Target creature gets +X/+X until end of turn, where X is the number of cards revealed this way."
+  },
+  "Thing Swing": {
+    "id": "Thing Swing",
+    "name": "Thing Swing",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {2} less to cast if it targets a Hero you control.\nTarget creature you control deals damage equal to twice its power to target creature an opponent controls."
+  },
+  "Vigorous Charge": {
+    "id": "Vigorous Charge",
+    "name": "Vigorous Charge",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {W} (You may pay an additional {W} as you cast this spell.)\nTarget creature gains trample until end of turn. Whenever that creature deals combat damage this turn, if this spell was kicked, you gain life equal to that damage."
+  },
+  "Naturalize 2": {
+    "id": "Naturalize 2",
+    "name": "Naturalize 2",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target artifact, enchantment, emblem, or gameplay tracker. (Trackers include play aids such as dungeons, city's blessing, and monarch. When you destroy it, the associated object or designation is removed from the game.)"
+  },
+  "Living Destiny": {
+    "id": "Living Destiny",
+    "name": "Living Destiny",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, reveal a creature card from your hand.\nYou gain life equal to the revealed card's mana value."
+  },
+  "Waxing Moon": {
+    "id": "Waxing Moon",
+    "name": "Waxing Moon",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Transform up to one target Werewolf you control. Creatures you control gain trample until end of turn."
+  },
+  "Prishe's Wanderings": {
+    "id": "Prishe's Wanderings",
+    "name": "Prishe's Wanderings",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card or Town card, put it onto the battlefield tapped, then shuffle. When you search your library this way, put a +1/+1 counter on target creature you control."
+  },
+  "Tawnos's Tinkering": {
+    "id": "Tawnos's Tinkering",
+    "name": "Tawnos's Tinkering",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put two +1/+1 counters on target artifact, creature, or land you control. Untap that permanent. If it isn't a creature, it becomes a 0/0 creature in addition to its other types."
+  },
+  "Avoid Fate": {
+    "id": "Avoid Fate",
+    "name": "Avoid Fate",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Counter target instant or Aura spell that targets a permanent you control."
+  },
+  "Defend the Celestus": {
+    "id": "Defend the Celestus",
+    "name": "Defend the Celestus",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Distribute three +1/+1 counters among one, two, or three target creatures you control."
+  },
+  "Allies at Last": {
+    "id": "Allies at Last",
+    "name": "Allies at Last",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Affinity for Allies (This spell costs {1} less to cast for each Ally you control.)\nUp to two target creatures you control each deal damage equal to their power to target creature an opponent controls."
+  },
+  "Spoils of the Hunt": {
+    "id": "Spoils of the Hunt",
+    "name": "Spoils of the Hunt",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +1/+0 until end of turn for each mana from a Treasure that was spent to cast this spell. Then that creature deals damage equal to its power to target creature an opponent controls."
+  },
+  "Shared Summons": {
+    "id": "Shared Summons",
+    "name": "Shared Summons",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}{G}",
+    "cmc": 5,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to two creature cards with different names, reveal them, put them into your hand, then shuffle."
+  },
+  "Verdant Rebirth": {
+    "id": "Verdant Rebirth",
+    "name": "Verdant Rebirth",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Until end of turn, target creature gains \"When this creature dies, return it to its owner's hand.\"\nDraw a card."
+  },
+  "Burrog Barrage": {
+    "id": "Burrog Barrage",
+    "name": "Burrog Barrage",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control gets +1/+0 until end of turn if you've cast another instant or sorcery spell this turn. Then it deals damage equal to its power to up to one target creature an opponent controls."
+  },
+  "Seedship Impact": {
+    "id": "Seedship Impact",
+    "name": "Seedship Impact",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target artifact or enchantment. If its mana value was 2 or less, create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")"
+  },
+  "Refreshing Rain": {
+    "id": "Refreshing Rain",
+    "name": "Refreshing Rain",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If an opponent controls a Swamp and you control a Forest, you may cast this spell without paying its mana cost.\nTarget player gains 6 life."
+  },
+  "Pippin's Bravery": {
+    "id": "Pippin's Bravery",
+    "name": "Pippin's Bravery",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may sacrifice a Food. If you do, target creature gets +4/+4 until end of turn. Otherwise, that creature gets +2/+2 until end of turn."
+  },
+  "Terrifying Presence": {
+    "id": "Terrifying Presence",
+    "name": "Terrifying Presence",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt by creatures other than target creature this turn."
+  },
+  "Squall Line": {
+    "id": "Squall Line",
+    "name": "Squall Line",
+    "typeLine": "Instant",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Squall Line deals X damage to each creature with flying and each player."
+  },
+  "Clip Wings": {
+    "id": "Clip Wings",
+    "name": "Clip Wings",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each opponent sacrifices a creature of their choice with flying."
+  },
+  "Once Upon a Time": {
+    "id": "Once Upon a Time",
+    "name": "Once Upon a Time",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If this spell is the first spell you've cast this game, you may cast it without paying its mana cost.\nLook at the top five cards of your library. You may reveal a creature or land card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+  },
+  "Tifa's Limit Break": {
+    "id": "Tifa's Limit Break",
+    "name": "Tifa's Limit Break",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Tiered (Choose one additional cost.)\n• Somersault — {0} — Target creature gets +2/+2 until end of turn.\n• Meteor Strikes — {2} — Double target creature's power and toughness until end of turn.\n• Final Heaven — {6}{G} — Triple target creature's power and toughness until end of turn."
+  },
+  "Wasteful Harvest": {
+    "id": "Wasteful Harvest",
+    "name": "Wasteful Harvest",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Mill five cards. You may put a permanent card from among the cards milled this way into your hand. (To mill a card, put the top card of your library into your graveyard.)"
+  },
+  "Lumaret's Favor": {
+    "id": "Lumaret's Favor",
+    "name": "Lumaret's Favor",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Infusion — When you cast this spell, copy it if you gained life this turn. You may choose new targets for the copy.\nTarget creature gets +2/+4 until end of turn."
+  },
+  "Roar of Jukai": {
+    "id": "Roar of Jukai",
+    "name": "Roar of Jukai",
+    "typeLine": "Instant — Arcane",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If you control a Forest, each blocked creature gets +2/+2 until end of turn.\nSplice onto Arcane—An opponent gains 5 life. (As you cast an Arcane spell, you may reveal this card from your hand and pay its splice cost. If you do, add this card's effects to that spell.)"
+  },
+  "Elemental Uprising": {
+    "id": "Elemental Uprising",
+    "name": "Elemental Uprising",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target land you control becomes a 4/4 Elemental creature with haste until end of turn. It's still a land. It must be blocked this turn if able."
+  },
+  "Groundswell": {
+    "id": "Groundswell",
+    "name": "Groundswell",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 until end of turn.\nLandfall — If you had a land enter the battlefield under your control this turn, that creature gets +4/+4 until end of turn instead."
+  },
+  "Realms Uncharted": {
+    "id": "Realms Uncharted",
+    "name": "Realms Uncharted",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for up to four land cards with different names and reveal them. An opponent chooses two of those cards. Put the chosen cards into your graveyard and the rest into your hand. Then shuffle."
+  },
+  "Filigree Fracture": {
+    "id": "Filigree Fracture",
+    "name": "Filigree Fracture",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Destroy target artifact or enchantment. If that permanent was blue or black, draw a card."
+  },
+  "Fertilid's Favor": {
+    "id": "Fertilid's Favor",
+    "name": "Fertilid's Favor",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target player searches their library for a basic land card, puts it onto the battlefield tapped, then shuffles. Put two +1/+1 counters on up to one target artifact or creature."
+  },
+  "Serene Sunset": {
+    "id": "Serene Sunset",
+    "name": "Serene Sunset",
+    "typeLine": "Instant",
+    "manaCost": "{X}{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage X target creatures would deal this turn."
+  },
+  "Shed Weakness": {
+    "id": "Shed Weakness",
+    "name": "Shed Weakness",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 until end of turn. You may remove a -1/-1 counter from it."
+  },
+  "Winds of Qal Sisma": {
+    "id": "Winds of Qal Sisma",
+    "name": "Winds of Qal Sisma",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt this turn.\nFerocious — If you control a creature with power 4 or greater, instead prevent all combat damage that would be dealt this turn by creatures your opponents control."
+  },
+  "Titanic Brawl": {
+    "id": "Titanic Brawl",
+    "name": "Titanic Brawl",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell costs {1} less to cast if it targets a creature you control with a +1/+1 counter on it.\nTarget creature you control fights target creature you don't control. (Each deals damage equal to its power to the other.)"
+  },
+  "Tandem Takedown": {
+    "id": "Tandem Takedown",
+    "name": "Tandem Takedown",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Up to two target creatures you control each get +1/+0 until end of turn. They each deal damage equal to their power to another target creature, planeswalker, or battle."
+  },
+  "Piercing Exhale": {
+    "id": "Piercing Exhale",
+    "name": "Piercing Exhale",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may behold a Dragon. (You may choose a Dragon you control or reveal a Dragon card from your hand.)\nTarget creature you control deals damage equal to its power to target creature or planeswalker. If a Dragon was beheld, surveil 2."
+  },
+  "Fog Patch": {
+    "id": "Fog Patch",
+    "name": "Fog Patch",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only during the declare blockers step.\nAttacking creatures become blocked. (This spell works on creatures that can't be blocked.)"
+  },
+  "Turn the Earth": {
+    "id": "Turn the Earth",
+    "name": "Turn the Earth",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose up to three target cards in graveyards. The owners of those cards shuffle them into their libraries. You gain 2 life.\nFlashback {1}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Sylvan Smite": {
+    "id": "Sylvan Smite",
+    "name": "Sylvan Smite",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature you control if you weren't the starting player. Then that creature deals damage equal to its power to target creature you don't control."
+  },
+  "Growth Cycle": {
+    "id": "Growth Cycle",
+    "name": "Growth Cycle",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +3/+3 until end of turn. It gets an additional +2/+2 until end of turn for each card named Growth Cycle in your graveyard."
+  },
+  "Gift of Growth": {
+    "id": "Gift of Growth",
+    "name": "Gift of Growth",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {2} (You may pay an additional {2} as you cast this spell.)\nUntap target creature. It gets +2/+2 until end of turn. If this spell was kicked, that creature gets +4/+4 until end of turn instead."
+  },
+  "Flash Foliage": {
+    "id": "Flash Foliage",
+    "name": "Flash Foliage",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only during combat after blockers are declared.\nCreate a 1/1 green Saproling creature token that's blocking target creature attacking you.\nDraw a card."
+  },
+  "Skyshroud Ambush": {
+    "id": "Skyshroud Ambush",
+    "name": "Skyshroud Ambush",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control fights target creature you don't control. When the creature you control wins the fight, draw a card."
+  },
+  "Lifelace": {
+    "id": "Lifelace",
+    "name": "Lifelace",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target spell or permanent becomes green. (Mana symbols on that permanent remain unchanged.)"
+  },
+  "Polliwallop": {
+    "id": "Polliwallop",
+    "name": "Polliwallop",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Affinity for Frogs (This spell costs {1} less to cast for each Frog you control.)\nTarget creature you control deals damage equal to twice its power to target creature you don't control."
+  },
+  "Undergrowth": {
+    "id": "Undergrowth",
+    "name": "Undergrowth",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may pay {2}{R}.\nPrevent all combat damage that would be dealt this turn. If this spell's additional cost was paid, this effect doesn't affect combat damage that would be dealt by red creatures."
+  },
+  "Betrayal at the Vault": {
+    "id": "Betrayal at the Vault",
+    "name": "Betrayal at the Vault",
+    "typeLine": "Instant",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control deals damage equal to its power to each of two other target creatures."
+  },
+  "Vine Snare": {
+    "id": "Vine Snare",
+    "name": "Vine Snare",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt this turn by creatures with power 4 or less."
+  },
+  "Tangle": {
+    "id": "Tangle",
+    "name": "Tangle",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Prevent all combat damage that would be dealt this turn.\nEach attacking creature doesn't untap during its controller's next untap step."
+  },
+  "Once and Future": {
+    "id": "Once and Future",
+    "name": "Once and Future",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Return target card from your graveyard to your hand. Put up to one other target card from your graveyard on top of your library. Exile Once and Future.\nAdamant — If at least three green mana was spent to cast this spell, instead return those cards to your hand and exile Once and Future."
+  },
+  "For the Family": {
+    "id": "For the Family",
+    "name": "For the Family",
+    "typeLine": "Instant",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature gets +2/+2 until end of turn. If you control four or more creatures, that creature gets +4/+4 until end of turn instead."
+  },
+  "Feed the Clan": {
+    "id": "Feed the Clan",
+    "name": "Feed the Clan",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You gain 5 life.\nFerocious — You gain 10 life instead if you control a creature with power 4 or greater."
+  },
+  "Wind Shear": {
+    "id": "Wind Shear",
+    "name": "Wind Shear",
+    "typeLine": "Instant",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Attacking creatures with flying get -2/-2 and lose flying until end of turn."
+  },
+  "Venomous Breath": {
+    "id": "Venomous Breath",
+    "name": "Venomous Breath",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Choose target creature. At this turn's next end of combat, destroy all creatures that blocked or were blocked by it this turn."
+  },
+  "Cosmic Hunger": {
+    "id": "Cosmic Hunger",
+    "name": "Cosmic Hunger",
+    "typeLine": "Instant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Target creature you control deals damage equal to its power to another target creature, planeswalker, or battle."
+  },
+  "Snag": {
+    "id": "Snag",
+    "name": "Snag",
+    "typeLine": "Instant",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may discard a Forest card rather than pay this spell's mana cost.\nPrevent all combat damage that would be dealt by unblocked creatures this turn."
+  }
+}
