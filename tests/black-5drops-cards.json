@@ -1,0 +1,1646 @@
+{
+  "Greater Werewolf": {
+    "id": "Greater Werewolf",
+    "name": "Greater Werewolf",
+    "typeLine": "Creature — Werewolf",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "At end of combat, put a -0/-2 counter on each creature blocking or blocked by this creature.",
+    "power": "2",
+    "toughness": "4"
+  },
+  "Muck Drubb": {
+    "id": "Muck Drubb",
+    "name": "Muck Drubb",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flash\nWhen this creature enters, change the target of target spell that targets only a single creature to this creature.\nMadness {2}{B} (If you discard this card, discard it into exile. When you do, cast it for its madness cost or put it into your graveyard.)",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Seizan, Perverter of Truth": {
+    "id": "Seizan, Perverter of Truth",
+    "name": "Seizan, Perverter of Truth",
+    "typeLine": "Legendary Creature — Demon Spirit",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "At the beginning of each player's upkeep, that player loses 2 life and draws two cards.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Shimian Night Stalker": {
+    "id": "Shimian Night Stalker",
+    "name": "Shimian Night Stalker",
+    "typeLine": "Creature — Nightstalker",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{B}, {T}: All damage that would be dealt to you this turn by target attacking creature is dealt to this creature instead.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Beetle-Headed Merchants": {
+    "id": "Beetle-Headed Merchants",
+    "name": "Beetle-Headed Merchants",
+    "typeLine": "Creature — Human Citizen",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature attacks, you may sacrifice another creature or artifact. If you do, draw a card and put a +1/+1 counter on this creature.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Maha, Its Feathers Night": {
+    "id": "Maha, Its Feathers Night",
+    "name": "Maha, Its Feathers Night",
+    "typeLine": "Legendary Creature — Elemental Bird",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying, trample\nWard—Discard a card.\nCreatures your opponents control have base toughness 1.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Cursed Monstrosity": {
+    "id": "Cursed Monstrosity",
+    "name": "Cursed Monstrosity",
+    "typeLine": "Creature — Horror",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever this creature becomes the target of a spell or ability, sacrifice it unless you discard a land card.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Young Necromancer": {
+    "id": "Young Necromancer",
+    "name": "Young Necromancer",
+    "typeLine": "Creature — Human Warlock",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, you may exile two cards from your graveyard. When you do, return target creature card from your graveyard to the battlefield.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Ravenous Demon // Archdemon of Greed": {
+    "id": "Ravenous Demon // Archdemon of Greed",
+    "name": "Ravenous Demon // Archdemon of Greed",
+    "typeLine": "Creature — Demon // Creature — Demon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Ravenous Demon: Sacrifice a Human: Transform this creature. Activate only as a sorcery.\n\nArchdemon of Greed: Flying, trample\nAt the beginning of your upkeep, sacrifice a Human. If you can't, tap this creature and it deals 9 damage to you.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Treacherous Vampire": {
+    "id": "Treacherous Vampire",
+    "name": "Treacherous Vampire",
+    "typeLine": "Creature — Vampire",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever this creature attacks or blocks, sacrifice it unless you exile a card from your graveyard.\nThreshold — As long as there are seven or more cards in your graveyard, this creature gets +2/+2 and has \"When this creature dies, you lose 6 life.\"",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Vogar, Necropolis Tyrant": {
+    "id": "Vogar, Necropolis Tyrant",
+    "name": "Vogar, Necropolis Tyrant",
+    "typeLine": "Legendary Creature — Zombie Giant",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Menace\nWhenever another creature dies during your turn, put a +1/+1 counter on Vogar.\nWhen Vogar dies, draw a card for each +1/+1 counter on it.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Greater Harvester": {
+    "id": "Greater Harvester",
+    "name": "Greater Harvester",
+    "typeLine": "Creature — Horror",
+    "manaCost": "{2}{B}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "At the beginning of your upkeep, sacrifice a permanent.\nWhenever this creature deals combat damage to a player, that player sacrifices two permanents of their choice.",
+    "power": "5",
+    "toughness": "6"
+  },
+  "Woebringer Demon": {
+    "id": "Woebringer Demon",
+    "name": "Woebringer Demon",
+    "typeLine": "Creature — Demon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nAt the beginning of each player's upkeep, that player sacrifices a creature of their choice. If the player can't, sacrifice this creature.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Mephitic Ooze": {
+    "id": "Mephitic Ooze",
+    "name": "Mephitic Ooze",
+    "typeLine": "Creature — Ooze",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "This creature gets +1/+0 for each artifact you control.\nWhenever this creature deals combat damage to a creature, destroy that creature. The creature can't be regenerated.",
+    "power": "0",
+    "toughness": "5"
+  },
+  "Aku Djinn": {
+    "id": "Aku Djinn",
+    "name": "Aku Djinn",
+    "typeLine": "Creature — Djinn",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Trample\nAt the beginning of your upkeep, put a +1/+1 counter on each creature each opponent controls.",
+    "power": "5",
+    "toughness": "6"
+  },
+  "Phyrexian Reaper": {
+    "id": "Phyrexian Reaper",
+    "name": "Phyrexian Reaper",
+    "typeLine": "Creature — Phyrexian Zombie",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature becomes blocked by a green creature, destroy that creature. It can't be regenerated.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Reaper of Sheoldred": {
+    "id": "Reaper of Sheoldred",
+    "name": "Reaper of Sheoldred",
+    "typeLine": "Creature — Phyrexian Horror",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Infect (This creature deals damage to creatures in the form of -1/-1 counters and to players in the form of poison counters.)\nWhenever a source deals damage to this creature, that source's controller gets a poison counter.",
+    "power": "2",
+    "toughness": "5"
+  },
+  "The Wretched": {
+    "id": "The Wretched",
+    "name": "The Wretched",
+    "typeLine": "Creature — Demon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "At end of combat, gain control of all creatures blocking this creature for as long as you control this creature.",
+    "power": "2",
+    "toughness": "5"
+  },
+  "Greel, Mind Raker": {
+    "id": "Greel, Mind Raker",
+    "name": "Greel, Mind Raker",
+    "typeLine": "Legendary Creature — Horror Spellshaper",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{X}{B}, {T}, Discard two cards: Target player discards X cards at random.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Gravebreaker Lamia": {
+    "id": "Gravebreaker Lamia",
+    "name": "Gravebreaker Lamia",
+    "typeLine": "Enchantment Creature — Snake Lamia",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Lifelink\nWhen this creature enters, search your library for a card, put it into your graveyard, then shuffle.\nSpells you cast from your graveyard cost {1} less to cast.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Abomination": {
+    "id": "Abomination",
+    "name": "Abomination",
+    "typeLine": "Creature — Horror",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature blocks or becomes blocked by a green or white creature, destroy that creature at end of combat.",
+    "power": "2",
+    "toughness": "6"
+  },
+  "Karfell Kennel-Master": {
+    "id": "Karfell Kennel-Master",
+    "name": "Karfell Kennel-Master",
+    "typeLine": "Creature — Zombie Berserker",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, up to two target creatures each get +1/+0 and gain indestructible until end of turn. (Damage and effects that say \"destroy\" don't destroy them.)",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Infernal Medusa": {
+    "id": "Infernal Medusa",
+    "name": "Infernal Medusa",
+    "typeLine": "Creature — Gorgon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature blocks a creature, destroy that creature at end of combat.\nWhenever this creature becomes blocked by a non-Wall creature, destroy that creature at end of combat.",
+    "power": "2",
+    "toughness": "4"
+  },
+  "Witch-king of Angmar": {
+    "id": "Witch-king of Angmar",
+    "name": "Witch-king of Angmar",
+    "typeLine": "Legendary Creature — Wraith Noble",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever one or more creatures deal combat damage to you, each opponent sacrifices a creature of their choice that dealt combat damage to you this turn. The Ring tempts you.\nDiscard a card: Witch-king of Angmar gains indestructible until end of turn. Tap him.",
+    "power": "5",
+    "toughness": "3"
+  },
+  "Krav, the Unredeemed": {
+    "id": "Krav, the Unredeemed",
+    "name": "Krav, the Unredeemed",
+    "typeLine": "Legendary Creature — Demon",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Partner with Regna, the Redeemer (When this creature enters, target player may put Regna into their hand from their library, then shuffle.)\n{B}, Sacrifice X creatures: Target player draws X cards and gains X life. Put X +1/+1 counters on Krav.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Ultron the Annihilator": {
+    "id": "Ultron the Annihilator",
+    "name": "Ultron the Annihilator",
+    "typeLine": "Legendary Artifact Creature — Robot Villain",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever Ultron enters or attacks, create a 2/2 colorless Robot Villain artifact creature token.\nWhenever another artifact is put into your graveyard from the battlefield or an artifact card is put into your graveyard from anywhere other than the battlefield, each opponent loses 1 life.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Sidisi, Undead Vizier": {
+    "id": "Sidisi, Undead Vizier",
+    "name": "Sidisi, Undead Vizier",
+    "typeLine": "Legendary Creature — Zombie Snake",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Deathtouch\nExploit (When this creature enters, you may sacrifice a creature.)\nWhen Sidisi exploits a creature, you may search your library for a card, put it into your hand, then shuffle.",
+    "power": "4",
+    "toughness": "6"
+  },
+  "Blade Juggler": {
+    "id": "Blade Juggler",
+    "name": "Blade Juggler",
+    "typeLine": "Creature — Human Rogue",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Spectacle {2}{B} (You may cast this spell for its spectacle cost rather than its mana cost if an opponent lost life this turn.)\nWhen this creature enters, it deals 1 damage to you and you draw a card.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Nyla, Shirshu Sleuth": {
+    "id": "Nyla, Shirshu Sleuth",
+    "name": "Nyla, Shirshu Sleuth",
+    "typeLine": "Legendary Creature — Mole Beast",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When Nyla enters, exile up to one target creature card from your graveyard. If you do, you lose X life and create X Clue tokens, where X is that card's mana value. (A Clue token is an artifact with \"{2}, Sacrifice this token: Draw a card.\")\nAt the beginning of your end step, if you control no Clues, return target card exiled with Nyla to its owner's hand.",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Agency Coroner": {
+    "id": "Agency Coroner",
+    "name": "Agency Coroner",
+    "typeLine": "Creature — Ogre Cleric",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{2}{B}, Sacrifice another creature: Draw a card. If the sacrificed creature was suspected, draw two cards instead.",
+    "power": "3",
+    "toughness": "6"
+  },
+  "Bellowing Fiend": {
+    "id": "Bellowing Fiend",
+    "name": "Bellowing Fiend",
+    "typeLine": "Creature — Spirit",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever this creature deals damage to a creature, this creature deals 3 damage to that creature's controller and 3 damage to you.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Chimney Imp": {
+    "id": "Chimney Imp",
+    "name": "Chimney Imp",
+    "typeLine": "Creature — Imp",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhen this creature dies, target opponent puts a card from their hand on top of their library.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Drana, the Last Bloodchief": {
+    "id": "Drana, the Last Bloodchief",
+    "name": "Drana, the Last Bloodchief",
+    "typeLine": "Legendary Creature — Vampire Cleric",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever Drana attacks, defending player chooses a nonlegendary creature card in your graveyard. You return that card to the battlefield with an additional +1/+1 counter on it. The creature is a Vampire in addition to its other types.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Eater of the Dead": {
+    "id": "Eater of the Dead",
+    "name": "Eater of the Dead",
+    "typeLine": "Creature — Horror",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{0}: If this creature is tapped, exile target creature card from a graveyard and untap this creature.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Evil Eye of Orms-by-Gore": {
+    "id": "Evil Eye of Orms-by-Gore",
+    "name": "Evil Eye of Orms-by-Gore",
+    "typeLine": "Creature — Eye",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Non-Eye creatures you control can't attack.\nThis creature can't be blocked except by Walls.",
+    "power": "3",
+    "toughness": "6"
+  },
+  "Painwracker Oni": {
+    "id": "Painwracker Oni",
+    "name": "Painwracker Oni",
+    "typeLine": "Creature — Demon Spirit",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)\nAt the beginning of your upkeep, sacrifice a creature if you don't control an Ogre.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Overzealous Muscle": {
+    "id": "Overzealous Muscle",
+    "name": "Overzealous Muscle",
+    "typeLine": "Creature — Ogre Mercenary",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever you commit a crime during your turn, this creature gains indestructible until end of turn. (Targeting opponents, anything they control, and/or cards in their graveyards is a crime. Damage and effects that say \"destroy\" don't destroy a creature with indestructible.)",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Drivnod, Carnage Dominus": {
+    "id": "Drivnod, Carnage Dominus",
+    "name": "Drivnod, Carnage Dominus",
+    "typeLine": "Legendary Creature — Phyrexian Horror",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "If a creature dying causes a triggered ability of a permanent you control to trigger, that ability triggers an additional time.\n{B/P}{B/P}, Exile three creature cards from your graveyard: Put an indestructible counter on Drivnod. ({B/P} can be paid with either {B} or 2 life.)",
+    "power": "8",
+    "toughness": "3"
+  },
+  "Bone Dragon": {
+    "id": "Bone Dragon",
+    "name": "Bone Dragon",
+    "typeLine": "Creature — Dragon Skeleton",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\n{3}{B}{B}, Exile seven other cards from your graveyard: Return this card from your graveyard to the battlefield tapped.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Anointed Deacon": {
+    "id": "Anointed Deacon",
+    "name": "Anointed Deacon",
+    "typeLine": "Creature — Vampire Cleric",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "At the beginning of combat on your turn, you may have target Vampire get +2/+0 until end of turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Roiling Horror": {
+    "id": "Roiling Horror",
+    "name": "Roiling Horror",
+    "typeLine": "Creature — Horror",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Roiling Horror's power and toughness are each equal to your life total minus the life total of an opponent with the most life.\nSuspend X—{X}{B}{B}{B}. X can't be 0. (Rather than cast this card from your hand, you may pay {X}{B}{B}{B} and exile it with X time counters on it. At the beginning of your upkeep, remove a time counter. When the last is removed, you may cast it without paying its mana cost. It has haste.)\nWhenever a time counter is removed from this card while it's exiled, target player loses 1 life and you gain 1 life.",
+    "power": "*",
+    "toughness": "*"
+  },
+  "Gilt-Leaf Winnower": {
+    "id": "Gilt-Leaf Winnower",
+    "name": "Gilt-Leaf Winnower",
+    "typeLine": "Creature — Elf Warrior",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Menace (This creature can't be blocked except by two or more creatures.)\nWhen this creature enters, you may destroy target non-Elf creature whose power and toughness aren't equal.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Trench Stalker": {
+    "id": "Trench Stalker",
+    "name": "Trench Stalker",
+    "typeLine": "Creature — Beast Horror",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "As long as you've drawn two or more cards this turn, this creature has deathtouch and lifelink.",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Hagra Diabolist": {
+    "id": "Hagra Diabolist",
+    "name": "Hagra Diabolist",
+    "typeLine": "Creature — Ogre Shaman Ally",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature or another Ally you control enters, you may have target player lose life equal to the number of Allies you control.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Purging Stormbrood // Absorb Essence": {
+    "id": "Purging Stormbrood // Absorb Essence",
+    "name": "Purging Stormbrood // Absorb Essence",
+    "typeLine": "Creature — Dragon // Instant — Omen",
+    "manaCost": "{4}{B} // {1}{W}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Purging Stormbrood: Flying\nWard—Pay 2 life.\nWhen this creature enters, remove all counters from up to one target creature.\n\nAbsorb Essence: Target creature gets +2/+2 and gains lifelink and hexproof until end of turn. (Then shuffle this card into its owner's library.)",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Green Goblin, Back for More": {
+    "id": "Green Goblin, Back for More",
+    "name": "Green Goblin, Back for More",
+    "typeLine": "Legendary Creature — Goblin Human Villain",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying, menace\nAt the beginning of combat on your turn, you may discard a card. If you do, each opponent discards a card.\nMayhem {3}{B}{B} (You may cast this card from your graveyard for {3}{B}{B} if you discarded it this turn. Timing rules still apply.)",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Boneclad Necromancer": {
+    "id": "Boneclad Necromancer",
+    "name": "Boneclad Necromancer",
+    "typeLine": "Creature — Human Wizard",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, you may exile target creature card from a graveyard. If you do, create a 2/2 black Zombie creature token.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Bitterheart Witch": {
+    "id": "Bitterheart Witch",
+    "name": "Bitterheart Witch",
+    "typeLine": "Creature — Human Shaman",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Deathtouch\nWhen this creature dies, you may search your library for a Curse card, put it onto the battlefield attached to target player, then shuffle.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Gisa, the Hellraiser": {
+    "id": "Gisa, the Hellraiser",
+    "name": "Gisa, the Hellraiser",
+    "typeLine": "Legendary Creature — Human Warlock",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Ward—{2}, Pay 2 life.\nSkeletons and Zombies you control get +1/+1 and have menace.\nWhenever you commit a crime, create two tapped 2/2 blue and black Zombie Rogue creature tokens. This ability triggers only once each turn. (Targeting opponents, anything they control, and/or cards in their graveyards is a crime.)",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Cleaving Reaper": {
+    "id": "Cleaving Reaper",
+    "name": "Cleaving Reaper",
+    "typeLine": "Creature — Angel Berserker",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying, trample\nPay 3 life: Return this card from your graveyard to your hand. Activate only if you had an Angel or Berserker enter the battlefield under your control this turn.",
+    "power": "5",
+    "toughness": "3"
+  },
+  "Shilgengar, Sire of Famine": {
+    "id": "Shilgengar, Sire of Famine",
+    "name": "Shilgengar, Sire of Famine",
+    "typeLine": "Legendary Creature — Elder Demon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nSacrifice another creature: Create a Blood token. If you sacrificed an Angel this way, create a number of Blood tokens equal to its toughness instead.\n{W/B}{W/B}{W/B}, Sacrifice six Blood tokens: Return each creature card from your graveyard to the battlefield with a finality counter on it. Those creatures are Vampires in addition to their other types.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Gutwrencher Oni": {
+    "id": "Gutwrencher Oni",
+    "name": "Gutwrencher Oni",
+    "typeLine": "Creature — Demon Spirit",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Trample\nAt the beginning of your upkeep, discard a card if you don't control an Ogre.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Evil Eye of Urborg": {
+    "id": "Evil Eye of Urborg",
+    "name": "Evil Eye of Urborg",
+    "typeLine": "Creature — Eye",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Non-Eye creatures you control can't attack.\nWhenever this creature becomes blocked by a creature, destroy that creature.",
+    "power": "6",
+    "toughness": "3"
+  },
+  "Morkrut Behemoth": {
+    "id": "Morkrut Behemoth",
+    "name": "Morkrut Behemoth",
+    "typeLine": "Creature — Zombie Giant",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice a creature or pay {1}{B}.\nMenace (This creature can't be blocked except by two or more creatures.)",
+    "power": "7",
+    "toughness": "6"
+  },
+  "Gloom Ripper": {
+    "id": "Gloom Ripper",
+    "name": "Gloom Ripper",
+    "typeLine": "Creature — Elf Assassin",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, target creature you control gets +X/+0 until end of turn and up to one target creature an opponent controls gets -0/-X until end of turn, where X is the number of Elves you control plus the number of Elf cards in your graveyard.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Shirei, Shizo's Caretaker": {
+    "id": "Shirei, Shizo's Caretaker",
+    "name": "Shirei, Shizo's Caretaker",
+    "typeLine": "Legendary Creature — Spirit",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever a creature with power 1 or less is put into your graveyard from the battlefield, you may return that card to the battlefield at the beginning of the next end step if Shirei is still on the battlefield.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Zombie Assassin": {
+    "id": "Zombie Assassin",
+    "name": "Zombie Assassin",
+    "typeLine": "Creature — Zombie Assassin",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{T}, Exile two cards from your graveyard and this creature: Destroy target nonblack creature. It can't be regenerated.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Shadowborn Demon": {
+    "id": "Shadowborn Demon",
+    "name": "Shadowborn Demon",
+    "typeLine": "Creature — Demon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhen this creature enters, destroy target non-Demon creature.\nAt the beginning of your upkeep, if there are fewer than six creature cards in your graveyard, sacrifice a creature.",
+    "power": "5",
+    "toughness": "6"
+  },
+  "Vengeful Pharaoh": {
+    "id": "Vengeful Pharaoh",
+    "name": "Vengeful Pharaoh",
+    "typeLine": "Creature — Zombie",
+    "manaCost": "{2}{B}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Deathtouch (Any amount of damage this deals to a creature is enough to destroy it.)\nWhenever combat damage is dealt to you or a planeswalker you control, if this card is in your graveyard, destroy target attacking creature, then put this card on top of your library.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Fendeep Summoner": {
+    "id": "Fendeep Summoner",
+    "name": "Fendeep Summoner",
+    "typeLine": "Creature — Treefolk Shaman",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{T}: Up to two target Swamps each become 3/5 Treefolk Warrior creatures in addition to their other types until end of turn.",
+    "power": "3",
+    "toughness": "5"
+  },
+  "Tergrid, God of Fright // Tergrid's Lantern": {
+    "id": "Tergrid, God of Fright // Tergrid's Lantern",
+    "name": "Tergrid, God of Fright // Tergrid's Lantern",
+    "typeLine": "Legendary Creature — God // Legendary Artifact",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Tergrid, God of Fright: Menace\nWhenever an opponent sacrifices a nontoken permanent or discards a permanent card, you may put that card from a graveyard onto the battlefield under your control.\n\nTergrid's Lantern: {T}: Target player loses 3 life unless they sacrifice a nonland permanent of their choice or discard a card.\n{3}{B}: Untap Tergrid's Lantern.",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Etched Host Doombringer": {
+    "id": "Etched Host Doombringer",
+    "name": "Etched Host Doombringer",
+    "typeLine": "Creature — Phyrexian Demon",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, choose one —\n• Target opponent loses 2 life and you gain 2 life.\n• Choose target battle. If an opponent protects it, remove three defense counters from it. Otherwise, put three defense counters on it.",
+    "power": "3",
+    "toughness": "5"
+  },
+  "Desolation Angel": {
+    "id": "Desolation Angel",
+    "name": "Desolation Angel",
+    "typeLine": "Creature — Angel",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Kicker {W}{W} (You may pay an additional {W}{W} as you cast this spell.)\nFlying\nWhen this creature enters, destroy all lands you control. If it was kicked, destroy all lands instead.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Tragic Banshee": {
+    "id": "Tragic Banshee",
+    "name": "Tragic Banshee",
+    "typeLine": "Creature — Spirit",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Morbid — When this creature enters, target creature an opponent controls gets -1/-1 until end of turn. If a creature died this turn, that creature gets -13/-13 until end of turn instead.",
+    "power": "5",
+    "toughness": "3"
+  },
+  "Sengir Connoisseur": {
+    "id": "Sengir Connoisseur",
+    "name": "Sengir Connoisseur",
+    "typeLine": "Creature — Vampire",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever one or more other creatures die, put a +1/+1 counter on this creature. This ability triggers only once each turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Soulblade Corrupter": {
+    "id": "Soulblade Corrupter",
+    "name": "Soulblade Corrupter",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Partner with Soulblade Renewer (When this creature enters, target player may put Soulblade Renewer into their hand from their library, then shuffle.)\nDeathtouch\nWhenever a creature with a +1/+1 counter on it attacks one of your opponents, that creature gains deathtouch until end of turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Sauron, the Necromancer": {
+    "id": "Sauron, the Necromancer",
+    "name": "Sauron, the Necromancer",
+    "typeLine": "Legendary Creature — Avatar Horror",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Menace\nWhenever Sauron attacks, exile target creature card from your graveyard. Create a tapped and attacking token that's a copy of that card, except it's a 3/3 black Wraith with menace. At the beginning of the next end step, exile that token unless Sauron is your Ring-bearer.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Krovikan Vampire": {
+    "id": "Krovikan Vampire",
+    "name": "Krovikan Vampire",
+    "typeLine": "Creature — Vampire",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "At the beginning of each end step, if a creature dealt damage by this creature this turn died, put that card onto the battlefield under your control. Sacrifice it when you lose control of this creature.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Caustic Crawler": {
+    "id": "Caustic Crawler",
+    "name": "Caustic Crawler",
+    "typeLine": "Creature — Insect",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, you may have target creature get -1/-1 until end of turn.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Prowling Pangolin": {
+    "id": "Prowling Pangolin",
+    "name": "Prowling Pangolin",
+    "typeLine": "Creature — Pangolin Beast",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, any player may sacrifice two creatures of their choice. If a player does, sacrifice this creature.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Angel of Suffering": {
+    "id": "Angel of Suffering",
+    "name": "Angel of Suffering",
+    "typeLine": "Creature — Nightmare Angel",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nIf damage would be dealt to you, prevent that damage and mill twice that many cards.",
+    "power": "5",
+    "toughness": "3"
+  },
+  "Fear of the Dark": {
+    "id": "Fear of the Dark",
+    "name": "Fear of the Dark",
+    "typeLine": "Enchantment Creature — Nightmare",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature attacks, if defending player controls no Glimmer creatures, it gains menace and deathtouch until end of turn. (A creature with menace can't be blocked except by two or more creatures.)",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Bloodtithe Collector": {
+    "id": "Bloodtithe Collector",
+    "name": "Bloodtithe Collector",
+    "typeLine": "Creature — Vampire Noble",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhen this creature enters, if an opponent lost life this turn, each opponent discards a card.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Undercity Eliminator": {
+    "id": "Undercity Eliminator",
+    "name": "Undercity Eliminator",
+    "typeLine": "Creature — Gorgon Assassin",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, you may sacrifice an artifact or creature. When you do, exile target creature an opponent controls.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Revenant Patriarch": {
+    "id": "Revenant Patriarch",
+    "name": "Revenant Patriarch",
+    "typeLine": "Creature — Spirit",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, if {W} was spent to cast it, target player skips their next combat phase.\nThis creature can't block.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Sheoldred // The True Scriptures": {
+    "id": "Sheoldred // The True Scriptures",
+    "name": "Sheoldred // The True Scriptures",
+    "typeLine": "Legendary Creature — Phyrexian Praetor // Enchantment — Saga",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Sheoldred: Menace\nWhen Sheoldred enters, each opponent sacrifices a nontoken creature or planeswalker of their choice.\n{4}{B}: Exile Sheoldred, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery and only if an opponent has eight or more cards in their graveyard.\n\nThe True Scriptures: (As this Saga enters and after your draw step, add a lore counter.)\nI — For each opponent, destroy up to one target creature or planeswalker that player controls.\nII — Each opponent discards three cards, then mills three cards.\nIII — Put all creature cards from all graveyards onto the battlefield under your control. Exile this Saga, then return it to the battlefield (front face up).",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Clackbridge Troll": {
+    "id": "Clackbridge Troll",
+    "name": "Clackbridge Troll",
+    "typeLine": "Creature — Troll",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Trample, haste\nWhen this creature enters, target opponent creates three 0/1 white Goat creature tokens.\nAt the beginning of combat on your turn, any opponent may sacrifice a creature of their choice. If a player does, tap this creature, you gain 3 life, and you draw a card.",
+    "power": "8",
+    "toughness": "8"
+  },
+  "Shrike Harpy": {
+    "id": "Shrike Harpy",
+    "name": "Shrike Harpy",
+    "typeLine": "Creature — Harpy",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nTribute 2 (As this creature enters, an opponent of your choice may put two +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, target opponent sacrifices a creature of their choice.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Predatory Nightstalker": {
+    "id": "Predatory Nightstalker",
+    "name": "Predatory Nightstalker",
+    "typeLine": "Creature — Nightstalker",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, you may have target opponent sacrifice a creature of their choice.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Warren Pilferers": {
+    "id": "Warren Pilferers",
+    "name": "Warren Pilferers",
+    "typeLine": "Creature — Goblin Rogue",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, return target creature card from your graveyard to your hand. If that card is a Goblin card, this creature gains haste until end of turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Harvester of Misery": {
+    "id": "Harvester of Misery",
+    "name": "Harvester of Misery",
+    "typeLine": "Creature — Spirit",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Menace\nWhen this creature enters, other creatures get -2/-2 until end of turn.\n{1}{B}, Discard this card: Target creature gets -2/-2 until end of turn.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Blighted Blackthorn": {
+    "id": "Blighted Blackthorn",
+    "name": "Blighted Blackthorn",
+    "typeLine": "Creature — Treefolk Warlock",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature enters or attacks, you may blight 2. If you do, you draw a card and lose 1 life. (To blight 2, put two -1/-1 counters on a creature you control.)",
+    "power": "3",
+    "toughness": "7"
+  },
+  "Cateran Enforcer": {
+    "id": "Cateran Enforcer",
+    "name": "Cateran Enforcer",
+    "typeLine": "Creature — Horror Mercenary",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Fear (This creature can't be blocked except by artifact creatures and/or black creatures.)\n{4}, {T}: Search your library for a Mercenary permanent card with mana value 4 or less, put it onto the battlefield, then shuffle.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Brutal Nightstalker": {
+    "id": "Brutal Nightstalker",
+    "name": "Brutal Nightstalker",
+    "typeLine": "Creature — Nightstalker",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, you may have target opponent discard a card.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Repentant Vampire": {
+    "id": "Repentant Vampire",
+    "name": "Repentant Vampire",
+    "typeLine": "Creature — Vampire",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever a creature dealt damage by this creature this turn dies, put a +1/+1 counter on this creature.\nThreshold — As long as there are seven or more cards in your graveyard, this creature is white and has \"{T}: Destroy target black creature.\"",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Vampire Scrivener": {
+    "id": "Vampire Scrivener",
+    "name": "Vampire Scrivener",
+    "typeLine": "Creature — Vampire Warlock",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever you gain life during your turn, put a +1/+1 counter on this creature.\nWhenever you lose life during your turn, put a +1/+1 counter on this creature.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Entropic Specter": {
+    "id": "Entropic Specter",
+    "name": "Entropic Specter",
+    "typeLine": "Creature — Specter Spirit",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nAs this creature enters, choose an opponent.\nEntropic Specter's power and toughness are each equal to the number of cards in the chosen player's hand.\nWhenever this creature deals damage to a player, that player discards a card.",
+    "power": "*",
+    "toughness": "*"
+  },
+  "Lo and Li, Twin Tutors": {
+    "id": "Lo and Li, Twin Tutors",
+    "name": "Lo and Li, Twin Tutors",
+    "typeLine": "Legendary Creature — Human Advisor",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When Lo and Li enter, search your library for a Lesson or Noble card, reveal it, put it into your hand, then shuffle.\nNoble creatures you control and Lesson spells you control have lifelink.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Purraj of Urborg": {
+    "id": "Purraj of Urborg",
+    "name": "Purraj of Urborg",
+    "typeLine": "Legendary Creature — Cat Warrior",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Purraj has first strike as long as it's attacking.\nWhenever a player casts a black spell, you may pay {B}. If you do, put a +1/+1 counter on Purraj.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Drakestown Forgotten": {
+    "id": "Drakestown Forgotten",
+    "name": "Drakestown Forgotten",
+    "typeLine": "Creature — Zombie",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "This creature enters with X +1/+1 counters on it, where X is the number of creature cards in all graveyards.\n{2}{B}, Remove a +1/+1 counter from this creature: Target creature gets -1/-1 until end of turn.",
+    "power": "0",
+    "toughness": "0"
+  },
+  "Fetid Gargantua": {
+    "id": "Fetid Gargantua",
+    "name": "Fetid Gargantua",
+    "typeLine": "Creature — Horror",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{2}{B}: Adapt 2. (If this creature has no +1/+1 counters on it, put two +1/+1 counters on it.)\nWhenever one or more +1/+1 counters are put on this creature, you may draw two cards. If you do, you lose 2 life.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Graven Archfiend": {
+    "id": "Graven Archfiend",
+    "name": "Graven Archfiend",
+    "typeLine": "Artifact Creature — Gargoyle Demon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may sacrifice a non-Demon creature.\nFlying\nWhen Graven Archfiend enters the battlefield, if its additional cost was paid, conjure a card named Demonic Pact onto the battlefield.",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Skirge Familiar": {
+    "id": "Skirge Familiar",
+    "name": "Skirge Familiar",
+    "typeLine": "Creature — Phyrexian Imp",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nDiscard a card: Add {B}.",
+    "power": "3",
+    "toughness": "2",
+    "producedMana": [
+      "B"
+    ]
+  },
+  "Corrupt Official": {
+    "id": "Corrupt Official",
+    "name": "Corrupt Official",
+    "typeLine": "Creature — Human Minion",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{2}{B}: Regenerate this creature.\nWhenever this creature becomes blocked, defending player discards a card at random.",
+    "power": "3",
+    "toughness": "1"
+  },
+  "Streaking Oilgorger": {
+    "id": "Streaking Oilgorger",
+    "name": "Streaking Oilgorger",
+    "typeLine": "Creature — Vampire",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying, haste\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nMax speed — This creature has lifelink.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Grotesque Hybrid": {
+    "id": "Grotesque Hybrid",
+    "name": "Grotesque Hybrid",
+    "typeLine": "Creature — Zombie",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature deals combat damage to a creature, destroy that creature. It can't be regenerated.\nDiscard a card: This creature gains flying and protection from green and from white until end of turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Gwenom, Remorseless": {
+    "id": "Gwenom, Remorseless",
+    "name": "Gwenom, Remorseless",
+    "typeLine": "Legendary Creature — Symbiote Spider Hero",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Deathtouch, lifelink\nWhenever Gwenom attacks, until end of turn, you may look at the top card of your library any time and you may play cards from the top of your library. If you cast a spell this way, pay life equal to its mana value rather than pay its mana cost.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Zombie Boa": {
+    "id": "Zombie Boa",
+    "name": "Zombie Boa",
+    "typeLine": "Creature — Zombie Snake",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{1}{B}: Choose a color. Whenever this creature becomes blocked by a creature of that color this turn, destroy that creature. Activate only as a sorcery.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Skittering Monstrosity": {
+    "id": "Skittering Monstrosity",
+    "name": "Skittering Monstrosity",
+    "typeLine": "Creature — Horror",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When you cast a creature spell, sacrifice this creature.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "The Speed Demon": {
+    "id": "The Speed Demon",
+    "name": "The Speed Demon",
+    "typeLine": "Legendary Creature — Demon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying, trample\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nAt the beginning of your end step, you draw X cards and lose X life, where X is your speed.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Specter of Mortality": {
+    "id": "Specter of Mortality",
+    "name": "Specter of Mortality",
+    "typeLine": "Creature — Specter",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhen this creature enters, you may exile one or more creature cards from your graveyard. When you do, each other creature gets -X/-X until end of turn, where X is the number of cards exiled this way.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Chainer, Dementia Master": {
+    "id": "Chainer, Dementia Master",
+    "name": "Chainer, Dementia Master",
+    "typeLine": "Legendary Creature — Human Minion",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "All Nightmares get +1/+1.\n{B}{B}{B}, Pay 3 life: Put target creature card from a graveyard onto the battlefield under your control. That creature is black and is a Nightmare in addition to its other creature types.\nWhen Chainer leaves the battlefield, exile all Nightmares.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Silumgar Scavenger": {
+    "id": "Silumgar Scavenger",
+    "name": "Silumgar Scavenger",
+    "typeLine": "Creature — Zombie Bird",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nExploit (When this creature enters, you may sacrifice a creature.)\nWhenever another creature you control dies, put a +1/+1 counter on this creature. It gains haste until end of turn if it exploited that creature.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Kuroki, Thief of Talents": {
+    "id": "Kuroki, Thief of Talents",
+    "name": "Kuroki, Thief of Talents",
+    "typeLine": "Legendary Creature — Spirit",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Menace\nAt the beginning of your end step, target opponent may draw four cards. If they do, look at that player's hand and you may cast a spell from their hand without paying its mana cost. If they don't, put two +1/+1 counters on Kuroki.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Barbed-Back Wurm": {
+    "id": "Barbed-Back Wurm",
+    "name": "Barbed-Back Wurm",
+    "typeLine": "Creature — Wurm",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{B}: Target green creature blocking this creature gets -1/-1 until end of turn.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Soul Scourge": {
+    "id": "Soul Scourge",
+    "name": "Soul Scourge",
+    "typeLine": "Creature — Nightmare Horror",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhen this creature enters, target player loses 3 life.\nWhen this creature leaves the battlefield, that player gains 3 life.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Diregraf Horde": {
+    "id": "Diregraf Horde",
+    "name": "Diregraf Horde",
+    "typeLine": "Creature — Zombie",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, create two 2/2 black Zombie creature tokens with decayed. When you do, exile up to two target cards from graveyards. (A creature with decayed can't block. When it attacks, sacrifice it at end of combat.)",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Infestation": {
+    "id": "Infestation",
+    "name": "Infestation",
+    "typeLine": "Creature — Elemental Incarnation",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Wither\nWhen this creature enters, conjure a card named Blowfly Infestation onto the battlefield. Then put a -1/-1 counter on each creature.\nEvoke—{1}{B}{B}, Pay 3 life.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Kinzu of the Bleak Coven": {
+    "id": "Kinzu of the Bleak Coven",
+    "name": "Kinzu of the Bleak Coven",
+    "typeLine": "Legendary Creature — Phyrexian Vampire",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nWhenever another nontoken creature you control dies, you may pay 2 life and exile it. If you do, create a token that's a copy of that creature, except it's 1/1 and has toxic 1. (Players dealt combat damage by it also get a poison counter.)",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Nested Ghoul": {
+    "id": "Nested Ghoul",
+    "name": "Nested Ghoul",
+    "typeLine": "Creature — Phyrexian Zombie Warrior",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever a source deals damage to this creature, create a 2/2 black Phyrexian Zombie creature token.",
+    "power": "4",
+    "toughness": "2"
+  },
+  "Wei Assassins": {
+    "id": "Wei Assassins",
+    "name": "Wei Assassins",
+    "typeLine": "Creature — Human Soldier Assassin",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, target opponent chooses a creature they control. Destroy that creature.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Carrion Wurm": {
+    "id": "Carrion Wurm",
+    "name": "Carrion Wurm",
+    "typeLine": "Creature — Zombie Wurm",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature attacks or blocks, any player may exile three cards from their graveyard. If a player does, this creature assigns no combat damage this turn.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Alpharael, Stonechosen": {
+    "id": "Alpharael, Stonechosen",
+    "name": "Alpharael, Stonechosen",
+    "typeLine": "Legendary Creature — Human Cleric",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Ward—Discard a card at random.\nVoid — Whenever Alpharael attacks, if a nonland permanent left the battlefield this turn or a spell was warped this turn, defending player loses half their life, rounded up.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Underworld Sentinel": {
+    "id": "Underworld Sentinel",
+    "name": "Underworld Sentinel",
+    "typeLine": "Creature — Skeleton Soldier",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever this creature attacks, exile target creature card from your graveyard.\nWhen this creature dies, put all cards exiled with it onto the battlefield.",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Corpse Harvester": {
+    "id": "Corpse Harvester",
+    "name": "Corpse Harvester",
+    "typeLine": "Creature — Zombie Wizard",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "{1}{B}, {T}, Sacrifice a creature: Search your library for a Zombie card and a Swamp card, reveal them, put them into your hand, then shuffle.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Zodiark, Umbral God": {
+    "id": "Zodiark, Umbral God",
+    "name": "Zodiark, Umbral God",
+    "typeLine": "Legendary Creature — God",
+    "manaCost": "{B}{B}{B}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Indestructible\nWhen Zodiark enters, each player sacrifices half the non-God creatures they control of their choice, rounded down.\nWhenever a player sacrifices another creature, put a +1/+1 counter on Zodiark.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Corpse Connoisseur": {
+    "id": "Corpse Connoisseur",
+    "name": "Corpse Connoisseur",
+    "typeLine": "Creature — Zombie Wizard",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, you may search your library for a creature card, put that card into your graveyard, then shuffle.\nUnearth {3}{B} ({3}{B}: Return this card from your graveyard to the battlefield. It gains haste. Exile it at the beginning of the next end step or if it would leave the battlefield. Unearth only as a sorcery.)",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Masked Gorgon": {
+    "id": "Masked Gorgon",
+    "name": "Masked Gorgon",
+    "typeLine": "Creature — Gorgon",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Green creatures and white creatures have protection from Gorgons.\nThreshold — This creature has protection from green and from white as long as there are seven or more cards in your graveyard.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Vrock": {
+    "id": "Vrock",
+    "name": "Vrock",
+    "typeLine": "Creature — Bird Demon",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying\nToxic Spores — At the beginning of your end step, if a permanent you controlled left the battlefield this turn, each opponent loses 3 life.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Black Cat, Cunning Thief": {
+    "id": "Black Cat, Cunning Thief",
+    "name": "Black Cat, Cunning Thief",
+    "typeLine": "Legendary Creature — Human Rogue Villain",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When Black Cat enters, look at the top nine cards of target opponent's library, exile two of them face down, then put the rest on the bottom of their library in a random order. You may play the exiled cards for as long as they remain exiled. Mana of any type can be spent to cast spells this way.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Voidforged Titan": {
+    "id": "Voidforged Titan",
+    "name": "Voidforged Titan",
+    "typeLine": "Artifact Creature — Robot Warrior",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Void — At the beginning of your end step, if a nonland permanent left the battlefield this turn or a spell was warped this turn, you draw a card and lose 1 life.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Earwig Squad": {
+    "id": "Earwig Squad",
+    "name": "Earwig Squad",
+    "typeLine": "Creature — Goblin Rogue",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Prowl {2}{B} (You may cast this for its prowl cost if you dealt combat damage to a player this turn with a Goblin or Rogue.)\nWhen this creature enters, if its prowl cost was paid, search target opponent's library for three cards and exile them. Then that player shuffles.",
+    "power": "5",
+    "toughness": "3"
+  },
+  "Dread Wight": {
+    "id": "Dread Wight",
+    "name": "Dread Wight",
+    "typeLine": "Creature — Zombie",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "At end of combat, put a paralyzation counter on each creature blocking or blocked by this creature and tap those creatures. Each of those creatures doesn't untap during its controller's untap step for as long as it has a paralyzation counter on it. Each of those creatures gains \"{4}: Remove a paralyzation counter from this creature.\"",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Speedbrood Stalker": {
+    "id": "Speedbrood Stalker",
+    "name": "Speedbrood Stalker",
+    "typeLine": "Creature — Insect Assassin",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying, Lifelink\nWhen this creature enters, choose target opponent. Secretly choose a creature or planeswalker that player controls. That player sacrifices a creature or planeswalker of their choice, then sacrifices the chosen permanent.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Aclazotz, Deepest Betrayal // Temple of the Dead": {
+    "id": "Aclazotz, Deepest Betrayal // Temple of the Dead",
+    "name": "Aclazotz, Deepest Betrayal // Temple of the Dead",
+    "typeLine": "Legendary Creature — Bat God // Land",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Aclazotz, Deepest Betrayal: Flying, lifelink\nWhenever Aclazotz attacks, each opponent discards a card. For each opponent who can't, you draw a card.\nWhenever an opponent discards a land card, create a 1/1 black Bat creature token with flying.\nWhen Aclazotz dies, return it to the battlefield tapped and transformed under its owner's control.\n\nTemple of the Dead: (Transforms from Aclazotz, Deepest Betrayal.)\n{T}: Add {B}.\n{2}{B}, {T}: Transform this land. Activate only if a player has one or fewer cards in hand and only as a sorcery.",
+    "power": "4",
+    "toughness": "4",
+    "producedMana": [
+      "B"
+    ]
+  },
+  "M.O.D.O.K.": {
+    "id": "M.O.D.O.K.",
+    "name": "M.O.D.O.K.",
+    "typeLine": "Legendary Artifact Creature — Villain",
+    "manaCost": "{3}{B}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Flying, lifelink\nMental Organism — Pay 3 life: M.O.D.O.K. connives. Activate only during your turn. (Draw a card, then discard a card. If you discarded a nonland card, put a +1/+1 counter on this creature.)\nDesigned Only for Killing — Creatures your opponents control get -1/-1.",
+    "power": "2",
+    "toughness": "2"
+  }
+}

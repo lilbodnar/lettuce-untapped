@@ -1,0 +1,2006 @@
+{
+  "Soul-Scar Mage": {
+    "id": "Soul-Scar Mage",
+    "name": "Soul-Scar Mage",
+    "typeLine": "Creature — Human Wizard",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Prowess\nIf a source you control would deal noncombat damage to a creature an opponent controls, put that many -1/-1 counters on that creature instead.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Hired Claw": {
+    "id": "Hired Claw",
+    "name": "Hired Claw",
+    "typeLine": "Creature — Lizard Mercenary",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you attack with one or more Lizards, this creature deals 1 damage to target opponent.\n{1}{R}: Put a +1/+1 counter on this creature. Activate only if an opponent lost life this turn and only once each turn.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Territorial Bruntar": {
+    "id": "Territorial Bruntar",
+    "name": "Territorial Bruntar",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reach\nLandfall — Whenever a land you control enters, exile cards from the top of your library until you exile a nonland card. You may cast that card this turn.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Muxus, Goblin Grandee": {
+    "id": "Muxus, Goblin Grandee",
+    "name": "Muxus, Goblin Grandee",
+    "typeLine": "Legendary Creature — Goblin Noble",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When Muxus enters, reveal the top six cards of your library. Put all Goblin creature cards with mana value 5 or less from among them onto the battlefield and the rest on the bottom of your library in a random order.\nWhenever Muxus attacks, it gets +1/+1 until end of turn for each other Goblin you control.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Blazing Bomb": {
+    "id": "Blazing Bomb",
+    "name": "Blazing Bomb",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you cast a noncreature spell, if at least four mana was spent to cast it, put a +1/+1 counter on this creature.\nBlow Up — {T}, Sacrifice this creature: It deals damage equal to its power to target creature. Activate only as a sorcery.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Agent of Stromgald": {
+    "id": "Agent of Stromgald",
+    "name": "Agent of Stromgald",
+    "typeLine": "Creature — Human Knight",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}: Add {B}.",
+    "power": "1",
+    "toughness": "1",
+    "producedMana": [
+      "B"
+    ]
+  },
+  "Chancellor of the Forge": {
+    "id": "Chancellor of the Forge",
+    "name": "Chancellor of the Forge",
+    "typeLine": "Creature — Phyrexian Giant",
+    "manaCost": "{4}{R}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may reveal this card from your opening hand. If you do, at the beginning of the first upkeep, create a 1/1 red Phyrexian Goblin creature token with haste.\nWhen this creature enters, create X 1/1 red Phyrexian Goblin creature tokens with haste, where X is the number of creatures you control.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Laccolith Titan": {
+    "id": "Laccolith Titan",
+    "name": "Laccolith Titan",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature becomes blocked, you may have it deal damage equal to its power to target creature. If you do, this creature assigns no combat damage this turn.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Goblin Goliath": {
+    "id": "Goblin Goliath",
+    "name": "Goblin Goliath",
+    "typeLine": "Creature — Goblin Mutant",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature enters, create a number of 1/1 red Goblin creature tokens equal to the number of opponents you have.\n{3}{R}, {T}: If a source you control would deal damage to an opponent this turn, it deals double that damage to that player instead.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Primordial Ooze": {
+    "id": "Primordial Ooze",
+    "name": "Primordial Ooze",
+    "typeLine": "Creature — Ooze",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature attacks each combat if able.\nAt the beginning of your upkeep, put a +1/+1 counter on this creature. Then you may pay {X}, where X is the number of +1/+1 counters on it. If you don't, tap this creature and it deals X damage to you.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Cinderheart Giant": {
+    "id": "Cinderheart Giant",
+    "name": "Cinderheart Giant",
+    "typeLine": "Creature — Giant Berserker",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nWhen this creature dies, it deals 7 damage to a creature an opponent controls chosen at random.",
+    "power": "7",
+    "toughness": "6"
+  },
+  "Assembled Alphas": {
+    "id": "Assembled Alphas",
+    "name": "Assembled Alphas",
+    "typeLine": "Creature — Wolf",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature blocks or becomes blocked by a creature, this creature deals 3 damage to that creature and 3 damage to that creature's controller.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Cinder Wall": {
+    "id": "Cinder Wall",
+    "name": "Cinder Wall",
+    "typeLine": "Creature — Wall",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Defender\nWhen this creature blocks, destroy it at end of combat.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Chaos Lord": {
+    "id": "Chaos Lord",
+    "name": "Chaos Lord",
+    "typeLine": "Creature — Human",
+    "manaCost": "{4}{R}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "First strike\nAt the beginning of your upkeep, target opponent gains control of this creature if the number of permanents is even.\nThis creature can attack as though it had haste unless it entered this turn.",
+    "power": "7",
+    "toughness": "7"
+  },
+  "Caldera Breaker": {
+    "id": "Caldera Breaker",
+    "name": "Caldera Breaker",
+    "typeLine": "Artifact Creature — Golem",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nWhen Caldera Breaker enters, exile all Mountain cards from your library. When you do, Caldera Breaker deals that much damage to target creature or planeswalker an opponent controls.\nWhen Caldera Breaker dies, put all cards exiled with it onto the battlefield under their owner's control. Conjure four cards named Volcanic Geyser into your library, then shuffle.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Kavaron Harrier": {
+    "id": "Kavaron Harrier",
+    "name": "Kavaron Harrier",
+    "typeLine": "Artifact Creature — Robot Soldier",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature attacks, you may pay {2}. If you do, create a 2/2 colorless Robot artifact creature token that's tapped and attacking. Sacrifice that token at end of combat.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Burnout Bashtronaut": {
+    "id": "Burnout Bashtronaut",
+    "name": "Burnout Bashtronaut",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Menace\nStart your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\n{2}: This creature gets +1/+0 until end of turn.\nMax speed — This creature has double strike.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Preyseizer Dragon": {
+    "id": "Preyseizer Dragon",
+    "name": "Preyseizer Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nDevour 2 (As this creature enters, you may sacrifice any number of creatures. It enters with twice that many +1/+1 counters on it.)\nWhenever this creature attacks, it deals damage to any target equal to the number of +1/+1 counters on this creature.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Lunk Errant": {
+    "id": "Lunk Errant",
+    "name": "Lunk Errant",
+    "typeLine": "Creature — Giant Warrior",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature attacks alone, it gets +1/+1 and gains trample until end of turn.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Murasa Pyromancer": {
+    "id": "Murasa Pyromancer",
+    "name": "Murasa Pyromancer",
+    "typeLine": "Creature — Human Shaman Ally",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature or another Ally you control enters, you may have this creature deal damage to target creature equal to the number of Allies you control.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Siege Dragon": {
+    "id": "Siege Dragon",
+    "name": "Siege Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nWhen this creature enters, destroy all Walls your opponents control.\nWhenever this creature attacks, if defending player controls no Walls, it deals 2 damage to each creature without flying that player controls.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Gnoll Hunting Party": {
+    "id": "Gnoll Hunting Party",
+    "name": "Gnoll Hunting Party",
+    "typeLine": "Creature — Gnoll",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {1} less to cast for each creature you attacked with this turn.\nDouble team\nAs long as it's your turn, Gnoll Hunting Party has first strike.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Myojin of Roaring Blades": {
+    "id": "Myojin of Roaring Blades",
+    "name": "Myojin of Roaring Blades",
+    "typeLine": "Legendary Creature — Spirit",
+    "manaCost": "{5}{R}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Myojin of Roaring Blades enters with an indestructible counter on it if you cast it from your hand.\nRemove an indestructible counter from Myojin of Roaring Blades: It deals 7 damage to each of up to three targets.",
+    "power": "7",
+    "toughness": "4"
+  },
+  "Burning Sun's Avatar": {
+    "id": "Burning Sun's Avatar",
+    "name": "Burning Sun's Avatar",
+    "typeLine": "Creature — Dinosaur Avatar",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature enters, it deals 3 damage to target opponent or planeswalker and 3 damage to up to one target creature.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Inferno Elemental": {
+    "id": "Inferno Elemental",
+    "name": "Inferno Elemental",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature blocks or becomes blocked by a creature, this creature deals 3 damage to that creature.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Stonewright": {
+    "id": "Stonewright",
+    "name": "Stonewright",
+    "typeLine": "Creature — Human Shaman",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nAs long as Stonewright is paired with another creature, each of those creatures has \"{R}: This creature gets +1/+0 until end of turn.\"",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Somberwald Vigilante": {
+    "id": "Somberwald Vigilante",
+    "name": "Somberwald Vigilante",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature becomes blocked by a creature, this creature deals 1 damage to that creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Chaos Imps": {
+    "id": "Chaos Imps",
+    "name": "Chaos Imps",
+    "typeLine": "Creature — Imp",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nUnleash (You may have this creature enter with a +1/+1 counter on it. It can't block as long as it has a +1/+1 counter on it.)\nThis creature has trample as long as it has a +1/+1 counter on it.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Goblins of the Flarg": {
+    "id": "Goblins of the Flarg",
+    "name": "Goblins of the Flarg",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Mountainwalk (This creature can't be blocked as long as defending player controls a Mountain.)\nWhen you control a Dwarf, sacrifice this creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Clockwork Percussionist": {
+    "id": "Clockwork Percussionist",
+    "name": "Clockwork Percussionist",
+    "typeLine": "Artifact Creature — Monkey Toy",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nWhen this creature dies, exile the top card of your library. You may play it until the end of your next turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Balefire Dragon": {
+    "id": "Balefire Dragon",
+    "name": "Balefire Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nWhenever this creature deals combat damage to a player, it deals that much damage to each creature that player controls.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Chiss-Goria, Forge Tyrant": {
+    "id": "Chiss-Goria, Forge Tyrant",
+    "name": "Chiss-Goria, Forge Tyrant",
+    "typeLine": "Legendary Creature — Dragon",
+    "manaCost": "{6}{R}{R}{R}",
+    "cmc": 9,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Affinity for artifacts (This spell costs {1} less to cast for each artifact you control.)\nFlying, haste\nWhenever Chiss-Goria attacks, exile the top five cards of your library. You may cast an artifact spell from among them this turn. If you do, it has affinity for artifacts.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Rimescale Dragon": {
+    "id": "Rimescale Dragon",
+    "name": "Rimescale Dragon",
+    "typeLine": "Snow Creature — Dragon",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\n{2}{S}: Tap target creature and put an ice counter on it. ({S} can be paid with one mana from a snow source.)\nCreatures with ice counters on them don't untap during their controllers' untap steps.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Phoenix Chick": {
+    "id": "Phoenix Chick",
+    "name": "Phoenix Chick",
+    "typeLine": "Creature — Phoenix",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying, haste\nThis creature can't block.\nWhenever you attack with three or more creatures, you may pay {R}{R}. If you do, return this card from your graveyard to the battlefield tapped and attacking with a +1/+1 counter on it.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Skarrgan Firebird": {
+    "id": "Skarrgan Firebird",
+    "name": "Skarrgan Firebird",
+    "typeLine": "Creature — Phoenix",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Bloodthirst 3 (If an opponent was dealt damage this turn, this creature enters with three +1/+1 counters on it.)\nFlying\n{R}{R}{R}: Return this card from your graveyard to your hand. Activate only if an opponent was dealt damage this turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Artillery Enthusiast": {
+    "id": "Artillery Enthusiast",
+    "name": "Artillery Enthusiast",
+    "typeLine": "Creature — Goblin Artificer",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Modified creatures you control have menace. (Equipment, Auras you control, and counters are modifications.)\nWhen Artillery Enthusiast enters, you may discard a card. If you do, seek a card with mana value equal to that card's mana value. (To seek a card, put one at random from your library into your hand.)",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Dracosaur Auxiliary": {
+    "id": "Dracosaur Auxiliary",
+    "name": "Dracosaur Auxiliary",
+    "typeLine": "Creature — Dinosaur Dragon Mount",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying, haste\nWhenever this creature attacks while saddled, it deals 2 damage to any target.\nSaddle 3 (Tap any number of other creatures you control with total power 3 or more: This Mount becomes saddled until end of turn. Saddle only as a sorcery.)",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Falkenrath Pit Fighter": {
+    "id": "Falkenrath Pit Fighter",
+    "name": "Falkenrath Pit Fighter",
+    "typeLine": "Creature — Vampire Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{R}, Discard a card, Sacrifice a Vampire: Draw two cards. Activate only if an opponent lost life this turn.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Ancient Copper Dragon": {
+    "id": "Ancient Copper Dragon",
+    "name": "Ancient Copper Dragon",
+    "typeLine": "Creature — Elder Dragon",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nWhenever this creature deals combat damage to a player, roll a d20. You create a number of Treasure tokens equal to the result.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Scorch Spitter": {
+    "id": "Scorch Spitter",
+    "name": "Scorch Spitter",
+    "typeLine": "Creature — Elemental Lizard",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature attacks, it deals 1 damage to the player or planeswalker it's attacking.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Igneous Elemental": {
+    "id": "Igneous Elemental",
+    "name": "Igneous Elemental",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {2} less to cast if there is a land card in your graveyard.\nWhen this creature enters, you may have it deal 2 damage to target creature.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Cunning Giant": {
+    "id": "Cunning Giant",
+    "name": "Cunning Giant",
+    "typeLine": "Creature — Giant",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If this creature is unblocked, you may have it assign its combat damage to a creature defending player controls.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Chandra's Incinerator": {
+    "id": "Chandra's Incinerator",
+    "name": "Chandra's Incinerator",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {X} less to cast, where X is the total amount of noncombat damage dealt to your opponents this turn.\nTrample\nWhenever a source you control deals noncombat damage to an opponent, this creature deals that much damage to target creature or planeswalker that player controls.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Goblin Guide": {
+    "id": "Goblin Guide",
+    "name": "Goblin Guide",
+    "typeLine": "Creature — Goblin Scout",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nWhenever this creature attacks, defending player reveals the top card of their library. If it's a land card, that player puts it into their hand.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Kill-Suit Cultist": {
+    "id": "Kill-Suit Cultist",
+    "name": "Kill-Suit Cultist",
+    "typeLine": "Creature — Goblin Berserker",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature attacks each combat if able.\n{B}, Sacrifice this creature: The next time damage would be dealt to target creature this turn, destroy that creature instead.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Forgestoker Dragon": {
+    "id": "Forgestoker Dragon",
+    "name": "Forgestoker Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\n{1}{R}: This creature deals 1 damage to target creature. That creature can't block this combat. Activate only if this creature is attacking.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Bearer of the Heavens": {
+    "id": "Bearer of the Heavens",
+    "name": "Bearer of the Heavens",
+    "typeLine": "Creature — Giant",
+    "manaCost": "{7}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature dies, destroy all permanents at the beginning of the next end step.",
+    "power": "10",
+    "toughness": "10"
+  },
+  "Legion Loyalist": {
+    "id": "Legion Loyalist",
+    "name": "Legion Loyalist",
+    "typeLine": "Creature — Goblin Soldier",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nBattalion — Whenever this creature and at least two other creatures attack, creatures you control gain first strike and trample until end of turn and can't be blocked by creature tokens this turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Shocker, Unshakable": {
+    "id": "Shocker, Unshakable",
+    "name": "Shocker, Unshakable",
+    "typeLine": "Legendary Creature — Human Rogue Villain",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "During your turn, Shocker has first strike.\nVibro-Shock Gauntlets — When Shocker enters, he deals 2 damage to target creature and 2 damage to that creature's controller.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Firestorm Phoenix": {
+    "id": "Firestorm Phoenix",
+    "name": "Firestorm Phoenix",
+    "typeLine": "Creature — Phoenix",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nIf this creature would die, return it to its owner's hand instead. Until that player's next turn, that player plays with that card revealed in their hand and can't play it.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Tin Street Cadet": {
+    "id": "Tin Street Cadet",
+    "name": "Tin Street Cadet",
+    "typeLine": "Creature — Goblin",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature becomes blocked, create a 1/1 red Goblin creature token.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "War-Torch Goblin": {
+    "id": "War-Torch Goblin",
+    "name": "War-Torch Goblin",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}, Sacrifice this creature: It deals 2 damage to target blocking creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Thundermare": {
+    "id": "Thundermare",
+    "name": "Thundermare",
+    "typeLine": "Creature — Elemental Horse",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste (This creature can attack and {T} as soon as it comes under your control.)\nWhen this creature enters, tap all other creatures.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Raphael, Tag Team Tough": {
+    "id": "Raphael, Tag Team Tough",
+    "name": "Raphael, Tag Team Tough",
+    "typeLine": "Legendary Creature — Mutant Ninja Turtle",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Menace (This creature can't be blocked except by two or more creatures.)\nWhenever Raphael deals combat damage to a player for the first time each turn, untap all attacking creatures. After this combat phase, there is an additional combat phase.",
+    "power": "5",
+    "toughness": "6"
+  },
+  "Dwarven Armorer": {
+    "id": "Dwarven Armorer",
+    "name": "Dwarven Armorer",
+    "typeLine": "Creature — Dwarf",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}, {T}, Discard a card: Put a +0/+1 counter or a +1/+0 counter on target creature.",
+    "power": "0",
+    "toughness": "2"
+  },
+  "Kilnmouth Dragon": {
+    "id": "Kilnmouth Dragon",
+    "name": "Kilnmouth Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Amplify 3 (As this creature enters, put three +1/+1 counters on it for each Dragon card you reveal in your hand.)\nFlying\n{T}: This creature deals damage equal to the number of +1/+1 counters on it to any target.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Gut, Fanatical Priestess": {
+    "id": "Gut, Fanatical Priestess",
+    "name": "Gut, Fanatical Priestess",
+    "typeLine": "Legendary Creature — Goblin Shaman",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Specialize {5}\nWhen Gut, Fanatical Priestess enters, up to one target creature you control fights target creature you don't control. If the creature you don't control would die this turn, exile it instead.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Fire Nation Cadets": {
+    "id": "Fire Nation Cadets",
+    "name": "Fire Nation Cadets",
+    "typeLine": "Creature — Human Soldier",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature has firebending 2 as long as there's a Lesson card in your graveyard. (Whenever this creature attacks, add {R}{R}. This mana lasts until end of combat.)\n{2}: This creature gets +1/+0 until end of turn.",
+    "power": "1",
+    "toughness": "2",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Butcher Orgg": {
+    "id": "Butcher Orgg",
+    "name": "Butcher Orgg",
+    "typeLine": "Creature — Orgg",
+    "manaCost": "{4}{R}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may assign this creature's combat damage divided as you choose among defending player and/or any number of creatures they control.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Velukan Dragon": {
+    "id": "Velukan Dragon",
+    "name": "Velukan Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nWhenever this creature attacks or blocks, roll a six-sided die. This creature gets +X/+0 until end of turn, where X is the result minus 1.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Roc Hatchling": {
+    "id": "Roc Hatchling",
+    "name": "Roc Hatchling",
+    "typeLine": "Creature — Bird",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature enters with four shell counters on it.\nAt the beginning of your upkeep, remove a shell counter from this creature.\nAs long as this creature has no shell counters on it, it gets +3/+2 and has flying.",
+    "power": "0",
+    "toughness": "1"
+  },
+  "Living Inferno": {
+    "id": "Living Inferno",
+    "name": "Living Inferno",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{6}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{T}: This creature deals damage equal to its power divided as you choose among any number of target creatures. Each of those creatures deals damage equal to its power to this creature.",
+    "power": "8",
+    "toughness": "5"
+  },
+  "Boldwyr Intimidator": {
+    "id": "Boldwyr Intimidator",
+    "name": "Boldwyr Intimidator",
+    "typeLine": "Creature — Giant Warrior",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Cowards can't block Warriors.\n{R}: Target creature becomes a Coward until end of turn.\n{2}{R}: Target creature becomes a Warrior until end of turn.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Olivia's Attendants": {
+    "id": "Olivia's Attendants",
+    "name": "Olivia's Attendants",
+    "typeLine": "Creature — Vampire",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Menace\nWhenever this creature deals damage, create that many Blood tokens. (They're artifacts with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")\n{2}{R}: This creature deals 1 damage to any target.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Yidaro, Wandering Monster": {
+    "id": "Yidaro, Wandering Monster",
+    "name": "Yidaro, Wandering Monster",
+    "typeLine": "Legendary Creature — Dinosaur Turtle",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample, haste\nCycling {1}{R}\nWhen you cycle this card, shuffle it into your library from your graveyard. If you've cycled a card named Yidaro, Wandering Monster four or more times this game, put it onto the battlefield from your graveyard instead. (Do this before you draw.)",
+    "power": "8",
+    "toughness": "8"
+  },
+  "Goblin Gaveleer": {
+    "id": "Goblin Gaveleer",
+    "name": "Goblin Gaveleer",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nThis creature gets +2/+0 for each Equipment attached to it.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Exuberant Fuseling": {
+    "id": "Exuberant Fuseling",
+    "name": "Exuberant Fuseling",
+    "typeLine": "Creature — Phyrexian Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nThis creature gets +1/+0 for each oil counter on it.\nWhen this creature enters and whenever another creature or artifact you control is put into a graveyard from the battlefield, put an oil counter on this creature.",
+    "power": "0",
+    "toughness": "1"
+  },
+  "Soulbright Seeker": {
+    "id": "Soulbright Seeker",
+    "name": "Soulbright Seeker",
+    "typeLine": "Creature — Elemental Sorcerer",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, behold an Elemental or pay {2}. (To behold an Elemental, choose an Elemental you control or reveal an Elemental card from your hand.)\n{R}: Target creature you control gains trample until end of turn. If this is the third time this ability has resolved this turn, add {R}{R}{R}{R}.",
+    "power": "2",
+    "toughness": "1",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Orcish Captain": {
+    "id": "Orcish Captain",
+    "name": "Orcish Captain",
+    "typeLine": "Creature — Orc Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}: Flip a coin. If you win the flip, target Orc creature gets +2/+0 until end of turn. If you lose the flip, it gets -0/-2 until end of turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Callous Giant": {
+    "id": "Callous Giant",
+    "name": "Callous Giant",
+    "typeLine": "Creature — Giant",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If a source would deal 3 or less damage to this creature, prevent that damage.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Martyr of Ashes": {
+    "id": "Martyr of Ashes",
+    "name": "Martyr of Ashes",
+    "typeLine": "Creature — Human Shaman",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{2}, Reveal X red cards from your hand, Sacrifice this creature: This creature deals X damage to each creature without flying.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Desert Were-Worm": {
+    "id": "Desert Were-Worm",
+    "name": "Desert Were-Worm",
+    "typeLine": "Creature — Dragon Wurm",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature gets +2/+0 for each Mountain you control.\nWhenever you attack with creatures with total power 12 or greater for the first time each turn, untap all attacking creatures. After this phase, there is an additional combat phase.",
+    "power": "0",
+    "toughness": "5"
+  },
+  "Bloodshot Cyclops": {
+    "id": "Bloodshot Cyclops",
+    "name": "Bloodshot Cyclops",
+    "typeLine": "Creature — Cyclops Giant",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{T}, Sacrifice a creature: This creature deals damage equal to the sacrificed creature's power to any target.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Dragon's Herald": {
+    "id": "Dragon's Herald",
+    "name": "Dragon's Herald",
+    "typeLine": "Creature — Goblin Shaman",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{2}{R}, {T}, Sacrifice a black creature, a red creature, and a green creature: Search your library for a card named Hellkite Overlord, put it onto the battlefield, then shuffle.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Goblin Cohort": {
+    "id": "Goblin Cohort",
+    "name": "Goblin Cohort",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature can't attack unless you've cast a creature spell this turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Soldier of Fortune": {
+    "id": "Soldier of Fortune",
+    "name": "Soldier of Fortune",
+    "typeLine": "Creature — Human Mercenary",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}, {T}: Target player shuffles their library.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Goblin Blast-Runner": {
+    "id": "Goblin Blast-Runner",
+    "name": "Goblin Blast-Runner",
+    "typeLine": "Creature — Goblin",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature gets +2/+0 and has menace as long as you sacrificed a permanent this turn.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Ghitu Lavarunner": {
+    "id": "Ghitu Lavarunner",
+    "name": "Ghitu Lavarunner",
+    "typeLine": "Creature — Human Wizard",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As long as there are two or more instant and/or sorcery cards in your graveyard, this creature gets +1/+0 and has haste. (It can attack and {T} as soon as it comes under your control.)",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Rumbling Ruin": {
+    "id": "Rumbling Ruin",
+    "name": "Rumbling Ruin",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature enters, count the number of +1/+1 counters on creatures you control. Creatures your opponents control with power less than or equal to that number can't block this turn.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Unlucky Witness": {
+    "id": "Unlucky Witness",
+    "name": "Unlucky Witness",
+    "typeLine": "Creature — Human Citizen",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature dies, exile the top two cards of your library. Until your next end step, you may play one of those cards.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Excruciator": {
+    "id": "Excruciator",
+    "name": "Excruciator",
+    "typeLine": "Creature — Avatar",
+    "manaCost": "{6}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Damage that would be dealt by this creature can't be prevented.",
+    "power": "7",
+    "toughness": "7"
+  },
+  "Magus of the Scroll": {
+    "id": "Magus of the Scroll",
+    "name": "Magus of the Scroll",
+    "typeLine": "Creature — Human Wizard",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{3}, {T}: Choose a card name, then reveal a card at random from your hand. If that card has the chosen name, this creature deals 2 damage to any target.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Firefright Mage": {
+    "id": "Firefright Mage",
+    "name": "Firefright Mage",
+    "typeLine": "Creature — Goblin Spellshaper",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{R}, {T}, Discard a card: Target creature can't be blocked this turn except by artifact creatures and/or red creatures.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Incinerator of the Guilty": {
+    "id": "Incinerator of the Guilty",
+    "name": "Incinerator of the Guilty",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying, trample\nWhenever this creature deals combat damage to a player, you may collect evidence X. When you do, this creature deals X damage to each creature and planeswalker that player controls. (To collect evidence X, exile cards with total mana value X or greater from your graveyard.)",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Avatar Roku, Firebender": {
+    "id": "Avatar Roku, Firebender",
+    "name": "Avatar Roku, Firebender",
+    "typeLine": "Legendary Creature — Human Avatar",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player attacks, add six {R}. Until end of combat, you don't lose this mana as steps end.\n{R}{R}{R}: Target creature gets +3/+0 until end of turn.",
+    "power": "6",
+    "toughness": "6",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Goblin Swine-Rider": {
+    "id": "Goblin Swine-Rider",
+    "name": "Goblin Swine-Rider",
+    "typeLine": "Creature — Goblin",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature becomes blocked, it deals 2 damage to each attacking creature and each blocking creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Ignition Team": {
+    "id": "Ignition Team",
+    "name": "Ignition Team",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature enters with X +1/+1 counters on it, where X is the number of tapped lands on the battlefield.\n{2}{R}, Remove a +1/+1 counter from this creature: Target land becomes a 4/4 red Elemental creature until end of turn. It's still a land.",
+    "power": "0",
+    "toughness": "0"
+  },
+  "Bloodcrazed Goblin": {
+    "id": "Bloodcrazed Goblin",
+    "name": "Bloodcrazed Goblin",
+    "typeLine": "Creature — Goblin Berserker",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature can't attack unless an opponent has been dealt damage this turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Red Hulk": {
+    "id": "Red Hulk",
+    "name": "Red Hulk",
+    "typeLine": "Legendary Creature — Gamma Berserker Villain",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reach, trample\nEnrage — Whenever Red Hulk is dealt damage, put a +1/+1 counter on him. When you do, he deals damage equal to the number of +1/+1 counters on him to any other target.",
+    "power": "6",
+    "toughness": "7"
+  },
+  "Dargo, the Shipwrecker": {
+    "id": "Dargo, the Shipwrecker",
+    "name": "Dargo, the Shipwrecker",
+    "typeLine": "Legendary Creature — Giant Pirate",
+    "manaCost": "{6}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may sacrifice any number of artifacts and/or creatures. This spell costs {2} less to cast for each permanent sacrificed this way and {2} less to cast for each other artifact or creature you've sacrificed this turn.\nTrample\nPartner (You can have two commanders if both have partner.)",
+    "power": "7",
+    "toughness": "5"
+  },
+  "Themberchaud": {
+    "id": "Themberchaud",
+    "name": "Themberchaud",
+    "typeLine": "Legendary Creature — Dragon",
+    "manaCost": "{4}{R}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nWhen Themberchaud enters, he deals X damage to each other creature without flying and each player, where X is the number of Mountains you control.\nYou may exert Themberchaud as he attacks. When you do, he gains flying until end of turn. (An exerted creature won't untap during your next untap step.)",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Ogre Geargrabber": {
+    "id": "Ogre Geargrabber",
+    "name": "Ogre Geargrabber",
+    "typeLine": "Creature — Ogre Warrior",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature attacks, gain control of target Equipment an opponent controls until end of turn. Attach it to this creature. When you lose control of that Equipment, unattach it.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Pardic Dragon": {
+    "id": "Pardic Dragon",
+    "name": "Pardic Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\n{R}: This creature gets +1/+0 until end of turn.\nSuspend 2—{R}{R}\nWhenever an opponent casts a spell, if this card is suspended, that player may put a time counter on this card.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Worldgorger Dragon": {
+    "id": "Worldgorger Dragon",
+    "name": "Worldgorger Dragon",
+    "typeLine": "Creature — Nightmare Dragon",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying, trample\nWhen this creature enters, exile all other permanents you control.\nWhen this creature leaves the battlefield, return the exiled cards to the battlefield under their owners' control.",
+    "power": "7",
+    "toughness": "7"
+  },
+  "Dwarven Scorcher": {
+    "id": "Dwarven Scorcher",
+    "name": "Dwarven Scorcher",
+    "typeLine": "Creature — Dwarf",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sacrifice this creature: This creature deals 1 damage to target creature unless that creature's controller has this creature deal 2 damage to them.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Soul of Shandalar": {
+    "id": "Soul of Shandalar",
+    "name": "Soul of Shandalar",
+    "typeLine": "Creature — Avatar",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "First strike\n{3}{R}{R}: This creature deals 3 damage to target player or planeswalker and 3 damage to up to one target creature that player or that planeswalker's controller controls.\n{3}{R}{R}, Exile this card from your graveyard: It deals 3 damage to target player or planeswalker and 3 damage to up to one target creature that player or that planeswalker's controller controls.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Chomping Mastasaur": {
+    "id": "Chomping Mastasaur",
+    "name": "Chomping Mastasaur",
+    "typeLine": "Creature — Dinosaur",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature enters or attacks, discard a card, then seek a nonland card. When you discard a card this way, this creature deals damage equal to the discarded card's mana value to any target.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Mogg Conscripts": {
+    "id": "Mogg Conscripts",
+    "name": "Mogg Conscripts",
+    "typeLine": "Creature — Goblin",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature can't attack unless you've cast a creature spell this turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Laccolith Whelp": {
+    "id": "Laccolith Whelp",
+    "name": "Laccolith Whelp",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature becomes blocked, you may have it deal damage equal to its power to target creature. If you do, this creature assigns no combat damage this turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Greater Stone Spirit": {
+    "id": "Greater Stone Spirit",
+    "name": "Greater Stone Spirit",
+    "typeLine": "Creature — Elemental Spirit",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature can't be blocked by creatures with flying.\n{2}{R}: Until end of turn, target creature gets +0/+2 and gains \"{R}: This creature gets +1/+0 until end of turn.\"",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Vexing Devil": {
+    "id": "Vexing Devil",
+    "name": "Vexing Devil",
+    "typeLine": "Creature — Devil",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature enters, any opponent may have it deal 4 damage to them. If a player does, sacrifice this creature.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Shaleskin Bruiser": {
+    "id": "Shaleskin Bruiser",
+    "name": "Shaleskin Bruiser",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{6}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nWhenever this creature attacks, it gets +3/+0 until end of turn for each other attacking Beast.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Khorvath Brightflame": {
+    "id": "Khorvath Brightflame",
+    "name": "Khorvath Brightflame",
+    "typeLine": "Legendary Creature — Dragon",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Partner with Sylvia Brightspear (When this creature enters, target player may put Sylvia into their hand from their library, then shuffle.)\nFlying, haste\nKnights your team controls have flying and haste.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Reckless Waif // Merciless Predator": {
+    "id": "Reckless Waif // Merciless Predator",
+    "name": "Reckless Waif // Merciless Predator",
+    "typeLine": "Creature — Human Rogue Werewolf // Creature — Werewolf",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reckless Waif: At the beginning of each upkeep, if no spells were cast last turn, transform this creature.\n\nMerciless Predator: At the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Crazed Firecat": {
+    "id": "Crazed Firecat",
+    "name": "Crazed Firecat",
+    "typeLine": "Creature — Elemental Cat",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature enters, flip a coin until you lose a flip. Put a +1/+1 counter on this creature for each flip you won.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Godo's Irregulars": {
+    "id": "Godo's Irregulars",
+    "name": "Godo's Irregulars",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}: This creature deals 1 damage to target creature blocking it.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Forge Devil": {
+    "id": "Forge Devil",
+    "name": "Forge Devil",
+    "typeLine": "Creature — Devil",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature enters, it deals 1 damage to target creature and 1 damage to you.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Fang Dragon // Forktail Sweep": {
+    "id": "Fang Dragon // Forktail Sweep",
+    "name": "Fang Dragon // Forktail Sweep",
+    "typeLine": "Creature — Dragon // Sorcery — Adventure",
+    "manaCost": "{5}{R}{R} // {1}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Fang Dragon: Flying\n\nForktail Sweep: Forktail Sweep deals 1 damage to each creature you don't control. (Then exile this card. You may cast the creature later from exile.)",
+    "power": "6",
+    "toughness": "3"
+  },
+  "Magmablood Archaic": {
+    "id": "Magmablood Archaic",
+    "name": "Magmablood Archaic",
+    "typeLine": "Creature — Avatar",
+    "manaCost": "{2/R}{2/R}{2/R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reach, trample\nConverge — This creature enters with a +1/+1 counter on it for each color of mana spent to cast it.\nWhenever you cast an instant or sorcery spell, creatures you control get +1/+0 until end of turn for each color of mana spent to cast that spell.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Riders of the Mark": {
+    "id": "Riders of the Mark",
+    "name": "Riders of the Mark",
+    "typeLine": "Creature — Human Knight",
+    "manaCost": "{6}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Affinity for Humans (This spell costs {1} less to cast for each Human you control.)\nTrample, haste\nAt the beginning of your end step, if this creature attacked this turn, return it to its owner's hand. If you do, create a number of 1/1 white Human Soldier creature tokens equal to its toughness.",
+    "power": "7",
+    "toughness": "4"
+  },
+  "Bolshack Dragon": {
+    "id": "Bolshack Dragon",
+    "name": "Bolshack Dragon",
+    "typeLine": "Creature — Armored Dragon",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Double b̶r̶e̶a̶k̶e̶r̶ strike\nWhile attacking, this creature gets +10̶0̶0̶ power for each f̶i̶r̶e̶ red card in your graveyard.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Gilgamesh, Master-at-Arms": {
+    "id": "Gilgamesh, Master-at-Arms",
+    "name": "Gilgamesh, Master-at-Arms",
+    "typeLine": "Legendary Creature — Human Samurai",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever Gilgamesh enters or attacks, look at the top six cards of your library. You may put any number of Equipment cards from among them onto the battlefield. Put the rest on the bottom of your library in a random order. When you put one or more Equipment onto the battlefield this way, you may attach one of them to a Samurai you control.",
+    "power": "6",
+    "toughness": "6"
+  },
+  "Goblin Glory Chaser": {
+    "id": "Goblin Glory Chaser",
+    "name": "Goblin Glory Chaser",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Renown 1 (When this creature deals combat damage to a player, if it isn't renowned, put a +1/+1 counter on it and it becomes renowned.)\nAs long as this creature is renowned, it has menace. (It can't be blocked except by two or more creatures.)",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Intrepid Ace": {
+    "id": "Intrepid Ace",
+    "name": "Intrepid Ace",
+    "typeLine": "Creature — Human Pilot",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature gets +2/+0 as long as it isn't attacking or blocking.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Tyrant of Discord": {
+    "id": "Tyrant of Discord",
+    "name": "Tyrant of Discord",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{4}{R}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature enters, target opponent chooses a permanent they control at random and sacrifices it. If a nonland permanent is sacrificed this way, repeat this process.",
+    "power": "7",
+    "toughness": "7"
+  },
+  "Karplusan Wolverine": {
+    "id": "Karplusan Wolverine",
+    "name": "Karplusan Wolverine",
+    "typeLine": "Snow Creature — Wolverine Beast",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature becomes blocked, you may have it deal 1 damage to any target.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Clive, Ifrit's Dominant // Ifrit, Warden of Inferno": {
+    "id": "Clive, Ifrit's Dominant // Ifrit, Warden of Inferno",
+    "name": "Clive, Ifrit's Dominant // Ifrit, Warden of Inferno",
+    "typeLine": "Legendary Creature — Human Noble Warrior // Legendary Enchantment Creature — Saga Demon",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Clive, Ifrit's Dominant: When Clive enters, you may discard your hand, then draw cards equal to your devotion to red. (Each {R} in the mana costs of permanents you control counts toward your devotion to red.)\n{4}{R}{R}, {T}: Exile Clive, then return it to the battlefield transformed under its owner's control. Activate only as a sorcery.\n\nIfrit, Warden of Inferno: (As this Saga enters and after your draw step, add a lore counter.)\nI — Lunge — Ifrit fights up to one other target creature.\nII, III — Brimstone — Add {R}{R}{R}{R}. If Ifrit has three or more lore counters on it, exile it, then return it to the battlefield (front face up).",
+    "power": "5",
+    "toughness": "5",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Boggart Forager": {
+    "id": "Boggart Forager",
+    "name": "Boggart Forager",
+    "typeLine": "Creature — Goblin Rogue",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}, Sacrifice this creature: Target player shuffles their library.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Dreamshaper Shaman": {
+    "id": "Dreamshaper Shaman",
+    "name": "Dreamshaper Shaman",
+    "typeLine": "Enchantment Creature — Minotaur Shaman",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your end step, you may pay {2}{R} and sacrifice a nonland permanent. If you do, reveal cards from the top of your library until you reveal a nonland permanent card. Put that card onto the battlefield and the rest on the bottom of your library in a random order.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Skittish Valesk": {
+    "id": "Skittish Valesk",
+    "name": "Skittish Valesk",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{6}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, flip a coin. If you lose the flip, turn this creature face down.\nMorph {5}{R} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Hurr Jackal": {
+    "id": "Hurr Jackal",
+    "name": "Hurr Jackal",
+    "typeLine": "Creature — Jackal",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{T}: Target creature can't be regenerated this turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Frantic Scapegoat": {
+    "id": "Frantic Scapegoat",
+    "name": "Frantic Scapegoat",
+    "typeLine": "Creature — Goat",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nWhen this creature enters, suspect it. (It has menace and can't block.)\nWhenever one or more other creatures you control enter, if this creature is suspected, you may suspect one of the other creatures. If you do, this creature is no longer suspected.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Mirage Phalanx": {
+    "id": "Mirage Phalanx",
+    "name": "Mirage Phalanx",
+    "typeLine": "Creature — Human Soldier",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Soulbond (You may pair this creature with another unpaired creature when either enters. They remain paired for as long as you control both of them.)\nAs long as Mirage Phalanx is paired with another creature, each of those creatures has \"At the beginning of combat on your turn, create a token that's a copy of this creature, except it has haste and loses soulbond. Exile it at end of combat.\"",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Slumbering Dragon": {
+    "id": "Slumbering Dragon",
+    "name": "Slumbering Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nThis creature can't attack or block unless it has five or more +1/+1 counters on it.\nWhenever a creature attacks you or a planeswalker you control, put a +1/+1 counter on this creature.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Stadium Headliner": {
+    "id": "Stadium Headliner",
+    "name": "Stadium Headliner",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Mobilize 1 (Whenever this creature attacks, create a tapped and attacking 1/1 red Warrior creature token. Sacrifice it at the beginning of the next end step.)\n{1}{R}, Sacrifice this creature: It deals damage equal to the number of creatures you control to target creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Orcish Conscripts": {
+    "id": "Orcish Conscripts",
+    "name": "Orcish Conscripts",
+    "typeLine": "Creature — Orc",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature can't attack unless at least two other creatures attack.\nThis creature can't block unless at least two other creatures block.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Jurin, Leading the Charge": {
+    "id": "Jurin, Leading the Charge",
+    "name": "Jurin, Leading the Charge",
+    "typeLine": "Legendary Creature — Human Barbarian",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nJurin must be blocked if able.\nWhenever Jurin attacks, each creature you control attacking a player gets +1/+0 until end of turn for each creature that player controls.",
+    "power": "4",
+    "toughness": "6"
+  },
+  "Shockmaw Dragon": {
+    "id": "Shockmaw Dragon",
+    "name": "Shockmaw Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nWhenever this creature deals combat damage to a player, it deals 1 damage to each creature that player controls.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Moonveil Dragon": {
+    "id": "Moonveil Dragon",
+    "name": "Moonveil Dragon",
+    "typeLine": "Creature — Dragon",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\n{R}: Each creature you control gets +1/+0 until end of turn.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Vuzzle Spaceship": {
+    "id": "Vuzzle Spaceship",
+    "name": "Vuzzle Spaceship",
+    "typeLine": "Artifact Creature — Construct",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Spaceship 6 (This creature enters with six +1/+1 counters. If it would be dealt damage, remove that many +1/+1 counters instead. Its abilities are active as long as it has at least that many +1/+1 counters.)\nThrusters [6] → Flying\nLasers [3] → Whenever Vuzzle Spaceship attacks, it deals 1 damage to any target.",
+    "power": "0",
+    "toughness": "0"
+  },
+  "Scarred Puma": {
+    "id": "Scarred Puma",
+    "name": "Scarred Puma",
+    "typeLine": "Creature — Cat",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature can't attack unless a black or green creature also attacks.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Rotisserie Elemental": {
+    "id": "Rotisserie Elemental",
+    "name": "Rotisserie Elemental",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Menace\nWhenever this creature deals combat damage to a player, put a skewer counter on this creature. Then you may sacrifice it. If you do, exile the top X cards of your library, where X is the number of skewer counters on this creature. You may play those cards this turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Goblin Javelineer": {
+    "id": "Goblin Javelineer",
+    "name": "Goblin Javelineer",
+    "typeLine": "Creature — Goblin Warrior",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nWhenever this creature becomes blocked, it deals 1 damage to target creature blocking it.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Simian Sling": {
+    "id": "Simian Sling",
+    "name": "Simian Sling",
+    "typeLine": "Artifact Creature — Equipment Monkey",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Equipped creature gets +1/+1.\nWhenever this creature or equipped creature becomes blocked, it deals 1 damage to defending player.\nReconfigure {2} ({2}: Attach to target creature you control; or unattach from a creature. Reconfigure only as a sorcery. While attached, this isn't a creature.)",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Rift Elemental": {
+    "id": "Rift Elemental",
+    "name": "Rift Elemental",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{R}, Remove a time counter from a permanent you control or suspended card you own: This creature gets +2/+0 until end of turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Branded Brawlers": {
+    "id": "Branded Brawlers",
+    "name": "Branded Brawlers",
+    "typeLine": "Creature — Human Soldier",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This creature can't attack if defending player controls an untapped land.\nThis creature can't block if you control an untapped land.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Molten Monstrosity": {
+    "id": "Molten Monstrosity",
+    "name": "Molten Monstrosity",
+    "typeLine": "Creature — Hellion",
+    "manaCost": "{7}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {X} less to cast, where X is the greatest power among creatures you control.\nTrample",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Calamity, Galloping Inferno": {
+    "id": "Calamity, Galloping Inferno",
+    "name": "Calamity, Galloping Inferno",
+    "typeLine": "Legendary Creature — Horse Mount",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nWhenever Calamity attacks while saddled, choose a nonlegendary creature that saddled it this turn and create a tapped and attacking token that's a copy of it. Sacrifice that token at the beginning of the next end step. Repeat this process once.\nSaddle 1",
+    "power": "4",
+    "toughness": "6"
+  },
+  "Capricious Hellraiser": {
+    "id": "Capricious Hellraiser",
+    "name": "Capricious Hellraiser",
+    "typeLine": "Creature — Phyrexian Dragon",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {3} less to cast if you have nine or more cards in your graveyard.\nFlying\nWhen this creature enters, exile three cards at random from your graveyard. Choose a noncreature, nonland card from among them and copy it. You may cast the copy without paying its mana cost.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Impelled Giant": {
+    "id": "Impelled Giant",
+    "name": "Impelled Giant",
+    "typeLine": "Creature — Giant Warrior",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nTap an untapped red creature you control other than this creature: This creature gets +X/+0 until end of turn, where X is the power of the creature tapped this way.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Goblin Artisans": {
+    "id": "Goblin Artisans",
+    "name": "Goblin Artisans",
+    "typeLine": "Creature — Goblin Artificer",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{T}: Flip a coin. If you win the flip, draw a card. If you lose the flip, counter target artifact spell you control that isn't the target of an ability from another creature named Goblin Artisans.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Thunder Brute": {
+    "id": "Thunder Brute",
+    "name": "Thunder Brute",
+    "typeLine": "Creature — Cyclops",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nTribute 3 (As this creature enters, an opponent of your choice may put three +1/+1 counters on it.)\nWhen this creature enters, if tribute wasn't paid, it gains haste until end of turn.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Petradon": {
+    "id": "Petradon",
+    "name": "Petradon",
+    "typeLine": "Creature — Nightmare Beast",
+    "manaCost": "{6}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this creature enters, exile two target lands.\nWhen this creature leaves the battlefield, return the exiled cards to the battlefield under their owners' control.\n{R}: This creature gets +1/+0 until end of turn.",
+    "power": "5",
+    "toughness": "6"
+  },
+  "Hearth Elemental // Stoke Genius": {
+    "id": "Hearth Elemental // Stoke Genius",
+    "name": "Hearth Elemental // Stoke Genius",
+    "typeLine": "Creature — Elemental // Sorcery — Adventure",
+    "manaCost": "{5}{R} // {1}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Hearth Elemental: This spell costs {X} less to cast, where X is the number of cards in your graveyard that are instant cards, sorcery cards, and/or have an Adventure.\n\nStoke Genius: Discard your hand, then draw two cards. (Then exile this card. You may cast the creature later from exile.)",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Village Messenger // Moonrise Intruder": {
+    "id": "Village Messenger // Moonrise Intruder",
+    "name": "Village Messenger // Moonrise Intruder",
+    "typeLine": "Creature — Human Werewolf // Creature — Werewolf",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Village Messenger: Haste\nAt the beginning of each upkeep, if no spells were cast last turn, transform this creature.\n\nMoonrise Intruder: Menace (This creature can't be blocked except by two or more creatures.)\nAt the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Flameblade Angel": {
+    "id": "Flameblade Angel",
+    "name": "Flameblade Angel",
+    "typeLine": "Creature — Angel",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nWhenever a source an opponent controls deals damage to you or a permanent you control, you may have this creature deal 1 damage to that source's controller.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Homura, Human Ascendant // Homura's Essence": {
+    "id": "Homura, Human Ascendant // Homura's Essence",
+    "name": "Homura, Human Ascendant // Homura's Essence",
+    "typeLine": "Legendary Creature — Human Monk // Legendary Enchantment",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Homura, Human Ascendant: Homura can't block.\nWhen Homura dies, return it to the battlefield flipped.\n\nHomura's Essence: Creatures you control get +2/+2 and have flying and \"{R}: This creature gets +1/+0 until end of turn.\"",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Book Devourer": {
+    "id": "Book Devourer",
+    "name": "Book Devourer",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nWhenever this creature deals combat damage to a player, you may discard all the cards in your hand. If you do, draw that many cards.",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Halam Djinn": {
+    "id": "Halam Djinn",
+    "name": "Halam Djinn",
+    "typeLine": "Creature — Djinn",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nThis creature gets -2/-2 as long as red is the most common color among all permanents or is tied for most common.",
+    "power": "6",
+    "toughness": "5"
+  },
+  "Obstinate Familiar": {
+    "id": "Obstinate Familiar",
+    "name": "Obstinate Familiar",
+    "typeLine": "Creature — Lizard",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If you would draw a card, you may skip that draw instead.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Tin Street Dodger": {
+    "id": "Tin Street Dodger",
+    "name": "Tin Street Dodger",
+    "typeLine": "Creature — Goblin Rogue",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\n{R}: This creature can't be blocked this turn except by creatures with defender.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Goblin Maskmaker": {
+    "id": "Goblin Maskmaker",
+    "name": "Goblin Maskmaker",
+    "typeLine": "Creature — Goblin Citizen",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this creature attacks, face-down spells you cast this turn cost {1} less to cast.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Gnoll War Band": {
+    "id": "Gnoll War Band",
+    "name": "Gnoll War Band",
+    "typeLine": "Creature — Gnoll",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {1} less to cast for each opponent who was dealt damage this turn.\nMenace\nMyriad (Whenever this creature attacks, for each opponent other than defending player, you may create a token copy that's tapped and attacking that player or a planeswalker they control. Exile the tokens at end of combat.)",
+    "power": "5",
+    "toughness": "5"
+  }
+}

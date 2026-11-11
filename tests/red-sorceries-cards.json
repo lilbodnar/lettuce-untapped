@@ -1,0 +1,3809 @@
+{
+  "Torrent of Fire": {
+    "id": "Torrent of Fire",
+    "name": "Torrent of Fire",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Torrent of Fire deals damage to any target equal to the greatest mana value among permanents you control."
+  },
+  "Goblin Gathering": {
+    "id": "Goblin Gathering",
+    "name": "Goblin Gathering",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create a number of 1/1 red Goblin creature tokens equal to two plus the number of cards named Goblin Gathering in your graveyard."
+  },
+  "World at War": {
+    "id": "World at War",
+    "name": "World at War",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "After the second main phase this turn, there's an additional combat phase followed by an additional main phase. At the beginning of that combat, untap all creatures that attacked this turn.\nRebound (If you cast this spell from your hand, exile it as it resolves. At the beginning of your next upkeep, you may cast this card from exile without paying its mana cost.)"
+  },
+  "Search for Survivors": {
+    "id": "Search for Survivors",
+    "name": "Search for Survivors",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reorder your graveyard at random. An opponent chooses a card at random in your graveyard. If it's a creature card, put it onto the battlefield. Otherwise, exile it."
+  },
+  "Ashaya's Enduring Bond": {
+    "id": "Ashaya's Enduring Bond",
+    "name": "Ashaya's Enduring Bond",
+    "typeLine": "Legendary Sorcery",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "(You may cast a legendary sorcery only if you control a legendary creature or planeswalker.)\nDiscover X, where X is the amount of mana spent to cast this spell. (Exile cards from the top of your library until you exile a nonland card with that mana value or less. Cast it without paying its mana cost or put it into your hand. Put the rest on the bottom in a random order.)\nAshaya's Enduring Bond can be your commander."
+  },
+  "Wildfire Howl": {
+    "id": "Wildfire Howl",
+    "name": "Wildfire Howl",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gift a card (You may promise an opponent a gift as you cast this spell. If you do, they draw a card before its other effects.)\nWildfire Howl deals 2 damage to each creature. If the gift was promised, instead Wildfire Howl deals 1 damage to any target and 2 damage to each creature."
+  },
+  "Devastation": {
+    "id": "Devastation",
+    "name": "Devastation",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy all creatures and lands."
+  },
+  "Pyromancy 101": {
+    "id": "Pyromancy 101",
+    "name": "Pyromancy 101",
+    "typeLine": "Sorcery — Lesson",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Pyromancy 101 deals 1 damage to any target.\nTeach {1}{R} (Then exile this spell taught to a creature you control. For as long as this card remains exiled, that creature has \"{T}: Copy the exiled card. You may cast the copy for its teach cost.\")"
+  },
+  "Goatnap": {
+    "id": "Goatnap",
+    "name": "Goatnap",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. If that creature is a Goat, it also gets +3/+0 until end of turn."
+  },
+  "Call Forth the Tempest": {
+    "id": "Call Forth the Tempest",
+    "name": "Call Forth the Tempest",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Cascade, cascade (When you cast this spell, exile cards from the top of your library until you exile a nonland card that costs less. You may cast it without paying its mana cost. Put the exiled cards on the bottom of your library in a random order. Then do it again.)\nCall Forth the Tempest deals damage to each creature your opponents control equal to the total mana value of other spells you've cast this turn."
+  },
+  "Cosmotronic Wave": {
+    "id": "Cosmotronic Wave",
+    "name": "Cosmotronic Wave",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Cosmotronic Wave deals 1 damage to each creature your opponents control. Creatures your opponents control can't block this turn."
+  },
+  "Shower of Coals": {
+    "id": "Shower of Coals",
+    "name": "Shower of Coals",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Shower of Coals deals 2 damage to each of up to three targets.\nThreshold — Shower of Coals deals 4 damage to each of those permanents and/or players instead if there are seven or more cards in your graveyard."
+  },
+  "Soulfire Eruption": {
+    "id": "Soulfire Eruption",
+    "name": "Soulfire Eruption",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{R}{R}{R}",
+    "cmc": 9,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose any number of target creatures, planeswalkers, and/or players. For each of them, exile the top card of your library, then Soulfire Eruption deals damage equal to that card's mana value to that permanent or player. You may play the exiled cards until the end of your next turn."
+  },
+  "Stensia Banquet": {
+    "id": "Stensia Banquet",
+    "name": "Stensia Banquet",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Stensia Banquet deals damage to target opponent or planeswalker equal to the number of Vampires you control.\nDraw a card."
+  },
+  "End the Festivities": {
+    "id": "End the Festivities",
+    "name": "End the Festivities",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "End the Festivities deals 1 damage to each opponent and each creature and planeswalker they control."
+  },
+  "Rhino's Rampage": {
+    "id": "Rhino's Rampage",
+    "name": "Rhino's Rampage",
+    "typeLine": "Sorcery",
+    "manaCost": "{R/G}",
+    "cmc": 1,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Target creature you control gets +1/+0 until end of turn. It fights target creature an opponent controls. When excess damage is dealt to the creature an opponent controls this way, destroy up to one target noncreature artifact with mana value 3 or less."
+  },
+  "Incite Hysteria": {
+    "id": "Incite Hysteria",
+    "name": "Incite Hysteria",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Radiance — Until end of turn, target creature and each other creature that shares a color with it gain \"This creature can't block.\""
+  },
+  "Roar of the Crowd": {
+    "id": "Roar of the Crowd",
+    "name": "Roar of the Crowd",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose a creature type. Roar of the Crowd deals damage to any target equal to the number of permanents you control of the chosen type."
+  },
+  "Mythos of Vadrok": {
+    "id": "Mythos of Vadrok",
+    "name": "Mythos of Vadrok",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Mythos of Vadrok deals 5 damage divided as you choose among any number of target creatures and/or planeswalkers. If {W}{U} was spent to cast this spell, until your next turn, those permanents can't attack or block and their activated abilities can't be activated."
+  },
+  "Artistic Process": {
+    "id": "Artistic Process",
+    "name": "Artistic Process",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one —\n• Artistic Process deals 6 damage to target creature.\n• Artistic Process deals 2 damage to each creature you don't control.\n• Create a 3/3 blue and red Elemental creature token with flying. It gains haste until end of turn."
+  },
+  "Wheel of Misfortune": {
+    "id": "Wheel of Misfortune",
+    "name": "Wheel of Misfortune",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each player secretly chooses a number 0 or greater, then all players reveal those numbers simultaneously and determine the highest and lowest numbers revealed this way. Wheel of Misfortune deals damage equal to the highest number to each player who chose that number. Each player who didn't choose the lowest number discards their hand, then draws seven cards."
+  },
+  "Browbeat": {
+    "id": "Browbeat",
+    "name": "Browbeat",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Any player may have Browbeat deal 5 damage to them. If no one does, target player draws three cards."
+  },
+  "Glimpse of Tomorrow": {
+    "id": "Glimpse of Tomorrow",
+    "name": "Glimpse of Tomorrow",
+    "typeLine": "Sorcery",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Suspend 3—{R}{R}\nShuffle all permanents you own into your library, then reveal that many cards from the top of your library. Put all non-Aura permanent cards revealed this way onto the battlefield, then do the same for Aura cards, then put the rest on the bottom of your library in a random order."
+  },
+  "Burning Wish": {
+    "id": "Burning Wish",
+    "name": "Burning Wish",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may reveal a sorcery card you own from outside the game and put it into your hand. Exile Burning Wish."
+  },
+  "Command the Stage": {
+    "id": "Command the Stage",
+    "name": "Command the Stage",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create a 2/2 colorless Wizard Soldier creature token named Cadet, then put a +1/+1 counter on each other Wizard token you control.\nAt the beginning of each upkeep, if an opponent was dealt noncombat damage last turn, return this card from your graveyard to your hand."
+  },
+  "Pirate's Landing": {
+    "id": "Pirate's Landing",
+    "name": "Pirate's Landing",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Draw a card. If mana from a Treasure was spent to cast this spell, seek a Pirate card instead."
+  },
+  "Repulsor Blast": {
+    "id": "Repulsor Blast",
+    "name": "Repulsor Blast",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Teamwork 2 (As an additional cost to cast this spell, you may tap any number of creatures you control with total power 2 or more.)\nRepulsor Blast deals 5 damage to target creature. If this spell was cast using teamwork, it also deals 2 damage to that creature's controller."
+  },
+  "Immolating Gyre": {
+    "id": "Immolating Gyre",
+    "name": "Immolating Gyre",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Immolating Gyre deals X damage to each creature and planeswalker you don't control, where X is the number of instant and sorcery cards in your graveyard."
+  },
+  "Devastating Dreams": {
+    "id": "Devastating Dreams",
+    "name": "Devastating Dreams",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, discard X cards at random.\nEach player sacrifices X lands of their choice. Devastating Dreams deals X damage to each creature."
+  },
+  "Act on Impulse": {
+    "id": "Act on Impulse",
+    "name": "Act on Impulse",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile the top three cards of your library. Until end of turn, you may play those cards. (If you cast a spell this way, you still pay its costs. You can play a land this way only if you have an available land play remaining.)"
+  },
+  "Asgardian Inspiration": {
+    "id": "Asgardian Inspiration",
+    "name": "Asgardian Inspiration",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile the top card of your library. You may play it this turn.\nWhenever a source you control deals noncombat damage to an opponent, you may pay {2}. If you do, return this card from your graveyard to your hand."
+  },
+  "Melt Terrain": {
+    "id": "Melt Terrain",
+    "name": "Melt Terrain",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target land. Melt Terrain deals 2 damage to that land's controller."
+  },
+  "Mogg Alarm": {
+    "id": "Mogg Alarm",
+    "name": "Mogg Alarm",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may sacrifice two Mountains rather than pay this spell's mana cost.\nCreate two 1/1 red Goblin creature tokens."
+  },
+  "Fight with Fire": {
+    "id": "Fight with Fire",
+    "name": "Fight with Fire",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {5}{R} (You may pay an additional {5}{R} as you cast this spell.)\nFight with Fire deals 5 damage to target creature. If this spell was kicked, it deals 10 damage divided as you choose among any number of targets instead. (Those targets can include players and planeswalkers.)"
+  },
+  "Red Sun's Twilight": {
+    "id": "Red Sun's Twilight",
+    "name": "Red Sun's Twilight",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy up to X target artifacts. If X is 5 or more, for each artifact destroyed this way, create a token that's a copy of it. Those tokens gain haste. Exile them at the beginning of the next end step."
+  },
+  "Spark of Creativity": {
+    "id": "Spark of Creativity",
+    "name": "Spark of Creativity",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose target creature. Exile the top card of your library. You may have Spark of Creativity deal damage to that creature equal to the exiled card's mana value. If you don't, you may play that card until end of turn."
+  },
+  "Hex Magic": {
+    "id": "Hex Magic",
+    "name": "Hex Magic",
+    "typeLine": "Sorcery — Arcane",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile all the cards from your hand, then draw that many cards. Until the end of your next turn, you may play cards exiled this way."
+  },
+  "Thieves' Auction": {
+    "id": "Thieves' Auction",
+    "name": "Thieves' Auction",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile all nontoken permanents. Starting with you, each player chooses one of the exiled cards and puts it onto the battlefield tapped under their control. Repeat this process until all cards exiled this way have been chosen."
+  },
+  "Structural Assault": {
+    "id": "Structural Assault",
+    "name": "Structural Assault",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy all artifacts, then Structural Assault deals damage to each creature equal to the number of artifacts that were put into graveyards from the battlefield this turn."
+  },
+  "Mishra's Command": {
+    "id": "Mishra's Command",
+    "name": "Mishra's Command",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose two —\n• Choose target player. They may discard up to X cards. Then they draw a card for each card discarded this way.\n• This spell deals X damage to target creature.\n• This spell deals X damage to target planeswalker.\n• Target creature gets +X/+0 and gains haste until end of turn."
+  },
+  "Spiraling Embers": {
+    "id": "Spiraling Embers",
+    "name": "Spiraling Embers",
+    "typeLine": "Sorcery — Arcane",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Spiraling Embers deals damage to any target equal to the number of cards in your hand."
+  },
+  "Epicenter": {
+    "id": "Epicenter",
+    "name": "Epicenter",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target player sacrifices a land of their choice.\nThreshold — Each player sacrifices all lands they control instead if there are seven or more cards in your graveyard."
+  },
+  "Flameshot": {
+    "id": "Flameshot",
+    "name": "Flameshot",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may discard a Mountain card rather than pay this spell's mana cost.\nFlameshot deals 3 damage divided as you choose among one, two, or three target creatures."
+  },
+  "Alchemist's Gambit": {
+    "id": "Alchemist's Gambit",
+    "name": "Alchemist's Gambit",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Cleave {4}{U}{U}{R} (You may cast this spell for its cleave cost. If you do, remove the words in square brackets.)\nTake an extra turn after this one. During that turn, damage can't be prevented. [At the beginning of that turn's end step, you lose the game.]\nExile Alchemist's Gambit."
+  },
+  "Crackle with Power": {
+    "id": "Crackle with Power",
+    "name": "Crackle with Power",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{X}{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Crackle with Power deals five times X damage to each of up to X targets."
+  },
+  "Bionic Blow": {
+    "id": "Bionic Blow",
+    "name": "Bionic Blow",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature you control gets +X/+0 until end of turn. Then it deals damage equal to its power to up to one other target creature."
+  },
+  "Reap the Past": {
+    "id": "Reap the Past",
+    "name": "Reap the Past",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Return X cards at random from your graveyard to your hand. Exile Reap the Past."
+  },
+  "Song of Seasons": {
+    "id": "Song of Seasons",
+    "name": "Song of Seasons",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Seek a Mountain card, a Forest card, and a non-Mountain, non-Forest land card. Put one of them onto the battlefield and put one of them into your graveyard."
+  },
+  "Sarkhan's Dragonfire": {
+    "id": "Sarkhan's Dragonfire",
+    "name": "Sarkhan's Dragonfire",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sarkhan's Dragonfire deals 3 damage to any target.\nLook at the top five cards of your library. You may reveal a red card from among them and put it into your hand. Put the rest on the bottom of your library in a random order."
+  },
+  "Acceptable Losses": {
+    "id": "Acceptable Losses",
+    "name": "Acceptable Losses",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, discard a card at random.\nAcceptable Losses deals 5 damage to target creature."
+  },
+  "Isengard Unleashed": {
+    "id": "Isengard Unleashed",
+    "name": "Isengard Unleashed",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Damage can't be prevented this turn. If a source you control would deal damage this turn to an opponent or a permanent an opponent controls, it deals triple that damage instead.\nFlashback {4}{R}{R}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Retribution": {
+    "id": "Retribution",
+    "name": "Retribution",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose two target creatures controlled by the same opponent. That player chooses and sacrifices one of those creatures. Put a -1/-1 counter on the other."
+  },
+  "Wish": {
+    "id": "Wish",
+    "name": "Wish",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may play a card you own from outside the game this turn."
+  },
+  "Irencrag Feat": {
+    "id": "Irencrag Feat",
+    "name": "Irencrag Feat",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Add seven {R}. You can cast only one more spell this turn.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Mugging": {
+    "id": "Mugging",
+    "name": "Mugging",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Mugging deals 2 damage to target creature. That creature can't block this turn."
+  },
+  "Boulder Dash": {
+    "id": "Boulder Dash",
+    "name": "Boulder Dash",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Boulder Dash deals 2 damage to any target and 1 damage to any other target."
+  },
+  "Icefall": {
+    "id": "Icefall",
+    "name": "Icefall",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target artifact or land.\nRecover {R}{R} (When a creature is put into your graveyard from the battlefield, you may pay {R}{R}. If you do, return this card from your graveyard to your hand. Otherwise, exile this card.)"
+  },
+  "Explosive Singularity": {
+    "id": "Explosive Singularity",
+    "name": "Explosive Singularity",
+    "typeLine": "Sorcery",
+    "manaCost": "{8}{R}{R}",
+    "cmc": 10,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may tap any number of untapped creatures you control. This spell costs {1} less to cast for each creature tapped this way.\nExplosive Singularity deals 10 damage to any target."
+  },
+  "Demonfire": {
+    "id": "Demonfire",
+    "name": "Demonfire",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Demonfire deals X damage to any target. If a creature dealt damage this way would die this turn, exile it instead.\nHellbent — If you have no cards in hand, this spell can't be countered and the damage can't be prevented."
+  },
+  "Mindblaze": {
+    "id": "Mindblaze",
+    "name": "Mindblaze",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose a nonland card name and a number greater than 0. Target player reveals their library. If that library contains exactly the chosen number of cards with the chosen name, Mindblaze deals 8 damage to that player. Then that player shuffles."
+  },
+  "Wish Good Luck": {
+    "id": "Wish Good Luck",
+    "name": "Wish Good Luck",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Create a Food token.\nCreate a tapped Treasure token.\nCreate a 3/2 colorless Vehicle artifact token with crew 1."
+  },
+  "Random Encounter": {
+    "id": "Random Encounter",
+    "name": "Random Encounter",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Shuffle your library, then mill four cards. Put each creature card milled this way onto the battlefield. They gain haste. At the beginning of the next end step, return those creatures to their owner's hand.\nFlashback {6}{R}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Lava Blister": {
+    "id": "Lava Blister",
+    "name": "Lava Blister",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target nonbasic land unless its controller has Lava Blister deal 6 damage to them."
+  },
+  "Soul Immolation": {
+    "id": "Soul Immolation",
+    "name": "Soul Immolation",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, blight X. X can't be greater than the greatest toughness among creatures you control. (Put X -1/-1 counters on a creature you control.)\nSoul Immolation deals X damage to each opponent and each creature they control."
+  },
+  "Shackles of Treachery": {
+    "id": "Shackles of Treachery",
+    "name": "Shackles of Treachery",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and \"Whenever this creature deals damage, destroy target Equipment attached to it.\""
+  },
+  "Visions of Ruin": {
+    "id": "Visions of Ruin",
+    "name": "Visions of Ruin",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each opponent sacrifices an artifact. For each artifact sacrificed this way, you create a Treasure token.\nFlashback {8}{R}{R}. This spell costs {X} less to cast this way, where X is the greatest mana value of a commander you own on the battlefield or in the command zone. (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Fear, Fire, Foes!": {
+    "id": "Fear, Fire, Foes!",
+    "name": "Fear, Fire, Foes!",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Damage can't be prevented this turn. Fear, Fire, Foes! deals X damage to target creature and 1 damage to each other creature with the same controller."
+  },
+  "Scrambleverse": {
+    "id": "Scrambleverse",
+    "name": "Scrambleverse",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "For each nonland permanent, choose a player at random. Then each player gains control of each permanent for which they were chosen. Untap those permanents."
+  },
+  "Last Chance": {
+    "id": "Last Chance",
+    "name": "Last Chance",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Take an extra turn after this one. At the beginning of that turn's end step, you lose the game."
+  },
+  "Furious Reprisal": {
+    "id": "Furious Reprisal",
+    "name": "Furious Reprisal",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Furious Reprisal deals 2 damage to each of two targets."
+  },
+  "Tahngarth's Glare": {
+    "id": "Tahngarth's Glare",
+    "name": "Tahngarth's Glare",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Look at the top three cards of target opponent's library, then put them back in any order. That player looks at the top three cards of your library, then puts them back in any order."
+  },
+  "Burning of Xinye": {
+    "id": "Burning of Xinye",
+    "name": "Burning of Xinye",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You destroy four lands you control, then target opponent destroys four lands they control. Then Burning of Xinye deals 4 damage to each creature."
+  },
+  "Markov Retribution": {
+    "id": "Markov Retribution",
+    "name": "Markov Retribution",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one or both —\n• Creatures you control get +1/+0 until end of turn.\n• Target Vampire you control deals damage equal to its power to another target creature."
+  },
+  "Elemental Appeal": {
+    "id": "Elemental Appeal",
+    "name": "Elemental Appeal",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{R}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {5} (You may pay an additional {5} as you cast this spell.)\nCreate a 7/1 red Elemental creature token with trample and haste. Exile it at the beginning of the next end step. If this spell was kicked, that creature gets +7/+0 until end of turn."
+  },
+  "Perilous Iteration": {
+    "id": "Perilous Iteration",
+    "name": "Perilous Iteration",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Seek a card with mana value 2 or less and a card with mana value 3 or greater. Discard those cards at the beginning of your next turn's end step."
+  },
+  "Face Yourself": {
+    "id": "Face Yourself",
+    "name": "Face Yourself",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "For each creature target player controls, create a token that's a copy of that creature, except it has haste and \"At the beginning of the end step, if you don't control a planeswalker, sacrifice this creature.\""
+  },
+  "Full Throttle": {
+    "id": "Full Throttle",
+    "name": "Full Throttle",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "After this main phase, there are two additional combat phases.\nAt the beginning of each combat this turn, untap all creatures that attacked this turn."
+  },
+  "Blinding Flare": {
+    "id": "Blinding Flare",
+    "name": "Blinding Flare",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Strive — This spell costs {R} more to cast for each target beyond the first.\nAny number of target creatures can't block this turn."
+  },
+  "Beastie Beatdown": {
+    "id": "Beastie Beatdown",
+    "name": "Beastie Beatdown",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Choose target creature you control and target creature an opponent controls.\nDelirium — If there are four or more card types among cards in your graveyard, put two +1/+1 counters on the creature you control.\nThe creature you control deals damage equal to its power to the creature an opponent controls."
+  },
+  "Meteor Swarm": {
+    "id": "Meteor Swarm",
+    "name": "Meteor Swarm",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Meteor Swarm deals 8 damage divided as you choose among X target creatures and/or planeswalkers."
+  },
+  "Evaporate": {
+    "id": "Evaporate",
+    "name": "Evaporate",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Evaporate deals 1 damage to each white and/or blue creature."
+  },
+  "Fire of Orthanc": {
+    "id": "Fire of Orthanc",
+    "name": "Fire of Orthanc",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target artifact or land. Creatures without flying can't block this turn."
+  },
+  "Bonus Round": {
+    "id": "Bonus Round",
+    "name": "Bonus Round",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Until end of turn, whenever a player casts an instant or sorcery spell, that player copies it and may choose new targets for the copy."
+  },
+  "Nahiri's Wrath": {
+    "id": "Nahiri's Wrath",
+    "name": "Nahiri's Wrath",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, discard X cards.\nNahiri's Wrath deals damage equal to the total mana value of the discarded cards to each of up to X target creatures and/or planeswalkers."
+  },
+  "Heroes' Hangout": {
+    "id": "Heroes' Hangout",
+    "name": "Heroes' Hangout",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one —\n• Date Night — Exile the top two cards of your library. Choose one of them. Until the end of your next turn, you may play that card.\n• Patrol Night — One or two target creatures each get +1/+0 and gain first strike until end of turn."
+  },
+  "Turn to Slag": {
+    "id": "Turn to Slag",
+    "name": "Turn to Slag",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Turn to Slag deals 5 damage to target creature. Destroy all Equipment attached to that creature."
+  },
+  "Bend or Break": {
+    "id": "Bend or Break",
+    "name": "Bend or Break",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each player separates all nontoken lands they control into two piles. For each player, one of their piles is chosen by one of their opponents of their choice. Destroy all lands in the chosen piles. Tap all lands in the other piles."
+  },
+  "Reign of Chaos": {
+    "id": "Reign of Chaos",
+    "name": "Reign of Chaos",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one —\n• Destroy target Plains and target white creature.\n• Destroy target Island and target blue creature."
+  },
+  "Collective Defiance": {
+    "id": "Collective Defiance",
+    "name": "Collective Defiance",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Escalate {1} (Pay this cost for each mode chosen beyond the first.)\nChoose one or more —\n• Target player discards all the cards in their hand, then draws that many cards.\n• Collective Defiance deals 4 damage to target creature.\n• Collective Defiance deals 3 damage to target opponent or planeswalker."
+  },
+  "Thunderwave": {
+    "id": "Thunderwave",
+    "name": "Thunderwave",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Roll a d20.\n1—9 | Thunderwave deals 3 damage to each creature.\n10—19 | You may choose a creature. Thunderwave deals 3 damage to each creature not chosen this way.\n20 | Thunderwave deals 6 damage to each creature your opponents control."
+  },
+  "Burning Cloak": {
+    "id": "Burning Cloak",
+    "name": "Burning Cloak",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature gets +2/+0 until end of turn. Burning Cloak deals 2 damage to that creature."
+  },
+  "Light Up the Night": {
+    "id": "Light Up the Night",
+    "name": "Light Up the Night",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Light Up the Night deals X damage to any target. It deals X plus 1 damage instead if that target is a creature or planeswalker.\nFlashback—{3}{R}, Remove X loyalty counters from among planeswalkers you control. If you cast this spell this way, X can't be 0. (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Rolling Earthquake": {
+    "id": "Rolling Earthquake",
+    "name": "Rolling Earthquake",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Rolling Earthquake deals X damage to each creature without horsemanship and each player."
+  },
+  "Coronation of Chaos": {
+    "id": "Coronation of Chaos",
+    "name": "Coronation of Chaos",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Up to three target creatures can't block this turn. Goad them. (Until your next turn, those creatures attack each combat if able and attack a player other than you if able.)"
+  },
+  "Obliterate": {
+    "id": "Obliterate",
+    "name": "Obliterate",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell can't be countered.\nDestroy all artifacts, creatures, and lands. They can't be regenerated."
+  },
+  "Insult // Injury": {
+    "id": "Insult // Injury",
+    "name": "Insult // Injury",
+    "typeLine": "Sorcery // Sorcery",
+    "manaCost": "{2}{R} // {2}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Insult: Damage can't be prevented this turn. If a source you control would deal damage this turn, it deals double that damage instead.\n\nInjury: Aftermath (Cast this spell only from your graveyard. Then exile it.)\nInjury deals 2 damage to target creature and 2 damage to target player or planeswalker."
+  },
+  "Dragon's Approach": {
+    "id": "Dragon's Approach",
+    "name": "Dragon's Approach",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Dragon's Approach deals 3 damage to each opponent. You may exile this spell and four cards named Dragon's Approach from your graveyard. If you do, search your library for a Dragon creature card, put it onto the battlefield, then shuffle.\nA deck can have any number of cards named Dragon's Approach."
+  },
+  "Nahiri's Warcrafting": {
+    "id": "Nahiri's Warcrafting",
+    "name": "Nahiri's Warcrafting",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Nahiri's Warcrafting deals 5 damage to target creature, planeswalker, or battle. Look at the top X cards of your library, where X is the excess damage dealt this way. You may exile one of those cards. Put the rest on the bottom of your library in a random order. You may play the exiled card this turn."
+  },
+  "Explosive Revelation": {
+    "id": "Explosive Revelation",
+    "name": "Explosive Revelation",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose any target. Reveal cards from the top of your library until you reveal a nonland card. Explosive Revelation deals damage equal to that card's mana value to that permanent or player. Put the nonland card into your hand and the rest on the bottom of your library in any order."
+  },
+  "Goblin Game": {
+    "id": "Goblin Game",
+    "name": "Goblin Game",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each player hides at least one item, then all players reveal them simultaneously. Each player loses life equal to the number of items they revealed. The player who revealed the fewest items then loses half their life, rounded up. If two or more players are tied for fewest, each loses half their life, rounded up."
+  },
+  "Rivals' Duel": {
+    "id": "Rivals' Duel",
+    "name": "Rivals' Duel",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose two target creatures that share no creature types. Those creatures fight each other. (Each deals damage equal to its power to the other.)"
+  },
+  "Transmogrify": {
+    "id": "Transmogrify",
+    "name": "Transmogrify",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile target creature. That creature's controller reveals cards from the top of their library until they reveal a creature card. That player puts that card onto the battlefield, then shuffles the rest into their library."
+  },
+  "Systems Override": {
+    "id": "Systems Override",
+    "name": "Systems Override",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target artifact or creature until end of turn. Untap that permanent. It gains haste until end of turn. If it's a Spacecraft, put ten charge counters on it. If you do, remove ten charge counters from it at the beginning of the next end step."
+  },
+  "Acidic Soil": {
+    "id": "Acidic Soil",
+    "name": "Acidic Soil",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Acidic Soil deals damage to each player equal to the number of lands they control."
+  },
+  "Trial of Agony": {
+    "id": "Trial of Agony",
+    "name": "Trial of Agony",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose two target creatures controlled by the same opponent. That player chooses one of those creatures. Trial of Agony deals 5 damage to that creature, and the other can't block this turn."
+  },
+  "Orbital Plunge": {
+    "id": "Orbital Plunge",
+    "name": "Orbital Plunge",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Orbital Plunge deals 6 damage to target creature. If excess damage was dealt this way, create a Lander token. (It's an artifact with \"{2}, {T}, Sacrifice this token: Search your library for a basic land card, put it onto the battlefield tapped, then shuffle.\")"
+  },
+  "Take for a Ride": {
+    "id": "Take for a Ride",
+    "name": "Take for a Ride",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Take for a Ride has flash as long as you've committed a crime this turn. (Targeting opponents, anything they control, and/or cards in their graveyards is a crime.)\nGain control of target creature until end of turn. Untap that creature. It gains haste until end of turn."
+  },
+  "Torch the Witness": {
+    "id": "Torch the Witness",
+    "name": "Torch the Witness",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Torch the Witness deals twice X damage to target creature. If excess damage was dealt to that creature this way, investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")"
+  },
+  "Boom // Bust": {
+    "id": "Boom // Bust",
+    "name": "Boom // Bust",
+    "typeLine": "Sorcery // Sorcery",
+    "manaCost": "{1}{R} // {5}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Boom: Destroy target land you control and target land you don't control.\n\nBust: Destroy all lands."
+  },
+  "Dwarven Landslide": {
+    "id": "Dwarven Landslide",
+    "name": "Dwarven Landslide",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker—{2}{R}, Sacrifice a land. (You may pay {2}{R} and sacrifice a land in addition to any other costs as you cast this spell.)\nDestroy target land. If this spell was kicked, destroy another target land."
+  },
+  "Tundra Fumarole": {
+    "id": "Tundra Fumarole",
+    "name": "Tundra Fumarole",
+    "typeLine": "Snow Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Tundra Fumarole deals 4 damage to target creature or planeswalker. Add {C} for each {S} spent to cast this spell. Until end of turn, you don't lose this mana as steps and phases end. ({S} is mana from a snow source.)",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Cinder Strike": {
+    "id": "Cinder Strike",
+    "name": "Cinder Strike",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may blight 1. (You may put a -1/-1 counter on a creature you control.)\nCinder Strike deals 2 damage to target creature. It deals 4 damage to that creature instead if this spell's additional cost was paid."
+  },
+  "Dire-Strain Rampage": {
+    "id": "Dire-Strain Rampage",
+    "name": "Dire-Strain Rampage",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Destroy target artifact, enchantment, or land. If a land was destroyed this way, its controller may search their library for up to two basic land cards, put them onto the battlefield tapped, then shuffle. Otherwise, its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle.\nFlashback {3}{R}{G}"
+  },
+  "Mark of Mutiny": {
+    "id": "Mark of Mutiny",
+    "name": "Mark of Mutiny",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Put a +1/+1 counter on it and untap it. That creature gains haste until end of turn. (It can attack and {T} this turn.)"
+  },
+  "Archaic's Agony": {
+    "id": "Archaic's Agony",
+    "name": "Archaic's Agony",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Converge — Archaic's Agony deals X damage to target creature, where X is the number of colors of mana spent to cast this spell. Exile cards from the top of your library equal to the excess damage dealt to that creature this way. You may play those cards until the end of your next turn."
+  },
+  "Warrior's Oath": {
+    "id": "Warrior's Oath",
+    "name": "Warrior's Oath",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Take an extra turn after this one. At the beginning of that turn's end step, you lose the game."
+  },
+  "Tidings of War": {
+    "id": "Tidings of War",
+    "name": "Tidings of War",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Amass Goblins 1. If this spell was cast from a graveyard, amass Goblins 3 instead. (To amass Goblins X, put X +1/+1 counters on an Army you control. It's also a Goblin. If you don't control an Army, create a 0/0 black Goblin Army creature token first.)\nFlashback {3}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Disorder": {
+    "id": "Disorder",
+    "name": "Disorder",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Disorder deals 2 damage to each white creature and each player who controls a white creature."
+  },
+  "Into the Night": {
+    "id": "Into the Night",
+    "name": "Into the Night",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "It becomes night. Discard any number of cards, then draw that many cards plus one."
+  },
+  "Twist Allegiance": {
+    "id": "Twist Allegiance",
+    "name": "Twist Allegiance",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You and target opponent each gain control of all creatures the other controls until end of turn. Untap those creatures. Those creatures gain haste until end of turn."
+  },
+  "Pack's Betrayal": {
+    "id": "Pack's Betrayal",
+    "name": "Pack's Betrayal",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. If you control a Wolf or Werewolf, scry 2. (Look at the top two cards of your library, then put any number of them on the bottom and the rest on top in any order.)"
+  },
+  "In Thrall to the Pit": {
+    "id": "In Thrall to the Pit",
+    "name": "In Thrall to the Pit",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {2}{B} (You may pay an additional {2}{B} as you cast this spell.)\nGain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. If this spell was kicked, sacrifice that creature at the beginning of the next end step."
+  },
+  "Jet's Brainwashing": {
+    "id": "Jet's Brainwashing",
+    "name": "Jet's Brainwashing",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {3} (You may pay an additional {3} as you cast this spell.)\nTarget creature can't block this turn. If this spell was kicked, gain control of that creature until end of turn, untap it, and it gains haste until end of turn.\nCreate a Clue token. (It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")"
+  },
+  "Thud": {
+    "id": "Thud",
+    "name": "Thud",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nThud deals damage equal to the sacrificed creature's power to any target."
+  },
+  "Undying Flames": {
+    "id": "Undying Flames",
+    "name": "Undying Flames",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile cards from the top of your library until you exile a nonland card. Undying Flames deals damage to any target equal to that card's mana value.\nEpic (For the rest of the game, you can't cast spells. At the beginning of each of your upkeeps, copy this spell except for its epic ability. You may choose a new target for the copy.)"
+  },
+  "Lithomantic Barrage": {
+    "id": "Lithomantic Barrage",
+    "name": "Lithomantic Barrage",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell can't be countered.\nLithomantic Barrage deals 1 damage to target creature or planeswalker. It deals 5 damage instead if that target is white and/or blue."
+  },
+  "Roiling Terrain": {
+    "id": "Roiling Terrain",
+    "name": "Roiling Terrain",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target land, then Roiling Terrain deals damage to that land's controller equal to the number of land cards in that player's graveyard."
+  },
+  "Devastating Summons": {
+    "id": "Devastating Summons",
+    "name": "Devastating Summons",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice X lands.\nCreate two X/X red Elemental creature tokens."
+  },
+  "Banefire": {
+    "id": "Banefire",
+    "name": "Banefire",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Banefire deals X damage to any target.\nIf X is 5 or more, this spell can't be countered and the damage can't be prevented."
+  },
+  "Ignite Memories": {
+    "id": "Ignite Memories",
+    "name": "Ignite Memories",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target player reveals a card at random from their hand. Ignite Memories deals damage to that player equal to that card's mana value.\nStorm (When you cast this spell, copy it for each spell cast before it this turn. You may choose new targets for the copies.)"
+  },
+  "Dismantle": {
+    "id": "Dismantle",
+    "name": "Dismantle",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target artifact. If that artifact had counters on it, put that many +1/+1 counters or charge counters on an artifact you control."
+  },
+  "Foray of Orcs": {
+    "id": "Foray of Orcs",
+    "name": "Foray of Orcs",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Amass Orcs 2. When you do, Foray of Orcs deals X damage to target creature an opponent controls, where X is the amassed Army's power. (To amass Orcs 2, put two +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)"
+  },
+  "Cone of Flame": {
+    "id": "Cone of Flame",
+    "name": "Cone of Flame",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Cone of Flame deals 1 damage to any target, 2 damage to another target, and 3 damage to a third target."
+  },
+  "Bumi Bash": {
+    "id": "Bumi Bash",
+    "name": "Bumi Bash",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one —\n• Bumi Bash deals damage equal to the number of lands you control to target creature.\n• Destroy target land creature or nonbasic land."
+  },
+  "Push the Limit": {
+    "id": "Push the Limit",
+    "name": "Push the Limit",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Return all Mount and Vehicle cards from your graveyard to the battlefield. Sacrifice them at the beginning of the next end step.\nVehicles you control become artifact creatures until end of turn. Creatures you control gain haste until end of turn."
+  },
+  "Monastery Raid": {
+    "id": "Monastery Raid",
+    "name": "Monastery Raid",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Freerunning {X}{R} (You may cast this spell for its freerunning cost if you dealt combat damage to a player this turn with an Assassin or commander.)\nExile the top two cards of your library. If this spell's freerunning cost was paid, exile the top X cards of your library instead. You may play the exiled cards until the end of your next turn."
+  },
+  "Spiteful Repossession": {
+    "id": "Spiteful Repossession",
+    "name": "Spiteful Repossession",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Spiteful Repossession deals damage to each opponent who controls more lands than you equal to the difference. Then create a number of Treasure tokens equal to the damage dealt this way."
+  },
+  "Book Burning": {
+    "id": "Book Burning",
+    "name": "Book Burning",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Any player may have Book Burning deal 6 damage to them. If no one does, target player mills six cards."
+  },
+  "Mutiny": {
+    "id": "Mutiny",
+    "name": "Mutiny",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature an opponent controls deals damage equal to its power to another target creature that player controls."
+  },
+  "Kindle the Carnage": {
+    "id": "Kindle the Carnage",
+    "name": "Kindle the Carnage",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Discard a card at random. If you do, Kindle the Carnage deals damage equal to that card's mana value to each creature. You may repeat this process any number of times."
+  },
+  "Forked Lightning": {
+    "id": "Forked Lightning",
+    "name": "Forked Lightning",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Forked Lightning deals 4 damage divided as you choose among one, two, or three target creatures."
+  },
+  "Gleeful Demolition": {
+    "id": "Gleeful Demolition",
+    "name": "Gleeful Demolition",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target artifact. If you controlled that artifact, create three 1/1 red Phyrexian Goblin creature tokens."
+  },
+  "Decree of Annihilation": {
+    "id": "Decree of Annihilation",
+    "name": "Decree of Annihilation",
+    "typeLine": "Sorcery",
+    "manaCost": "{8}{R}{R}",
+    "cmc": 10,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile all artifacts, creatures, and lands from the battlefield, all cards from all graveyards, and all cards from all hands.\nCycling {5}{R}{R} ({5}{R}{R}, Discard this card: Draw a card.)\nWhen you cycle this card, destroy all lands."
+  },
+  "Savage Smash": {
+    "id": "Savage Smash",
+    "name": "Savage Smash",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Target creature you control gets +2/+2 until end of turn. It fights target creature you don't control. (Each deals damage equal to its power to the other.)"
+  },
+  "Roil Eruption": {
+    "id": "Roil Eruption",
+    "name": "Roil Eruption",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {5} (You may pay an additional {5} as you cast this spell.)\nRoil Eruption deals 3 damage to any target. If this spell was kicked, it deals 5 damage instead."
+  },
+  "Madcap Experiment": {
+    "id": "Madcap Experiment",
+    "name": "Madcap Experiment",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reveal cards from the top of your library until you reveal an artifact card. Put that card onto the battlefield and the rest on the bottom of your library in a random order. Madcap Experiment deals damage to you equal to the number of cards revealed this way."
+  },
+  "Pinnacle of Rage": {
+    "id": "Pinnacle of Rage",
+    "name": "Pinnacle of Rage",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Pinnacle of Rage deals 3 damage to each of two targets."
+  },
+  "Magmatic Chasm": {
+    "id": "Magmatic Chasm",
+    "name": "Magmatic Chasm",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures without flying can't block this turn."
+  },
+  "Shadowstorm": {
+    "id": "Shadowstorm",
+    "name": "Shadowstorm",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Shadowstorm deals 2 damage to each creature with shadow."
+  },
+  "Storm of Memories": {
+    "id": "Storm of Memories",
+    "name": "Storm of Memories",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Storm (When you cast this spell, copy it for each spell cast before it this turn.)\nExile an instant or sorcery card with mana value 3 or less from your graveyard at random. You may cast it without paying its mana cost. If that spell would be put into a graveyard, exile it instead."
+  },
+  "Molten Psyche": {
+    "id": "Molten Psyche",
+    "name": "Molten Psyche",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each player shuffles the cards from their hand into their library, then draws that many cards.\nMetalcraft — If you control three or more artifacts, Molten Psyche deals damage to each opponent equal to the number of cards that player has drawn this turn."
+  },
+  "Scorch the Fields": {
+    "id": "Scorch the Fields",
+    "name": "Scorch the Fields",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target land. Scorch the Fields deals 1 damage to each Human creature."
+  },
+  "Mana Seism": {
+    "id": "Mana Seism",
+    "name": "Mana Seism",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sacrifice any number of lands, then add that much {C}.",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Deadshot": {
+    "id": "Deadshot",
+    "name": "Deadshot",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Tap target creature. It deals damage equal to its power to another target creature."
+  },
+  "Barrage of Boulders": {
+    "id": "Barrage of Boulders",
+    "name": "Barrage of Boulders",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Barrage of Boulders deals 1 damage to each creature you don't control.\nFerocious — If you control a creature with power 4 or greater, creatures can't block this turn."
+  },
+  "You've Been Caught Stealing": {
+    "id": "You've Been Caught Stealing",
+    "name": "You've Been Caught Stealing",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one —\n• Threaten the Merchant — Each creature blocks this turn if able.\n• Bribe the Guards — You create a Treasure token for each opponent who was dealt damage this turn. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Reckless Blaze": {
+    "id": "Reckless Blaze",
+    "name": "Reckless Blaze",
+    "typeLine": "Sorcery — Lesson",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reckless Blaze deals 5 damage to each creature. Whenever a creature you control dealt damage this way dies this turn, add {R}.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Howl of the Horde": {
+    "id": "Howl of the Horde",
+    "name": "Howl of the Horde",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When you next cast an instant or sorcery spell this turn, copy that spell. You may choose new targets for the copy.\nRaid — If you attacked this turn, when you next cast an instant or sorcery spell this turn, copy that spell an additional time. You may choose new targets for the copy."
+  },
+  "Cryoclasm": {
+    "id": "Cryoclasm",
+    "name": "Cryoclasm",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target Plains or Island. Cryoclasm deals 3 damage to that land's controller."
+  },
+  "Shatterskull Smashing // Shatterskull, the Hammer Pass": {
+    "id": "Shatterskull Smashing // Shatterskull, the Hammer Pass",
+    "name": "Shatterskull Smashing // Shatterskull, the Hammer Pass",
+    "typeLine": "Sorcery // Land",
+    "manaCost": "{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Shatterskull Smashing: Shatterskull Smashing deals X damage divided as you choose among up to two target creatures and/or planeswalkers. If X is 6 or more, Shatterskull Smashing deals twice X damage divided as you choose among them instead.\n\nShatterskull, the Hammer Pass: As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {R}.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Become Brutes": {
+    "id": "Become Brutes",
+    "name": "Become Brutes",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "One or two target creatures each gain haste until end of turn. For each of those creatures, create a Monster Role token attached to it. (If you control another Role on it, put that one into the graveyard. Enchanted creature gets +1/+1 and has trample.)"
+  },
+  "Waltz of Rage": {
+    "id": "Waltz of Rage",
+    "name": "Waltz of Rage",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature you control deals damage equal to its power to each other creature. Until end of turn, whenever a creature you control dies, exile the top card of your library. You may play it until the end of your next turn."
+  },
+  "Stronghold Gambit": {
+    "id": "Stronghold Gambit",
+    "name": "Stronghold Gambit",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each player chooses a card in their hand. Then each player reveals their chosen card. The owner of each creature card revealed this way with the lowest mana value puts it onto the battlefield."
+  },
+  "Jokulhaups": {
+    "id": "Jokulhaups",
+    "name": "Jokulhaups",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy all artifacts, creatures, and lands. They can't be regenerated."
+  },
+  "Cave-In": {
+    "id": "Cave-In",
+    "name": "Cave-In",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may exile a red card from your hand rather than pay this spell's mana cost.\nCave-In deals 2 damage to each creature and each player."
+  },
+  "Metallic Mastery": {
+    "id": "Metallic Mastery",
+    "name": "Metallic Mastery",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target artifact until end of turn. Untap that artifact. It gains haste until end of turn."
+  },
+  "Flowstone Flood": {
+    "id": "Flowstone Flood",
+    "name": "Flowstone Flood",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Buyback—Pay 3 life, Discard a card at random. (You may pay 3 life and discard a card at random in addition to any other costs as you cast this spell. If you do, put this card into your hand as it resolves.)\nDestroy target land."
+  },
+  "Cerebral Eruption": {
+    "id": "Cerebral Eruption",
+    "name": "Cerebral Eruption",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target opponent reveals the top card of their library. Cerebral Eruption deals damage equal to the revealed card's mana value to that player and each creature that player controls. If a land card is revealed this way, return Cerebral Eruption to its owner's hand."
+  },
+  "Builder's Bane": {
+    "id": "Builder's Bane",
+    "name": "Builder's Bane",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy X target artifacts. Builder's Bane deals damage to each player equal to the number of artifacts they controlled that were put into a graveyard this way."
+  },
+  "Bond of Passion": {
+    "id": "Bond of Passion",
+    "name": "Bond of Passion",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. Bond of Passion deals 2 damage to any other target."
+  },
+  "Molten Exhale": {
+    "id": "Molten Exhale",
+    "name": "Molten Exhale",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may cast this spell as though it had flash if you behold a Dragon as an additional cost to cast it. (To behold a Dragon, choose a Dragon you control or reveal a Dragon card from your hand.)\nMolten Exhale deals 4 damage to target creature or planeswalker."
+  },
+  "Apocalypse": {
+    "id": "Apocalypse",
+    "name": "Apocalypse",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile all permanents. You discard your hand."
+  },
+  "Thatcher Revolt": {
+    "id": "Thatcher Revolt",
+    "name": "Thatcher Revolt",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create three 1/1 red Human creature tokens with haste. Sacrifice those tokens at the beginning of the next end step."
+  },
+  "Joust": {
+    "id": "Joust",
+    "name": "Joust",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose target creature you control and target creature you don't control. The creature you control gets +2/+1 until end of turn if it's a Knight. Then those creatures fight each other. (Each deals damage equal to its power to the other.)"
+  },
+  "Liquid Fire": {
+    "id": "Liquid Fire",
+    "name": "Liquid Fire",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, choose a number between 0 and 5.\nLiquid Fire deals X damage to target creature and 5 minus X damage to that creature's controller, where X is the chosen number."
+  },
+  "Chain Lightning": {
+    "id": "Chain Lightning",
+    "name": "Chain Lightning",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Chain Lightning deals 3 damage to any target. Then that player or that permanent's controller may pay {R}{R}. If the player does, they may copy this spell and may choose a new target for that copy."
+  },
+  "Hew the Entwood": {
+    "id": "Hew the Entwood",
+    "name": "Hew the Entwood",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sacrifice any number of lands. Reveal the top X cards of your library, where X is the number of lands sacrificed this way. Choose any number of artifact and/or land cards revealed this way. Put all nonland cards chosen this way onto the battlefield, then put all land cards chosen this way onto the battlefield tapped, then put the rest on the bottom of your library in a random order."
+  },
+  "Nahiri's Lithoforming": {
+    "id": "Nahiri's Lithoforming",
+    "name": "Nahiri's Lithoforming",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sacrifice X lands. For each land sacrificed this way, draw a card. You may play X additional lands this turn. Lands you control enter tapped this turn."
+  },
+  "Ruthless Invasion": {
+    "id": "Ruthless Invasion",
+    "name": "Ruthless Invasion",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R/P}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "({R/P} can be paid with either {R} or 2 life.)\nNonartifact creatures can't block this turn."
+  },
+  "Mega Flare": {
+    "id": "Mega Flare",
+    "name": "Mega Flare",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {3}{R}{R}\nIf this spell was kicked, create a 6/6 red Dragon creature token with flying.\nFor each opponent, choose up to one target creature that player controls. Mega Flare deals damage equal to the greatest power among creatures you control to each of the chosen creatures."
+  },
+  "Pigment Storm": {
+    "id": "Pigment Storm",
+    "name": "Pigment Storm",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Pigment Storm deals 5 damage to target creature. Excess damage is dealt to that creature's controller instead."
+  },
+  "Burn from Within": {
+    "id": "Burn from Within",
+    "name": "Burn from Within",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Burn from Within deals X damage to any target. If a creature is dealt damage this way, it loses indestructible until end of turn. If that creature would die this turn, exile it instead."
+  },
+  "Rite of Flame": {
+    "id": "Rite of Flame",
+    "name": "Rite of Flame",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Add {R}{R}, then add {R} for each card named Rite of Flame in each graveyard.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Harness by Force": {
+    "id": "Harness by Force",
+    "name": "Harness by Force",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Strive — This spell costs {2}{R} more to cast for each target beyond the first.\nGain control of any number of target creatures until end of turn. Untap those creatures. They gain haste until end of turn."
+  },
+  "Erratic Explosion": {
+    "id": "Erratic Explosion",
+    "name": "Erratic Explosion",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose any target. Reveal cards from the top of your library until you reveal a nonland card. Erratic Explosion deals damage equal to that card's mana value to that permanent or player. Put the revealed cards on the bottom of your library in any order."
+  },
+  "Firecat Blitz": {
+    "id": "Firecat Blitz",
+    "name": "Firecat Blitz",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create X 1/1 red Elemental Cat creature tokens with haste. Exile them at the beginning of the next end step.\nFlashback—{R}{R}, Sacrifice X Mountains. (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Tectonic Hazard": {
+    "id": "Tectonic Hazard",
+    "name": "Tectonic Hazard",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Tectonic Hazard deals 1 damage to each opponent and each creature they control."
+  },
+  "Gravitic Punch": {
+    "id": "Gravitic Punch",
+    "name": "Gravitic Punch",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature you control deals damage equal to its power to target player.\nJump-start (You may cast this card from your graveyard by discarding a card in addition to paying its other costs. Then exile this card.)"
+  },
+  "Suspicious Detonation": {
+    "id": "Suspicious Detonation",
+    "name": "Suspicious Detonation",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {3} less to cast if you've sacrificed an artifact this turn.\nThis spell can't be countered. (This includes by the ward ability.)\nSuspicious Detonation deals 4 damage to target creature."
+  },
+  "Change of Fortune": {
+    "id": "Change of Fortune",
+    "name": "Change of Fortune",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Discard your hand, then draw a card for each card you've discarded this turn."
+  },
+  "Wild Swing": {
+    "id": "Wild Swing",
+    "name": "Wild Swing",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose three target nonenchantment permanents. Destroy one of them at random."
+  },
+  "Traitorous Instinct": {
+    "id": "Traitorous Instinct",
+    "name": "Traitorous Instinct",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. Until end of turn, it gets +2/+0 and gains haste."
+  },
+  "Disintegrate": {
+    "id": "Disintegrate",
+    "name": "Disintegrate",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Disintegrate deals X damage to any target. If it's a creature, it can't be regenerated this turn, and if it would die this turn, exile it instead."
+  },
+  "Wave of Indifference": {
+    "id": "Wave of Indifference",
+    "name": "Wave of Indifference",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "X target creatures can't block this turn."
+  },
+  "Reversal of Fortune": {
+    "id": "Reversal of Fortune",
+    "name": "Reversal of Fortune",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target opponent reveals their hand. You may copy an instant or sorcery card in it. If you do, you may cast the copy without paying its mana cost."
+  },
+  "Sorceress's Schemes": {
+    "id": "Sorceress's Schemes",
+    "name": "Sorceress's Schemes",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Return target instant or sorcery card from your graveyard or exiled card with flashback you own to your hand. Add {R}.\nFlashback {4}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Deathbellow War Cry": {
+    "id": "Deathbellow War Cry",
+    "name": "Deathbellow War Cry",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Search your library for up to four Minotaur creature cards with different names, put them onto the battlefield, then shuffle."
+  },
+  "Wheel of Potential": {
+    "id": "Wheel of Potential",
+    "name": "Wheel of Potential",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You get {E}{E}{E} (three energy counters), then you may pay any amount of {E}.\nEach player may exile their hand and draw a number of cards equal to the amount of {E} paid this way. If seven or more {E} was paid this way, you may play cards you own exiled this way until the end of your next turn."
+  },
+  "Shatterstorm": {
+    "id": "Shatterstorm",
+    "name": "Shatterstorm",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy all artifacts. They can't be regenerated."
+  },
+  "Breaking of the Fellowship": {
+    "id": "Breaking of the Fellowship",
+    "name": "Breaking of the Fellowship",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature an opponent controls deals damage equal to its power to another target creature that player controls. The Ring tempts you."
+  },
+  "Galvanic Relay": {
+    "id": "Galvanic Relay",
+    "name": "Galvanic Relay",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile the top card of your library. During your next turn, you may play that card.\nStorm (When you cast this spell, copy it for each spell cast before it this turn.)"
+  },
+  "Fossil Find": {
+    "id": "Fossil Find",
+    "name": "Fossil Find",
+    "typeLine": "Sorcery",
+    "manaCost": "{R/G}",
+    "cmc": 1,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Return a card at random from your graveyard to your hand, then reorder your graveyard as you choose."
+  },
+  "Firecannon Blast": {
+    "id": "Firecannon Blast",
+    "name": "Firecannon Blast",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Firecannon Blast deals 3 damage to target creature.\nRaid — Firecannon Blast deals 6 damage instead if you attacked this turn."
+  },
+  "Break Out": {
+    "id": "Break Out",
+    "name": "Break Out",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Look at the top six cards of your library. You may reveal a creature card from among them. If that card has mana value 2 or less, you may put it onto the battlefield and it gains haste until end of turn. If you didn't put the revealed card onto the battlefield this way, put it into your hand. Put the rest on the bottom of your library in a random order."
+  },
+  "Sundering Stroke": {
+    "id": "Sundering Stroke",
+    "name": "Sundering Stroke",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sundering Stroke deals 7 damage divided as you choose among one, two, or three targets. If at least seven red mana was spent to cast this spell, instead Sundering Stroke deals 7 damage to each of those permanents and/or players."
+  },
+  "Draconic Debut": {
+    "id": "Draconic Debut",
+    "name": "Draconic Debut",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Draconic Debut deals X damage to any target.\nThe next Dragon creature spell you cast costs {X} less to cast."
+  },
+  "Ashuza's Breath": {
+    "id": "Ashuza's Breath",
+    "name": "Ashuza's Breath",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "For each creature, choose a number from 0 to 2 at random. Ashuza's Breath deals that much damage to that creature."
+  },
+  "Flamebreak": {
+    "id": "Flamebreak",
+    "name": "Flamebreak",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flamebreak deals 3 damage to each creature without flying and each player. Creatures dealt damage this way can't be regenerated this turn."
+  },
+  "Flash of Defiance": {
+    "id": "Flash of Defiance",
+    "name": "Flash of Defiance",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Green creatures and white creatures can't block this turn.\nFlashback—{1}{R}, Pay 3 life. (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Draconic Intervention": {
+    "id": "Draconic Intervention",
+    "name": "Draconic Intervention",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, exile an instant or sorcery card from your graveyard.\nDraconic Intervention deals X damage to each non-Dragon creature, where X is the exiled card's mana value. If a creature dealt damage this way would die this turn, exile it instead.\nExile Draconic Intervention."
+  },
+  "Arrow Storm": {
+    "id": "Arrow Storm",
+    "name": "Arrow Storm",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Arrow Storm deals 4 damage to any target.\nRaid — If you attacked this turn, instead Arrow Storm deals 5 damage to that permanent or player and the damage can't be prevented."
+  },
+  "Temporal Firestorm": {
+    "id": "Temporal Firestorm",
+    "name": "Temporal Firestorm",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {1}{W} and/or {1}{U} (You may pay an additional {1}{W} and/or {1}{U} as you cast this spell.)\nChoose up to X creatures and/or planeswalkers you control, where X is the number of times this spell was kicked. Those permanents phase out.\nTemporal Firestorm deals 5 damage to each creature and each planeswalker."
+  },
+  "Seismic Stomp": {
+    "id": "Seismic Stomp",
+    "name": "Seismic Stomp",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures without flying can't block this turn."
+  },
+  "Mana Clash": {
+    "id": "Mana Clash",
+    "name": "Mana Clash",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You and target opponent each flip a coin. Mana Clash deals 1 damage to each player whose coin comes up tails. Repeat this process until both players' coins come up heads on the same flip."
+  },
+  "Blow Your House Down": {
+    "id": "Blow Your House Down",
+    "name": "Blow Your House Down",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Up to three target creatures can't block this turn. Destroy any of them that are Walls."
+  },
+  "Photon Blast Barrage": {
+    "id": "Photon Blast Barrage",
+    "name": "Photon Blast Barrage",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When you cast this spell, copy it X times. You may choose new targets for the copies.\nPhoton Blast Barrage deals 1 damage to target creature."
+  },
+  "Breaking Point": {
+    "id": "Breaking Point",
+    "name": "Breaking Point",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Any player may have Breaking Point deal 6 damage to them. If no one does, destroy all creatures. Creatures destroyed this way can't be regenerated."
+  },
+  "Goblin War Cry": {
+    "id": "Goblin War Cry",
+    "name": "Goblin War Cry",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target opponent chooses a creature they control. Other creatures they control can't block this turn."
+  },
+  "Press into Service": {
+    "id": "Press into Service",
+    "name": "Press into Service",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Support 2. (Put a +1/+1 counter on each of up to two target creatures.)\nGain control of target creature until end of turn. Untap that creature. It gains haste until end of turn."
+  },
+  "Chaotic Transformation": {
+    "id": "Chaotic Transformation",
+    "name": "Chaotic Transformation",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile up to one target artifact, up to one target creature, up to one target enchantment, up to one target planeswalker, and/or up to one target land. For each permanent exiled this way, its controller reveals cards from the top of their library until they reveal a card that shares a card type with it, puts that card onto the battlefield, then shuffles."
+  },
+  "Nahiri's Sacrifice": {
+    "id": "Nahiri's Sacrifice",
+    "name": "Nahiri's Sacrifice",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice an artifact or creature with mana value X.\nNahiri's Sacrifice deals X damage divided as you choose among any number of target creatures."
+  },
+  "Spite of Mogis": {
+    "id": "Spite of Mogis",
+    "name": "Spite of Mogis",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Spite of Mogis deals damage to target creature equal to the number of instant and sorcery cards in your graveyard. Scry 1. (Look at the top card of your library. You may put that card on the bottom.)"
+  },
+  "Song of Blood": {
+    "id": "Song of Blood",
+    "name": "Song of Blood",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Mill four cards. Whenever a creature attacks this turn, it gets +1/+0 until end of turn for each creature card put into your graveyard this way."
+  },
+  "Plasma Bolt": {
+    "id": "Plasma Bolt",
+    "name": "Plasma Bolt",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Plasma Bolt deals 2 damage to any target.\nVoid — Plasma Bolt deals 3 damage instead if a nonland permanent left the battlefield this turn or a spell was warped this turn."
+  },
+  "Overmaster": {
+    "id": "Overmaster",
+    "name": "Overmaster",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "The next instant or sorcery spell you cast this turn can't be countered.\nDraw a card."
+  },
+  "Feral Lightning": {
+    "id": "Feral Lightning",
+    "name": "Feral Lightning",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create three 3/1 red Elemental creature tokens with haste. Exile them at the beginning of the next end step."
+  },
+  "Mark for Death": {
+    "id": "Mark for Death",
+    "name": "Mark for Death",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature an opponent controls blocks this turn if able. Untap that creature. Other creatures that player controls can't block this turn."
+  },
+  "Worldfire": {
+    "id": "Worldfire",
+    "name": "Worldfire",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{R}{R}{R}",
+    "cmc": 9,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile all permanents. Exile all cards from all hands and graveyards. Each player's life total becomes 1."
+  },
+  "Mascot Interception": {
+    "id": "Mascot Interception",
+    "name": "Mascot Interception",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {3} less to cast if it targets a creature token.\nGain control of target creature until end of turn. Untap that creature. It gets +2/+0 and gains haste until end of turn."
+  },
+  "Molten Birth": {
+    "id": "Molten Birth",
+    "name": "Molten Birth",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create two 1/1 red Elemental creature tokens, then flip a coin. If you win the flip, return Molten Birth to its owner's hand."
+  },
+  "Hazoret's Undying Fury": {
+    "id": "Hazoret's Undying Fury",
+    "name": "Hazoret's Undying Fury",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Shuffle your library, then exile the top four cards. You may cast any number of spells with mana value 5 or less from among them without paying their mana costs. Lands you control don't untap during your next untap step."
+  },
+  "Jaws of Stone": {
+    "id": "Jaws of Stone",
+    "name": "Jaws of Stone",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Jaws of Stone deals X damage divided as you choose among any number of targets, where X is the number of Mountains you control as you cast this spell."
+  },
+  "Burning Inquiry": {
+    "id": "Burning Inquiry",
+    "name": "Burning Inquiry",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each player draws three cards, then discards three cards at random."
+  },
+  "Grenzo's Rebuttal": {
+    "id": "Grenzo's Rebuttal",
+    "name": "Grenzo's Rebuttal",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create a 4/4 red Ogre creature token. Starting with you, each player chooses an artifact, a creature, and a land from among the permanents controlled by the player to their left. Destroy each permanent chosen this way."
+  },
+  "Eternal Flame": {
+    "id": "Eternal Flame",
+    "name": "Eternal Flame",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Eternal Flame deals X damage to target opponent or planeswalker and half X damage, rounded up, to you, where X is the number of Mountains you control."
+  },
+  "Flame Fusillade": {
+    "id": "Flame Fusillade",
+    "name": "Flame Fusillade",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Until end of turn, permanents you control gain \"{T}: This permanent deals 1 damage to any target.\""
+  },
+  "Wrap in Flames": {
+    "id": "Wrap in Flames",
+    "name": "Wrap in Flames",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Wrap in Flames deals 1 damage to each of up to three target creatures. Those creatures can't block this turn."
+  },
+  "Thunderblade Charge": {
+    "id": "Thunderblade Charge",
+    "name": "Thunderblade Charge",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Thunderblade Charge deals 3 damage to any target.\nWhenever one or more creatures you control deal combat damage to a player, if this card is in your graveyard, you may pay {2}{R}{R}{R}. If you do, you may cast it without paying its mana cost."
+  },
+  "Skullscorch": {
+    "id": "Skullscorch",
+    "name": "Skullscorch",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target player discards two cards at random unless that player has Skullscorch deal 4 damage to them."
+  },
+  "Savage Offensive": {
+    "id": "Savage Offensive",
+    "name": "Savage Offensive",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {G} (You may pay an additional {G} as you cast this spell.)\nCreatures you control gain first strike until end of turn. If this spell was kicked, they get +1/+1 until end of turn."
+  },
+  "Jagged Lightning": {
+    "id": "Jagged Lightning",
+    "name": "Jagged Lightning",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Jagged Lightning deals 3 damage to each of two target creatures."
+  },
+  "Furnace Reins": {
+    "id": "Furnace Reins",
+    "name": "Furnace Reins",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. Until end of turn, it gains haste and \"Whenever this creature deals combat damage to a player or battle, create a Treasure token.\" (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Game of Chaos": {
+    "id": "Game of Chaos",
+    "name": "Game of Chaos",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flip a coin. If you win the flip, you gain 1 life and target opponent loses 1 life, and you decide whether to flip again. If you lose the flip, you lose 1 life and that opponent gains 1 life, and that player decides whether to flip again. Double the life stakes with each flip."
+  },
+  "Shove Aside": {
+    "id": "Shove Aside",
+    "name": "Shove Aside",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If you aren't the starting player, you may cast Shove Aside as though it had flash.\nShove Aside deals 3 damage to target creature or planeswalker."
+  },
+  "Over the Top": {
+    "id": "Over the Top",
+    "name": "Over the Top",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each player reveals a number of cards from the top of their library equal to the number of nonland permanents they control, puts all permanent cards they revealed this way onto the battlefield, and puts the rest into their graveyard."
+  },
+  "Stomping Slabs": {
+    "id": "Stomping Slabs",
+    "name": "Stomping Slabs",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reveal the top seven cards of your library, then put those cards on the bottom of your library in any order. If a card named Stomping Slabs was revealed this way, Stomping Slabs deals 7 damage to any target."
+  },
+  "Crater's Claws": {
+    "id": "Crater's Claws",
+    "name": "Crater's Claws",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Crater's Claws deals X damage to any target.\nFerocious — Crater's Claws deals X plus 2 damage instead if you control a creature with power 4 or greater."
+  },
+  "Anarchy": {
+    "id": "Anarchy",
+    "name": "Anarchy",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy all white permanents."
+  },
+  "Tectonic Rift": {
+    "id": "Tectonic Rift",
+    "name": "Tectonic Rift",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target land. Creatures without flying can't block this turn."
+  },
+  "Unexpected Allies": {
+    "id": "Unexpected Allies",
+    "name": "Unexpected Allies",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target nontoken creature you control gets +2/+0 and gains double team until end of turn. It also gains first strike until end of turn if it has the same name as another creature you control or a creature card in your graveyard."
+  },
+  "Hour of Devastation": {
+    "id": "Hour of Devastation",
+    "name": "Hour of Devastation",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "All creatures lose indestructible until end of turn. Hour of Devastation deals 5 damage to each creature and each non-Bolas planeswalker."
+  },
+  "Volcanic Wind": {
+    "id": "Volcanic Wind",
+    "name": "Volcanic Wind",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Volcanic Wind deals X damage divided as you choose among any number of target creatures, where X is the number of creatures on the battlefield as you cast this spell."
+  },
+  "Start Your Engines": {
+    "id": "Start Your Engines",
+    "name": "Start Your Engines",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Vehicles you control become artifact creatures until end of turn. Creatures you control get +2/+0 until end of turn."
+  },
+  "Sozin's Comet": {
+    "id": "Sozin's Comet",
+    "name": "Sozin's Comet",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each creature you control gains firebending 5 until end of turn. (Whenever it attacks, add {R}{R}{R}{R}{R}. This mana lasts until end of combat.)\nForetell {2}{R} (During your turn, you may pay {2} and exile this card from your hand face down. Cast it on a later turn for its foretell cost.)",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Structural Distortion": {
+    "id": "Structural Distortion",
+    "name": "Structural Distortion",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile target artifact or land. Structural Distortion deals 2 damage to that permanent's controller."
+  },
+  "The Fall of Kroog": {
+    "id": "The Fall of Kroog",
+    "name": "The Fall of Kroog",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose target opponent. Destroy target land that player controls. The Fall of Kroog deals 3 damage to that player and 1 damage to each creature they control."
+  },
+  "Boltfire": {
+    "id": "Boltfire",
+    "name": "Boltfire",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Boltfire deals 2 damage to any target.\nFlashforward {4}{R} (You may cast this card from exile for its flashforward cost. Then put it on the bottom of your library.)"
+  },
+  "Khorvath's Fury": {
+    "id": "Khorvath's Fury",
+    "name": "Khorvath's Fury",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "For each player, choose friend or foe. Each friend discards all cards from their hand, then draws that many cards plus one. Khorvath's Fury deals damage to each foe equal to the number of cards in their hand."
+  },
+  "Kaervek's Torch": {
+    "id": "Kaervek's Torch",
+    "name": "Kaervek's Torch",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As long as Kaervek's Torch is on the stack, spells that target it cost {2} more to cast.\nKaervek's Torch deals X damage to any target."
+  },
+  "Sparkmage's Gambit": {
+    "id": "Sparkmage's Gambit",
+    "name": "Sparkmage's Gambit",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sparkmage's Gambit deals 1 damage to each of up to two target creatures. Those creatures can't block this turn."
+  },
+  "Fury of the Horde": {
+    "id": "Fury of the Horde",
+    "name": "Fury of the Horde",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may exile two red cards from your hand rather than pay this spell's mana cost.\nUntap all creatures that attacked this turn. After this main phase, there is an additional combat phase followed by an additional main phase."
+  },
+  "Kaboom!": {
+    "id": "Kaboom!",
+    "name": "Kaboom!",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose any number of target players or planeswalkers. For each of them, reveal cards from the top of your library until you reveal a nonland card, Kaboom! deals damage equal to that card's mana value to that player or planeswalker, then you put the revealed cards on the bottom of your library in any order."
+  },
+  "Sundering Eruption // Volcanic Fissure": {
+    "id": "Sundering Eruption // Volcanic Fissure",
+    "name": "Sundering Eruption // Volcanic Fissure",
+    "typeLine": "Sorcery // Land",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sundering Eruption: Destroy target land. Its controller may search their library for a basic land card, put it onto the battlefield tapped, then shuffle. Creatures without flying can't block this turn.\n\nVolcanic Fissure: As this land enters, you may pay 3 life. If you don't, it enters tapped.\n{T}: Add {R}.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Fervent Mastery": {
+    "id": "Fervent Mastery",
+    "name": "Fervent Mastery",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may pay {2}{R}{R} rather than pay this spell's mana cost.\nIf the {2}{R}{R} cost was paid, an opponent discards any number of cards, then draws that many cards.\nSearch your library for up to three cards, put them into your hand, shuffle, then discard three cards at random."
+  },
+  "Awe for the Guilds": {
+    "id": "Awe for the Guilds",
+    "name": "Awe for the Guilds",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Monocolored creatures can't block this turn."
+  },
+  "Static Discharge": {
+    "id": "Static Discharge",
+    "name": "Static Discharge",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Starting intensity 3\nThis sorcery deals damage equal to its intensity to any target. Then cards you own named Static Discharge intensify by 1."
+  },
+  "Terminal Velocity": {
+    "id": "Terminal Velocity",
+    "name": "Terminal Velocity",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may put an artifact or creature card from your hand onto the battlefield. That permanent gains haste, \"When this permanent leaves the battlefield, it deals damage equal to its mana value to each creature,\" and \"At the beginning of your end step, sacrifice this permanent.\""
+  },
+  "Anzrag's Rampage": {
+    "id": "Anzrag's Rampage",
+    "name": "Anzrag's Rampage",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy all artifacts you don't control, then exile the top X cards of your library, where X is the number of artifacts that were put into graveyards from the battlefield this turn. You may put a creature card exiled this way onto the battlefield. It gains haste. Return it to your hand at the beginning of the next end step."
+  },
+  "Reckless Crew": {
+    "id": "Reckless Crew",
+    "name": "Reckless Crew",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create X 2/1 red Dwarf Berserker creature tokens, where X is the number of Vehicles you control plus the number of Equipment you control. For each of those tokens, you may attach an Equipment you control to it."
+  },
+  "Primitive Justice": {
+    "id": "Primitive Justice",
+    "name": "Primitive Justice",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may pay {1}{R} and/or {1}{G} any number of times.\nDestroy target artifact. For each additional {1}{R} you paid, destroy another target artifact. For each additional {1}{G} you paid, destroy another target artifact, and you gain 1 life."
+  },
+  "Alpha Brawl": {
+    "id": "Alpha Brawl",
+    "name": "Alpha Brawl",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature an opponent controls deals damage equal to its power to each other creature that player controls, then each of those creatures deals damage equal to its power to that creature."
+  },
+  "Mogg Infestation": {
+    "id": "Mogg Infestation",
+    "name": "Mogg Infestation",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy all creatures target player controls. For each creature that died this way, that player creates two 1/1 red Goblin creature tokens."
+  },
+  "Rite of Ruin": {
+    "id": "Rite of Ruin",
+    "name": "Rite of Ruin",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose an order for artifacts, creatures, and lands. Each player sacrifices one permanent of their choice of the first type, sacrifices two of their choice of the second type, then sacrifices three of their choice of the third type."
+  },
+  "Meteor Shower": {
+    "id": "Meteor Shower",
+    "name": "Meteor Shower",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Meteor Shower deals X plus 1 damage divided as you choose among any number of targets."
+  },
+  "Rupture": {
+    "id": "Rupture",
+    "name": "Rupture",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sacrifice a creature. Rupture deals damage equal to that creature's power to each creature without flying and each player."
+  },
+  "Quenchable Fire": {
+    "id": "Quenchable Fire",
+    "name": "Quenchable Fire",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Quenchable Fire deals 3 damage to target player or planeswalker. It deals an additional 3 damage to that player or planeswalker at the beginning of your next upkeep step unless that player or that planeswalker's controller pays {U} before that step."
+  },
+  "Kick in the Door": {
+    "id": "Kick in the Door",
+    "name": "Kick in the Door",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Put a +1/+1 counter on target creature. That creature gains haste until end of turn and can't be blocked by Walls this turn. Venture into the dungeon. (Enter the first room or advance to the next room.)"
+  },
+  "Descent of the Dragons": {
+    "id": "Descent of the Dragons",
+    "name": "Descent of the Dragons",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy any number of target creatures. For each creature destroyed this way, its controller creates a 4/4 red Dragon creature token with flying."
+  },
+  "Seize the Storm": {
+    "id": "Seize the Storm",
+    "name": "Seize the Storm",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Create a red Elemental creature token with trample and \"This token's power and toughness are each equal to the number of instant and sorcery cards in your graveyard plus the number of cards with flashback you own in exile.\"\nFlashback {6}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Pulverize": {
+    "id": "Pulverize",
+    "name": "Pulverize",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may sacrifice two Mountains rather than pay this spell's mana cost.\nDestroy all artifacts."
+  },
+  "Triumphant Chomp": {
+    "id": "Triumphant Chomp",
+    "name": "Triumphant Chomp",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Triumphant Chomp deals damage to target creature equal to 2 or the greatest power among Dinosaurs you control, whichever is greater."
+  },
+  "Awaken the Sleeper": {
+    "id": "Awaken the Sleeper",
+    "name": "Awaken the Sleeper",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. If it's equipped, you may destroy all Equipment attached to that creature."
+  },
+  "Anguished Recollection": {
+    "id": "Anguished Recollection",
+    "name": "Anguished Recollection",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Discard a card. If you do, seek two cards that don't share a card type with the discarded card."
+  },
+  "Rage of Purphoros": {
+    "id": "Rage of Purphoros",
+    "name": "Rage of Purphoros",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Rage of Purphoros deals 4 damage to target creature. It can't be regenerated this turn. Scry 1. (Look at the top card of your library. You may put that card on the bottom.)"
+  },
+  "Tentative Connection": {
+    "id": "Tentative Connection",
+    "name": "Tentative Connection",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell costs {3} less to cast if you control a creature with menace.\nGain control of target creature until end of turn. Untap that creature. It gains haste until end of turn."
+  },
+  "Evil's Thrall": {
+    "id": "Evil's Thrall",
+    "name": "Evil's Thrall",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. If you control a Villain with greater mana value than that creature, gain control of that creature until the end of your next turn instead. Untap that creature. It gains haste until end of turn."
+  },
+  "Siege of Towers": {
+    "id": "Siege of Towers",
+    "name": "Siege of Towers",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Replicate {1}{R} (When you cast this spell, copy it for each time you paid its replicate cost. You may choose new targets for the copies.)\nTarget Mountain becomes a 3/1 creature. It's still a land."
+  },
+  "Ember Gale": {
+    "id": "Ember Gale",
+    "name": "Ember Gale",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures target player controls can't block this turn. Ember Gale deals 1 damage to each white and/or blue creature that player controls."
+  },
+  "Detonate": {
+    "id": "Detonate",
+    "name": "Detonate",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target artifact with mana value X. It can't be regenerated. Detonate deals X damage to that artifact's controller."
+  },
+  "Lightning Surge": {
+    "id": "Lightning Surge",
+    "name": "Lightning Surge",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Lightning Surge deals 4 damage to any target.\nThreshold — If there are seven or more cards in your graveyard, instead Lightning Surge deals 6 damage to that permanent or player and the damage can't be prevented.\nFlashback {5}{R}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Swirling Sandstorm": {
+    "id": "Swirling Sandstorm",
+    "name": "Swirling Sandstorm",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Threshold — Swirling Sandstorm deals 5 damage to each creature without flying if there are seven or more cards in your graveyard."
+  },
+  "Rekindled Flame": {
+    "id": "Rekindled Flame",
+    "name": "Rekindled Flame",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Rekindled Flame deals 4 damage to any target.\nAt the beginning of your upkeep, if an opponent has no cards in hand, you may return this card from your graveyard to your hand."
+  },
+  "Steal the Show": {
+    "id": "Steal the Show",
+    "name": "Steal the Show",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one or both —\n• Target player discards any number of cards, then draws that many cards.\n• Steal the Show deals damage equal to the number of instant and sorcery cards in your graveyard to target creature or planeswalker."
+  },
+  "Structural Collapse": {
+    "id": "Structural Collapse",
+    "name": "Structural Collapse",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target player sacrifices an artifact and a land of their choice. Structural Collapse deals 2 damage to that player."
+  },
+  "Illicit Auction": {
+    "id": "Illicit Auction",
+    "name": "Illicit Auction",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each player may bid life for control of target creature. You start the bidding with a bid of 0. In turn order, each player may top the high bid. The bidding ends if the high bid stands. The high bidder loses life equal to the high bid and gains control of the creature. (This effect lasts indefinitely.)"
+  },
+  "Kamahl's Sledge": {
+    "id": "Kamahl's Sledge",
+    "name": "Kamahl's Sledge",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kamahl's Sledge deals 4 damage to target creature.\nThreshold — If there are seven or more cards in your graveyard, instead Kamahl's Sledge deals 4 damage to that creature and 4 damage to that creature's controller."
+  },
+  "Highway Robbery": {
+    "id": "Highway Robbery",
+    "name": "Highway Robbery",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may discard a card or sacrifice a land. If you do, draw two cards.\nPlot {1}{R} (You may pay {1}{R} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)"
+  },
+  "Unnatural Moonrise": {
+    "id": "Unnatural Moonrise",
+    "name": "Unnatural Moonrise",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "It becomes night. Until end of turn, target creature gets +1/+0 and gains trample and \"Whenever this creature deals combat damage to a player, draw a card.\"\nFlashback {2}{R}{G} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Ancestral Anger": {
+    "id": "Ancestral Anger",
+    "name": "Ancestral Anger",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target creature gains trample and gets +X/+0 until end of turn, where X is 1 plus the number of cards named Ancestral Anger in your graveyard.\nDraw a card."
+  },
+  "Broadcast Takeover": {
+    "id": "Broadcast Takeover",
+    "name": "Broadcast Takeover",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of all artifacts your opponents control until end of turn. Untap them. They gain haste until end of turn."
+  },
+  "Swelter": {
+    "id": "Swelter",
+    "name": "Swelter",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Swelter deals 2 damage to each of two target creatures."
+  },
+  "Hellion Eruption": {
+    "id": "Hellion Eruption",
+    "name": "Hellion Eruption",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sacrifice all creatures you control, then create that many 4/4 red Hellion creature tokens."
+  },
+  "Purphoros's Intervention": {
+    "id": "Purphoros's Intervention",
+    "name": "Purphoros's Intervention",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one —\n• Create an X/1 red Elemental creature token with trample and haste. Sacrifice it at the beginning of the next end step.\n• Purphoros's Intervention deals twice X damage to target creature or planeswalker."
+  },
+  "Indomitable Creativity": {
+    "id": "Indomitable Creativity",
+    "name": "Indomitable Creativity",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy X target artifacts and/or creatures. For each permanent destroyed this way, its controller reveals cards from the top of their library until an artifact or creature card is revealed and exiles that card. Those players put the exiled cards onto the battlefield, then shuffle."
+  },
+  "Overpowering Attack": {
+    "id": "Overpowering Attack",
+    "name": "Overpowering Attack",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Freerunning {2}{R} (You may cast this spell for its freerunning cost if you dealt combat damage to a player this turn with an Assassin or commander.)\nUntap all creatures you control that attacked this turn. If it's your main phase, there is an additional combat phase after this phase, followed by an additional main phase."
+  },
+  "Eunuchs' Intrigues": {
+    "id": "Eunuchs' Intrigues",
+    "name": "Eunuchs' Intrigues",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target opponent chooses a creature they control. Other creatures they control can't block this turn."
+  },
+  "Fire Giant's Fury": {
+    "id": "Fire Giant's Fury",
+    "name": "Fire Giant's Fury",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target Giant you control gets +2/+2 and gains trample until end of turn. Whenever it deals combat damage to a player this turn, exile that many cards from the top of your library. Until the end of your next turn, you may play those cards."
+  },
+  "Destructive Tampering": {
+    "id": "Destructive Tampering",
+    "name": "Destructive Tampering",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one —\n• Destroy target artifact.\n• Creatures without flying can't block this turn."
+  },
+  "Brood Birthing": {
+    "id": "Brood Birthing",
+    "name": "Brood Birthing",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If you control an Eldrazi Spawn, create three 0/1 colorless Eldrazi Spawn creature tokens. They have \"Sacrifice this token: Add {C}.\" Otherwise, create one of those tokens.",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Into the Fire": {
+    "id": "Into the Fire",
+    "name": "Into the Fire",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose one —\n• Into the Fire deals 2 damage to each creature, planeswalker, and battle.\n• Put any number of cards from your hand on the bottom of your library, then draw that many cards plus one."
+  },
+  "Electro's Bolt": {
+    "id": "Electro's Bolt",
+    "name": "Electro's Bolt",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Electro's Bolt deals 4 damage to target creature.\nMayhem {1}{R} (You may cast this card from your graveyard for {1}{R} if you discarded it this turn. Timing rules still apply.)"
+  },
+  "Molten Rain": {
+    "id": "Molten Rain",
+    "name": "Molten Rain",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target land. If that land was nonbasic, Molten Rain deals 2 damage to the land's controller."
+  },
+  "Concussive Bolt": {
+    "id": "Concussive Bolt",
+    "name": "Concussive Bolt",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Concussive Bolt deals 4 damage to target player or planeswalker.\nMetalcraft — If you control three or more artifacts, creatures controlled by that player or by that planeswalker's controller can't block this turn."
+  },
+  "Cindercone Smite": {
+    "id": "Cindercone Smite",
+    "name": "Cindercone Smite",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Cindercone Smite deals 2 damage to target creature. Then create a Treasure token if you weren't the starting player."
+  },
+  "Burn at the Stake": {
+    "id": "Burn at the Stake",
+    "name": "Burn at the Stake",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, tap any number of untapped creatures you control.\nBurn at the Stake deals damage to any target equal to three times the number of creatures tapped this way."
+  },
+  "Phoenix Heart": {
+    "id": "Phoenix Heart",
+    "name": "Phoenix Heart",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}{R}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Koni and Richard continue the game and play all games as partners forever."
+  },
+  "Raze to the Ground": {
+    "id": "Raze to the Ground",
+    "name": "Raze to the Ground",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This spell can't be countered.\nDestroy target artifact. If its mana value was 1 or less, draw a card."
+  },
+  "Landslide": {
+    "id": "Landslide",
+    "name": "Landslide",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sacrifice any number of Mountains. Landslide deals that much damage to target player or planeswalker."
+  },
+  "Arc Trail": {
+    "id": "Arc Trail",
+    "name": "Arc Trail",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Arc Trail deals 2 damage to any target and 1 damage to any other target."
+  },
+  "Reckless Handling": {
+    "id": "Reckless Handling",
+    "name": "Reckless Handling",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Search your library for an artifact card, reveal it, put it into your hand, shuffle, then discard a card at random. If an artifact card was discarded this way, Reckless Handling deals 2 damage to each opponent."
+  },
+  "Price of Loyalty": {
+    "id": "Price of Loyalty",
+    "name": "Price of Loyalty",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. If mana from a Treasure was spent to cast this spell, that creature gets +2/+0 until end of turn."
+  },
+  "Peak Eruption": {
+    "id": "Peak Eruption",
+    "name": "Peak Eruption",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy target Mountain. Peak Eruption deals 3 damage to that land's controller."
+  },
+  "Unexpected Request": {
+    "id": "Unexpected Request",
+    "name": "Unexpected Request",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Gain control of target creature until end of turn. Untap that creature. It gains haste until end of turn. You may attach an Equipment you control to that creature. If you do, unattach it at the beginning of the next end step."
+  },
+  "Torrent of Lava": {
+    "id": "Torrent of Lava",
+    "name": "Torrent of Lava",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Torrent of Lava deals X damage to each creature without flying.\nAs long as Torrent of Lava is on the stack, each creature has \"{T}: Prevent the next 1 damage that would be dealt to this creature by Torrent of Lava this turn.\""
+  },
+  "Misguided Rage": {
+    "id": "Misguided Rage",
+    "name": "Misguided Rage",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target player sacrifices a permanent of their choice."
+  },
+  "Falling Star": {
+    "id": "Falling Star",
+    "name": "Falling Star",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flip Falling Star onto the playing area from a height of at least one foot. Falling Star deals 3 damage to each creature it lands on. Tap all creatures dealt damage by Falling Star. If Falling Star doesn't turn completely over at least once during the flip, it has no effect."
+  },
+  "Scrapyard Salvo": {
+    "id": "Scrapyard Salvo",
+    "name": "Scrapyard Salvo",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Scrapyard Salvo deals damage to target player or planeswalker equal to the number of artifact cards in your graveyard."
+  },
+  "Chandra's Revolution": {
+    "id": "Chandra's Revolution",
+    "name": "Chandra's Revolution",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Chandra's Revolution deals 4 damage to target creature. Tap target land. That land doesn't untap during its controller's next untap step."
+  },
+  "Lava Burst": {
+    "id": "Lava Burst",
+    "name": "Lava Burst",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Lava Burst deals X damage to any target. If Lava Burst would deal damage to a creature, that damage can't be prevented or dealt instead to another permanent or player."
+  },
+  "Recoup": {
+    "id": "Recoup",
+    "name": "Recoup",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Target sorcery card in your graveyard gains flashback until end of turn. The flashback cost is equal to its mana cost. (Mana cost includes color.)\nFlashback {3}{R} (You may cast this card from your graveyard for its flashback cost. Then exile it.)"
+  },
+  "Illuminate": {
+    "id": "Illuminate",
+    "name": "Illuminate",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kicker {2}{R} and/or {3}{U} (You may pay an additional {2}{R} and/or {3}{U} as you cast this spell.)\nIlluminate deals X damage to target creature. If this spell was kicked with its {2}{R} kicker, it deals X damage to that creature's controller. If this spell was kicked with its {3}{U} kicker, you draw X cards."
+  },
+  "Pyrophobia": {
+    "id": "Pyrophobia",
+    "name": "Pyrophobia",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Pyrophobia deals 3 damage to target creature. Cowards can't block this turn."
+  },
+  "Winter Sky": {
+    "id": "Winter Sky",
+    "name": "Winter Sky",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flip a coin. If you win the flip, Winter Sky deals 1 damage to each creature and each player. If you lose the flip, each player draws a card."
+  },
+  "Besmirch": {
+    "id": "Besmirch",
+    "name": "Besmirch",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Until end of turn, gain control of target creature and it gains haste. Untap and goad that creature. (Until your next turn, that creature attacks each combat if able and attacks a player other than you if able.)"
+  },
+  "Scorched Earth": {
+    "id": "Scorched Earth",
+    "name": "Scorched Earth",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As an additional cost to cast this spell, discard X land cards.\nDestroy X target lands."
+  },
+  "Improvisation Capstone": {
+    "id": "Improvisation Capstone",
+    "name": "Improvisation Capstone",
+    "typeLine": "Sorcery — Lesson",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile cards from the top of your library until you exile cards with total mana value 4 or greater. You may cast any number of spells from among them without paying their mana costs.\nParadigm (Then exile this spell. After you first resolve a spell with this name, you may cast a copy of it from exile without paying its mana cost at the beginning of each of your first main phases.)"
+  },
+  "Searing Rays": {
+    "id": "Searing Rays",
+    "name": "Searing Rays",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose a color. Searing Rays deals damage to each player equal to the number of creatures of that color that player controls."
+  },
+  "Rally the Horde": {
+    "id": "Rally the Horde",
+    "name": "Rally the Horde",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Exile the top card of your library. Exile the top card of your library. Exile the top card of your library. If the last card exiled isn't a land card, repeat this process. Create a 1/1 red Warrior creature token for each nonland card exiled this way."
+  },
+  "Granulate": {
+    "id": "Granulate",
+    "name": "Granulate",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Destroy each nonland artifact with mana value 4 or less."
+  },
+  "Scent of Cinder": {
+    "id": "Scent of Cinder",
+    "name": "Scent of Cinder",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Reveal any number of red cards in your hand. Scent of Cinder deals X damage to any target, where X is the number of cards revealed this way."
+  },
+  "Hazardous Blast": {
+    "id": "Hazardous Blast",
+    "name": "Hazardous Blast",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Hazardous Blast deals 1 damage to each creature your opponents control. Creatures your opponents control can't block this turn."
+  }
+}

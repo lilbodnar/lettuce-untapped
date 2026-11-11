@@ -1,0 +1,892 @@
+{
+  "Memory Vessel": {
+    "id": "Memory Vessel",
+    "name": "Memory Vessel",
+    "typeLine": "Artifact",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{T}, Exile this artifact: Each player exiles the top seven cards of their library. Until your next turn, players may play cards they exiled this way, and they can't play cards from their hand. Activate only as a sorcery."
+  },
+  "War Balloon": {
+    "id": "War Balloon",
+    "name": "War Balloon",
+    "typeLine": "Artifact — Vehicle",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\n{1}: Put a fire counter on this Vehicle.\nAs long as this Vehicle has three or more fire counters on it, it's an artifact creature.\nCrew 3 (Tap any number of creatures you control with total power 3 or more: This Vehicle becomes an artifact creature until end of turn.)",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Beamtown Beatstick": {
+    "id": "Beamtown Beatstick",
+    "name": "Beamtown Beatstick",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Equipped creature gets +1/+0 and has menace. (It can't be blocked except by two or more creatures.)\nWhenever equipped creature deals combat damage to a player or battle, create a Treasure token.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+  },
+  "Concealed Weapon": {
+    "id": "Concealed Weapon",
+    "name": "Concealed Weapon",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Equipped creature gets +3/+0.\nDisguise {2}{R} (You may cast this card face down for {3} as a 2/2 creature with ward {2}. Turn it face up any time for its disguise cost.)\nWhen this Equipment is turned face up, attach it to target creature you control.\nEquip {1}{R}"
+  },
+  "Jaya, Venerated Firemage": {
+    "id": "Jaya, Venerated Firemage",
+    "name": "Jaya, Venerated Firemage",
+    "typeLine": "Legendary Planeswalker — Jaya",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If another red source you control would deal damage to a permanent or player, it deals that much damage plus 1 to that permanent or player instead.\n−2: Jaya deals 2 damage to any target.",
+    "loyalty": "5"
+  },
+  "Memorial Vault": {
+    "id": "Memorial Vault",
+    "name": "Memorial Vault",
+    "typeLine": "Artifact",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{T}, Sacrifice another artifact: Exile the top X cards of your library, where X is one plus the mana value of the sacrificed artifact. You may play those cards this turn."
+  },
+  "Geistflame Reservoir": {
+    "id": "Geistflame Reservoir",
+    "name": "Geistflame Reservoir",
+    "typeLine": "Artifact",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you cast an instant or sorcery spell, put a charge counter on this artifact.\n{1}{R}, {T}, Remove any number of charge counters from this artifact: It deals that much damage to any target.\n{1}{R}, {T}: Exile the top card of your library. You may play that card this turn."
+  },
+  "Lukka, Coppercoat Outcast": {
+    "id": "Lukka, Coppercoat Outcast",
+    "name": "Lukka, Coppercoat Outcast",
+    "typeLine": "Legendary Planeswalker — Lukka",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Exile the top three cards of your library. Creature cards exiled this way gain \"You may cast this card from exile as long as you control a Lukka planeswalker.\"\n−2: Exile target creature you control, then reveal cards from the top of your library until you reveal a creature card with greater mana value. Put that card onto the battlefield and the rest on the bottom of your library in a random order.\n−7: Each creature you control deals damage equal to its power to each opponent.",
+    "loyalty": "5"
+  },
+  "Chandra, Bold Pyromancer": {
+    "id": "Chandra, Bold Pyromancer",
+    "name": "Chandra, Bold Pyromancer",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Add {R}{R}. Chandra deals 2 damage to target player.\n−3: Chandra deals 3 damage to target creature or planeswalker.\n−7: Chandra deals 10 damage to target player and each creature and planeswalker they control.",
+    "loyalty": "5",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Jaya, Fiery Negotiator": {
+    "id": "Jaya, Fiery Negotiator",
+    "name": "Jaya, Fiery Negotiator",
+    "typeLine": "Legendary Planeswalker — Jaya",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Create a 1/1 red Monk creature token with prowess.\n−1: Exile the top two cards of your library. Choose one of them. You may play that card this turn.\n−2: Choose target creature an opponent controls. Whenever you attack this turn, Jaya deals damage equal to the number of attacking creatures to that creature.\n−8: You get an emblem with \"Whenever you cast a red instant or sorcery spell, copy it twice. You may choose new targets for the copies.\"",
+    "loyalty": "4"
+  },
+  "Hoard Hauler": {
+    "id": "Hoard Hauler",
+    "name": "Hoard Hauler",
+    "typeLine": "Artifact — Vehicle",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nWhenever this Vehicle deals combat damage to a player, create a Treasure token for each artifact they control.\nCrew 3",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Chandra, Fire Artisan": {
+    "id": "Chandra, Fire Artisan",
+    "name": "Chandra, Fire Artisan",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever one or more loyalty counters are removed from Chandra, she deals that much damage to target opponent or planeswalker.\n+1: Exile the top card of your library. You may play it this turn.\n−7: Exile the top seven cards of your library. You may play them this turn.",
+    "loyalty": "4"
+  },
+  "Domri, Chaos Bringer": {
+    "id": "Domri, Chaos Bringer",
+    "name": "Domri, Chaos Bringer",
+    "typeLine": "Legendary Planeswalker — Domri",
+    "manaCost": "{2}{R}{G}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "+1: Add {R} or {G}. If that mana is spent on a creature spell, it gains riot. (It enters with your choice of a +1/+1 counter or haste.)\n−3: Look at the top four cards of your library. You may reveal up to two creature cards from among them and put them into your hand. Put the rest on the bottom of your library in a random order.\n−8: You get an emblem with \"At the beginning of each end step, create a 4/4 red and green Beast creature token with trample.\"",
+    "loyalty": "5",
+    "producedMana": [
+      "G",
+      "R"
+    ]
+  },
+  "Shichifukujin Dragon": {
+    "id": "Shichifukujin Dragon",
+    "name": "Shichifukujin Dragon",
+    "typeLine": "Summon Dragon",
+    "manaCost": "{6}{R}{R}{R}",
+    "cmc": 9,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When Shichifukujin Dragon comes into play, put seven +1/+1 counters on it.\n{R}{R}{R}, Sacrifice two +1/+1 counters: Put three +1/+1 counters on Shichifukujin Dragon at end of turn. Play this ability as a sorcery.",
+    "power": "0",
+    "toughness": "0"
+  },
+  "Fire Nation Turret": {
+    "id": "Fire Nation Turret",
+    "name": "Fire Nation Turret",
+    "typeLine": "Artifact",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of combat on your turn, up to one target creature gets +2/+0 and gains firebending 2 until end of turn.\n{R}: Put a charge counter on this artifact.\nRemove fifty charge counters from this artifact: It deals 50 damage to any target."
+  },
+  "Dowsing Device // Geode Grotto": {
+    "id": "Dowsing Device // Geode Grotto",
+    "name": "Dowsing Device // Geode Grotto",
+    "typeLine": "Artifact // Land — Cave",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Dowsing Device: Whenever this artifact or another artifact you control enters, up to one target creature you control gets +1/+0 and gains haste until end of turn. Then transform this artifact if you control four or more artifacts.\n\nGeode Grotto: (Transforms from Dowsing Device.)\n{T}: Add {R}.\n{2}{R}, {T}: Until end of turn, target creature gains haste and gets +X/+0, where X is the number of artifacts you control. Activate only as a sorcery.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Chandra, Spark Hunter": {
+    "id": "Chandra, Spark Hunter",
+    "name": "Chandra, Spark Hunter",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of combat on your turn, choose up to one target Vehicle you control. Until end of turn, it becomes an artifact creature and gains haste.\n+2: You may sacrifice an artifact or discard a card. If you do, draw a card.\n0: Create a 3/2 colorless Vehicle artifact token with crew 1.\n−7: You get an emblem with \"Whenever an artifact you control enters, this emblem deals 3 damage to any target.\"",
+    "loyalty": "4"
+  },
+  "Sanguine Statuette": {
+    "id": "Sanguine Statuette",
+    "name": "Sanguine Statuette",
+    "typeLine": "Artifact",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this artifact enters, create a Blood token. (It's an artifact with \"{1}, {T}, Discard a card, Sacrifice this token: Draw a card.\")\nWhenever you sacrifice a Blood token, you may have this artifact become a 3/3 Vampire artifact creature with haste until end of turn."
+  },
+  "Flanking Licid": {
+    "id": "Flanking Licid",
+    "name": "Flanking Licid",
+    "typeLine": "Summon Licid",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}, {T}: Flanking Licid loses this ability and becomes a creature enchantment that reads \"Enchanted creature gains flanking\" instead of a creature. Move Flanking Licid onto target creature. You may pay {R} to end this effect.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Minsc & Boo, Timeless Heroes": {
+    "id": "Minsc & Boo, Timeless Heroes",
+    "name": "Minsc & Boo, Timeless Heroes",
+    "typeLine": "Legendary Planeswalker — Minsc",
+    "manaCost": "{2}{R}{G}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "When Minsc & Boo enters and at the beginning of your upkeep, you may create Boo, a legendary 1/1 red Hamster creature token with trample and haste.\n+1: Put three +1/+1 counters on up to one target creature with trample or haste.\n−2: Sacrifice a creature. When you do, Minsc & Boo deals X damage to any target, where X is that creature's power. If the sacrificed creature was a Hamster, draw X cards.\nMinsc & Boo, Timeless Heroes can be your commander.",
+    "loyalty": "3"
+  },
+  "Chainsaw": {
+    "id": "Chainsaw",
+    "name": "Chainsaw",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this Equipment enters, it deals 3 damage to up to one target creature.\nWhenever one or more creatures die, put a rev counter on this Equipment.\nEquipped creature gets +X/+0, where X is the number of rev counters on this Equipment.\nEquip {3}"
+  },
+  "Chandra Ablaze": {
+    "id": "Chandra Ablaze",
+    "name": "Chandra Ablaze",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Discard a card. If a red card is discarded this way, Chandra deals 4 damage to any target.\n−2: Each player discards their hand, then draws three cards.\n−7: Cast any number of red instant and/or sorcery cards from your graveyard without paying their mana costs.",
+    "loyalty": "5"
+  },
+  "Chandra, Flame's Fury": {
+    "id": "Chandra, Flame's Fury",
+    "name": "Chandra, Flame's Fury",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Chandra deals 2 damage to any target.\n−2: Chandra deals 4 damage to target creature and 2 damage to that creature's controller.\n−8: Chandra deals 10 damage to target player and each creature that player controls.",
+    "loyalty": "4"
+  },
+  "Chandra, Dressed to Kill": {
+    "id": "Chandra, Dressed to Kill",
+    "name": "Chandra, Dressed to Kill",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Add {R}. Chandra deals 1 damage to up to one target player or planeswalker.\n+1: Exile the top card of your library. If it's red, you may cast it this turn.\n−7: Exile the top five cards of your library. You may cast red spells from among them this turn. You get an emblem with \"Whenever you cast a red spell, this emblem deals X damage to any target, where X is the amount of mana spent to cast that spell.\"",
+    "loyalty": "3",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Cori-Steel Cutter": {
+    "id": "Cori-Steel Cutter",
+    "name": "Cori-Steel Cutter",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Equipped creature gets +1/+1 and has trample and haste.\nFlurry — Whenever you cast your second spell each turn, create a 1/1 white Monk creature token with prowess. You may attach this Equipment to it. (Whenever you cast a noncreature spell, the token gets +1/+1 until end of turn.)\nEquip {1}{R}"
+  },
+  "Invasion of Regatha // Disciples of the Inferno": {
+    "id": "Invasion of Regatha // Disciples of the Inferno",
+    "name": "Invasion of Regatha // Disciples of the Inferno",
+    "typeLine": "Battle — Siege // Creature — Human Monk",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Invasion of Regatha: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, it deals 4 damage to another target battle or opponent and 1 damage to up to one target creature.\n\nDisciples of the Inferno: Prowess (Whenever you cast a noncreature spell, this creature gets +1/+1 until end of turn.)\nIf a noncreature source you control would deal damage to a creature, battle, or opponent, it deals that much damage plus 2 instead."
+  },
+  "Chandra, Hope's Beacon": {
+    "id": "Chandra, Hope's Beacon",
+    "name": "Chandra, Hope's Beacon",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you cast an instant or sorcery spell, copy it. You may choose new targets for the copy. This ability triggers only once each turn.\n+2: Add two mana in any combination of colors.\n+1: Exile the top five cards of your library. Until the end of your next turn, you may cast an instant or sorcery spell from among those exiled cards.\n−X: Chandra deals X damage to each of up to two targets.",
+    "loyalty": "5",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Chandra, the Firebrand": {
+    "id": "Chandra, the Firebrand",
+    "name": "Chandra, the Firebrand",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Chandra deals 1 damage to any target.\n−2: When you next cast an instant or sorcery spell this turn, copy that spell. You may choose new targets for the copy.\n−6: Chandra deals 6 damage to each of up to six targets.",
+    "loyalty": "3"
+  },
+  "Koth of the Hammer": {
+    "id": "Koth of the Hammer",
+    "name": "Koth of the Hammer",
+    "typeLine": "Legendary Planeswalker — Koth",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Untap target Mountain. It becomes a 4/4 red Elemental creature until end of turn. It's still a land.\n−2: Add {R} for each Mountain you control.\n−5: You get an emblem with \"Mountains you control have '{T}: This land deals 1 damage to any target.'\"",
+    "loyalty": "3",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Chandra, Heart of Fire": {
+    "id": "Chandra, Heart of Fire",
+    "name": "Chandra, Heart of Fire",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Discard your hand, then exile the top three cards of your library. Until end of turn, you may play cards exiled this way.\n+1: Chandra deals 2 damage to any target.\n−9: Search your graveyard and library for any number of red instant and/or sorcery cards, exile them, then shuffle. You may cast them this turn. Add six {R}.",
+    "loyalty": "5",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Magmatic Galleon": {
+    "id": "Magmatic Galleon",
+    "name": "Magmatic Galleon",
+    "typeLine": "Artifact — Vehicle",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this Vehicle enters, it deals 5 damage to target creature an opponent controls.\nWhenever one or more creatures your opponents control are dealt excess noncombat damage, create a Treasure token.\nCrew 2",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Invasion of Tarkir // Defiant Thundermaw": {
+    "id": "Invasion of Tarkir // Defiant Thundermaw",
+    "name": "Invasion of Tarkir // Defiant Thundermaw",
+    "typeLine": "Battle — Siege // Creature — Dragon",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Invasion of Tarkir: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, reveal any number of Dragon cards from your hand. When you do, this Siege deals X plus 2 damage to any other target, where X is the number of cards revealed this way. (X can be 0.)\n\nDefiant Thundermaw: Flying, trample\nWhenever a Dragon you control attacks, it deals 2 damage to any target."
+  },
+  "Mizzium Tank": {
+    "id": "Mizzium Tank",
+    "name": "Mizzium Tank",
+    "typeLine": "Artifact — Vehicle",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Trample\nWhenever you cast a noncreature spell, this Vehicle becomes an artifact creature and gets +1/+1 until end of turn.\nCrew 1 (Tap any number of creatures you control with total power 1 or more: This Vehicle becomes an artifact creature until end of turn.)",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Chandra, Acolyte of Flame": {
+    "id": "Chandra, Acolyte of Flame",
+    "name": "Chandra, Acolyte of Flame",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "0: Put a loyalty counter on each red planeswalker you control.\n0: Create two 1/1 red Elemental creature tokens. They gain haste. Sacrifice them at the beginning of the next end step.\n−2: You may cast target instant or sorcery card with mana value 3 or less from your graveyard. If that spell would be put into your graveyard, exile it instead.",
+    "loyalty": "4"
+  },
+  "Daredevil's Billy Club": {
+    "id": "Daredevil's Billy Club",
+    "name": "Daredevil's Billy Club",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this Equipment enters, it deals 2 damage to any target and 1 damage to you.\nEquipped creature gets +1/+0 and has menace. (It can't be blocked except by two or more creatures.)\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+  },
+  "Invasion of Kaldheim // Pyre of the World Tree": {
+    "id": "Invasion of Kaldheim // Pyre of the World Tree",
+    "name": "Invasion of Kaldheim // Pyre of the World Tree",
+    "typeLine": "Battle — Siege // Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Invasion of Kaldheim: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, exile all cards from your hand, then draw that many cards. Until the end of your next turn, you may play cards exiled this way.\n\nPyre of the World Tree: Discard a land card: This enchantment deals 2 damage to any target.\nWhenever you discard a land card, exile the top card of your library. You may play that card this turn."
+  },
+  "Chandra, Pyromaster": {
+    "id": "Chandra, Pyromaster",
+    "name": "Chandra, Pyromaster",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Chandra deals 1 damage to target player or planeswalker and 1 damage to up to one target creature that player or that planeswalker's controller controls. That creature can't block this turn.\n0: Exile the top card of your library. You may play it this turn.\n−7: Exile the top ten cards of your library. Choose an instant or sorcery card exiled this way and copy it three times. You may cast the copies without paying their mana costs.",
+    "loyalty": "4"
+  },
+  "Ajani Unrelenting": {
+    "id": "Ajani Unrelenting",
+    "name": "Ajani Unrelenting",
+    "typeLine": "Legendary Planeswalker — Ajani",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you activate a loyalty ability, create a 2/2 colorless Wizard Soldier creature token named Cadet.\n+1: Creatures you control get +1/+0 and gain haste until end of turn.\n−2: Discard your hand, then draw a card for each creature you control.\n−3: Ajani deals 4 damage to each creature except for tokens you control.",
+    "loyalty": "5"
+  },
+  "Chandra, Flame's Catalyst": {
+    "id": "Chandra, Flame's Catalyst",
+    "name": "Chandra, Flame's Catalyst",
+    "typeLine": "Legendary Planeswalker — Chandra",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Chandra deals 3 damage to each opponent.\n−2: You may cast target red instant or sorcery card from your graveyard. If that spell would be put into your graveyard, exile it instead.\n−8: Discard your hand, then draw seven cards. Until end of turn, you may cast spells from your hand without paying their mana costs.",
+    "loyalty": "5"
+  },
+  "Urabrask's Forge": {
+    "id": "Urabrask's Forge",
+    "name": "Urabrask's Forge",
+    "typeLine": "Artifact",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of combat on your turn, put an oil counter on this artifact, then create an X/1 red Phyrexian Horror creature token with trample and haste, where X is the number of oil counters on this artifact. Sacrifice that token at the beginning of the next end step."
+  },
+  "Spire Mechcycle": {
+    "id": "Spire Mechcycle",
+    "name": "Spire Mechcycle",
+    "typeLine": "Artifact — Vehicle",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Haste\nExhaust — Tap another untapped Mount or Vehicle you control: This Vehicle becomes an artifact creature. Put a +1/+1 counter on it for each Mount and/or Vehicle you control other than this Vehicle. (Activate each exhaust ability only once.)\nCrew 2",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Getaway Barrel": {
+    "id": "Getaway Barrel",
+    "name": "Getaway Barrel",
+    "typeLine": "Artifact",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this artifact is put into a graveyard from the battlefield, reveal the top thirteen cards of your library. Put a random creature card from among them onto the battlefield. Put the rest on the bottom of your library in a random order."
+  },
+  "Mjölnir, Hammer of Thor": {
+    "id": "Mjölnir, Hammer of Thor",
+    "name": "Mjölnir, Hammer of Thor",
+    "typeLine": "Legendary Artifact — Equipment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When Mjölnir enters, it deals 4 damage to up to one target creature.\nDouble all damage equipped creature would deal.\nEquip worthy {1} (A creature is worthy if it's a legendary non-Villain that's red and/or white.)\n{2}{R}, Discard this card: It deals 2 damage to each creature."
+  },
+  "Lukka, Bound to Ruin": {
+    "id": "Lukka, Bound to Ruin",
+    "name": "Lukka, Bound to Ruin",
+    "typeLine": "Legendary Planeswalker — Lukka",
+    "manaCost": "{2}{R}{R/G/P}{G}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Compleated ({R/G/P} can be paid with {R}, {G}, or 2 life. If life was paid, this planeswalker enters with two fewer loyalty counters.)\n+1: Add {R}{G}. Spend this mana only to cast creature spells or activate abilities of creatures.\n−1: Create a 3/3 green Phyrexian Beast creature token with toxic 1.\n−4: Lukka deals X damage divided as you choose among any number of target creatures and/or planeswalkers, where X is the greatest power among creatures you control as you activate this ability.",
+    "loyalty": "5",
+    "producedMana": [
+      "G",
+      "R"
+    ]
+  },
+  "Wand of Wonder": {
+    "id": "Wand of Wonder",
+    "name": "Wand of Wonder",
+    "typeLine": "Artifact",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{4}, {T}: Roll a d20. Each opponent exiles cards from the top of their library until they exile an instant or sorcery card, then shuffles the rest into their library. You may cast up to X instant and/or sorcery spells from among cards exiled this way without paying their mana costs.\n1—9 | X is one.\n10—19 | X is two.\n20 | X is three."
+  },
+  "Tibalt, Wicked Tormentor": {
+    "id": "Tibalt, Wicked Tormentor",
+    "name": "Tibalt, Wicked Tormentor",
+    "typeLine": "Legendary Planeswalker — Tibalt",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Add {R}{R}. Draft a card from Tibalt, Wicked Tormentor's spellbook, then exile it. Until end of turn, you may cast that card.\n+1: Tibalt, Wicked Tormentor deals 4 damage to target creature or planeswalker unless its controller has Tibalt deal 4 damage to them. If they do, you may discard a card. If you do, draw a card.\n−X: Create X 1/1 red Devil creature tokens with \"When this creature dies, it deals 1 damage to any target.\"",
+    "loyalty": "3",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Spicy Oatmeal Pizza": {
+    "id": "Spicy Oatmeal Pizza",
+    "name": "Spicy Oatmeal Pizza",
+    "typeLine": "Artifact — Food",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this artifact enters, it deals 4 damage to any target and 3 damage to you.\n{2}, {T}, Sacrifice this artifact: You gain 3 life."
+  },
+  "Churning Reservoir": {
+    "id": "Churning Reservoir",
+    "name": "Churning Reservoir",
+    "typeLine": "Artifact",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, put an oil counter on another target nontoken artifact or creature you control.\n{2}, {T}: Create a 1/1 red Phyrexian Goblin creature token. Activate only if an oil counter was removed from a permanent you controlled this turn or a permanent with an oil counter on it was put into a graveyard this turn."
+  },
+  "Territory Forge": {
+    "id": "Territory Forge",
+    "name": "Territory Forge",
+    "typeLine": "Artifact",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this artifact enters, if you cast it, exile target artifact or land.\nThis artifact has all activated abilities of the exiled card."
+  },
+  "Dragonspark Reactor": {
+    "id": "Dragonspark Reactor",
+    "name": "Dragonspark Reactor",
+    "typeLine": "Artifact",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever this artifact or another artifact you control enters, put a charge counter on this artifact.\n{4}, Sacrifice this artifact: It deals damage equal to the number of charge counters on it to target player and that much damage to up to one target creature."
+  },
+  "Brass's Tunnel-Grinder // Tecutlan, the Searing Rift": {
+    "id": "Brass's Tunnel-Grinder // Tecutlan, the Searing Rift",
+    "name": "Brass's Tunnel-Grinder // Tecutlan, the Searing Rift",
+    "typeLine": "Legendary Artifact // Legendary Land — Cave",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Brass's Tunnel-Grinder: When Brass's Tunnel-Grinder enters, discard any number of cards, then draw that many cards plus one.\nAt the beginning of your end step, if you descended this turn, put a bore counter on Brass's Tunnel-Grinder. Then if there are three or more bore counters on it, remove those counters and transform it. (You descended if a permanent card was put into your graveyard from anywhere.)\n\nTecutlan, the Searing Rift: (Transforms from Brass's Tunnel-Grinder.)\n{T}: Add {R}.\nWhenever you cast a permanent spell using mana produced by Tecutlan, discover X, where X is that spell's mana value.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Pumpkin Bombs": {
+    "id": "Pumpkin Bombs",
+    "name": "Pumpkin Bombs",
+    "typeLine": "Artifact",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{T}, Discard two cards: Draw three cards, then put a fuse counter on this artifact. It deals damage equal to the number of fuse counters on it to target opponent. They gain control of this artifact."
+  },
+  "Jeska, Thrice Reborn": {
+    "id": "Jeska, Thrice Reborn",
+    "name": "Jeska, Thrice Reborn",
+    "typeLine": "Legendary Planeswalker — Jeska",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Jeska enters with a loyalty counter on her for each time you've cast a commander from the command zone this game.\n0: Choose target creature. Until your next turn, if that creature would deal combat damage to one of your opponents, it deals triple that damage to that player instead.\n−X: Jeska deals X damage to each of up to three targets.\nJeska, Thrice Reborn can be your commander.\nPartner",
+    "loyalty": "0"
+  },
+  "Bespoke Battlegarb": {
+    "id": "Bespoke Battlegarb",
+    "name": "Bespoke Battlegarb",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Equipped creature gets +2/+0.\nCelebration — At the beginning of combat on your turn, if two or more nonland permanents entered the battlefield under your control this turn, attach this Equipment to up to one target creature you control.\nEquip {2} ({2}: Attach to target creature you control. Equip only as a sorcery.)"
+  },
+  "Sarkhan, Dragonsoul": {
+    "id": "Sarkhan, Dragonsoul",
+    "name": "Sarkhan, Dragonsoul",
+    "typeLine": "Legendary Planeswalker — Sarkhan",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+2: Sarkhan deals 1 damage to each opponent and each creature your opponents control.\n−3: Sarkhan deals 4 damage to target player or planeswalker.\n−9: Search your library for any number of Dragon creature cards, put them onto the battlefield, then shuffle.",
+    "loyalty": "5"
+  },
+  "Hexgold Halberd": {
+    "id": "Hexgold Halberd",
+    "name": "Hexgold Halberd",
+    "typeLine": "Artifact — Equipment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "For Mirrodin! (When this Equipment enters, create a 2/2 red Rebel creature token, then attach this to it.)\nDuring your turn, equipped creature has first strike and trample.\nEquip {2}{R}"
+  },
+  "The Unluckiest Planeswalker": {
+    "id": "The Unluckiest Planeswalker",
+    "name": "The Unluckiest Planeswalker",
+    "typeLine": "Legendary Planeswalker",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Rulebreaker — A deck with this commander can have Aura cards of any color identity and any basic land cards.\n+1: Add one mana of any color. When you spend this mana to cast an Aura spell this turn, create a 1/1 red Gremlin creature token.\n−3: Discard your hand, then draw cards equal to twice the number of Auras you control. For each Aura attached to you, attach it to an opponent of your choice.\nThe Unluckiest Planeswalker can be your commander.",
+    "loyalty": "4",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Warmaker Gunship": {
+    "id": "Warmaker Gunship",
+    "name": "Warmaker Gunship",
+    "typeLine": "Artifact — Spacecraft",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this Spacecraft enters, it deals damage equal to the number of artifacts you control to target creature an opponent controls.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 6+.)\n6+ | Flying",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Goblin Polka Band": {
+    "id": "Goblin Polka Band",
+    "name": "Goblin Polka Band",
+    "typeLine": "Summon Goblin",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{2}, {T}, Pay {R} for each target: Tap any number of random target creatures. Goblins tapped in this way do not untap during their controllers' next untap phases.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Boommobile": {
+    "id": "Boommobile",
+    "name": "Boommobile",
+    "typeLine": "Artifact — Vehicle",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this Vehicle enters, add four mana of any one color. Spend this mana only to activate abilities.\nExhaust — {X}{2}{R}: This Vehicle deals X damage to any target. Put a +1/+1 counter on this Vehicle. (Activate each exhaust ability only once.)\nCrew 2",
+    "power": "5",
+    "toughness": "5",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Rowan, Fearless Sparkmage": {
+    "id": "Rowan, Fearless Sparkmage",
+    "name": "Rowan, Fearless Sparkmage",
+    "typeLine": "Legendary Planeswalker — Rowan",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Up to one target creature gets +3/+0 and gains first strike until end of turn.\n−2: Rowan deals 1 damage to each of up to two target creatures. Those creatures can't block this turn.\n−9: Gain control of all creatures until end of turn. Untap them. They gain haste until end of turn.",
+    "loyalty": "5"
+  },
+  "Doors of Durin": {
+    "id": "Doors of Durin",
+    "name": "Doors of Durin",
+    "typeLine": "Legendary Artifact",
+    "manaCost": "{3}{R}{G}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Whenever you attack, scry 2, then you may reveal the top card of your library. If a creature card is revealed this way, put it onto the battlefield tapped and attacking. Until your next turn, it gains trample if you control a Dwarf and hexproof if you control an Elf."
+  },
+  "Chandra's Regulator": {
+    "id": "Chandra's Regulator",
+    "name": "Chandra's Regulator",
+    "typeLine": "Legendary Artifact",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you activate a loyalty ability of a Chandra planeswalker, you may pay {1}. If you do, copy that ability. You may choose new targets for the copy.\n{1}, {T}, Discard a Mountain card or a red card: Draw a card."
+  },
+  "Rowan, Scholar of Sparks // Will, Scholar of Frost": {
+    "id": "Rowan, Scholar of Sparks // Will, Scholar of Frost",
+    "name": "Rowan, Scholar of Sparks // Will, Scholar of Frost",
+    "typeLine": "Legendary Planeswalker — Rowan // Legendary Planeswalker — Will",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Rowan, Scholar of Sparks: Instant and sorcery spells you cast cost {1} less to cast.\n+1: Rowan deals 1 damage to each opponent. If you've drawn three or more cards this turn, she deals 3 damage to each opponent instead.\n−4: You get an emblem with \"Whenever you cast an instant or sorcery spell, you may pay {2}. If you do, copy that spell. You may choose new targets for the copy.\"\n\nWill, Scholar of Frost: Instant and sorcery spells you cast cost {1} less to cast.\n+1: Up to one target creature has base power and toughness 0/2 until your next turn.\n−3: Draw two cards.\n−7: Exile up to five target permanents. For each permanent exiled this way, its controller creates a 4/4 blue and red Elemental creature token.",
+    "loyalty": "2"
+  },
+  "Ore-Rich Stalactite // Cosmium Catalyst": {
+    "id": "Ore-Rich Stalactite // Cosmium Catalyst",
+    "name": "Ore-Rich Stalactite // Cosmium Catalyst",
+    "typeLine": "Artifact // Artifact",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Ore-Rich Stalactite: {T}: Add {R}. Spend this mana only to cast an instant or sorcery spell.\nCraft with four or more red instant and/or sorcery cards {3}{R}{R} ({3}{R}{R}, Exile this artifact, Exile the four or more from your graveyard: Return this card transformed under its owner's control. Craft only as a sorcery.)\n\nCosmium Catalyst: {1}{R}, {T}: Choose an exiled card used to craft this artifact at random. You may cast that card without paying its mana cost.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Rage Extractor": {
+    "id": "Rage Extractor",
+    "name": "Rage Extractor",
+    "typeLine": "Artifact",
+    "manaCost": "{4}{R/P}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "({R/P} can be paid with either {R} or 2 life.)\nWhenever you cast a spell with {H} in its mana cost, this artifact deals damage equal to that spell's mana value to any target."
+  },
+  "Dragon's Smile": {
+    "id": "Dragon's Smile",
+    "name": "Dragon's Smile",
+    "typeLine": "Legendary Artifact — Vehicle",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flying\nOnce during each of your turns, you may pay {0} rather than pay the mana cost for a spell you cast from exile.\nWhenever Dragon's Smile deals combat damage to a player, that player exiles that many cards from the top of their library. You may play those cards this turn.\nCrew 3",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Tibalt, the Fiend-Blooded": {
+    "id": "Tibalt, the Fiend-Blooded",
+    "name": "Tibalt, the Fiend-Blooded",
+    "typeLine": "Legendary Planeswalker — Tibalt",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "+1: Draw a card, then discard a card at random.\n−4: Tibalt deals damage equal to the number of cards in target player's hand to that player.\n−6: Gain control of all creatures until end of turn. Untap them. They gain haste until end of turn.",
+    "loyalty": "2"
+  },
+  "Saheeli's Lattice // Mastercraft Raptor": {
+    "id": "Saheeli's Lattice // Mastercraft Raptor",
+    "name": "Saheeli's Lattice // Mastercraft Raptor",
+    "typeLine": "Artifact // Artifact Creature — Dinosaur",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Saheeli's Lattice: When this artifact enters, you may discard a card. If you do, draw two cards.\nCraft with one or more Dinosaurs {4}{R} ({4}{R}, Exile this artifact, Exile one or more Dinosaurs you control and/or Dinosaur cards from your graveyard: Return this card transformed under its owner's control. Craft only as a sorcery.)\n\nMastercraft Raptor: Mastercraft Raptor's power is equal to the total power of the exiled cards used to craft it."
+  },
+  "Invasion of Ergamon // Truga Cliffcharger": {
+    "id": "Invasion of Ergamon // Truga Cliffcharger",
+    "name": "Invasion of Ergamon // Truga Cliffcharger",
+    "typeLine": "Battle — Siege // Creature — Rhino",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Invasion of Ergamon: (As a Siege enters, choose an opponent to protect it. You and others can attack it. When it's defeated, exile it, then cast it transformed.)\nWhen this Siege enters, create a Treasure token. Then you may discard a card. If you do, draw a card.\n\nTruga Cliffcharger: Trample\nWhen this creature enters, you may discard a card. If you do, search your library for a land or battle card, reveal it, put it into your hand, then shuffle."
+  },
+  "Samut, the Tested": {
+    "id": "Samut, the Tested",
+    "name": "Samut, the Tested",
+    "typeLine": "Legendary Planeswalker — Samut",
+    "manaCost": "{2}{R}{G}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "+1: Up to one target creature gains double strike until end of turn.\n−2: Samut deals 2 damage divided as you choose among one or two targets.\n−7: Search your library for up to two creature and/or planeswalker cards, put them onto the battlefield, then shuffle.",
+    "loyalty": "4"
+  }
+}

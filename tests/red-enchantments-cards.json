@@ -1,0 +1,2903 @@
+{
+  "Food Fight": {
+    "id": "Food Fight",
+    "name": "Food Fight",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Artifacts you control have \"{2}, Sacrifice this artifact: It deals damage to any target equal to 1 plus the number of permanents named Food Fight you control.\""
+  },
+  "Meteor Storm": {
+    "id": "Meteor Storm",
+    "name": "Meteor Storm",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "{2}{R}{G}, Discard two cards at random: This enchantment deals 4 damage to any target."
+  },
+  "Goblin Bomb": {
+    "id": "Goblin Bomb",
+    "name": "Goblin Bomb",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, you may flip a coin. If you win the flip, put a fuse counter on this enchantment. If you lose the flip, remove a fuse counter from this enchantment.\nRemove five fuse counters from this enchantment and sacrifice it: It deals 20 damage to target player or planeswalker."
+  },
+  "Pandemonium": {
+    "id": "Pandemonium",
+    "name": "Pandemonium",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature enters, that creature's controller may have it deal damage equal to its power to any target of their choice."
+  },
+  "Rowan's Talent": {
+    "id": "Rowan's Talent",
+    "name": "Rowan's Talent",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant planeswalker\nEnchanted planeswalker has \"[+1]: Up to one target creature gets +2/+0 and gains first strike and trample until end of turn.\"\nWhenever you activate a loyalty ability of enchanted planeswalker, copy that ability. You may choose new targets for the copy."
+  },
+  "Raka Sanctuary": {
+    "id": "Raka Sanctuary",
+    "name": "Raka Sanctuary",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, if you control a white or blue permanent, this enchantment deals 1 damage to target creature. If you control a white permanent and a blue permanent, this enchantment deals 3 damage instead."
+  },
+  "Laccolith Rig": {
+    "id": "Laccolith Rig",
+    "name": "Laccolith Rig",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature becomes blocked, you may have it deal damage equal to its power to target creature. If you do, the first creature assigns no combat damage this turn."
+  },
+  "Lust for War": {
+    "id": "Lust for War",
+    "name": "Lust for War",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature becomes tapped, this Aura deals 3 damage to that creature's controller.\nEnchanted creature attacks each combat if able."
+  },
+  "Rebellion of the Flamekin": {
+    "id": "Rebellion of the Flamekin",
+    "name": "Rebellion of the Flamekin",
+    "typeLine": "Kindred Enchantment — Elemental",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you clash, you may pay {1}. If you do, create a 3/1 red Elemental Shaman creature token. If you won, that token gains haste until end of turn. (This ability triggers after the clash ends.)"
+  },
+  "Tectonic Instability": {
+    "id": "Tectonic Instability",
+    "name": "Tectonic Instability",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a land enters, tap all lands its controller controls."
+  },
+  "Manabarbs": {
+    "id": "Manabarbs",
+    "name": "Manabarbs",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player taps a land for mana, this enchantment deals 1 damage to that player."
+  },
+  "Curse of Hospitality": {
+    "id": "Curse of Hospitality",
+    "name": "Curse of Hospitality",
+    "typeLine": "Enchantment — Aura Curse",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant player\nCreatures attacking enchanted player have trample.\nWhenever a creature deals combat damage to enchanted player, that player exiles the top card of their library. Until end of turn, that creature's controller may play that card and they may spend mana as though it were mana of any color to cast that spell."
+  },
+  "Awaken the Ancient": {
+    "id": "Awaken the Ancient",
+    "name": "Awaken the Ancient",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant Mountain\nEnchanted Mountain is a 7/7 red Giant creature with haste. It's still a land."
+  },
+  "Expedited Inheritance": {
+    "id": "Expedited Inheritance",
+    "name": "Expedited Inheritance",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature is dealt damage, its controller may exile that many cards from the top of their library. They may play those cards until the end of their next turn."
+  },
+  "Blockbuster": {
+    "id": "Blockbuster",
+    "name": "Blockbuster",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{R}, Sacrifice this enchantment: It deals 3 damage to each tapped creature and each player."
+  },
+  "Fated Firepower": {
+    "id": "Fated Firepower",
+    "name": "Fated Firepower",
+    "typeLine": "Enchantment",
+    "manaCost": "{X}{R}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flash\nThis enchantment enters with X fire counters on it.\nIf a source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus an amount of damage equal to the number of fire counters on this enchantment instead."
+  },
+  "Blood Sun": {
+    "id": "Blood Sun",
+    "name": "Blood Sun",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this enchantment enters, draw a card.\nAll lands lose all abilities except mana abilities."
+  },
+  "Power Surge": {
+    "id": "Power Surge",
+    "name": "Power Surge",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's upkeep, this enchantment deals X damage to that player, where X is the number of untapped lands they controlled at the beginning of this turn."
+  },
+  "Keldon Mantle": {
+    "id": "Keldon Mantle",
+    "name": "Keldon Mantle",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\n{B}: Regenerate enchanted creature.\n{R}: Enchanted creature gets +1/+0 until end of turn.\n{G}: Enchanted creature gains trample until end of turn."
+  },
+  "Raid Bombardment": {
+    "id": "Raid Bombardment",
+    "name": "Raid Bombardment",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature you control with power 2 or less attacks, this enchantment deals 1 damage to the player or planeswalker that creature is attacking."
+  },
+  "Flowstone Embrace": {
+    "id": "Flowstone Embrace",
+    "name": "Flowstone Embrace",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\n{T}: Enchanted creature gets +2/-2 until end of turn."
+  },
+  "Ancient Runes": {
+    "id": "Ancient Runes",
+    "name": "Ancient Runes",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's upkeep, this enchantment deals damage to that player equal to the number of artifacts they control."
+  },
+  "Grand Melee": {
+    "id": "Grand Melee",
+    "name": "Grand Melee",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "All creatures attack each combat if able.\nAll creatures block each combat if able."
+  },
+  "Fiery Mantle": {
+    "id": "Fiery Mantle",
+    "name": "Fiery Mantle",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\n{R}: Enchanted creature gets +1/+0 until end of turn.\nWhen this Aura is put into a graveyard from the battlefield, return it to its owner's hand."
+  },
+  "Mana Cache": {
+    "id": "Mana Cache",
+    "name": "Mana Cache",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's end step, put a charge counter on this enchantment for each untapped land that player controls.\nRemove a charge counter from this enchantment: Add {C}. Any player may activate this ability but only during their turn before the end step.",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Raiding Party": {
+    "id": "Raiding Party",
+    "name": "Raiding Party",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This enchantment can't be the target of white spells or abilities from white sources.\nSacrifice an Orc: Each player may tap any number of untapped white creatures they control. For each creature tapped this way, that player chooses up to two Plains. Then destroy all Plains that weren't chosen this way by any player."
+  },
+  "Scald": {
+    "id": "Scald",
+    "name": "Scald",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player taps an Island for mana, this enchantment deals 1 damage to that player."
+  },
+  "Heart of Bogardan": {
+    "id": "Heart of Bogardan",
+    "name": "Heart of Bogardan",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Cumulative upkeep {2} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nWhen a player doesn't pay this enchantment's cumulative upkeep, this enchantment deals X damage to target player or planeswalker and each creature that player or that planeswalker's controller controls, where X is twice the number of age counters on this enchantment minus 2."
+  },
+  "Steam Vines": {
+    "id": "Steam Vines",
+    "name": "Steam Vines",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant land\nWhen enchanted land becomes tapped, destroy it and this Aura deals 1 damage to that land's controller. That player attaches this Aura to a land of their choice."
+  },
+  "Dragon Grip": {
+    "id": "Dragon Grip",
+    "name": "Dragon Grip",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Ferocious — If you control a creature with power 4 or greater, you may cast this spell as though it had flash. (You may cast it any time you could cast an instant.)\nEnchant creature\nEnchanted creature gets +2/+0 and has first strike."
+  },
+  "Cool but Rude": {
+    "id": "Cool but Rude",
+    "name": "Cool but Rude",
+    "typeLine": "Enchantment — Class",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhenever you attack, you may discard a card. If you do, draw a card.\n{1}{R}: Level 2\nWhenever you discard a card, this Class deals 2 damage to each opponent.\n{1}{R}: Level 3\nWhen this Class becomes level 3, search your library for a card, put it into your hand, shuffle, then discard a card at random."
+  },
+  "Hazoret's Favor": {
+    "id": "Hazoret's Favor",
+    "name": "Hazoret's Favor",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of combat on your turn, you may have target creature you control get +2/+0 and gain haste until end of turn. If you do, sacrifice it at the beginning of the next end step."
+  },
+  "Burning Earth": {
+    "id": "Burning Earth",
+    "name": "Burning Earth",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player taps a nonbasic land for mana, this enchantment deals 1 damage to that player."
+  },
+  "Citadel of Pain": {
+    "id": "Citadel of Pain",
+    "name": "Citadel of Pain",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's end step, this enchantment deals X damage to that player, where X is the number of untapped lands they control."
+  },
+  "Predatory Advantage": {
+    "id": "Predatory Advantage",
+    "name": "Predatory Advantage",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{G}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "At the beginning of each opponent's end step, if that player didn't cast a creature spell this turn, create a 2/2 green Lizard creature token."
+  },
+  "Aether Rift": {
+    "id": "Aether Rift",
+    "name": "Aether Rift",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, discard a card at random. If you discard a creature card this way, return it from your graveyard to the battlefield unless any player pays 5 life."
+  },
+  "Bulwark": {
+    "id": "Bulwark",
+    "name": "Bulwark",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, this enchantment deals X damage to target opponent, where X is the number of cards in your hand minus the number of cards in that player's hand."
+  },
+  "The Flame of Keld": {
+    "id": "The Flame of Keld",
+    "name": "The Flame of Keld",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Discard your hand.\nII — Draw two cards.\nIII — If a red source you control would deal damage to a permanent or player this turn, it deals that much damage plus 2 to that permanent or player instead."
+  },
+  "Underworld Breach": {
+    "id": "Underworld Breach",
+    "name": "Underworld Breach",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each nonland card in your graveyard has escape. The escape cost is equal to the card's mana cost plus exile three other cards from your graveyard. (You may cast cards from your graveyard for their escape cost.)\nAt the beginning of the end step, sacrifice this enchantment."
+  },
+  "Fires of Invention": {
+    "id": "Fires of Invention",
+    "name": "Fires of Invention",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You can cast spells only during your turn and you can cast no more than two spells each turn.\nYou may cast spells with mana value less than or equal to the number of lands you control without paying their mana costs."
+  },
+  "Crescent Island Temple": {
+    "id": "Crescent Island Temple",
+    "name": "Crescent Island Temple",
+    "typeLine": "Legendary Enchantment — Shrine",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When Crescent Island Temple enters, for each Shrine you control, create a 1/1 red Monk creature token with prowess. (Whenever you cast a noncreature spell, it gets +1/+1 until end of turn.)\nWhenever another Shrine you control enters, create a 1/1 red Monk creature token with prowess."
+  },
+  "Curse of Shaken Faith": {
+    "id": "Curse of Shaken Faith",
+    "name": "Curse of Shaken Faith",
+    "typeLine": "Enchantment — Aura Curse",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant player\nWhenever enchanted player casts a spell other than the first spell they cast each turn or copies a spell, this Aura deals 2 damage to them."
+  },
+  "Oath of Mages": {
+    "id": "Oath of Mages",
+    "name": "Oath of Mages",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's upkeep, that player chooses target player who has more life than they do and is their opponent. The first player may have this enchantment deal 1 damage to the second player."
+  },
+  "Widespread Thieving": {
+    "id": "Widespread Thieving",
+    "name": "Widespread Thieving",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Hideaway 5 (When this enchantment enters, look at the top five cards of your library, exile one face down, then put the rest on the bottom in a random order.)\nWhenever you cast a multicolored spell, create a Treasure token. Then you may pay {W}{U}{B}{R}{G}. If you do, you may play the exiled card without paying its mana cost."
+  },
+  "Pyromania": {
+    "id": "Pyromania",
+    "name": "Pyromania",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{R}, Discard a card at random: This enchantment deals 1 damage to any target.\n{1}{R}, Sacrifice this enchantment: It deals 1 damage to any target."
+  },
+  "Amok": {
+    "id": "Amok",
+    "name": "Amok",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}, Discard a card at random: Put a +1/+1 counter on target creature."
+  },
+  "Festival of Embers": {
+    "id": "Festival of Embers",
+    "name": "Festival of Embers",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "During your turn, you may cast instant and sorcery spells from your graveyard by paying 1 life in addition to their other costs.\nIf a card or token would be put into your graveyard from anywhere, exile it instead.\n{1}{R}: Sacrifice this enchantment."
+  },
+  "Splinter Twin": {
+    "id": "Splinter Twin",
+    "name": "Splinter Twin",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature has \"{T}: Create a token that's a copy of this creature, except it has haste. Exile that token at the beginning of the next end step.\""
+  },
+  "Planeswalker's Fury": {
+    "id": "Planeswalker's Fury",
+    "name": "Planeswalker's Fury",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{3}{R}: Target opponent reveals a card at random from their hand. This enchantment deals damage equal to that card's mana value to that player. Activate only as a sorcery."
+  },
+  "Latulla's Orders": {
+    "id": "Latulla's Orders",
+    "name": "Latulla's Orders",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flash\nEnchant creature\nWhenever enchanted creature deals combat damage to defending player, you may destroy target artifact that player controls."
+  },
+  "Curse of Bloodletting": {
+    "id": "Curse of Bloodletting",
+    "name": "Curse of Bloodletting",
+    "typeLine": "Enchantment — Aura Curse",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant player\nIf a source would deal damage to enchanted player, it deals double that damage to that player instead."
+  },
+  "Insolence": {
+    "id": "Insolence",
+    "name": "Insolence",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature becomes tapped, this Aura deals 2 damage to that creature's controller."
+  },
+  "Fall of Cair Andros": {
+    "id": "Fall of Cair Andros",
+    "name": "Fall of Cair Andros",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature an opponent controls is dealt excess noncombat damage, amass Orcs X, where X is that excess damage. (Put X +1/+1 counters on an Army you control. It's also an Orc. If you don't control an Army, create a 0/0 black Orc Army creature token first.)\n{7}{R}: This enchantment deals 7 damage to target creature."
+  },
+  "Uphill Battle": {
+    "id": "Uphill Battle",
+    "name": "Uphill Battle",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures played by your opponents enter tapped."
+  },
+  "Roiling Vortex": {
+    "id": "Roiling Vortex",
+    "name": "Roiling Vortex",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's upkeep, this enchantment deals 1 damage to them.\nWhenever a player casts a spell, if no mana was spent to cast that spell, this enchantment deals 5 damage to that player.\n{R}: Your opponents can't gain life this turn."
+  },
+  "Price of Glory": {
+    "id": "Price of Glory",
+    "name": "Price of Glory",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player taps a land for mana, if it's not that player's turn, destroy that land."
+  },
+  "Dragon Breath": {
+    "id": "Dragon Breath",
+    "name": "Dragon Breath",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature has haste.\n{R}: Enchanted creature gets +1/+0 until end of turn.\nWhen a creature with mana value 6 or greater enters, you may return this card from your graveyard to the battlefield attached to that creature."
+  },
+  "Mana Echoes": {
+    "id": "Mana Echoes",
+    "name": "Mana Echoes",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature enters, you may add an amount of {C} equal to the number of creatures you control that share a creature type with it.",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Experimental Frenzy": {
+    "id": "Experimental Frenzy",
+    "name": "Experimental Frenzy",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may look at the top card of your library any time.\nYou may play lands and cast spells from the top of your library.\nYou can't play lands or cast spells from your hand.\n{3}{R}: Destroy this enchantment."
+  },
+  "Harness the Storm": {
+    "id": "Harness the Storm",
+    "name": "Harness the Storm",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you cast an instant or sorcery spell from your hand, you may cast target card with the same name as that spell from your graveyard. (You still pay its costs.)"
+  },
+  "Goblin Caves": {
+    "id": "Goblin Caves",
+    "name": "Goblin Caves",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant land\nAs long as enchanted land is a basic Mountain, Goblin creatures get +0/+2."
+  },
+  "Ral and the Implicit Maze": {
+    "id": "Ral and the Implicit Maze",
+    "name": "Ral and the Implicit Maze",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — This Saga deals 2 damage to each creature and planeswalker your opponents control.\nII — You may discard a card. If you do, exile the top two cards of your library. You may play them until the end of your next turn.\nIII — Create a Spellgorger Weird token. (It's a {2}{R} 2/2 Weird creature with \"Whenever you cast a noncreature spell, put a +1/+1 counter on Spellgorger Weird.\")"
+  },
+  "Pyrostatic Pillar": {
+    "id": "Pyrostatic Pillar",
+    "name": "Pyrostatic Pillar",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player casts a spell with mana value 3 or less, this enchantment deals 2 damage to that player."
+  },
+  "Call of the Full Moon": {
+    "id": "Call of the Full Moon",
+    "name": "Call of the Full Moon",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +3/+2 and has trample. (It can deal excess combat damage to the player or planeswalker it's attacking.)\nAt the beginning of each upkeep, if a player cast two or more spells last turn, sacrifice this Aura."
+  },
+  "Aria of Flame": {
+    "id": "Aria of Flame",
+    "name": "Aria of Flame",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this enchantment enters, each opponent gains 10 life.\nWhenever you cast an instant or sorcery spell, put a verse counter on this enchantment, then it deals damage equal to the number of verse counters on it to target player or planeswalker."
+  },
+  "Sulfuric Vapors": {
+    "id": "Sulfuric Vapors",
+    "name": "Sulfuric Vapors",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If a red spell would deal damage to a permanent or player, it deals that much damage plus 1 to that permanent or player instead."
+  },
+  "City on Fire": {
+    "id": "City on Fire",
+    "name": "City on Fire",
+    "typeLine": "Enchantment",
+    "manaCost": "{5}{R}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nIf a source you control would deal damage to a permanent or player, it deals triple that damage instead."
+  },
+  "The Brothers' War": {
+    "id": "The Brothers' War",
+    "name": "The Brothers' War",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Create two tapped Powerstone tokens.\nII — Choose two target players. Until your next turn, each creature they control attacks the other chosen player each combat if able.\nIII — This Saga deals X damage to any target and X damage to any other target, where X is the number of artifacts you control."
+  },
+  "All Will Be One": {
+    "id": "All Will Be One",
+    "name": "All Will Be One",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you put one or more counters on a permanent or player, this enchantment deals that much damage to target opponent, creature an opponent controls, or planeswalker an opponent controls."
+  },
+  "Leyline of Combustion": {
+    "id": "Leyline of Combustion",
+    "name": "Leyline of Combustion",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nWhenever you and/or at least one permanent you control becomes the target of a spell or ability an opponent controls, this enchantment deals 2 damage to that player."
+  },
+  "Yotia Declares War": {
+    "id": "Yotia Declares War",
+    "name": "Yotia Declares War",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Read ahead (Choose a chapter and start with that many lore counters. Add one after your draw step. Skipped chapters don't trigger. Sacrifice after III.)\nI — Create a 0/2 colorless Thopter artifact creature token with flying named Ornithopter.\nII — Tap any number of untapped artifacts you control. When you do, this Saga deals that much damage to target creature or planeswalker.\nIII — Up to one target artifact you control becomes an artifact creature with base power and toughness 4/4 until end of turn."
+  },
+  "Outpace Oblivion": {
+    "id": "Outpace Oblivion",
+    "name": "Outpace Oblivion",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Start your engines! (If you have no speed, it starts at 1. It increases once on each of your turns when an opponent loses life. Max speed is 4.)\nWhen this enchantment enters, it deals 5 damage to up to one target creature or planeswalker.\n{2}, Sacrifice this enchantment: It deals 2 damage to each player who doesn't have max speed."
+  },
+  "Pain for All": {
+    "id": "Pain for All",
+    "name": "Pain for All",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature you control\nWhen this Aura enters, enchanted creature deals damage equal to its power to any other target.\nWhenever enchanted creature is dealt damage, it deals that much damage to each opponent."
+  },
+  "Tin Street Market": {
+    "id": "Tin Street Market",
+    "name": "Tin Street Market",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant land\nEnchanted land has \"{T}, Discard a card: Draw a card.\""
+  },
+  "Fiery Emancipation": {
+    "id": "Fiery Emancipation",
+    "name": "Fiery Emancipation",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If a source you control would deal damage to a permanent or player, it deals triple that damage to that permanent or player instead."
+  },
+  "Kumano Faces Kakkazan // Etching of Kumano": {
+    "id": "Kumano Faces Kakkazan // Etching of Kumano",
+    "name": "Kumano Faces Kakkazan // Etching of Kumano",
+    "typeLine": "Enchantment — Saga // Enchantment Creature — Human Shaman",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Kumano Faces Kakkazan: (As this Saga enters and after your draw step, add a lore counter.)\nI — This Saga deals 1 damage to each opponent and each planeswalker they control.\nII — When you next cast a creature spell this turn, that creature enters with an additional +1/+1 counter on it.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nEtching of Kumano: Haste\nIf a creature dealt damage this turn by a source you controlled would die, exile it instead."
+  },
+  "Last Light of Durin's Day": {
+    "id": "Last Light of Durin's Day",
+    "name": "Last Light of Durin's Day",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a Mountain you control enters, put a quest counter on this enchantment. If it has six or more quest counters on it, sacrifice it. If you do, search your hand and/or library for a Dragon card and put it onto the battlefield. If you search your library this way, shuffle.\nMountaincycling {2} ({2}, Discard this card: Search your library for a Mountain card, reveal it, put it into your hand, then shuffle.)"
+  },
+  "Break Through the Line": {
+    "id": "Break Through the Line",
+    "name": "Break Through the Line",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}: Target creature with power 2 or less gains haste until end of turn and can't be blocked this turn."
+  },
+  "Instill Furor": {
+    "id": "Instill Furor",
+    "name": "Instill Furor",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature has \"At the beginning of your end step, sacrifice this creature unless it attacked this turn.\""
+  },
+  "Melting": {
+    "id": "Melting",
+    "name": "Melting",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "All lands are no longer snow."
+  },
+  "Tahngarth's Rage": {
+    "id": "Tahngarth's Rage",
+    "name": "Tahngarth's Rage",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +3/+0 as long as it's attacking. Otherwise, it gets -2/-1."
+  },
+  "Unpredictable Cyclone": {
+    "id": "Unpredictable Cyclone",
+    "name": "Unpredictable Cyclone",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If a cycling ability of another nonland card would cause you to draw a card, instead exile cards from the top of your library until you exile a card that shares a card type with the cycled card. You may cast that card without paying its mana cost. Then put the exiled cards that weren't cast this way on the bottom of your library in a random order.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+  },
+  "Bard Class": {
+    "id": "Bard Class",
+    "name": "Bard Class",
+    "typeLine": "Enchantment — Class",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "(Gain the next level as a sorcery to add its ability.)\nLegendary creatures you control enter with an additional +1/+1 counter on them.\n{R}{G}: Level 2\nLegendary spells you cast cost {R}{G} less to cast. This effect reduces only the amount of colored mana you pay.\n{3}{R}{G}: Level 3\nWhenever you cast a legendary spell, exile the top two cards of your library. You may play them this turn."
+  },
+  "Magnetic Mountain": {
+    "id": "Magnetic Mountain",
+    "name": "Magnetic Mountain",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Blue creatures don't untap during their controllers' untap steps.\nAt the beginning of each player's upkeep, that player may choose any number of tapped blue creatures they control and pay {4} for each creature chosen this way. If the player does, untap those creatures."
+  },
+  "Goblin Shrine": {
+    "id": "Goblin Shrine",
+    "name": "Goblin Shrine",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant land\nAs long as enchanted land is a basic Mountain, Goblin creatures get +1/+0.\nWhen this Aura leaves the battlefield, it deals 1 damage to each Goblin creature."
+  },
+  "Sanctum of Shattered Heights": {
+    "id": "Sanctum of Shattered Heights",
+    "name": "Sanctum of Shattered Heights",
+    "typeLine": "Legendary Enchantment — Shrine",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}, Discard a land card or Shrine card: Sanctum of Shattered Heights deals X damage to target creature or planeswalker, where X is the number of Shrines you control."
+  },
+  "Vance's Blasting Cannons // Spitfire Bastion": {
+    "id": "Vance's Blasting Cannons // Spitfire Bastion",
+    "name": "Vance's Blasting Cannons // Spitfire Bastion",
+    "typeLine": "Legendary Enchantment // Legendary Land",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Vance's Blasting Cannons: At the beginning of your upkeep, exile the top card of your library. If it's a nonland card, you may cast that card this turn.\nWhenever you cast your third spell in a turn, you may transform Vance's Blasting Cannons.\n\nSpitfire Bastion: (Transforms from Vance's Blasting Cannons.)\n{T}: Add {R}.\n{2}{R}, {T}: Spitfire Bastion deals 3 damage to any target.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Fencer's Magemark": {
+    "id": "Fencer's Magemark",
+    "name": "Fencer's Magemark",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nCreatures you control that are enchanted get +1/+1 and have first strike."
+  },
+  "Taste for Mayhem": {
+    "id": "Taste for Mayhem",
+    "name": "Taste for Mayhem",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +2/+0.\nHellbent — Enchanted creature gets an additional +2/+0 as long as you have no cards in hand."
+  },
+  "Visions of Phyrexia": {
+    "id": "Visions of Phyrexia",
+    "name": "Visions of Phyrexia",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, exile the top card of your library. You may play that card this turn.\nAt the beginning of your end step, if you didn't play a card from exile this turn, create a tapped Powerstone token. (It's an artifact with \"{T}: Add {C}. This mana can't be spent to cast a nonartifact spell.\")",
+    "producedMana": [
+      "C"
+    ]
+  },
+  "Immersturm Battlefield": {
+    "id": "Immersturm Battlefield",
+    "name": "Immersturm Battlefield",
+    "typeLine": "Enchantment — Realm",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Hosted creatures get +2/+0 and have haste.\nHost {1}{R} ({1}{R}: Host target creature at this Realm. A Realm can host any number of creatures. Host only as a sorcery.)"
+  },
+  "Collective Inferno": {
+    "id": "Collective Inferno",
+    "name": "Collective Inferno",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Convoke (Your creatures can help cast this spell. Each creature you tap while casting this spell pays for {1} or one mana of that creature's color.)\nAs this enchantment enters, choose a creature type.\nDouble all damage that sources you control of the chosen type would deal."
+  },
+  "Runes of the Deus": {
+    "id": "Runes of the Deus",
+    "name": "Runes of the Deus",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{4}{R/G}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Enchant creature\nAs long as enchanted creature is red, it gets +1/+1 and has double strike. (It deals both first-strike and regular combat damage.)\nAs long as enchanted creature is green, it gets +1/+1 and has trample."
+  },
+  "Veteran's Voice": {
+    "id": "Veteran's Voice",
+    "name": "Veteran's Voice",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature you control\nTap enchanted creature: Target creature other than the creature tapped this way gets +2/+1 until end of turn. Activate only if enchanted creature is untapped."
+  },
+  "Way of the Pyromancer": {
+    "id": "Way of the Pyromancer",
+    "name": "Way of the Pyromancer",
+    "typeLine": "Legendary Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When Way of the Pyromancer enters, empower Jace 2. (Put two loyalty counters on a Jace token you control. If you don't control one, first create a blue Jace planeswalker token with \"[−1]: Surveil 1\" and \"[−3]: Draw a card.\")\nPlaneswalkers you control have \"[+1]: Add {R}.\"",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Antagonism": {
+    "id": "Antagonism",
+    "name": "Antagonism",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's end step, this enchantment deals 2 damage to that player unless one of their opponents was dealt damage this turn."
+  },
+  "Crevasse": {
+    "id": "Crevasse",
+    "name": "Crevasse",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures with mountainwalk can be blocked as though they didn't have mountainwalk."
+  },
+  "Imminent Doom": {
+    "id": "Imminent Doom",
+    "name": "Imminent Doom",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "This enchantment enters with a doom counter on it.\nWhenever you cast a spell with mana value equal to the number of doom counters on this enchantment, this enchantment deals that much damage to any target. Then put a doom counter on this enchantment."
+  },
+  "Goblin Kites": {
+    "id": "Goblin Kites",
+    "name": "Goblin Kites",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}: Target creature you control with toughness 2 or less gains flying until end of turn. Flip a coin at the beginning of the next end step. If you lose the flip, sacrifice that creature."
+  },
+  "Curse of Marit Lage": {
+    "id": "Curse of Marit Lage",
+    "name": "Curse of Marit Lage",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this enchantment enters, tap all Islands.\nIslands don't untap during their controllers' untap steps."
+  },
+  "Quest for Pure Flame": {
+    "id": "Quest for Pure Flame",
+    "name": "Quest for Pure Flame",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a source you control deals damage to an opponent, you may put a quest counter on this enchantment.\nRemove four quest counters from this enchantment and sacrifice it: If any source you control would deal damage to a permanent or player this turn, it deals double that damage to that permanent or player instead."
+  },
+  "Pyromancy": {
+    "id": "Pyromancy",
+    "name": "Pyromancy",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{3}, Discard a card at random: This enchantment deals damage to any target equal to the mana value of the discarded card."
+  },
+  "Chaos Moon": {
+    "id": "Chaos Moon",
+    "name": "Chaos Moon",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each upkeep, count the number of permanents. If the number is odd, until end of turn, red creatures get +1/+1 and whenever a player taps a Mountain for mana, that player adds an additional {R}. If the number is even, until end of turn, red creatures get -1/-1 and if a player taps a Mountain for mana, that Mountain produces colorless mana instead of any other type.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Victory of the Pyrohammer": {
+    "id": "Victory of the Pyrohammer",
+    "name": "Victory of the Pyrohammer",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step add a lore counter. Sacrifice after III.)\nI — Victory of the Pyrohammer deals 4 damage to each creature and each planeswalker. Victory of the Pyrohammer gains \"Damage isn't removed from creatures during cleanup steps.\"\nII, III — Victory of the Pyrohammer deals 1 damage to each creature and each planeswalker."
+  },
+  "Maximum Carnage": {
+    "id": "Maximum Carnage",
+    "name": "Maximum Carnage",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Until your next turn, each creature attacks each combat if able and attacks a player other than you if able.\nII — Add {R}{R}{R}.\nIII — This Saga deals 5 damage to each opponent.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Reptilian Reflection": {
+    "id": "Reptilian Reflection",
+    "name": "Reptilian Reflection",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you cycle a card, you may have this enchantment become a 5/4 Dinosaur creature with trample and haste in addition to its other types until end of turn."
+  },
+  "Hoarder's Overflow": {
+    "id": "Hoarder's Overflow",
+    "name": "Hoarder's Overflow",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this enchantment enters and whenever you expend 4, put a stash counter on it. (You expend 4 as you spend your fourth total mana to cast spells during a turn.)\n{1}{R}, Sacrifice this enchantment: Discard your hand, then draw cards equal to the number of stash counters on this enchantment."
+  },
+  "Words of War": {
+    "id": "Words of War",
+    "name": "Words of War",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}: The next time you would draw a card this turn, this enchantment deals 2 damage to any target instead."
+  },
+  "Betrothed of Fire": {
+    "id": "Betrothed of Fire",
+    "name": "Betrothed of Fire",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nSacrifice an untapped creature: Enchanted creature gets +2/+0 until end of turn.\nSacrifice enchanted creature: Creatures you control get +2/+0 until end of turn."
+  },
+  "Flowstone Blade": {
+    "id": "Flowstone Blade",
+    "name": "Flowstone Blade",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\n{R}: Enchanted creature gets +1/-1 until end of turn."
+  },
+  "Stormbind": {
+    "id": "Stormbind",
+    "name": "Stormbind",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "{2}, Discard a card at random: This enchantment deals 2 damage to any target."
+  },
+  "Curse of Stalked Prey": {
+    "id": "Curse of Stalked Prey",
+    "name": "Curse of Stalked Prey",
+    "typeLine": "Enchantment — Aura Curse",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant player\nWhenever a creature deals combat damage to enchanted player, put a +1/+1 counter on that creature."
+  },
+  "Raph's Bravado": {
+    "id": "Raph's Bravado",
+    "name": "Raph's Bravado",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "During your turn, attacking creatures get +1/+0."
+  },
+  "Clash of Realities": {
+    "id": "Clash of Realities",
+    "name": "Clash of Realities",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "All Spirits have \"When this permanent enters, you may have it deal 3 damage to target non-Spirit creature.\"\nNon-Spirit creatures have \"When this creature enters, you may have it deal 3 damage to target Spirit creature.\""
+  },
+  "Form of the Dragon": {
+    "id": "Form of the Dragon",
+    "name": "Form of the Dragon",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{R}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, this enchantment deals 5 damage to any target.\nAt the beginning of each end step, your life total becomes 5.\nCreatures without flying can't attack you."
+  },
+  "Case of the Burning Masks": {
+    "id": "Case of the Burning Masks",
+    "name": "Case of the Burning Masks",
+    "typeLine": "Enchantment — Case",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this Case enters, it deals 3 damage to target creature an opponent controls.\nTo solve — Three or more sources you controlled dealt damage this turn. (If unsolved, solve at the beginning of your end step.)\nSolved — Sacrifice this Case: Exile the top three cards of your library. Choose one of them. You may play that card this turn."
+  },
+  "Spider-Verse": {
+    "id": "Spider-Verse",
+    "name": "Spider-Verse",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "The \"legend rule\" doesn't apply to Spiders you control.\nWhenever you cast a spell from anywhere other than your hand, you may copy it. If you do, you may choose new targets for the copy. If the copy is a permanent spell, it gains haste. Do this only once each turn."
+  },
+  "Flame Blitz": {
+    "id": "Flame Blitz",
+    "name": "Flame Blitz",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your end step, this enchantment deals 5 damage to each planeswalker.\nCycling {2} ({2}, Discard this card: Draw a card.)"
+  },
+  "Gimli's Reckless Might": {
+    "id": "Gimli's Reckless Might",
+    "name": "Gimli's Reckless Might",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures you control have haste.\nFormidable — Whenever you attack, if creatures you control have total power 8 or greater, target attacking creature you control fights up to one target creature you don't control."
+  },
+  "Total War": {
+    "id": "Total War",
+    "name": "Total War",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player attacks with one or more creatures, destroy all untapped non-Wall creatures that player controls that didn't attack, except for creatures the player hasn't controlled continuously since the beginning of the turn."
+  },
+  "Rumbling Aftershocks": {
+    "id": "Rumbling Aftershocks",
+    "name": "Rumbling Aftershocks",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you cast a kicked spell, you may have this enchantment deal damage to any target equal to the number of times that spell was kicked."
+  },
+  "Raiding Schemes": {
+    "id": "Raiding Schemes",
+    "name": "Raiding Schemes",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{G}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Each noncreature spell you cast has conspire. (As you cast a noncreature spell, you may tap two untapped creatures you control that share a color with it. When you do, copy it and you may choose new targets for the copy. A copy of a permanent spell becomes a token.)"
+  },
+  "Fiery Bombardment": {
+    "id": "Fiery Bombardment",
+    "name": "Fiery Bombardment",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Chroma — {2}, Sacrifice a creature: This enchantment deals damage to any target equal to the number of red mana symbols in the sacrificed creature's mana cost."
+  },
+  "Pyromancer Ascension": {
+    "id": "Pyromancer Ascension",
+    "name": "Pyromancer Ascension",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you cast an instant or sorcery spell that has the same name as a card in your graveyard, you may put a quest counter on this enchantment.\nWhenever you cast an instant or sorcery spell while this enchantment has two or more quest counters on it, you may copy that spell. You may choose new targets for the copy."
+  },
+  "Possibility Storm": {
+    "id": "Possibility Storm",
+    "name": "Possibility Storm",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player casts a spell from their hand, that player exiles it, then exiles cards from the top of their library until they exile a card that shares a card type with it. That player may cast that card without paying its mana cost. Then they put all cards exiled with this enchantment on the bottom of their library in a random order."
+  },
+  "Kumano's Blessing": {
+    "id": "Kumano's Blessing",
+    "name": "Kumano's Blessing",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flash\nEnchant creature\nIf a creature dealt damage by enchanted creature this turn would die, exile it instead."
+  },
+  "Firebreathing": {
+    "id": "Firebreathing",
+    "name": "Firebreathing",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\n{R}: Enchanted creature gets +1/+0 until end of turn."
+  },
+  "Storm World": {
+    "id": "Storm World",
+    "name": "Storm World",
+    "typeLine": "World Enchantment",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's upkeep, this enchantment deals X damage to that player, where X is 4 minus the number of cards in their hand."
+  },
+  "Pick Up the Pace": {
+    "id": "Pick Up the Pace",
+    "name": "Pick Up the Pace",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature you control that entered this turn attacks, exile the top card of your library.\nYou may play cards exiled with this enchantment as long as you attacked this turn."
+  },
+  "In Residence": {
+    "id": "In Residence",
+    "name": "In Residence",
+    "typeLine": "Enchantment",
+    "manaCost": "{X}{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "When this enchantment enters, search your library for a legendary creature card with mana value X or less, exile it, then shuffle.\nAt the beginning of your first main phase, you may introduce the exiled card using an introduction you haven't used this game. If you do, put that card onto the battlefield. It gains haste. Exile that creature at the beginning of the next end step."
+  },
+  "Ghitu Firebreathing": {
+    "id": "Ghitu Firebreathing",
+    "name": "Ghitu Firebreathing",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flash (You may cast this spell any time you could cast an instant.)\nEnchant creature\n{R}: Enchanted creature gets +1/+0 until end of turn.\n{R}: Return this Aura to its owner's hand."
+  },
+  "Alpine Moon": {
+    "id": "Alpine Moon",
+    "name": "Alpine Moon",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As this enchantment enters, choose a nonbasic land card name.\nLands your opponents control with the chosen name lose all land types and abilities, and they gain \"{T}: Add one mana of any color.\"",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Powerbalance": {
+    "id": "Powerbalance",
+    "name": "Powerbalance",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever an opponent casts a spell, you may reveal the top card of your library. If you do, you may cast that card without paying its mana cost if the two spells have the same mana value."
+  },
+  "Stonehands": {
+    "id": "Stonehands",
+    "name": "Stonehands",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +0/+2.\n{R}: Enchanted creature gets +1/+0 until end of turn."
+  },
+  "Crown of Fury": {
+    "id": "Crown of Fury",
+    "name": "Crown of Fury",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +1/+0 and has first strike.\nSacrifice this Aura: Enchanted creature and other creatures that share a creature type with it get +1/+0 and gain first strike until end of turn."
+  },
+  "Gravity Sphere": {
+    "id": "Gravity Sphere",
+    "name": "Gravity Sphere",
+    "typeLine": "World Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "All creatures lose flying."
+  },
+  "Consuming Ferocity": {
+    "id": "Consuming Ferocity",
+    "name": "Consuming Ferocity",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant non-Wall creature\nEnchanted creature gets +1/+0.\nAt the beginning of your upkeep, put a +1/+0 counter on enchanted creature. If that creature has three or more +1/+0 counters on it, it deals damage equal to its power to its controller, then destroy that creature and it can't be regenerated."
+  },
+  "Mob Mentality": {
+    "id": "Mob Mentality",
+    "name": "Mob Mentality",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature has trample.\nWhenever all non-Wall creatures you control attack, enchanted creature gets +X/+0 until end of turn, where X is the number of attacking creatures."
+  },
+  "Stand or Fall": {
+    "id": "Stand or Fall",
+    "name": "Stand or Fall",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of combat on your turn, for each defending player, separate all creatures that player controls into two piles and that player chooses one. Only creatures in the chosen piles can block this turn."
+  },
+  "Cindervines": {
+    "id": "Cindervines",
+    "name": "Cindervines",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}{G}",
+    "cmc": 2,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Whenever an opponent casts a noncreature spell, this enchantment deals 1 damage to that player.\n{1}, Sacrifice this enchantment: Destroy target artifact or enchantment. This enchantment deals 2 damage to that permanent's controller."
+  },
+  "Impending Doom": {
+    "id": "Impending Doom",
+    "name": "Impending Doom",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +3/+3 and attacks each combat if able.\nWhen enchanted creature dies, this Aura deals 3 damage to that creature's controller."
+  },
+  "Brand of Ill Omen": {
+    "id": "Brand of Ill Omen",
+    "name": "Brand of Ill Omen",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nCumulative upkeep {R} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nEnchanted creature's controller can't cast creature spells."
+  },
+  "Rune of Speed": {
+    "id": "Rune of Speed",
+    "name": "Rune of Speed",
+    "typeLine": "Enchantment — Aura Rune",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant permanent\nWhen this Aura enters, draw a card.\nAs long as enchanted permanent is a creature, it gets +1/+0 and has haste.\nAs long as enchanted permanent is an Equipment, it has \"Equipped creature gets +1/+0 and has haste.\""
+  },
+  "Gremlin Infestation": {
+    "id": "Gremlin Infestation",
+    "name": "Gremlin Infestation",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant artifact\nAt the beginning of your end step, this Aura deals 2 damage to enchanted artifact's controller.\nWhen enchanted artifact is put into a graveyard, create a 2/2 red Gremlin creature token."
+  },
+  "Blood Moon": {
+    "id": "Blood Moon",
+    "name": "Blood Moon",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Nonbasic lands are Mountains."
+  },
+  "Case of the Crimson Pulse": {
+    "id": "Case of the Crimson Pulse",
+    "name": "Case of the Crimson Pulse",
+    "typeLine": "Enchantment — Case",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this Case enters, discard a card, then draw two cards.\nTo solve — You have no cards in hand. (If unsolved, solve at the beginning of your end step.)\nSolved — At the beginning of your upkeep, discard your hand, then draw two cards."
+  },
+  "Triple Triad": {
+    "id": "Triple Triad",
+    "name": "Triple Triad",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, each player exiles the top card of their library. Until end of turn, you may play the card you own exiled this way and each other card exiled this way with lesser mana value than it without paying their mana costs."
+  },
+  "Firebender Ascension": {
+    "id": "Firebender Ascension",
+    "name": "Firebender Ascension",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this enchantment enters, create a 2/2 red Soldier creature token with firebending 1.\nWhenever a creature you control attacking causes a triggered ability of that creature to trigger, put a quest counter on this enchantment. Then if it has four or more quest counters on it, you may copy that ability. You may choose new targets for the copy."
+  },
+  "Vicious Shadows": {
+    "id": "Vicious Shadows",
+    "name": "Vicious Shadows",
+    "typeLine": "Enchantment",
+    "manaCost": "{6}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature dies, you may have this enchantment deal damage to target player equal to the number of cards in that player's hand."
+  },
+  "Mana Flare": {
+    "id": "Mana Flare",
+    "name": "Mana Flare",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player taps a land for mana, that player adds one mana of any type that land produced.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Impatience": {
+    "id": "Impatience",
+    "name": "Impatience",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's end step, if that player didn't cast a spell this turn, this enchantment deals 2 damage to that player."
+  },
+  "Pyromancer's Swath": {
+    "id": "Pyromancer's Swath",
+    "name": "Pyromancer's Swath",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If an instant or sorcery source you control would deal damage to a permanent or player, it deals that much damage plus 2 to that permanent or player instead.\nAt the beginning of each end step, discard your hand."
+  },
+  "The Brute": {
+    "id": "The Brute",
+    "name": "The Brute",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +1/+0.\n{R}{R}{R}: Regenerate enchanted creature."
+  },
+  "Dracogenesis": {
+    "id": "Dracogenesis",
+    "name": "Dracogenesis",
+    "typeLine": "Enchantment",
+    "manaCost": "{6}{R}{R}",
+    "cmc": 8,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You may cast Dragon spells without paying their mana costs."
+  },
+  "Sidequest: Play Blitzball // World Champion, Celestial Weapon": {
+    "id": "Sidequest: Play Blitzball // World Champion, Celestial Weapon",
+    "name": "Sidequest: Play Blitzball // World Champion, Celestial Weapon",
+    "typeLine": "Enchantment // Legendary Artifact — Equipment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Sidequest: Play Blitzball: At the beginning of combat on your turn, target creature you control gets +2/+0 until end of turn.\nAt the end of combat on your turn, if a player was dealt 6 or more combat damage this turn, transform this enchantment, then attach it to a creature you control.\n\nWorld Champion, Celestial Weapon: Double Overdrive — Equipped creature gets +2/+0 and has double strike.\nEquip {3} ({3}: Attach to target creature you control. Equip only as a sorcery.)"
+  },
+  "Origin of the Hidden Ones": {
+    "id": "Origin of the Hidden Ones",
+    "name": "Origin of the Hidden Ones",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — This Saga deals 4 damage to any target.\nII — Create two 1/1 black Assassin creature tokens with menace.\nIII — Whenever an Assassin you control attacks this turn, create a 1/1 black Assassin creature token with menace that's tapped and attacking."
+  },
+  "Wild Evocation": {
+    "id": "Wild Evocation",
+    "name": "Wild Evocation",
+    "typeLine": "Enchantment",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's upkeep, that player reveals a card at random from their hand. If it's a land card, the player puts it onto the battlefield. Otherwise, the player casts it without paying its mana cost if able."
+  },
+  "Charred Foyer // Warped Space": {
+    "id": "Charred Foyer // Warped Space",
+    "name": "Charred Foyer // Warped Space",
+    "typeLine": "Enchantment — Room // Enchantment — Room",
+    "manaCost": "{3}{R} // {4}{R}{R}",
+    "cmc": 10,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Charred Foyer: At the beginning of your upkeep, exile the top card of your library. You may play it this turn.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)\n\nWarped Space: Once each turn, you may pay {0} rather than pay the mana cost for a spell you cast from exile.\n(You may cast either half. That door unlocks on the battlefield. As a sorcery, you may pay the mana cost of a locked door to unlock it.)"
+  },
+  "Blacksmith's Talent": {
+    "id": "Blacksmith's Talent",
+    "name": "Blacksmith's Talent",
+    "typeLine": "Enchantment — Class",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhen this Class enters, create a colorless Equipment artifact token named Sword with \"Equipped creature gets +1/+1\" and equip {2}.\n{2}{R}: Level 2\nAt the beginning of combat on your turn, attach target Equipment you control to up to one target creature you control.\n{3}{R}: Level 3\nDuring your turn, equipped creatures you control have double strike and haste."
+  },
+  "Collapsing Borders": {
+    "id": "Collapsing Borders",
+    "name": "Collapsing Borders",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Domain — At the beginning of each player's upkeep, that player gains 1 life for each basic land type among lands they control. Then this enchantment deals 3 damage to that player."
+  },
+  "Raging River": {
+    "id": "Raging River",
+    "name": "Raging River",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever one or more creatures you control attack, each defending player divides all creatures without flying they control into a \"left\" pile and a \"right\" pile. Then, for each attacking creature you control, choose \"left\" or \"right.\" That creature can't be blocked this combat except by creatures with flying and creatures in a pile with the chosen label."
+  },
+  "Connecting the Dots": {
+    "id": "Connecting the Dots",
+    "name": "Connecting the Dots",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature you control attacks, exile the top card of your library face down. (You can't look at it.)\n{1}{R}, Discard your hand, Sacrifice this enchantment: Put all cards exiled with this enchantment into their owners' hands."
+  },
+  "Planeswalkerificate": {
+    "id": "Planeswalkerificate",
+    "name": "Planeswalkerificate",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature you control\nEnchanted creature is a planeswalker in addition to its other types. Its toughness becomes its loyalty. (You change its toughness to activate loyalty abilities. Damage lowers toughness. Toughness doesn't heal at end of turn.) It can't block and gains the following abilities —\n+1: Add {R}{R}.\n−1: Exile the top card of your library. You may play it this turn.\n−X: This planeswalker deals X damage to any target.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Aether Flash": {
+    "id": "Aether Flash",
+    "name": "Aether Flash",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature enters, this enchantment deals 2 damage to it."
+  },
+  "Heretic's Punishment": {
+    "id": "Heretic's Punishment",
+    "name": "Heretic's Punishment",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{3}{R}: Choose any target, then mill three cards. This enchantment deals damage to that permanent or player equal to the greatest mana value among the milled cards."
+  },
+  "Orcish Mine": {
+    "id": "Orcish Mine",
+    "name": "Orcish Mine",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant land\nThis Aura enters with three ore counters on it.\nAt the beginning of your upkeep and whenever enchanted land becomes tapped, remove an ore counter from this Aura.\nWhen the last ore counter is removed from this Aura, destroy enchanted land and this Aura deals 2 damage to that land's controller."
+  },
+  "Heat Stroke": {
+    "id": "Heat Stroke",
+    "name": "Heat Stroke",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At end of combat, destroy each creature that blocked or was blocked this turn."
+  },
+  "Monsoon": {
+    "id": "Monsoon",
+    "name": "Monsoon",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{G}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "At the beginning of each player's end step, tap all untapped Islands that player controls and this enchantment deals X damage to the player, where X is the number of Islands tapped this way."
+  },
+  "Stensia Uprising": {
+    "id": "Stensia Uprising",
+    "name": "Stensia Uprising",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your end step, create a 1/1 red Human creature token. Then if you control exactly thirteen permanents, you may sacrifice this enchantment. When you do, it deals 7 damage to any target."
+  },
+  "Incendiary": {
+    "id": "Incendiary",
+    "name": "Incendiary",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nAt the beginning of your upkeep, you may put a fuse counter on this Aura.\nWhen enchanted creature dies, this Aura deals X damage to any target, where X is the number of fuse counters on this Aura."
+  },
+  "Mardu Runemark": {
+    "id": "Mardu Runemark",
+    "name": "Mardu Runemark",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +2/+2.\nEnchanted creature has first strike as long as you control a white or black permanent."
+  },
+  "Bludgeon Brawl": {
+    "id": "Bludgeon Brawl",
+    "name": "Bludgeon Brawl",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each noncreature, non-Equipment artifact is an Equipment with equip {X} and \"Equipped creature gets +X/+0,\" where X is that artifact's mana value."
+  },
+  "Dwarven Armory": {
+    "id": "Dwarven Armory",
+    "name": "Dwarven Armory",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{2}, Sacrifice a land: Put a +2/+2 counter on target creature. Activate only during any upkeep step."
+  },
+  "Mudslide": {
+    "id": "Mudslide",
+    "name": "Mudslide",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures without flying don't untap during their controllers' untap steps.\nAt the beginning of each player's upkeep, that player may choose any number of tapped creatures without flying they control and pay {2} for each creature chosen this way. If the player does, untap those creatures."
+  },
+  "Goblin Influx Array": {
+    "id": "Goblin Influx Array",
+    "name": "Goblin Influx Array",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Goblin spells you cast cost {R} less to cast. (If it doesn't require {R}, it costs {1} less to cast.)\nAt the beginning of your end step, conjure a random card from Goblin Influx Array's spellbook into your hand."
+  },
+  "The Rollercrusher Ride": {
+    "id": "The Rollercrusher Ride",
+    "name": "The Rollercrusher Ride",
+    "typeLine": "Legendary Enchantment",
+    "manaCost": "{X}{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Delirium — If a source you control would deal noncombat damage to a permanent or player while there are four or more card types among cards in your graveyard, it deals double that damage instead.\nWhen The Rollercrusher Ride enters, it deals X damage to each of up to X target creatures."
+  },
+  "Virtue of Courage // Embereth Blaze": {
+    "id": "Virtue of Courage // Embereth Blaze",
+    "name": "Virtue of Courage // Embereth Blaze",
+    "typeLine": "Enchantment // Instant — Adventure",
+    "manaCost": "{3}{R}{R} // {1}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Virtue of Courage: Whenever a source you control deals noncombat damage to an opponent, you may exile that many cards from the top of your library. You may play those cards this turn.\n\nEmbereth Blaze: Embereth Blaze deals 2 damage to any target. (Then exile this card. You may cast the enchantment later from exile.)"
+  },
+  "Five-Alarm Fire": {
+    "id": "Five-Alarm Fire",
+    "name": "Five-Alarm Fire",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature you control deals combat damage, put a blaze counter on this enchantment.\nRemove five blaze counters from this enchantment: It deals 5 damage to any target."
+  },
+  "Overabundance": {
+    "id": "Overabundance",
+    "name": "Overabundance",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Whenever a player taps a land for mana, that player adds one mana of any type that land produced, and this enchantment deals 1 damage to the player.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Elkin Lair": {
+    "id": "Elkin Lair",
+    "name": "Elkin Lair",
+    "typeLine": "World Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's upkeep, that player exiles a card at random from their hand. The player may play that card this turn. At the beginning of the next end step, if the player hasn't played the card, they put it into their graveyard."
+  },
+  "Brutal Suppression": {
+    "id": "Brutal Suppression",
+    "name": "Brutal Suppression",
+    "typeLine": "Enchantment",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Activated abilities of nontoken Rebels cost an additional \"Sacrifice a land\" to activate."
+  },
+  "Zone of Flame": {
+    "id": "Zone of Flame",
+    "name": "Zone of Flame",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{4}{R}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant zone (Battlefield, command, exile, and stack are shared zones. Each player has their own graveyard, hand, and library zones.)\nWhenever one or more cards enter or leave enchanted zone, Zone of Flame deals 1 damage to each opponent. (Tokens aren't cards.)"
+  },
+  "Ashling's Prerogative": {
+    "id": "Ashling's Prerogative",
+    "name": "Ashling's Prerogative",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As this enchantment enters, choose odd or even. (Zero is even.)\nEach creature with mana value of the chosen quality has haste.\nEach creature without mana value of the chosen quality enters tapped."
+  },
+  "Aggression": {
+    "id": "Aggression",
+    "name": "Aggression",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant non-Wall creature\nEnchanted creature has first strike and trample.\nAt the beginning of the end step of enchanted creature's controller, destroy that creature if it didn't attack this turn."
+  },
+  "Aether Revolt": {
+    "id": "Aether Revolt",
+    "name": "Aether Revolt",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Revolt — As long as a permanent left the battlefield under your control this turn, if a source you control would deal noncombat damage to an opponent or a permanent an opponent controls, it deals that much damage plus 2 instead.\nWhenever you get one or more {E}, this enchantment deals that much damage to any target."
+  },
+  "Meek Attack": {
+    "id": "Meek Attack",
+    "name": "Meek Attack",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{R}: You may put a creature card with total power and toughness 5 or less from your hand onto the battlefield. That creature gains haste. At the beginning of the next end step, sacrifice that creature."
+  },
+  "War's Toll": {
+    "id": "War's Toll",
+    "name": "War's Toll",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever an opponent taps a land for mana, tap all lands that player controls.\nIf a creature an opponent controls attacks, all creatures that opponent controls attack if able."
+  },
+  "Killer Instinct": {
+    "id": "Killer Instinct",
+    "name": "Killer Instinct",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{R}{G}",
+    "cmc": 6,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, reveal the top card of your library. If it's a creature card, put it onto the battlefield. That creature gains haste until end of turn. Sacrifice it at the beginning of the next end step."
+  },
+  "Korvold and the Noble Thief": {
+    "id": "Korvold and the Noble Thief",
+    "name": "Korvold and the Noble Thief",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI, II — Create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")\nIII — Exile the top three cards of target opponent's library. You may play those cards this turn.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Hand to Hand": {
+    "id": "Hand to Hand",
+    "name": "Hand to Hand",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "During combat, players can't cast instant spells or activate abilities that aren't mana abilities."
+  },
+  "Genju of the Spires": {
+    "id": "Genju of the Spires",
+    "name": "Genju of the Spires",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant Mountain\n{2}: Enchanted Mountain becomes a 6/1 red Spirit creature until end of turn. It's still a land.\nWhen enchanted Mountain is put into a graveyard, you may return this card from your graveyard to your hand."
+  },
+  "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki": {
+    "id": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+    "name": "Fable of the Mirror-Breaker // Reflection of Kiki-Jiki",
+    "typeLine": "Enchantment — Saga // Enchantment Creature — Goblin Shaman",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Fable of the Mirror-Breaker: (As this Saga enters and after your draw step, add a lore counter.)\nI — Create a 2/2 red Goblin Shaman creature token with \"Whenever this token attacks, create a Treasure token.\"\nII — You may discard up to two cards. If you do, draw that many cards.\nIII — Exile this Saga, then return it to the battlefield transformed under your control.\n\nReflection of Kiki-Jiki: {1}, {T}: Create a token that's a copy of another target nonlegendary creature you control, except it has haste. Sacrifice it at the beginning of the next end step."
+  },
+  "Sarkhan's Unsealing": {
+    "id": "Sarkhan's Unsealing",
+    "name": "Sarkhan's Unsealing",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever you cast a creature spell with power 4, 5, or 6, this enchantment deals 4 damage to any target.\nWhenever you cast a creature spell with power 7 or greater, this enchantment deals 4 damage to each opponent and each creature and planeswalker they control."
+  },
+  "Bedlam": {
+    "id": "Bedlam",
+    "name": "Bedlam",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures can't block."
+  },
+  "Circle of Flame": {
+    "id": "Circle of Flame",
+    "name": "Circle of Flame",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature without flying attacks you or a planeswalker you control, this enchantment deals 1 damage to that creature."
+  },
+  "Close Quarters": {
+    "id": "Close Quarters",
+    "name": "Close Quarters",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature you control becomes blocked, this enchantment deals 1 damage to any target."
+  },
+  "The Misty Mountains Cold": {
+    "id": "The Misty Mountains Cold",
+    "name": "The Misty Mountains Cold",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II, III, IV — Create a Treasure token. Then if you control four or more Treasures, sacrifice this Saga. If you do, create a 6/6 red Dragon creature token with flying. (A Treasure token is an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Vessel of Volatility": {
+    "id": "Vessel of Volatility",
+    "name": "Vessel of Volatility",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{R}, Sacrifice this enchantment: Add {R}{R}{R}{R}.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Waking the Trolls": {
+    "id": "Waking the Trolls",
+    "name": "Waking the Trolls",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{4}{R}{G}",
+    "cmc": 6,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Destroy target land.\nII — Put target land card from a graveyard onto the battlefield under your control.\nIII — Choose target opponent. If they control fewer lands than you, create a number of 4/4 green Troll Warrior creature tokens with trample equal to the difference."
+  },
+  "Mechanized Warfare": {
+    "id": "Mechanized Warfare",
+    "name": "Mechanized Warfare",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If a red or artifact source you control would deal damage to an opponent or a permanent an opponent controls, it deals that much damage plus 1 instead."
+  },
+  "Crackling Emergence": {
+    "id": "Crackling Emergence",
+    "name": "Crackling Emergence",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant land you control\nEnchanted land is a 3/3 red Spirit creature with haste. It's still a land.\nIf enchanted land would be destroyed, instead sacrifice this Aura and that land gains indestructible until end of turn."
+  },
+  "Grip of Chaos": {
+    "id": "Grip of Chaos",
+    "name": "Grip of Chaos",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a spell or ability is put onto the stack, if it has a single target, reselect its target at random. (Select from among all legal targets.)"
+  },
+  "Curse of Obsession": {
+    "id": "Curse of Obsession",
+    "name": "Curse of Obsession",
+    "typeLine": "Enchantment — Aura Curse",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant player\nAt the beginning of enchanted player's draw step, that player draws two additional cards.\nAt the beginning of enchanted player's end step, that player discards their hand."
+  },
+  "Tide of War": {
+    "id": "Tide of War",
+    "name": "Tide of War",
+    "typeLine": "Enchantment",
+    "manaCost": "{4}{R}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever one or more creatures block, flip a coin. If you win the flip, each blocking creature is sacrificed by its controller. If you lose the flip, each blocked creature is sacrificed by its controller."
+  },
+  "Fractured Loyalty": {
+    "id": "Fractured Loyalty",
+    "name": "Fractured Loyalty",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nWhenever enchanted creature becomes the target of a spell or ability, that spell or ability's controller gains control of that creature. (This effect lasts indefinitely.)"
+  },
+  "Natural Emergence": {
+    "id": "Natural Emergence",
+    "name": "Natural Emergence",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{G}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "When this enchantment enters, return a red or green enchantment you control to its owner's hand.\nLands you control are 2/2 creatures with first strike. They're still lands."
+  },
+  "Impending Disaster": {
+    "id": "Impending Disaster",
+    "name": "Impending Disaster",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, if there are seven or more lands on the battlefield, sacrifice this enchantment and destroy all lands."
+  },
+  "Goblin Assault": {
+    "id": "Goblin Assault",
+    "name": "Goblin Assault",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, create a 1/1 red Goblin creature token with haste.\nGoblin creatures attack each combat if able."
+  },
+  "No Quarter": {
+    "id": "No Quarter",
+    "name": "No Quarter",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature becomes blocked by a creature with lesser power, destroy the blocking creature.\nWhenever a creature blocks a creature with lesser power, destroy the attacking creature."
+  },
+  "Wild Research": {
+    "id": "Wild Research",
+    "name": "Wild Research",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{1}{W}: Search your library for an enchantment card and reveal that card. Put it into your hand, then discard a card at random. Then shuffle.\n{1}{U}: Search your library for an instant card and reveal that card. Put it into your hand, then discard a card at random. Then shuffle."
+  },
+  "Origin of Thor": {
+    "id": "Origin of Thor",
+    "name": "Origin of Thor",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — You may discard a card. If you do, draw two cards.\nII — Whenever you cast a spell this turn, put a +1/+1 counter on target creature you control.\nIII — Target creature you control deals damage equal to its power to each opponent."
+  },
+  "Bloodfire Infusion": {
+    "id": "Bloodfire Infusion",
+    "name": "Bloodfire Infusion",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature you control\n{R}, Sacrifice enchanted creature: This Aura deals damage equal to the sacrificed creature's power to each creature."
+  },
+  "Valakut Exploration": {
+    "id": "Valakut Exploration",
+    "name": "Valakut Exploration",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, exile the top card of your library. You may play that card for as long as it remains exiled.\nAt the beginning of your end step, if there are cards exiled with this enchantment, put them into their owner's graveyard, then this enchantment deals that much damage to each opponent."
+  },
+  "Toddler's Rage": {
+    "id": "Toddler's Rage",
+    "name": "Toddler's Rage",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Flash\nEnchant creature\nEnchanted creature gets +2/+1 and has tantrum. (It's like trample but for blocking.)"
+  },
+  "Heat Wave": {
+    "id": "Heat Wave",
+    "name": "Heat Wave",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Cumulative upkeep {R} (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)\nBlue creatures can't block creatures you control.\nNonblue creatures can't block creatures you control unless their controller pays 1 life for each blocking creature they control."
+  },
+  "Case of the Market Melee": {
+    "id": "Case of the Market Melee",
+    "name": "Case of the Market Melee",
+    "typeLine": "Enchantment — Case",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this Case enters, it deals 1 damage to any target.\nDamage isn't removed from creatures during cleanup steps.\nTo solve — Three or more creatures are damaged.\nSolved — Whenever you attack with one or more creatures, this Case deals that much damage divided as you choose among any number of targets."
+  },
+  "Havoc": {
+    "id": "Havoc",
+    "name": "Havoc",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever an opponent casts a white spell, they lose 2 life."
+  },
+  "Rivalry": {
+    "id": "Rivalry",
+    "name": "Rivalry",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of each player's upkeep, if that player controls more lands than each other player, this enchantment deals 2 damage to them."
+  },
+  "Invasion Plans": {
+    "id": "Invasion Plans",
+    "name": "Invasion Plans",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "All creatures block each combat if able.\nThe attacking player chooses how each creature blocks each combat."
+  },
+  "Goblin Festival": {
+    "id": "Goblin Festival",
+    "name": "Goblin Festival",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{2}: This enchantment deals 1 damage to any target. Flip a coin. If you lose the flip, choose one of your opponents. That player gains control of this enchantment."
+  },
+  "There and Back Again": {
+    "id": "There and Back Again",
+    "name": "There and Back Again",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Up to one target creature can't block for as long as you control this Saga. The Ring tempts you.\nII — Search your library for a Mountain card, put it onto the battlefield, then shuffle.\nIII — Create Smaug, a legendary 6/6 red Dragon creature token with flying, haste, and \"When Smaug dies, create fourteen Treasure tokens.\""
+  },
+  "Bestial Fury": {
+    "id": "Bestial Fury",
+    "name": "Bestial Fury",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nWhen this Aura enters, draw a card at the beginning of the next turn's upkeep.\nWhenever enchanted creature becomes blocked, it gets +4/+0 and gains trample until end of turn."
+  },
+  "Akki War Paint": {
+    "id": "Akki War Paint",
+    "name": "Akki War Paint",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant artifact or creature\nAs long as enchanted permanent is a creature, it gets +2/+1."
+  },
+  "Cavalcade of Calamity": {
+    "id": "Cavalcade of Calamity",
+    "name": "Cavalcade of Calamity",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature you control with power 1 or less attacks, this enchantment deals 1 damage to the player or planeswalker that creature is attacking."
+  },
+  "Shiv's Embrace": {
+    "id": "Shiv's Embrace",
+    "name": "Shiv's Embrace",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +2/+2 and has flying.\n{R}: Enchanted creature gets +1/+0 until end of turn."
+  },
+  "Confusion in the Ranks": {
+    "id": "Confusion in the Ranks",
+    "name": "Confusion in the Ranks",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever an artifact, creature, or enchantment enters, its controller chooses target permanent another player controls that shares a card type with it. Exchange control of those permanents."
+  },
+  "Weapons Manufacturing": {
+    "id": "Weapons Manufacturing",
+    "name": "Weapons Manufacturing",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a nontoken artifact you control enters, create a colorless artifact token named Munitions with \"When this token leaves the battlefield, it deals 2 damage to any target.\""
+  },
+  "Fatal Attraction": {
+    "id": "Fatal Attraction",
+    "name": "Fatal Attraction",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nWhen this Aura enters, it deals 2 damage to enchanted creature.\nAt the beginning of your upkeep, this Aura deals 4 damage to enchanted creature."
+  },
+  "Lavamancer's Skill": {
+    "id": "Lavamancer's Skill",
+    "name": "Lavamancer's Skill",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature has \"{T}: This creature deals 1 damage to target creature.\"\nAs long as enchanted creature is a Wizard, it has \"{T}: This creature deals 2 damage to target creature.\""
+  },
+  "Sneak Attack": {
+    "id": "Sneak Attack",
+    "name": "Sneak Attack",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{R}: You may put a creature card from your hand onto the battlefield. That creature gains haste. Sacrifice the creature at the beginning of the next end step."
+  },
+  "Arms Race": {
+    "id": "Arms Race",
+    "name": "Arms Race",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{3}{R}: You may put an artifact card from your hand onto the battlefield. That artifact gains haste. Sacrifice it at the beginning of the next end step."
+  },
+  "Earthbind": {
+    "id": "Earthbind",
+    "name": "Earthbind",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nWhen this Aura enters, if enchanted creature has flying, this Aura deals 2 damage to that creature and this Aura gains \"Enchanted creature loses flying.\""
+  },
+  "Bitter Work": {
+    "id": "Bitter Work",
+    "name": "Bitter Work",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Whenever you attack a player with one or more creatures with power 4 or greater, draw a card.\nExhaust — {4}: Earthbend 4. Activate only during your turn. (Target land you control becomes a 0/0 creature with haste that's still a land. Put four +1/+1 counters on it. When it dies or is exiled, return it to the battlefield tapped. Activate each exhaust ability only once.)"
+  },
+  "Artist's Talent": {
+    "id": "Artist's Talent",
+    "name": "Artist's Talent",
+    "typeLine": "Enchantment — Class",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(Gain the next level as a sorcery to add its ability.)\nWhenever you cast a noncreature spell, you may discard a card. If you do, draw a card.\n{2}{R}: Level 2\nNoncreature spells you cast cost {1} less to cast.\n{2}{R}: Level 3\nIf a source you control would deal noncombat damage to an opponent or a permanent an opponent controls, it deals that much damage plus 2 instead."
+  },
+  "Might Makes Right": {
+    "id": "Might Makes Right",
+    "name": "Might Makes Right",
+    "typeLine": "Enchantment",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of combat on your turn, if you control each creature on the battlefield with the greatest power, gain control of target creature an opponent controls until end of turn. Untap that creature. It gains haste until end of turn. (It can attack and {T} this turn.)"
+  },
+  "Dwarven Shrine": {
+    "id": "Dwarven Shrine",
+    "name": "Dwarven Shrine",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a player casts a spell, this enchantment deals X damage to that player, where X is twice the number of cards in all graveyards with the same name as that spell."
+  },
+  "Chaosphere": {
+    "id": "Chaosphere",
+    "name": "Chaosphere",
+    "typeLine": "World Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Creatures with flying can block only creatures with flying.\nCreatures without flying have reach. (They can block creatures with flying.)"
+  },
+  "Infectious Rage": {
+    "id": "Infectious Rage",
+    "name": "Infectious Rage",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +2/-1.\nWhen enchanted creature dies, choose a creature at random this Aura can enchant. Return this card to the battlefield attached to that creature."
+  },
+  "Pia's Revolution": {
+    "id": "Pia's Revolution",
+    "name": "Pia's Revolution",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a nontoken artifact is put into your graveyard from the battlefield, return that card to your hand unless target opponent has this enchantment deal 3 damage to them."
+  },
+  "Mishra's Domination": {
+    "id": "Mishra's Domination",
+    "name": "Mishra's Domination",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nAs long as you control enchanted creature, it gets +2/+2. Otherwise, it can't block."
+  },
+  "Paroxysm": {
+    "id": "Paroxysm",
+    "name": "Paroxysm",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nAt the beginning of the upkeep of enchanted creature's controller, that player reveals the top card of their library. If that card is a land card, destroy that creature. Otherwise, it gets +3/+3 until end of turn."
+  },
+  "Draconic Destiny": {
+    "id": "Draconic Destiny",
+    "name": "Draconic Destiny",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nEnchanted creature gets +1/+1 and has flying, haste, and \"{1}: This creature gets +1/+0 until end of turn.\" It's a Dragon in addition to its other types.\nWhen enchanted creature dies, return this card to its owner's hand."
+  },
+  "Crown of Flames": {
+    "id": "Crown of Flames",
+    "name": "Crown of Flames",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\n{R}: Enchanted creature gets +1/+0 until end of turn.\n{R}: Return this Aura to its owner's hand."
+  },
+  "Curse of the Pierced Heart": {
+    "id": "Curse of the Pierced Heart",
+    "name": "Curse of the Pierced Heart",
+    "typeLine": "Enchantment — Aura Curse",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant player\nAt the beginning of enchanted player's upkeep, this Aura deals 1 damage to that player or a planeswalker that player controls."
+  },
+  "Shadow of the Goblin": {
+    "id": "Shadow of the Goblin",
+    "name": "Shadow of the Goblin",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Unreliable Visions — At the beginning of your first main phase, discard a card. If you do, draw a card.\nUndying Vengeance — Whenever you play a land or cast a spell from anywhere other than your hand, this enchantment deals 1 damage to each opponent."
+  },
+  "Impromptu Raid": {
+    "id": "Impromptu Raid",
+    "name": "Impromptu Raid",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R/G}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "{2}{R/G}: Reveal the top card of your library. If it isn't a creature card, put it into your graveyard. Otherwise, put that card onto the battlefield. That creature gains haste. Sacrifice it at the beginning of the next end step."
+  },
+  "Fires of Mount Doom": {
+    "id": "Fires of Mount Doom",
+    "name": "Fires of Mount Doom",
+    "typeLine": "Legendary Enchantment",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When Fires of Mount Doom enters, it deals 2 damage to target creature an opponent controls. Destroy all Equipment attached to that creature.\n{2}{R}: Exile the top card of your library. You may play that card this turn. When you play a card this way, Fires of Mount Doom deals 2 damage to each player."
+  },
+  "Repercussion": {
+    "id": "Repercussion",
+    "name": "Repercussion",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Whenever a creature is dealt damage, this enchantment deals that much damage to that creature's controller."
+  },
+  "Trove of Temptation": {
+    "id": "Trove of Temptation",
+    "name": "Trove of Temptation",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Each opponent must attack you or a planeswalker you control with at least one creature each combat if able.\nAt the beginning of your end step, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Leyline of Resonance": {
+    "id": "Leyline of Resonance",
+    "name": "Leyline of Resonance",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "If this card is in your opening hand, you may begin the game with it on the battlefield.\nWhenever you cast an instant or sorcery spell that targets only a single creature you control, copy that spell. You may choose new targets for the copy."
+  },
+  "An-Zerrin Ruins": {
+    "id": "An-Zerrin Ruins",
+    "name": "An-Zerrin Ruins",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "As this enchantment enters, choose a creature type.\nCreatures of the chosen type don't untap during their controllers' untap steps."
+  },
+  "Tilonalli's Crown": {
+    "id": "Tilonalli's Crown",
+    "name": "Tilonalli's Crown",
+    "typeLine": "Enchantment — Aura",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Enchant creature\nWhen this Aura enters, it deals 1 damage to enchanted creature.\nEnchanted creature gets +3/+0 and has trample."
+  },
+  "Haphazard Bombardment": {
+    "id": "Haphazard Bombardment",
+    "name": "Haphazard Bombardment",
+    "typeLine": "Enchantment",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this enchantment enters, choose four nonenchantment permanents you don't control and put an aim counter on each of them.\nAt the beginning of your end step, if two or more permanents you don't control have an aim counter on them, destroy one of those permanents at random."
+  },
+  "Guild Feud": {
+    "id": "Guild Feud",
+    "name": "Guild Feud",
+    "typeLine": "Enchantment",
+    "manaCost": "{5}{R}",
+    "cmc": 6,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your upkeep, target opponent reveals the top three cards of their library, may put a creature card from among them onto the battlefield, then puts the rest into their graveyard. You do the same with the top three cards of your library. If two creatures are put onto the battlefield this way, those creatures fight each other."
+  },
+  "Spiteful Banditry": {
+    "id": "Spiteful Banditry",
+    "name": "Spiteful Banditry",
+    "typeLine": "Enchantment",
+    "manaCost": "{X}{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When this enchantment enters, it deals X damage to each creature.\nWhenever one or more creatures your opponents control die, you create a Treasure token. This ability triggers only once each turn."
+  },
+  "Aggressive Mining": {
+    "id": "Aggressive Mining",
+    "name": "Aggressive Mining",
+    "typeLine": "Enchantment",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You can't play lands.\nSacrifice a land: Draw two cards. Activate only once each turn."
+  }
+}
