@@ -737,8 +737,21 @@ const Bot = (() => {
     for (const inst of Object.values(s.cards)) inst.bot = facts(defs[inst.id] || {});
     G.log(s, `Opp is playing ${deck.name}${s.onDraw ? ' (on the draw)' : ' (on the play)'}.`);
     keepOrMulligan(s);
-    return { s, started: false, pending: null };
+    const bot = { s, started: false, pending: null };
+    if (opts.style && opts.style !== 'balanced' && STYLES.includes(opts.style)) bot.style = opts.style;
+    return bot;
   }
+
+  // Opp's play style (game.bot.style). Balanced is the rules the Simulator's guide describes; the others change
+  // when it attacks, whether it keeps instant removal for your turn, and which of your spells it counters:
+  //   aggressive: attacks unless a block kills its creature for nothing, never holds removal (it clears blockers
+  //     on its own turn, and takes smaller targets), counters only spells with mana value 4 or more.
+  //   careful: attacks only where no block can kill the attacker, and keeps blockers home when your creatures
+  //     could take half its life back.
+  //   controlling: attacks like careful, keeps mana open for a counterspell it holds (removal and wipes still
+  //     go out), takes smaller targets with removal, counters spells with mana value 2 or more.
+  const STYLES = ['balanced', 'aggressive', 'careful', 'controlling'];
+  const styleOf = game => (game && game.bot && STYLES.includes(game.bot.style) ? game.bot.style : 'balanced');
 
   // Keeps 7 with 2 to 5 lands. Otherwise takes one mulligan and puts the worst card on the bottom.
   function keepOrMulligan(s) {
@@ -917,7 +930,7 @@ const Bot = (() => {
 
   // Removal and creature burn Opp saves for your turn (on an attacker, or at your end step) when
   // it can answer you (game.bot.respond). Counterspells only ever answer your spells.
-  const heldForYourTurn = (game, inst) => !!game.bot.respond && /\binstant\b/i.test(front(inst.typeLine)) && !!inst.bot.spell
+  const heldForYourTurn = (game, inst) => !!game.bot.respond && styleOf(game) !== 'aggressive' && /\binstant\b/i.test(front(inst.typeLine)) && !!inst.bot.spell
     && !!(inst.bot.spell.kill || (inst.bot.spell.damage && inst.bot.spell.creature) || inst.bot.spell.removal);
 
   // The first thing Opp would hit with a removal effect ({ inst, st, s } or { player }), or null.
@@ -942,6 +955,7 @@ const Bot = (() => {
     const s = game.bot.s;
     const you = moment === 'attack' ? attackers || [] : yourCreatures(game, defOf);
     const options = [];
+    const keepOpen = moment === 'main' ? keepOpenFor(game) : 0;
     // Thalia and the like, on either table.
     const taxes = [{ rules: tableRules(s, defOf), own: true }, { rules: tableRules(game, defOf), own: false }];
     for (const zone of moment === 'main' ? ['command', 'hand', 'graveyard', 'library', 'exile'] : ['hand']) {
@@ -977,7 +991,7 @@ const Bot = (() => {
         if (f.spell && f.spell.kill) {
           if (held) continue;
           target = bestTarget(you);
-          if (!target || value(target.st) < (moment === 'attack' ? 3 : 4)) continue;
+          if (!target || value(target.st) < killBar(game, moment)) continue;
           priority += 10;
         } else if (f.spell && f.spell.damage) {
           const n = f.spell.damage;
@@ -996,15 +1010,27 @@ const Bot = (() => {
           // On your turn: only on an attacker worth it (when you attack), or your best creature (end step).
           if (moment !== 'main' && f.spell.removal) {
             const hit = removalPick(game, inst, f.spell.effect, defOf);
-            if (!hit || !hit.inst || value(hit.st) < (moment === 'attack' ? 3 : 4)) continue;
+            if (!hit || !hit.inst || value(hit.st) < killBar(game, moment)) continue;
             if (moment === 'attack' && !you.some(a => a.inst === hit.inst)) continue;
             priority += 10;
           }
         }
+        // Controlling: on its own turn it keeps mana open for a counterspell in hand (removal and wipes still go out).
+        if (moment === 'main' && keepOpen && !(f.spell && (f.spell.kill || f.spell.removal || f.spell.wipe || f.spell.damage)) && cmcOfInst(inst, defOf) + (x || 0) > G.available(s).total - keepOpen) continue;
         options.push({ iid, inst, zone, tax, target, priority, x });
       }
     }
     return options.sort((a, b) => b.priority - a.priority);
+  }
+  // How good a creature of yours must be (value) for Opp's removal: 3 on an attacker, 4 otherwise; less for aggressive
+  // (it doesn't wait for your turn) and controlling.
+  const killBar = (game, moment) => (moment === 'attack' ? 3 : 4) - ({ aggressive: 2, controlling: 1 }[styleOf(game)] || 0);
+  // Controlling Opp's mana to keep open: what its cheapest counterspell in hand costs (0 when it has none or isn't controlling).
+  function keepOpenFor(game) {
+    if (styleOf(game) !== 'controlling') return 0;
+    const s = game.bot.s;
+    const costs = s.zones.hand.map(iid => s.cards[iid]).filter(c => c.bot && c.bot.spell && c.bot.spell.counter).map(c => c.bot.cmc || 0);
+    return costs.length ? Math.min(...costs) : 0;
   }
   // The biggest X (up to 20) that Opp's mana pays for in cost ({X}{X}: each one), or 0.
   const withX = (cost, x) => String(cost).replace(/\{X\}/gi, `{${x}}`);
@@ -1211,7 +1237,7 @@ const Bot = (() => {
     const nc = game.noCounter;
     if (nc && nc.turn === game.turn && spellFits(spell, nc.what, defOf)) { delete game.noCounter; return false; }
     if (game.noCounterTurn && game.noCounterTurn.turn === game.turn && spellFits(spell, game.noCounterTurn.what, defOf)) return false;
-    if (cmc < 3 && !spell.commander) return false;
+    if (cmc < ({ aggressive: 4, controlling: 2 }[styleOf(game)] || 3) && !spell.commander) return false; // worth countering (play style)
     if (!oppMayCast(game, defOf, 'hand') || game.lockNoncreature) return false; // Silence, Grand Abolisher, Hope of Ghirapur (counterspells are noncreature)
     if (/\bcan't be countered\b/i.test((defOf(spell.id) || {}).oracle || '')) return false; // "This spell can't be countered."
     if (/^split second\b/im.test((defOf(spell.id) || {}).oracle || '')) return false; // Sudden Spoiling, Krosan Grip: no responses
@@ -34227,10 +34253,14 @@ const Bot = (() => {
     if (through >= game.life) return ready.map(c => c.inst.iid);
 
     // Safe to attack: no block you could make kills it without losing as much. With menace, only pairs can block.
+    // (Aggressive: any trade will do. Careful and controlling: no block may kill it at all.)
+    const style = styleOf(game);
     const safeFrom = (a, group) => {
       const r = combat(a.st, group);
+      if (!r.a.dead) return true;
+      if (style === 'careful' || style === 'controlling') return false;
       const lost = group.filter((b, i) => r.b[i].dead).reduce((n, b) => n + value(b), 0);
-      return !r.a.dead || lost >= value(a.st);
+      return style === 'aggressive' ? lost > 0 : lost >= value(a.st);
     };
     let attackers = ready.filter(a => {
       const can = blockers.filter(b => canBlock(b, a.st, game));
@@ -34241,7 +34271,8 @@ const Bot = (() => {
     // Keep blockers home if your creatures could swing back for lethal.
     const yourPower = you.filter(c => !noAttack(c.st)).map(c => hitOf(c.st)).sort((a, b) => b - a);
     const home = () => creatures(s, c => !c.tapped && (!attackers.some(a => a.inst === c) || botStats(c).kw.has('vigilance'))).length;
-    const danger = () => yourPower.slice(home()).reduce((n, p) => n + Math.max(0, p), 0) >= game.oppLife;
+    const risk = style === 'careful' || style === 'controlling' ? Math.ceil(game.oppLife / 2) : game.oppLife; // careful: half its life is too much
+    const danger = () => yourPower.slice(home()).reduce((n, p) => n + Math.max(0, p), 0) >= risk;
     while (danger()) {
       const goHome = attackers.filter(a => !a.st.kw.has('vigilance')).sort((a, b) => b.st.tou - a.st.tou)[0];
       if (!goHome) break;
@@ -35518,7 +35549,7 @@ const Bot = (() => {
     discardWatch, exiledOnEntry, mustAttack, morphCost, mutateHosts, mutate, rollDice, revealSpec, condition, colorsOfInst,
     hasConvoke, convokeTap, hasImprovise, improviseTap, revealUntil, damageEach, forcedBlocks, countersPut, attackedBy, fightOn, castTooEarly, loyaltyPaid, shuffled, condition, topCastable, topHaste, sagaChapters, loreUp, becameBlocked, encoreOf, encore, unearthOf, unearth, preparedSpell, castPrepared, flashbackLife, payEscalate, graveDiscards, mayhemOf, mayhemOk, escapeOf, escapeOk, devourOf, devourWhat, activationDiscount, landsFromTop, monarchExtra, manaTapped, returnLent, drawInstead, graveInstead, kotisOk, payKotis, tooWeakToAttack, graveAbilities, graveCost, useGraveAbility, landsFromGrave, cmcOfInst, nabCost, nab,
     // For coverage.js, which reads card text the same way the rest of this file does.
-    crewedNow, milled, approximations,
+    crewedNow, milled, approximations, STYLES, chooseAttackers,
     cycled, loyaltyTwice,
     parts: { B29, NEAR, VAMP, oppCtx, ZABAZ, ALL_BASICS, SELF_DEALT, NORIN, NORIN_SWIFT, ORDINAL_DRAW, GRIST, ANY_TARGETED,HEX_FROM, STONE_IDOL, BLACK_ROSE, TARGET_TAX, GRAVE_KIND, GRAVE_ONCE, FIGHT_GROW, BOAST_DISCOUNT, CHAMPION_BLOCK, SPREAD_COPY, GIADA, LEGEND_TWICE, MARVEL_COPY, SELF_TARGETED, BLOCK_TAX, NO_ENCHANTED_ATTACK, EXPEND, TOKEN_SWAP, BELLO, OPP_SAC_POISON, settleBloom, SAC_WATCH, BRUSHRAZER, LANDS_FROM_TOP, AUGUR, BROOD, VINECRASHER, ENTER_EQUAL, STATION_ROW, CRIME, DEFENSE, CONVERGE_ENTER, settleSpace, tappedWatch, WINGS, MASKWOOD, RHET_TOMB, VIZIER, MENTOR, DISCARD_PAY, settleZombies, PLUS_THOPTER, MARVEL, NISSA, settleEnergy, BLOCKED_PUMP, PACKLEADER, SOULBOND, LONE_WOLF, SILVERFUR, PROWLER, CLONE_POWER, KELPIE_CAST, STEWARD, OWN_COLORS_MANA, KOTIS, LAND_TO_GRAVE, LEAVE_GRAVE, KELPIE, REAVER, DAUTHI, AINOK, DIED_COUNTERS, LIER, BIBLIOPHILE, GRAVE_CDA, SIDAR, URN, HOARD, THREE_BLOCKERS, NOTION, NO_UNTAP, NABBER, FORTH, HARSH, MONARCH_DRAW, VERGE, PREVENT_GROW, CHAMPIONS, NO_SAC, ABILITY_DISCOUNT, gainFill, TOKEN_WATCH, ARWEN, DEARLY, REALM, SCRY_GROW, ERESTOR, UNITY, MIRKWOOD, WARMONGER, BATTALION, NOT_ATTACKING_YOU, CHAPTER, ABOLETH, WINNOW_CAST, WINNOW_BLOCK, ABOLISHER, HAND_ONLY, DOVESCAPE, KW_LOST, GRAVE_TYPES_DISCOUNT, PRO_FROM_OPPS, ALL_ISLANDS, ALL_FORESTS, GROUNDED, OPPS_ENTER_TAPPED, DRAW_CAP, GRAVE_LOCK, NO_GRAVE_CAST, SEARCH_TOP, SEARCH_WATCH, COIN_MASTERY, KRANG, SHUFFLE_BACK, PLUS_MUTAGEN, GRAVE_ALT, SELF_LOSS_WATCH, CLONE_OWN, CLONE_X, UNBOUND_DOUBLE, UNBOUND_COPY, NO_KIND_ATTACK, NO_COUNTERED_ATTACK, CAP_UNTAP, BLOCKED_GROW, SHARES_TYPE, moreLifeAttack, ROLL_ROW, SIEGE, DICE_PLUS, ROLL_WATCH, ATTACK_TWICE, DESERT, CAST_ONLY, CLONE_EOT, condition, OTHER_KEYWORDS, GRAVE_CAST3,
       // Would grantsOnce's staticExtra read this line of inst? (tried on an empty table)

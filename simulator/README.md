@@ -83,6 +83,23 @@ On the **Decks** tab, under **Play against the computer**, pick your deck, Opp's
 
 Some cards' lines are played as simpler ones (an X fixed at 3, a choice always made the same way) or not at all. Hover a card: **Simplified here** under its picture lists those lines and what each one does in the Simulator.
 
+**Opp plays** picks how the computer plays:
+
+| Style | Attacks | Removal | Counterspells |
+|---|---|---|---|
+| Balanced | the rules below | holds instant removal for your turn | your spells costing 3 or more |
+| Aggressive | also into trades, and with big creatures into blockers that would trade down | uses it on its own turn, on smaller targets too | only spells costing 4 or more |
+| Careful | only where no block can kill the attacker; keeps blockers home if you could take half its life back | like Balanced | like Balanced |
+| Controlling | like Careful | like Balanced, on smaller targets too | spells costing 2 or more, and it keeps mana open for its counterspell instead of tapping out |
+
+**Commander pod:** pick decks for **Opp 2** and **Opp 3** under **More computer players** to play against up to three computer players, each with its own deck (Commander decks start at 40 life). They take their turns after yours, in order. Each attacks whoever looks most dangerous (the most power on the table), or an aggressive one the player with the least life; when one attacks another computer player, that turn plays out at once and the message says what happened. A computer player who drops out leaves the game; you win when you're the last one left, and the game ends if you're out.
+
+- Your spells that hit "an opponent" or "target player" hit your **target** (🎯 on its table). Click **Target** on another player's table to switch. Picking a creature or player as a spell's target works on any table.
+- Each combat you attack one computer player (pick the same player for every attacker). That player becomes your target.
+- What's simplified: each computer player sees one opponent at a time (the one it attacks this turn, or you), so its "each opponent" effects hit only that player, and the effects of your cards that say "each opponent" hit only your target.
+
+**Game history** (on the Playtest tab, once you've finished a game): every game you finished, newest first, for all decks or one. Click a game for Opp's play style, who went first, life at the end, the cards each side cast and on which turn, what was on each table at the end, and the end of the game log. The latest 200 games keep their log and tables; older ones keep the summary.
+
 Opp plays with simple rules:
 
 - It keeps a hand with 2 to 5 lands, otherwise it mulligans once.

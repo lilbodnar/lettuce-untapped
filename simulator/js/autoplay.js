@@ -391,7 +391,18 @@ const Autoplay = (() => {
     return { deck: copyDeck(deck, name, rows.filter(r => r.qty > 0)), missing };
   }
 
-  return { match, goldfish, summarize, tally, cardImpact, withLands, withChanges, median };
+  // One computer player's whole turn against another (the app's Commander pod, when a computer player attacks
+  // another one). active and defender are { bot, life } (bot: Bot.create's), changed in place; defOf: id → card.
+  // Returns why each has lost ('' if they haven't).
+  function botTurn(active, defender, defOf) {
+    const current = defender.bot.s;
+    return isolated(() => current, defOf, () => {
+      takeTurn(active, defender, defOf);
+      return { defender: lost(defender), active: lost(active) };
+    });
+  }
+
+  return { match, goldfish, summarize, tally, cardImpact, withLands, withChanges, median, botTurn };
 })();
 
 if (typeof module !== 'undefined') module.exports = Autoplay;

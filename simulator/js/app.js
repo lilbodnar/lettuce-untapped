@@ -132,7 +132,7 @@
       m = { id: gameId, createdAt: Date.now(), online: null };
       games.unshift(m);
     }
-    Object.assign(m, { deckName: game.deckName, deckKey: game.deckKey, turn: game.turn, life: game.life, vsBot: game.bot ? game.bot.s.deckName : null, updatedAt: Date.now() });
+    Object.assign(m, { deckName: game.deckName, deckKey: game.deckKey, turn: game.turn, life: game.life, vsBot: game.pod && game.bot ? `pod of ${game.pod.seats.length}` : game.bot ? game.bot.s.deckName : null, updatedAt: Date.now() });
     if (linkedOnline(m)) {
       const names = Online.players().filter(p => p.pid !== Online.id()).map(p => p.name);
       Object.assign(m.online, { role: Online.role(), myId: Online.id(), activePid, players: names.length ? names : m.online.players || [] });
@@ -368,7 +368,8 @@
         if (b) list.push({ key: p.pid, name: p.name, why: why(b.life, b.poison || 0, 0) });
       }
     } else {
-      list.push({ key: 'opp', name: 'Opp', why: why(game.oppLife, 0, 0, hasBot() && game.bot.s.cantLose) });
+      if (isPod()) game.pod.seats.forEach(x => list.push({ key: x.pid, name: x.name, why: x.out ? 'out' : why(seatLife(x), 0, 0, seatBot(x).s.cantLose) }));
+      else list.push({ key: 'opp', name: 'Opp', why: why(game.oppLife, 0, 0, hasBot() && game.bot.s.cantLose) });
     }
     return list;
   }
@@ -382,6 +383,7 @@
     list.forEach(p => { if (!p.why) told.delete(p.key); });
     const fresh = list.filter(p => p.why && !told.has(p.key));
     game.dead = [...told, ...fresh.map(p => p.key)];
+    if (isPod()) podOut(fresh.map(p => p.key));
     if (!fresh.length) return;
     const alive = list.filter(p => !p.why);
     const lines = fresh.map(p => `${p.name === 'You' ? 'You lose' : `${p.name} loses`} (${p.why}).`);
@@ -396,21 +398,49 @@
     if (!alive.length) outcome = { result: 'draw', why: lines.join(' ') };
     else if (me) outcome = { result: 'loss', why: me.why };
     else if (alive.length === 1 && alive[0].key === 'me') outcome = { result: 'win', why: fresh.map(p => p.why).join(', ') };
-    showGameOver(title, lines, alive.length > 1, outcome);
+    // Against computer players the game is over once you're out (online, the others play on).
+    const youOut = !alive.some(p => p.key === 'me');
+    if (isPod() && youOut && alive.length) { title = 'You lose.'; delete game.pod.queue; delete game.pod.thenYours; }
+    showGameOver(title, lines, alive.length > 1 && !(isPod() && youOut), outcome);
+  }
+
+  // What Game history keeps about a finished game besides the result: Opp's play style, who went first, life at
+  // the end, mulligans, the cards each side cast (with the turn each was first cast), the nonland cards on each
+  // table at the end, and the log's last lines.
+  const HISTORY_FULL = 200; // games that keep their log and end-of-game table
+  function gameDetails() {
+    const nameOf = id => (def(id) || {}).name || id;
+    const cast = t => Object.entries((t && t.casts) || {}).sort((a, b) => a[1] - b[1]).slice(0, 60).map(([id, turn]) => [nameOf(id), turn]);
+    const mv = c => (c.cmc != null ? c.cmc : (c.bot && c.bot.cmc) || 0);
+    const board = t => (t ? t.zones.battlefield.map(iid => t.cards[iid]).filter(c => c && !Game.isLand(c) && !c.faceDown).sort((a, b) => mv(b) - mv(a)).slice(0, 12).map(c => c.name) : []);
+    const opp = hasBot() ? game.bot.s : null;
+    const oppLogs = isPod() ? game.pod.seats.flatMap(x => (seatBot(x).s.log || []).map(l => ({ ...l, msg: `${x.name}: ${l.msg}` }))) : (opp && opp.log) || [];
+    const log = [...(game.log || []), ...oppLogs].filter(l => l && l.msg).sort((a, b) => (a.at || 0) - (b.at || 0))
+      .slice(-80).map(l => ({ turn: l.turn, msg: String(l.msg).slice(0, 240) }));
+    const out = { onDraw: !!game.onDraw, mulligans: game.mulligans || 0, life: { you: game.life }, cast: cast(game), board: { you: board(game) }, log };
+    if (opp) Object.assign(out, { style: game.bot.style || 'balanced', oppCast: cast(opp), oppMulligans: opp.mulligans || 0 }, { life: { you: game.life, opp: game.oppLife }, board: { you: board(game), opp: board(opp) } });
+    if (isPod()) { // every computer player, in seat order
+      delete out.oppCast; delete out.life.opp; delete out.board.opp;
+      out.seats = game.pod.seats.map(x => { const t = seatBot(x).s; return { name: x.name, deck: t.deckName || '', life: seatLife(x), out: !!x.out, cast: cast(t), board: board(t) }; });
+    }
+    return out;
   }
 
   // Saves how this game went for you (once per game), for the deck's record here and in MTG Tracker.
   async function recordResult(result, why) {
     if (!game || game.recordedResult) return;
     game.recordedResult = result;
-    const opponents = hasBot() ? [`Opp (${game.bot.s.deckName || 'computer'})`]
+    const opponents = isPod() ? game.pod.seats.map(x => `${x.name} (${seatBot(x).s.deckName || 'computer'})`) : hasBot() ? [`Opp (${game.bot.s.deckName || 'computer'})`]
       : others().map(p => { const b = peers[p.pid] && peers[p.pid].board; return b && b.deckName ? `${p.name} (${b.deckName})` : p.name; });
     results.push({ at: Date.now(), deckKey: game.deckKey, deckName: game.deckName, mode: hasBot() ? 'bot' : isOnline() ? 'online' : 'solo',
-      opponents, result, turns: game.turn, why: String(why || '').slice(0, 200) });
+      opponents, result, turns: game.turn, why: String(why || '').slice(0, 200), ...gameDetails() });
     if (results.length > 2000) results.splice(0, results.length - 2000);
+    // The log and the table at the end take room, so only the latest games keep them (the rest keep the summary).
+    results.slice(0, -HISTORY_FULL).forEach(r => { delete r.log; delete r.board; });
     saveSoon();
     try { await Store.set('results', results); } catch (e) { status(`Couldn't save the result (${e.message}).`, 'warn'); }
-    status(`Saved a ${result} for ${game ? game.deckName : 'this deck'}. MTG Tracker shows it on the deck's page.`, 'ok');
+    status(`Saved a ${result} for ${game ? game.deckName : 'this deck'}. It's in Game history on the Playtest tab, and MTG Tracker shows it on the deck's page.`, 'ok');
+    refreshHistory();
   }
 
   // This deck's record from saved results: { win, loss, draw }.
@@ -658,7 +688,12 @@
     const targeted = pick => { if (srcCard && /\b(instant|sorcery)\b/i.test(String(srcCard.typeLine || '').split('//')[0])) Bot.spellTargeted(game, game, srcCard, pick, def, effectCtx(), eff); };
     const perm = (inst, st, mine, who, apply) => { if (Bot.canTarget(eff, inst, st, mine, false)) opts.push({ label: inst.name, who, card: inst, apply }); };
     game.zones.battlefield.map(iid => game.cards[iid]).forEach(inst => perm(inst, Bot.stats(inst, def(inst.id)), true, 'You', () => { Bot.applyTarget(game, game, inst, eff, req.src, def, game); targeted({ inst, s: game }); }));
-    if (hasBot()) {
+    if (isPod()) { // every computer player's permanents; picking one puts that player in focus
+      game.pod.seats.filter(x => !x.out).forEach(x => {
+        const s = seatBot(x).s;
+        s.zones.battlefield.map(iid => s.cards[iid]).forEach(inst => perm(inst, Bot.botStats(inst), false, x.name, () => { focusSeat(x.pid); Bot.applyTarget(game, s, inst, eff, req.src, def, game); targeted({ inst, s }); }));
+      });
+    } else if (hasBot()) {
       const s = game.bot.s;
       s.zones.battlefield.map(iid => s.cards[iid]).forEach(inst => perm(inst, Bot.botStats(inst), false, 'Opp', () => { Bot.applyTarget(game, s, inst, eff, req.src, def, game); targeted({ inst, s }); }));
     }
@@ -676,7 +711,7 @@
       if (f.players === 'any') players.push({ label: 'You', apply: () => Bot.damagePlayer(game, 'you', eff.n, req.src) });
       for (const p of others()) {
         players.push({ label: p.name, apply: () => {
-          if (p.pid === BOT) { Bot.damagePlayer(game, 'opp', eff.n, req.src); Bot.opponentDamaged(game, game, eff.n, def, effectCtx()); targeted({ player: 'opp' }); }
+          if (isBotPid(p.pid)) { focusSeat(p.pid); Bot.damagePlayer(game, 'opp', eff.n, req.src); Bot.opponentDamaged(game, game, eff.n, def, effectCtx()); targeted({ player: 'opp' }); }
           else { (game.oppHits = game.oppHits || []).push({ to: p.pid, d: -eff.n }); Game.log(game, `${req.src}: ${eff.n} damage to ${p.name}.`); Bot.opponentDamaged(game, game, eff.n, def, effectCtx()); }
         } });
       }
@@ -686,7 +721,7 @@
       players.push({ label: 'You', apply: () => Bot.playerEffect(game, 'you', eff, req.src) });
       for (const p of others()) {
         players.push({ label: p.name, apply: () => {
-          if (p.pid === BOT) { Bot.playerEffect(game, 'opp', eff, req.src); targeted({ player: 'opp' }); }
+          if (isBotPid(p.pid)) { focusSeat(p.pid); Bot.playerEffect(game, 'opp', eff, req.src); targeted({ player: 'opp' }); }
           else { (game.oppHits = game.oppHits || []).push({ to: p.pid, d: -eff.lose }); Game.log(game, `${req.src}: ${p.name} draws ${eff.draw} (on their side) and loses ${eff.lose} life.`); }
         } });
       }
@@ -1097,7 +1132,7 @@
     });
     if (game.bot.s.stack) return openRespond();
     if (w.phase === 'main2') {
-      if (w.yoursNext) startNextTurn();
+      if (w.yoursNext) afterOppTurn();
       const msg = [w.before, res.notes.length ? `Opp ${res.notes.join(', ')}.` : ''].filter(Boolean).join(' ') || 'Opp ended its turn.';
       return status(msg + outcome(), 'ok', 10000);
     }
@@ -1162,7 +1197,9 @@
     if (isOnline()) return passTurn();
     if (hasBot()) {
       if (game.bot.pending || game.bot.tapChoice || game.bot.s.stack) return oppWaiting();
-      return endStep(() => checkHandSize(() => oppTurn(true)));
+      if (isPod() && game.pod.queue) return status('The computer players are still taking their turns.', 'warn'); // (End turn again would start another round)
+      if (isPod() && game.life <= 0 && !game.cantLose) return status('You\'re out of this game. Reset or start a new one from Playtest.', 'warn');
+      return endStep(() => checkHandSize(() => (isPod() ? podRound(true) : oppTurn(true))));
     }
     endStep(() => checkHandSize(startNextTurn));
   }
@@ -1235,12 +1272,12 @@
   // ---------- online play ----------
 
   const isOnline = () => Online.active();
-  const nameOf = pid => (pid === BOT ? 'Opp' : pid === Online.id() ? 'You' : (Online.players().find(p => p.pid === pid) || {}).name || 'Player');
+  const nameOf = pid => (seatOf(pid) ? seatOf(pid).name : pid === BOT ? 'Opp' : pid === Online.id() ? 'You' : (Online.players().find(p => p.pid === pid) || {}).name || 'Player');
 
   // The other players, in seat order starting with the one after you. Playing alone against the
   // computer, that's Opp.
   function others() {
-    if (!isOnline()) return hasBot() ? [{ pid: BOT, name: 'Opp' }] : [];
+    if (!isOnline()) return isPod() ? game.pod.seats.filter(x => !x.out).map(x => ({ pid: x.pid, name: x.name })) : hasBot() ? [{ pid: BOT, name: 'Opp' }] : [];
     const ps = Online.players();
     const i = ps.findIndex(p => p.pid === Online.id());
     return i < 0 ? [] : [...ps.slice(i + 1), ...ps.slice(0, i)];
@@ -1433,13 +1470,99 @@
   const BOT = 'bot'; // Opp's id where other players have theirs
   const hasBot = () => !isOnline() && !!(game && game.bot);
 
+  // ---------- Commander pod: you against up to three computer players ----------
+  // game.pod = { seats: [{ pid, name, deckKey, bot, life, out }], focus, queue, thenYours }. The seat in focus is the
+  // one game.bot and game.oppLife hold (its own bot and life are null meanwhile), so all of Opp's code plays it as
+  // it always has: the seat whose turn it is, the one you attack, the one your spells hit. The other seats are
+  // drawn like online players' tables. A seat attacking another seat is played out at once (Autoplay.botTurn).
+  const isPod = () => !isOnline() && !!(game && game.pod && game.bot);
+  const seatOf = pid => (isPod() ? game.pod.seats.find(x => x.pid === pid) || null : null);
+  const isBotPid = pid => pid === BOT || !!seatOf(pid);
+  const focusPid = () => (isPod() ? game.pod.seats[game.pod.focus].pid : BOT);
+  const seatBot = x => (x.bot || game.bot); // the focused seat's table is game.bot
+  const seatLife = x => (x.life == null ? game.oppLife : x.life);
+  function focusSeat(pid) {
+    if (!isPod()) return;
+    const p = game.pod;
+    const i = p.seats.findIndex(x => x.pid === pid);
+    if (i < 0 || i === p.focus) return;
+    const cur = p.seats[p.focus];
+    cur.bot = game.bot; cur.life = game.oppLife;
+    const next = p.seats[i];
+    game.bot = next.bot; game.oppLife = next.life;
+    next.bot = null; next.life = null;
+    p.focus = i;
+  }
+  // Whom a computer player attacks on its turn: the biggest threat on the table (the most power on the battlefield),
+  // or for an aggressive one the player with the least life. 'you' or a seat. Ties go to you.
+  function podTarget(seat) {
+    const power = t => t.zones.battlefield.map(iid => t.cards[iid]).filter(c => c && Game.isCreature(c))
+      .reduce((n, c) => n + Math.max(0, Bot.stats(c, c.bot || def(c.id) || {}).pow || 0), 0);
+    const list = [{ who: 'you', life: game.life, power: power(game) },
+      ...game.pod.seats.filter(x => x !== seat && !x.out).map(x => ({ who: x, life: seatLife(x), power: power(seatBot(x).s) }))];
+    const aggressive = seatBot(seat).style === 'aggressive';
+    list.sort((a, b) => (aggressive ? a.life - b.life : b.power - a.power) || (a.who === 'you' ? -1 : b.who === 'you' ? 1 : 0));
+    return list[0].who;
+  }
+  // A round of the computer players' turns, in seat order; then yours (thenYours) unless you already drew for it.
+  function podRound(thenYours) {
+    act(() => { game.pod.queue = game.pod.seats.map((x, i) => i).filter(i => !game.pod.seats[i].out); game.pod.thenYours = thenYours; });
+    nextPodSeat();
+  }
+  function nextPodSeat() {
+    const p = game.pod;
+    if (!p.queue || !p.queue.length) {
+      const yours = p.thenYours;
+      // Back to the player you picked as your target (a computer player's turn against you put that one in focus).
+      const back = seatOf(p.target);
+      const pick = back && !back.out ? back : p.seats.find(x => !x.out);
+      act(() => { delete p.queue; delete p.thenYours; if (pick) focusSeat(pick.pid); });
+      if (yours) startNextTurn();
+      return;
+    }
+    const seat = p.seats[p.queue[0]];
+    act(() => { p.queue.shift(); });
+    if (seat.out || game.life <= 0) return nextPodSeat();
+    const target = podTarget(seat);
+    if (target === 'you') {
+      act(() => focusSeat(seat.pid));
+      status(`${seat.name}'s turn.`, 'ok');
+      return oppTurn(true);
+    }
+    // Against another computer player: its whole turn now.
+    let res;
+    act(() => {
+      const A = { bot: seatBot(seat), life: seatLife(seat) };
+      const D = { bot: seatBot(target), life: seatLife(target) };
+      res = Autoplay.botTurn(A, D, def);
+      for (const [x, o] of [[seat, A], [target, D]]) { if (x.life == null) game.oppLife = o.life; else x.life = o.life; }
+      Game.log(game, `${seat.name} took its turn against ${target.name}${res.defender ? ` (${target.name}: ${res.defender})` : ''}.`);
+    });
+    status(`${seat.name} took its turn against ${target.name} (${target.name} is at ${seatLife(target)} life).`, 'ok', 6000);
+    checkDeaths();
+    setTimeout(() => { if (game && game.pod && game.pod.queue) nextPodSeat(); }, 700);
+  }
+  // Seats that just lost are out of the rotation (their table stays as it was, unseen); focus moves off them.
+  function podOut(keys) {
+    const p = game.pod;
+    keys.forEach(k => { const x = seatOf(k); if (x) x.out = true; });
+    if (p.seats[p.focus].out) { const next = p.seats.find(x => !x.out); if (next) focusSeat(next.pid); }
+  }
+  // After a computer player's turn against you: the next one's, or yours.
+  function afterOppTurn() {
+    if (isPod() && game.pod.queue) return nextPodSeat();
+    startNextTurn();
+  }
+
   // Opp's table in the same shape another player's would arrive in, so it's drawn the same way.
   function peerOf(pid) {
-    if (pid !== BOT) return peers[pid];
+    if (!isBotPid(pid)) return peers[pid];
     if (!hasBot()) return null;
-    const s = game.bot.s;
+    const seat = seatOf(pid);
+    if (seat && seat.out) return null;
+    const s = seat ? seatBot(seat).s : game.bot.s;
     const piles = Game.arrangePiles(s, { width: Game.layout.cols * Game.CELL_W + 0.25, height: Game.layout.rows * Game.CELL_H, condense: !!ui.condenseTokens });
-    const board = Object.assign(Online.snapshot(s), { life: game.oppLife, cmdDamage: {}, piles });
+    const board = Object.assign(Online.snapshot(s), { life: seat ? seatLife(seat) : game.oppLife, cmdDamage: {}, piles });
     const cards = {};
     [...board.battlefield, ...board.graveyard, ...board.exile, ...board.command].forEach(c => { cards[c.iid] = c; });
     return { board, cards };
@@ -1447,6 +1570,12 @@
 
   const kwText = st => (st.kw.size ? ' · ' + [...st.kw].join(', ') : '');
   const outcome = () => (game.oppLife <= 0 && !(game.bot && game.bot.s.cantLose) ? ' Opp is at 0 life: you win!' : game.life <= 0 && !game.cantLose ? ' You are at 0 life: Opp wins.' : '');
+
+  // Opp's play styles (Bot.STYLES).
+  const STYLE_NAMES = [['balanced', 'Balanced'], ['aggressive', 'Aggressive'], ['careful', 'Careful'], ['controlling', 'Controlling']];
+  const STYLE_HELP = 'Balanced: the rules above. Aggressive: attacks into trades, uses removal right away, counters only big spells. '
+    + 'Careful: attacks only when no block can kill its creature, keeps more blockers home. Controlling: careful attacks, keeps mana open for counterspells, counters spells that cost 2 or more.';
+  const styleName = v => (STYLE_NAMES.find(([k]) => k === v) || STYLE_NAMES[0])[1];
 
   function botPanelHtml() {
     const decks = allDecks();
@@ -1462,7 +1591,12 @@
         <label class="muted small">Your deck <select id="botYou">${opts(you)}</select></label>
         <label class="muted small">Opp's deck <select id="botOpp">${opts(opp)}</select></label>
         <label class="muted small">Who goes first <select id="botFirst">${[['roll', 'Roll a d20'], ['me', 'You'], ['opp', 'Opp']].map(([v, l]) => `<option value="${v}" ${v === first ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
+        <label class="muted small" title="${esc(STYLE_HELP)}">Opp plays <select id="botStyle">${STYLE_NAMES.map(([v, l]) => `<option value="${v}" ${v === (ui.botStyle || 'balanced') ? 'selected' : ''}>${l}</option>`).join('')}</select></label>
         <button class="btn" data-act="bot-play">Play</button>
+      </div>
+      <div class="toolbar tight">
+        <span class="muted small" title="A Commander pod: you against up to three computer players, each with its own deck. They take their turns after yours, in order, and each attacks whoever looks most dangerous (an aggressive one goes after the lowest life).">More computer players:</span>
+        ${[2, 3].map(n => `<label class="muted small">Opp ${n} <select id="botOpp${n}"><option value="">none</option>${opts(has(ui['botOpp' + n]) ? ui['botOpp' + n] : '')}</select></label>`).join('')}
       </div>` : '<p class="muted">Add a deck below first.</p>'}`;
   }
 
@@ -1470,7 +1604,11 @@
     const you = $('#botYou').value;
     const opp = $('#botOpp').value;
     const first = $('#botFirst').value;
-    Object.assign(ui, { botYou: you, botOpp: opp, botFirst: first });
+    const style = ($('#botStyle') || {}).value || 'balanced';
+    const opp2 = ($('#botOpp2') || {}).value || '';
+    const opp3 = ($('#botOpp3') || {}).value || '';
+    Object.assign(ui, { botYou: you, botOpp: opp, botFirst: first, botStyle: style, botOpp2: opp2, botOpp3: opp3 });
+    const podKeys = [opp2, opp3].filter(Boolean);
     saveSoon();
     if (isOnline()) return status('Leave the online game first to play against the computer.');
     let oppFirst = first === 'opp';
@@ -1482,7 +1620,7 @@
       oppFirst = c > a;
       note = `d20 for first: you ${a}, Opp ${c}.`;
     }
-    await startGame(you, oppFirst, false, opp, note);
+    await startGame(you, oppFirst, false, opp, note, { style, podKeys });
   }
 
   // Opp's whole turn. If it attacks you pick blockers first; yoursNext then starts your turn.
@@ -1555,7 +1693,7 @@
       if (game.bot.wait) Object.assign(game.bot.wait, { yoursNext, before });
     });
     if (game.bot.s.stack) return openRespond();
-    if (yoursNext) startNextTurn();
+    if (yoursNext) afterOppTurn();
     const msg = [before, notes.length ? `Opp ${notes.join(', ')}.` : ''].filter(Boolean).join(' ') || 'Opp didn\'t do anything this turn.';
     status(msg + outcome(), 'ok', 10000);
   }
@@ -1572,7 +1710,8 @@
   // Who you can attack: each opponent, and each of their planeswalkers.
   function attackTargets() {
     const out = [];
-    for (const p of others()) {
+    const list = isPod() ? [...others()].sort((a, b) => (b.pid === focusPid()) - (a.pid === focusPid())) : others(); // your target first: the attack dialog's default
+    for (const p of list) {
       out.push({ value: p.pid + '|', label: p.name, pid: p.pid });
       const peer = peerOf(p.pid);
       for (const c of (peer && peer.board ? peer.board.battlefield : [])) {
@@ -1597,7 +1736,8 @@
   function combatRules() {
     const mine = Bot.tableRules(game, def);
     const byPid = {};
-    if (!isOnline() && hasBot()) byPid[BOT] = Bot.tableRules(game.bot.s, def);
+    if (isPod()) game.pod.seats.filter(x => !x.out).forEach(x => { byPid[x.pid] = Bot.tableRules(seatBot(x).s, def); });
+    else if (!isOnline() && hasBot()) byPid[BOT] = Bot.tableRules(game.bot.s, def);
     else others().forEach(p => { const peer = peers[p.pid]; byPid[p.pid] = (peer && peer.board && peer.board.rules) || cleanRules(null); });
     return { mine, byPid, all: [mine, ...Object.values(byPid)] };
   }
@@ -1877,6 +2017,11 @@
       const paid = Game.autoPay(game, `{${tax}}`);
       Game.log(game, `Paid {${tax}} to attack${paid && paid.sources.length ? ` (tapped ${paid.sources.join(', ')})` : ''}.`);
     };
+    if (isPod()) {
+      const pids = [...new Set(picks.map(p => p.to.pid))];
+      if (pids.length > 1) return status('Against the computer players, attack one of them per combat (pick the same player for every attacker).', 'warn', 8000);
+      act(() => { focusSeat(pids[0]); game.pod.target = pids[0]; });
+    }
     closeModal();
     if (!isOnline()) {
       // Interceptor in your graveyard: "you may pay {2}{B}. If you do, return this card … tapped and attacking."
@@ -2217,13 +2362,16 @@
   // replace: start over in place of the current game (Reset). Online, a new deck or a new
   // match replaces the game you're connected to. Otherwise it's a new saved game.
   // botKey: play against the computer with that deck (onDraw then means Opp goes first).
-  async function startGame(deckKey, onDraw, replace, botKey, note) {
+  // opts.style: Opp's play style (Bot.STYLES).
+  async function startGame(deckKey, onDraw, replace, botKey, note, opts = {}) {
     replace = replace || linkedOnline(gameMeta());
     const deck = findDeck(deckKey);
     const botDeck = botKey && findDeck(botKey);
     if (!deck || (botKey && !botDeck)) return status('That deck is no longer available.', 'error');
+    const podDecks = botDeck ? (opts.podKeys || []).map(findDeck) : []; // more computer players (a Commander pod)
+    if (podDecks.some(d => !d)) return status('One of the computer players\' decks is no longer available.', 'error');
     try {
-      await ensureDefs([...deck.rows, ...(botDeck ? botDeck.rows : [])].map(r => r.id), true);
+      await ensureDefs([...deck.rows, ...(botDeck ? botDeck.rows : []), ...podDecks.flatMap(d => d.rows)].map(r => r.id), true);
     } catch (e) {
       status('Could not reach Scryfall for card images. Playing with text cards. (' + e.message + ')', 'warn');
     }
@@ -2233,10 +2381,23 @@
       return defs;
     };
     const g = Game.create(deck, defsOf(deck), { onDraw });
+    g.trackCasts = true; // the turn each card is first cast, for Game history
     if (botDeck) {
-      g.bot = Bot.create(botDeck, defsOf(botDeck), { onDraw: !onDraw });
+      g.bot = Bot.create(botDeck, defsOf(botDeck), { onDraw: !onDraw, style: opts.style });
+      g.bot.s.trackCasts = true;
       g.oppLife = botDeck.rows.some(r => r.commander) ? 40 : 20;
-      Game.log(g, `${note ? note + ' ' : ''}Playing against Opp with ${botDeck.name}. ${onDraw ? 'Opp goes first.' : 'You go first.'}`);
+      const styled = g.bot.style ? ` Opp plays ${styleName(g.bot.style).toLowerCase()}.` : '';
+      if (podDecks.length) {
+        // A pod: seat 1 is in focus (its table is g.bot), the others keep theirs.
+        const lifeOf = d => (d.rows.some(r => r.commander) ? 40 : 20);
+        g.pod = { focus: 0, seats: [{ pid: BOT, name: 'Opp 1', deckKey: botKey, bot: null, life: null },
+          ...podDecks.map((d, i) => {
+            const b = Bot.create(d, defsOf(d), { onDraw: !onDraw, style: opts.style });
+            b.s.trackCasts = true;
+            return { pid: BOT + (i + 2), name: `Opp ${i + 2}`, deckKey: d.key, bot: b, life: lifeOf(d) };
+          })] };
+        Game.log(g, `${note ? note + ' ' : ''}Commander pod: you against ${[botDeck, ...podDecks].map((d, i) => `Opp ${i + 1} (${d.name})`).join(', ')}.${styled} ${onDraw ? 'The computer players go first.' : 'You go first.'}`);
+      } else Game.log(g, `${note ? note + ' ' : ''}Playing against Opp with ${botDeck.name}.${styled} ${onDraw ? 'Opp goes first.' : 'You go first.'}`);
     }
     useNewGame(g, replace);
     inLobby = false;
@@ -2246,7 +2407,7 @@
     setTab('play');
     saveSoon();
     syncSoon();
-    if (botDeck && onDraw) oppTurn(false);
+    if (botDeck && onDraw) { if (isPod()) podRound(false); else oppTurn(false); }
     else if (botDeck) status(`${note ? note + ' ' : ''}You go first.`, 'ok');
   }
 
@@ -2608,6 +2769,7 @@
     view.innerHTML = `
       ${gamesPanelHtml()}
       <section class="panel bot-panel">${botPanelHtml()}</section>
+      <section class="panel history-panel" id="historyPanel" ${results.length ? '' : 'hidden'}>${historyPanelHtml()}</section>
       <section class="panel online-panel" id="onlinePanel">${onlinePanelHtml()}</section>
       <section class="panel">
         <div class="page-head">
@@ -2646,6 +2808,55 @@
           <div class="toolbar"><button class="btn">Import deck</button><span class="muted small" id="pasteMsg"></span></div>
         </form>
       </section>`;
+  }
+
+  // Game history: every finished game (the results recordResult saved), newest first, for one deck or all of them.
+  // Each opens to its details: Opp's style, who went first, life at the end, the cards each side cast by turn,
+  // what was on the table at the end, and the log's last lines (the latest HISTORY_FULL games keep those two).
+  const HISTORY_PAGE = 25;
+  function historyPanelHtml() {
+    const decks = [...new Map(results.map(r => [r.deckKey, r.deckName])).entries()];
+    const pick = decks.some(([k]) => k === ui.historyDeck) ? ui.historyDeck : '';
+    const list = results.filter(r => !pick || r.deckKey === pick).slice().reverse();
+    const limit = ui.historyLimit || HISTORY_PAGE;
+    const rec = list.reduce((o, r) => { o[r.result] = (o[r.result] || 0) + 1; return o; }, {});
+    const when = at => new Date(at).toLocaleString([], { month: 'short', day: 'numeric', hour: 'numeric', minute: '2-digit' });
+    const label = { win: 'Won', loss: 'Lost', draw: 'Draw' };
+    const mode = r => (r.mode === 'bot' ? 'vs computer' : r.mode === 'online' ? 'online' : 'alone');
+    const castList = xs => (xs && xs.length ? xs.map(([n, t]) => `<span class="pill" title="First cast on turn ${t}">T${t} ${esc(n)}</span>`).join(' ') : '<span class="muted">nothing</span>');
+    const row = r => {
+      const details = [
+        r.style ? `Opp played ${esc(styleName(r.style).toLowerCase())}` : '',
+        r.onDraw != null ? (r.mode === 'bot' ? (r.onDraw ? 'Opp went first' : 'You went first') : (r.onDraw ? 'On the draw' : 'On the play')) : '',
+        r.life ? `Life at the end: you ${r.life.you}${r.life.opp != null ? `, Opp ${r.life.opp}` : ''}` : '',
+        r.mulligans ? `You mulliganed ${r.mulligans}` : '',
+      ].filter(Boolean).join(' · ');
+      const board = r.board ? [['You', r.board.you], ['Opp', r.board.opp]].filter(([, b]) => b).map(([w, b]) => `<div><b>${w}:</b> ${b.length ? esc(b.join(', ')) : '<span class="muted">nothing</span>'}</div>`).join('') : '';
+      return `<details class="history-game">
+        <summary><span class="${r.result === 'win' ? 'ok' : r.result === 'loss' ? 'bad' : ''}"><b>${label[r.result] || esc(r.result)}</b></span>
+          ${esc(r.deckName)} <span class="muted">${esc(mode(r))}${(r.opponents || []).length ? ` · ${esc(r.opponents.join(', '))}` : ''} · ${r.turns ? `turn ${r.turns} · ` : ''}${esc(when(r.at))}</span></summary>
+        <div class="history-body small">
+          ${r.why ? `<p>${esc(r.why)}</p>` : ''}
+          ${details ? `<p class="muted">${details}</p>` : ''}
+          ${r.cast ? `<p><b>You cast:</b> ${castList(r.cast)}</p>` : ''}
+          ${r.oppCast ? `<p><b>Opp cast:</b> ${castList(r.oppCast)}</p>` : ''}
+          ${(r.seats || []).map(x => `<p><b>${esc(x.name)}</b> <span class="muted">(${esc(x.deck)}) · ${x.out ? 'out' : `${x.life} life`}</span><br>cast: ${castList(x.cast)}${x.board && x.board.length ? `<br><span class="muted">on the table: ${esc(x.board.join(', '))}</span>` : ''}</p>`).join('')}
+          ${board ? `<div class="history-board"><b>On the table at the end</b>${board}</div>` : ''}
+          ${r.log && r.log.length ? `<details class="history-log"><summary>Game log (last ${r.log.length} lines)</summary>${r.log.map(l => `<div><span class="muted">T${l.turn}</span> ${esc(l.msg)}</div>`).join('')}</details>` : ''}
+          ${!r.cast && !r.log ? '<p class="muted">Saved before Game history kept details.</p>' : ''}
+        </div></details>`;
+    };
+    return `<div class="page-head"><h3>Game history <span class="muted small">(${list.length} game${list.length === 1 ? '' : 's'}: ${rec.win || 0}–${rec.loss || 0}${rec.draw ? `–${rec.draw}` : ''})</span></h3>
+        <label class="muted small">Deck <select data-act="history-deck"><option value="">All decks</option>${decks.map(([k, n]) => `<option value="${esc(k)}" ${k === pick ? 'selected' : ''}>${esc(n)}</option>`).join('')}</select></label></div>
+      <p class="muted small">Every game you finished, newest first. Click one to see the cards each side cast, the table at the end and the log.</p>
+      ${list.slice(0, limit).map(row).join('')}
+      ${list.length > limit ? `<div class="toolbar"><button class="btn sm ghost" data-act="history-more">Show ${Math.min(HISTORY_PAGE, list.length - limit)} more</button></div>` : ''}`;
+  }
+  function refreshHistory() {
+    const el = $('#historyPanel');
+    if (!el) return;
+    el.hidden = !results.length;
+    el.innerHTML = historyPanelHtml();
   }
 
   // Every saved game. Each one keeps going until you end it, even after the app is closed.
@@ -3225,13 +3436,13 @@
     }
     const zoneBtn = (z, label) => `<button class="link-btn" data-act="opp-zone" data-pid="${esc(p.pid)}" data-z="${z}" ${b[z].length ? '' : 'disabled'}>${label} <b>${b[z].length}</b></button>`;
     head.innerHTML = `
-      <b class="opp-name" title="${esc(b.deckName)}">${esc(p.name)}</b>${p.pid === BOT ? ` <span class="opp-stat" title="Opp's deck">${esc(b.deckName)}</span>` : ''}
+      <b class="opp-name" title="${esc(b.deckName)}">${esc(p.name)}</b>${isBotPid(p.pid) ? ` <span class="opp-stat" title="Their deck">${esc(b.deckName)}</span>` : ''}${isPod() ? (p.pid === focusPid() ? ' <span class="opp-stat focus" title="Your spells that hit an opponent hit this player, and your attacks go here unless you pick another.">🎯 Your target</span>' : ` <button class="opp-stat" data-act="pod-focus" data-pid="${esc(p.pid)}" title="Make this the player your spells that hit an opponent hit">Target</button>`) : ''}
       ${activePid === p.pid ? '<span class="turn-badge">Their turn</span>' : ''}
       <div class="life" title="${esc(p.name)}'s life. − and + change it for them."><span>♥</span><button data-act="hit" data-pid="${esc(p.pid)}" data-d="-1">−</button><b>${b.life}</b><button data-act="hit" data-pid="${esc(p.pid)}" data-d="1">+</button></div>
       ${b.poison ? `<span class="opp-stat poison">☠ <b>${b.poison}</b></span>` : ''}
       ${b.energy ? `<span class="opp-stat" title="Energy">⚡ <b>${b.energy}</b></span>` : ''}
-      ${p.pid === BOT && game.bot.s.stack && game.bot.s.cards[game.bot.s.stack.iid] ? `<button class="opp-stat poison" data-act="respond-open" title="Waiting for your answer. Click to let it resolve or answer it.">Casting ${esc(game.bot.s.cards[game.bot.s.stack.iid].name)}…</button>` : ''}
-      ${(p.pid === BOT ? Bot.monarchOf(game) === 'opp' : b.monarch) ? '<span class="opp-stat" title="The monarch draws a card at the end of their turn. Deal them combat damage to take it.">👑 Monarch</span>' : ''}
+      ${p.pid === focusPid() && game.bot.s.stack && game.bot.s.cards[game.bot.s.stack.iid] ? `<button class="opp-stat poison" data-act="respond-open" title="Waiting for your answer. Click to let it resolve or answer it.">Casting ${esc(game.bot.s.cards[game.bot.s.stack.iid].name)}…</button>` : ''}
+      ${(isBotPid(p.pid) ? p.pid === focusPid() && Bot.monarchOf(game) === 'opp' : b.monarch) ? '<span class="opp-stat" title="The monarch draws a card at the end of their turn. Deal them combat damage to take it.">👑 Monarch</span>' : ''}
       ${Object.entries(b.cmdDamage || {}).filter(([, n]) => n).map(([k, n]) => `<span class="opp-stat ${n >= 21 ? 'poison' : ''}" title="Commander damage ${esc(p.name)} has taken from ${esc(k.replace('|', "'s "))}">⚔ ${esc(k.split('|')[1])} <b>${n}</b></span>`).join('')}
       <span class="opp-stat">T<b>${b.turn}</b></span>
       <span class="opp-stat">Hand <b>${b.hand}</b></span>
@@ -3391,7 +3602,8 @@
       lines.push(...chat.map(c => ({ at: c.at, msg: c.msg, who: c.from, chat: true })));
       lines = lines.sort((a, b) => b.at - a.at).slice(0, 150);
     } else if (hasBot()) {
-      lines.push(...game.bot.s.log.slice(0, 80).map(l => ({ at: l.at || 0, turn: l.turn, msg: l.msg, who: BOT })));
+      if (isPod()) game.pod.seats.forEach(x => lines.push(...seatBot(x).s.log.slice(0, 80).map(l => ({ at: l.at || 0, turn: l.turn, msg: l.msg, who: x.pid }))));
+      else lines.push(...game.bot.s.log.slice(0, 80).map(l => ({ at: l.at || 0, turn: l.turn, msg: l.msg, who: BOT })));
       lines = lines.sort((a, b) => b.at - a.at).slice(0, 150);
     }
     el.innerHTML = lines.map(l => (l.chat
@@ -4740,7 +4952,7 @@
   }
 
   function confirmRestart(onDraw) {
-    if (confirm(`Reset and start ${game.deckName} over ${onDraw ? 'on the draw' : 'on the play'}? The current game will be lost.`)) startGame(game.deckKey, onDraw, true, hasBot() ? game.bot.s.deckKey : null);
+    if (confirm(`Reset and start ${game.deckName} over ${onDraw ? 'on the draw' : 'on the play'}? The current game will be lost.`)) startGame(game.deckKey, onDraw, true, isPod() ? game.pod.seats[0].deckKey : hasBot() ? game.bot.s.deckKey : null, '', { style: hasBot() ? game.bot.style : undefined, podKeys: isPod() ? game.pod.seats.slice(1).map(x => x.deckKey) : [] });
   }
 
   // ---------- zone viewer (graveyard, exile, library search, top N) ----------
@@ -5869,6 +6081,7 @@
       case 'resume': return setTab('play');
       case 'resume-game': return resumeGame(b.dataset.id);
       case 'delete-game': return deleteGame(b.dataset.id);
+      case 'history-more': ui.historyLimit = (ui.historyLimit || HISTORY_PAGE) + HISTORY_PAGE; return refreshHistory();
       case 'reconnect': return reconnectGame();
       case 'refresh': await connectTracker(); return renderDecks();
       case 'delete-deck': {
@@ -5915,10 +6128,16 @@
       case 'bot-play': return playBot();
       case 'hit': {
         const d = Number(b.dataset.d);
-        if (b.dataset.pid === BOT) return act(() => { game.oppLife += d; });
+        if (seatOf(b.dataset.pid) && b.dataset.pid !== focusPid()) return act(() => { seatOf(b.dataset.pid).life += d; });
+        if (isBotPid(b.dataset.pid)) return act(() => { game.oppLife += d; });
         return act(() => { (game.oppHits = game.oppHits || []).push({ to: b.dataset.pid, d }); });
       }
       case 'opp-zone': return openOppZone(b.dataset.pid, b.dataset.z);
+      case 'pod-focus': {
+        if (!isPod() || game.bot.pending || game.bot.tapChoice || game.bot.s.stack) return status('Finish answering the computer player first.', 'warn');
+        act(() => { focusSeat(b.dataset.pid); game.pod.target = b.dataset.pid; });
+        return status(`Your spells that hit an opponent now hit ${nameOf(b.dataset.pid)}.`, 'ok');
+      }
       case 'next-turn': return nextTurn();
       case 'draw': return act(() => Game.drawCards(game, 1));
       case 'untap': return act(() => Game.untapAll(game));
@@ -5984,6 +6203,7 @@
       renderLinkState();
       renderDecks();
     } else if (a === 'size') { ui.cardW = Number(t.value); saveSoon(); renderBoard(); }
+    else if (a === 'history-deck') { ui.historyDeck = t.value; ui.historyLimit = 0; saveSoon(); refreshHistory(); }
     else if (a === 'online-deck') {
       ui.onlineDeck = t.value;
       saveSoon();
