@@ -710,7 +710,16 @@ const Bot = (() => {
   }
 
   // An instant or sorcery runEffect can do all of ("Each opponent loses 3 life.", "Proliferate."): { effect: text }, or null.
+  // It only reads the text (no table), so each text's answer is kept: Opp's table works it out for every card
+  // it's made with, and a 100-card deck used to take seconds. A copy goes out, so no card can change another's.
+  const PLAIN_SPELL_CACHE = new Map();
   function plainSpell(oracle) {
+    const key = String(oracle || '');
+    if (!PLAIN_SPELL_CACHE.has(key)) { if (PLAIN_SPELL_CACHE.size >= 50000) PLAIN_SPELL_CACHE.clear(); PLAIN_SPELL_CACHE.set(key, plainSpell0(key)); }
+    const v = PLAIN_SPELL_CACHE.get(key);
+    return v && { ...v };
+  }
+  function plainSpell0(oracle) {
     const text = String(oracle || '').split('\n').map(l => l.replace(/\([^)]*\)/g, '').trim()).filter(l => l && !keywords(l).length).join(' ');
     if (!text || !canRunAll(text, { hitOpps: true, other: true, target: true })) return null;
     // removal: it destroys, exiles, bounces or burns a target ("Destroy target nonblack creature.")
@@ -26028,7 +26037,17 @@ const Bot = (() => {
       "if you cast it, copy your last single-target spell this turn for each other creature the opponent controls");
     return t;
   }
+  // Without a table (g null: coverage, canRunAll) the answer only depends on the text, and the same texts are
+  // settled over and over, so those answers are kept.
+  const SETTLE_CACHE = new Map();
   function settleIfYouDo(text, g) {
+    if (g) return settleIfYouDo0(text, g);
+    const k = String(text);
+    let v = SETTLE_CACHE.get(k);
+    if (v === undefined) { v = settleIfYouDo0(k, null); if (SETTLE_CACHE.size >= 100000) SETTLE_CACHE.clear(); SETTLE_CACHE.set(k, v); }
+    return v;
+  }
+  function settleIfYouDo0(text, g) {
     let t = String(text).trim().replace(ONCE_EACH_TURN, ''); // done by runEffect
     t = settleBatch29(t, g);
     t = settleVampires(t);
