@@ -1,0 +1,2104 @@
+{
+  "Doorman": {
+    "id": "Doorman",
+    "name": "Doorman",
+    "typeLine": "Legendary Creature — Mutant Hero",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Until end of turn, target creature can't be blocked by creatures with power 2 or less and/or Walls.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Nomadic Elf": {
+    "id": "Nomadic Elf",
+    "name": "Nomadic Elf",
+    "typeLine": "Creature — Elf Nomad",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{1}{G}: Add one mana of any color.",
+    "power": "2",
+    "toughness": "2",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Sparring Dummy": {
+    "id": "Sparring Dummy",
+    "name": "Sparring Dummy",
+    "typeLine": "Artifact Creature — Scarecrow",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Defender\n{T}: Mill a card. You may put a land card milled this way into your hand. You gain 2 life if a Lesson card is milled this way. (To mill a card, put the top card of your library into your graveyard.)",
+    "power": "1",
+    "toughness": "3"
+  },
+  "Courier of Comestibles": {
+    "id": "Courier of Comestibles",
+    "name": "Courier of Comestibles",
+    "typeLine": "Creature — Human Citizen",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, you may search your library for a Food card, reveal it, put it into your hand, then shuffle. If you don't put a card into your hand this way, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Sharp-Eyed Rookie": {
+    "id": "Sharp-Eyed Rookie",
+    "name": "Sharp-Eyed Rookie",
+    "typeLine": "Creature — Human Detective",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Vigilance\nWhenever a creature you control enters, if its power is greater than this creature's power or its toughness is greater than this creature's toughness, put a +1/+1 counter on this creature and investigate. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Werewolf Pack Leader": {
+    "id": "Werewolf Pack Leader",
+    "name": "Werewolf Pack Leader",
+    "typeLine": "Creature — Human Werewolf",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, draw a card.\n{3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and isn't a Human.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Talara's Battalion": {
+    "id": "Talara's Battalion",
+    "name": "Talara's Battalion",
+    "typeLine": "Creature — Elf Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Cast this spell only if you've cast another green spell this turn.\nTrample",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Armored Scrapgorger": {
+    "id": "Armored Scrapgorger",
+    "name": "Armored Scrapgorger",
+    "typeLine": "Creature — Phyrexian Beast",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This creature gets +3/+0 as long as it has three or more oil counters on it.\n{T}: Add one mana of any color.\nWhenever this creature becomes tapped, exile target card from a graveyard and put an oil counter on this creature.",
+    "power": "0",
+    "toughness": "3",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Gatecreeper Vine": {
+    "id": "Gatecreeper Vine",
+    "name": "Gatecreeper Vine",
+    "typeLine": "Creature — Plant",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Defender\nWhen this creature enters, you may search your library for a basic land card or a Gate card, reveal it, put it into your hand, then shuffle.",
+    "power": "0",
+    "toughness": "2"
+  },
+  "Snarespinner": {
+    "id": "Snarespinner",
+    "name": "Snarespinner",
+    "typeLine": "Creature — Spider",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reach\nWhenever this creature blocks a creature with flying, this creature gets +2/+0 until end of turn.",
+    "power": "1",
+    "toughness": "3"
+  },
+  "Rime Tender": {
+    "id": "Rime Tender",
+    "name": "Rime Tender",
+    "typeLine": "Snow Creature — Human Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Untap another target snow permanent.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Hardbristle Bandit": {
+    "id": "Hardbristle Bandit",
+    "name": "Hardbristle Bandit",
+    "typeLine": "Creature — Plant Rogue",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Add one mana of any color.\nWhenever you commit a crime, untap this creature. This ability triggers only once each turn. (Targeting opponents, anything they control, and/or cards in their graveyards is a crime.)",
+    "power": "1",
+    "toughness": "1",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Greenwheel Liberator": {
+    "id": "Greenwheel Liberator",
+    "name": "Greenwheel Liberator",
+    "typeLine": "Creature — Elf Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Revolt — This creature enters with two +1/+1 counters on it if a permanent left the battlefield under your control this turn.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Spellwild Ouphe": {
+    "id": "Spellwild Ouphe",
+    "name": "Spellwild Ouphe",
+    "typeLine": "Creature — Ouphe",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Spells that target this creature cost {2} less to cast.",
+    "power": "1",
+    "toughness": "3"
+  },
+  "Intrepid Trufflesnout // Go Hog Wild": {
+    "id": "Intrepid Trufflesnout // Go Hog Wild",
+    "name": "Intrepid Trufflesnout // Go Hog Wild",
+    "typeLine": "Creature — Boar // Instant — Adventure",
+    "manaCost": "{1}{G} // {1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Intrepid Trufflesnout: Whenever this creature attacks alone, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n\nGo Hog Wild: Target creature gets +2/+2 until end of turn. (Then exile this card. You may cast the creature later from exile.)",
+    "power": "3",
+    "toughness": "1"
+  },
+  "Traveling Botanist": {
+    "id": "Traveling Botanist",
+    "name": "Traveling Botanist",
+    "typeLine": "Creature — Dog Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature becomes tapped, look at the top card of your library. If it's a land card, you may reveal it and put it into your hand. If you don't put the card into your hand, you may put it into your graveyard.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Avatar of the Resolute": {
+    "id": "Avatar of the Resolute",
+    "name": "Avatar of the Resolute",
+    "typeLine": "Creature — Avatar",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reach, trample\nThis creature enters with a +1/+1 counter on it for each other creature you control with a +1/+1 counter on it.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Hermit Druid": {
+    "id": "Hermit Druid",
+    "name": "Hermit Druid",
+    "typeLine": "Creature — Human Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{G}, {T}: Reveal cards from the top of your library until you reveal a basic land card. Put that card into your hand and all other cards revealed this way into your graveyard.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Jet Collector": {
+    "id": "Jet Collector",
+    "name": "Jet Collector",
+    "typeLine": "Creature — Merfolk Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your second main phase, if there are four or more cards in your graveyard, conjure a card named Mox Jet into your hand. This ability triggers only once.\n{X}{B}: Return target creature card with mana value X from your graveyard to the battlefield with a finality counter on it. Activate only as a sorcery.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Riftsweeper": {
+    "id": "Riftsweeper",
+    "name": "Riftsweeper",
+    "typeLine": "Creature — Elf Shaman",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, choose target face-up exiled card. Its owner shuffles it into their library.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Questing Cosplayer": {
+    "id": "Questing Cosplayer",
+    "name": "Questing Cosplayer",
+    "typeLine": "Creature — Human Bard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When Questing Cosplayer enters the battlefield, create a Questing Role token and attach it to target creature. (If you control another Role on it, put that one into the graveyard. Enchanted creature has all the abilities of Questing Beast.)",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Wirewood Hivemaster": {
+    "id": "Wirewood Hivemaster",
+    "name": "Wirewood Hivemaster",
+    "typeLine": "Creature — Elf",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever another nontoken Elf enters, you may create a 1/1 green Insect creature token.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Vitu-Ghazi Inspector": {
+    "id": "Vitu-Ghazi Inspector",
+    "name": "Vitu-Ghazi Inspector",
+    "typeLine": "Creature — Elf Detective",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may collect evidence 6. (Exile cards with total mana value 6 or greater from your graveyard.)\nReach\nWhen this creature enters, if evidence was collected, put a +1/+1 counter on target creature and you gain 2 life.",
+    "power": "1",
+    "toughness": "3"
+  },
+  "Tribal Forcemage": {
+    "id": "Tribal Forcemage",
+    "name": "Tribal Forcemage",
+    "typeLine": "Creature — Elf Wizard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Morph {1}{G} (You may cast this card face down as a 2/2 creature for {3}. Turn it face up any time for its morph cost.)\nWhen this creature is turned face up, creatures of the creature type of your choice get +2/+2 and gain trample until end of turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Stubborn Burrowfiend": {
+    "id": "Stubborn Burrowfiend",
+    "name": "Stubborn Burrowfiend",
+    "typeLine": "Creature — Badger Beast Mount",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature becomes saddled for the first time each turn, mill two cards, then this creature gets +X/+X until end of turn, where X is the number of creature cards in your graveyard.\nSaddle 2 (Tap any number of other creatures you control with total power 2 or more: This Mount becomes saddled until end of turn. Saddle only as a sorcery.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Amber-Plate Ainok": {
+    "id": "Amber-Plate Ainok",
+    "name": "Amber-Plate Ainok",
+    "typeLine": "Creature — Dog Mercenary",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Double team\nAt the beginning of your second main phase, if this creature is tapped, it endures 1.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Voracious Wurm": {
+    "id": "Voracious Wurm",
+    "name": "Voracious Wurm",
+    "typeLine": "Creature — Wurm",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This creature enters with X +1/+1 counters on it, where X is the amount of life you've gained this turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Garenbrig Squire": {
+    "id": "Garenbrig Squire",
+    "name": "Garenbrig Squire",
+    "typeLine": "Creature — Human Soldier",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever you cast a creature spell that has an Adventure, this creature gets +1/+1 until end of turn. (It doesn't need to have gone on the adventure first.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Scarwood Hag": {
+    "id": "Scarwood Hag",
+    "name": "Scarwood Hag",
+    "typeLine": "Creature — Hag",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{G}{G}{G}{G}, {T}: Target creature gains forestwalk until end of turn. (It can't be blocked as long as defending player controls a Forest.)\n{T}: Target creature loses forestwalk until end of turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Kappa Tech-Wrecker": {
+    "id": "Kappa Tech-Wrecker",
+    "name": "Kappa Tech-Wrecker",
+    "typeLine": "Creature — Turtle Ninja",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Ninjutsu {1}{G}\nThis creature enters with a deathtouch counter on it.\nWhenever this creature deals combat damage to a player, you may remove a deathtouch counter from it. When you do, exile target artifact or enchantment that player controls.",
+    "power": "1",
+    "toughness": "3"
+  },
+  "Venomsac Lagac": {
+    "id": "Venomsac Lagac",
+    "name": "Venomsac Lagac",
+    "typeLine": "Creature — Lizard Mount",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Deathtouch\nWhenever this creature attacks while saddled, it gets +0/+3 until end of turn.\nSaddle 2 (Tap any number of other creatures you control with total power 2 or more: This Mount becomes saddled until end of turn. Saddle only as a sorcery.)",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Hidden Herbalists": {
+    "id": "Hidden Herbalists",
+    "name": "Hidden Herbalists",
+    "typeLine": "Creature — Human Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Revolt — When this creature enters, if a permanent left the battlefield under your control this turn, add {G}{G}.",
+    "power": "2",
+    "toughness": "2",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Kraul Harpooner": {
+    "id": "Kraul Harpooner",
+    "name": "Kraul Harpooner",
+    "typeLine": "Creature — Insect Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reach\nUndergrowth — When this creature enters, choose up to one target creature you don't control with flying. This creature gets +X/+0 until end of turn, where X is the number of creature cards in your graveyard, then you may have this creature fight that creature.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Undercover Skrull": {
+    "id": "Undercover Skrull",
+    "name": "Undercover Skrull",
+    "typeLine": "Creature — Skrull Shapeshifter Villain",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As long as there are two or more creature cards in your graveyard, this creature gets +2/+2 and is all creature types.\n{T}: Add one mana of any color.",
+    "power": "1",
+    "toughness": "1",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Heir of the Wilds": {
+    "id": "Heir of the Wilds",
+    "name": "Heir of the Wilds",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Deathtouch\nFerocious — Whenever this creature attacks, if you control a creature with power 4 or greater, this creature gets +1/+1 until end of turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Smoke Teller": {
+    "id": "Smoke Teller",
+    "name": "Smoke Teller",
+    "typeLine": "Creature — Human Shaman",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{1}{U}: Look at target face-down creature.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Knight of Wundagore": {
+    "id": "Knight of Wundagore",
+    "name": "Knight of Wundagore",
+    "typeLine": "Creature — Cat Knight Villain",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nWhenever you put a +1/+1 counter on another creature, put a +1/+1 counter on this creature. This ability triggers only once each turn.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Elvish Vanguard": {
+    "id": "Elvish Vanguard",
+    "name": "Elvish Vanguard",
+    "typeLine": "Creature — Elf Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever another Elf enters, put a +1/+1 counter on this creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Corrosive Ooze": {
+    "id": "Corrosive Ooze",
+    "name": "Corrosive Ooze",
+    "typeLine": "Creature — Ooze",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature blocks or becomes blocked by an equipped creature, destroy all Equipment attached to that creature at end of combat.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Sheltering Ancient": {
+    "id": "Sheltering Ancient",
+    "name": "Sheltering Ancient",
+    "typeLine": "Creature — Treefolk",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nCumulative upkeep—Put a +1/+1 counter on a creature an opponent controls. (At the beginning of your upkeep, put an age counter on this permanent, then sacrifice it unless you pay its upkeep cost for each age counter on it.)",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Keen-Eyed Curator": {
+    "id": "Keen-Eyed Curator",
+    "name": "Keen-Eyed Curator",
+    "typeLine": "Creature — Raccoon Scout",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As long as there are four or more card types among cards exiled with this creature, it gets +4/+4 and has trample.\n{1}: Exile target card from a graveyard.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Mutagen Man, Living Ooze": {
+    "id": "Mutagen Man, Living Ooze",
+    "name": "Mutagen Man, Living Ooze",
+    "typeLine": "Legendary Creature — Ooze Mutant",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nActivated abilities of artifact tokens you control cost {1} less to activate.\nWhen Mutagen Man enters, create X Mutagen tokens. (They're artifacts with \"{1}, {T}, Sacrifice this token: Put a +1/+1 counter on target creature. Activate only as a sorcery.\")",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Fblthp, Knows the Way": {
+    "id": "Fblthp, Knows the Way",
+    "name": "Fblthp, Knows the Way",
+    "typeLine": "Legendary Creature — Homunculus Scout",
+    "manaCost": "{X}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Domain — Fblthp's power is equal to the number of basic land types among lands you control.\nWhen Fblthp enters, search your library for up to X basic land cards with different names, reveal them, put them into your hand, then shuffle.",
+    "power": "*",
+    "toughness": "2"
+  },
+  "Weaver of Harmony": {
+    "id": "Weaver of Harmony",
+    "name": "Weaver of Harmony",
+    "typeLine": "Enchantment Creature — Snake Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Other enchantment creatures you control get +1/+1.\n{G}, {T}: Copy target activated or triggered ability you control from an enchantment source. You may choose new targets for the copy. (Mana abilities can't be targeted.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Chittering Illuminator": {
+    "id": "Chittering Illuminator",
+    "name": "Chittering Illuminator",
+    "typeLine": "Enchantment Creature — Squirrel Glimmer",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As long as Chittering Illuminator is at the top of your library, you may look at it any time and you may cast it.\nAs long as the top card of your library is a creature card, you may look at it any time and you may cast it.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Hellcat, Undying Vigilante": {
+    "id": "Hellcat, Undying Vigilante",
+    "name": "Hellcat, Undying Vigilante",
+    "typeLine": "Legendary Creature — Human Hero",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Haste\nWhen Hellcat dies, return her to the battlefield under her owner's control with a +1/+1 counter on her. She loses all abilities and gains haste.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Ursine Champion": {
+    "id": "Ursine Champion",
+    "name": "Ursine Champion",
+    "typeLine": "Creature — Human Berserker",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{5}{G}: This creature gets +3/+3 and becomes a Bear Berserker until end of turn. Activate only once each turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Shelkin Brownie": {
+    "id": "Shelkin Brownie",
+    "name": "Shelkin Brownie",
+    "typeLine": "Creature — Ouphe",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Target creature loses all \"bands with other\" abilities until end of turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Raucous Entertainer": {
+    "id": "Raucous Entertainer",
+    "name": "Raucous Entertainer",
+    "typeLine": "Creature — Plant Bard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{1}, {T}: Put a +1/+1 counter on each creature you control that entered this turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Nurturing Licid": {
+    "id": "Nurturing Licid",
+    "name": "Nurturing Licid",
+    "typeLine": "Creature — Licid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{G}, {T}: This creature loses this ability and becomes an Aura enchantment with enchant creature. Attach it to target creature. You may pay {G} to end this effect.\n{G}: Regenerate enchanted creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Spectral Bears": {
+    "id": "Spectral Bears",
+    "name": "Spectral Bears",
+    "typeLine": "Creature — Bear Spirit",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature attacks, if defending player controls no black nontoken permanents, it doesn't untap during your next untap step.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Bushy Bodyguard": {
+    "id": "Bushy Bodyguard",
+    "name": "Bushy Bodyguard",
+    "typeLine": "Creature — Squirrel Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Offspring {2} (You may pay an additional {2} as you cast this spell. If you do, when this creature enters, create a 1/1 token copy of it.)\nWhen this creature enters, you may forage. If you do, put two +1/+1 counters on it. (To forage, exile three cards from your graveyard or sacrifice a Food.)",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Coiling Stalker": {
+    "id": "Coiling Stalker",
+    "name": "Coiling Stalker",
+    "typeLine": "Creature — Snake Ninja",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Ninjutsu {1}{G} ({1}{G}, Return an unblocked attacker you control to hand: Put this card onto the battlefield from your hand tapped and attacking.)\nWhenever this creature deals combat damage to a player, put a +1/+1 counter on target creature you control that doesn't have a +1/+1 counter on it.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Questing Druid // Seek the Beast": {
+    "id": "Questing Druid // Seek the Beast",
+    "name": "Questing Druid // Seek the Beast",
+    "typeLine": "Creature — Human Druid // Instant — Adventure",
+    "manaCost": "{1}{G} // {1}{R}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Questing Druid: Whenever you cast a spell that's white, blue, black, or red, put a +1/+1 counter on this creature.\n\nSeek the Beast: Exile the top two cards of your library. Until your next end step, you may play those cards.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Bitterblade Warrior": {
+    "id": "Bitterblade Warrior",
+    "name": "Bitterblade Warrior",
+    "typeLine": "Creature — Jackal Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may exert this creature as it attacks. When you do, it gets +1/+0 and gains deathtouch until end of turn. (An exerted creature won't untap during your next untap step.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Vinesoul Spider": {
+    "id": "Vinesoul Spider",
+    "name": "Vinesoul Spider",
+    "typeLine": "Creature — Elemental Spider",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Reach\nAt the beginning of your end step, put a random land card from your library into your graveyard.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Vintara Snapper": {
+    "id": "Vintara Snapper",
+    "name": "Vintara Snapper",
+    "typeLine": "Creature — Turtle",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This creature has shroud as long as you control no untapped lands. (It can't be the target of spells or abilities.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Scaleguard Sentinels": {
+    "id": "Scaleguard Sentinels",
+    "name": "Scaleguard Sentinels",
+    "typeLine": "Creature — Human Soldier",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, you may reveal a Dragon card from your hand.\nThis creature enters with a +1/+1 counter on it if you revealed a Dragon card or controlled a Dragon as you cast this spell.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Orochi Ranger": {
+    "id": "Orochi Ranger",
+    "name": "Orochi Ranger",
+    "typeLine": "Creature — Snake Warrior Ranger",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature deals combat damage to a creature, tap that creature and it doesn't untap during its controller's next untap step.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Opulent Clomper": {
+    "id": "Opulent Clomper",
+    "name": "Opulent Clomper",
+    "typeLine": "Creature — Ouphe",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Vivid — Opulent Clomper's power and toughness are each equal to the number of colors among permanents you control.\nAt the beginning of your upkeep, if this creature isn't all colors, it becomes a random color that it isn't in addition to its other colors.",
+    "power": "*",
+    "toughness": "*"
+  },
+  "Flourishing Bloom-Kin": {
+    "id": "Flourishing Bloom-Kin",
+    "name": "Flourishing Bloom-Kin",
+    "typeLine": "Creature — Plant Elemental",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This creature gets +1/+1 for each Forest you control.\nDisguise {4}{G}\nWhen this creature is turned face up, search your library for up to two Forest cards and reveal them. Put one of them onto the battlefield tapped and the other into your hand, then shuffle.",
+    "power": "0",
+    "toughness": "0"
+  },
+  "Woodland Champion": {
+    "id": "Woodland Champion",
+    "name": "Woodland Champion",
+    "typeLine": "Creature — Elf Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever one or more tokens you control enter, put that many +1/+1 counters on this creature.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Bramble Familiar // Fetch Quest": {
+    "id": "Bramble Familiar // Fetch Quest",
+    "name": "Bramble Familiar // Fetch Quest",
+    "typeLine": "Creature — Elemental Raccoon // Sorcery — Adventure",
+    "manaCost": "{1}{G} // {5}{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Bramble Familiar: {T}: Add {G}.\n{1}{G}, {T}, Discard a card: Return this creature to its owner's hand.\n\nFetch Quest: Mill seven cards. Then put a creature, enchantment, or land card from among the milled cards onto the battlefield.",
+    "power": "2",
+    "toughness": "2",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Frenzied Baloth": {
+    "id": "Frenzied Baloth",
+    "name": "Frenzied Baloth",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This spell can't be countered.\nTrample, haste\nCreature spells you control can't be countered.\nCombat damage can't be prevented.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Harvesttide Sentry": {
+    "id": "Harvesttide Sentry",
+    "name": "Harvesttide Sentry",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Coven — At the beginning of combat on your turn, if you control three or more creatures with different powers, this creature can't be blocked by creatures with power 2 or less this turn.",
+    "power": "3",
+    "toughness": "1"
+  },
+  "Mayor of Avabruck // Howlpack Alpha": {
+    "id": "Mayor of Avabruck // Howlpack Alpha",
+    "name": "Mayor of Avabruck // Howlpack Alpha",
+    "typeLine": "Creature — Human Advisor Werewolf // Creature — Werewolf",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Mayor of Avabruck: Other Human creatures you control get +1/+1.\nAt the beginning of each upkeep, if no spells were cast last turn, transform this creature.\n\nHowlpack Alpha: Each other creature you control that's a Werewolf or a Wolf gets +1/+1.\nAt the beginning of your end step, create a 2/2 green Wolf creature token.\nAt the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Pygmy Troll": {
+    "id": "Pygmy Troll",
+    "name": "Pygmy Troll",
+    "typeLine": "Creature — Troll",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature becomes blocked by a creature, this creature gets +1/+1 until end of turn.\n{G}: Regenerate this creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Sporeback Wolf": {
+    "id": "Sporeback Wolf",
+    "name": "Sporeback Wolf",
+    "typeLine": "Creature — Wolf",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "During your turn, this creature gets +0/+2.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Kavu Predator": {
+    "id": "Kavu Predator",
+    "name": "Kavu Predator",
+    "typeLine": "Creature — Kavu",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nWhenever an opponent gains life, put that many +1/+1 counters on this creature.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Saddled Rimestag": {
+    "id": "Saddled Rimestag",
+    "name": "Saddled Rimestag",
+    "typeLine": "Snow Creature — Elk",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This creature gets +2/+2 as long as you had another creature enter the battlefield under your control this turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Hex, Kellan's Companion": {
+    "id": "Hex, Kellan's Companion",
+    "name": "Hex, Kellan's Companion",
+    "typeLine": "Legendary Creature — Dog",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Haste\nWhenever you cast an Adventure spell, if Hex, Kellan's Companion is on the battlefield or in exile, it perpetually gets +1/+1. Then if it's on the battlefield, exile it with a fetch counter on it.\nWhenever you cast a spell from exile, if Hex is in exile with a fetch counter on it, put it onto the battlefield.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Menagerie Curator": {
+    "id": "Menagerie Curator",
+    "name": "Menagerie Curator",
+    "typeLine": "Creature — Human Citizen",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Add one mana of any one color. Spend this mana only to cast a creature spell.\nWhenever you cast a creature spell that doesn't share a creature type with a creature card in your library, draw a card.",
+    "power": "1",
+    "toughness": "3",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Streetwise Negotiator": {
+    "id": "Streetwise Negotiator",
+    "name": "Streetwise Negotiator",
+    "typeLine": "Creature — Cat Citizen",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Backup 1 (When this creature enters, put a +1/+1 counter on target creature. If that's another creature, it gains the following ability until end of turn.)\nThis creature assigns combat damage equal to its toughness rather than its power.",
+    "power": "0",
+    "toughness": "2"
+  },
+  "House Cartographer": {
+    "id": "House Cartographer",
+    "name": "House Cartographer",
+    "typeLine": "Creature — Human Scout Survivor",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Survival — At the beginning of your second main phase, if this creature is tapped, reveal cards from the top of your library until you reveal a land card. Put that card into your hand and the rest on the bottom of your library in a random order.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Dripping-Tongue Zubera": {
+    "id": "Dripping-Tongue Zubera",
+    "name": "Dripping-Tongue Zubera",
+    "typeLine": "Creature — Zubera Spirit",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature dies, create a 1/1 colorless Spirit creature token for each Zubera that died this turn.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Great Divide Guide": {
+    "id": "Great Divide Guide",
+    "name": "Great Divide Guide",
+    "typeLine": "Creature — Human Scout Ally",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each land and Ally you control has \"{T}: Add one mana of any color.\"",
+    "power": "2",
+    "toughness": "3",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Thornvault Forager": {
+    "id": "Thornvault Forager",
+    "name": "Thornvault Forager",
+    "typeLine": "Creature — Squirrel Ranger",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Add {G}.\n{T}, Forage: Add two mana in any combination of colors. (To forage, exile three cards from your graveyard or sacrifice a Food.)\n{3}{G}, {T}: Search your library for a Squirrel card, reveal it, put it into your hand, then shuffle.",
+    "power": "2",
+    "toughness": "2",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Shinen of Life's Roar": {
+    "id": "Shinen of Life's Roar",
+    "name": "Shinen of Life's Roar",
+    "typeLine": "Creature — Spirit",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "All creatures able to block this creature do so.\nChannel — {2}{G}{G}, Discard this card: All creatures able to block target creature this turn do so.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Kami of Transience": {
+    "id": "Kami of Transience",
+    "name": "Kami of Transience",
+    "typeLine": "Creature — Spirit",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nWhenever you cast an enchantment spell, put a +1/+1 counter on this creature.\nAt the beginning of each end step, if an enchantment was put into your graveyard from the battlefield this turn, you may return this card from your graveyard to your hand.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Dryad Sophisticate": {
+    "id": "Dryad Sophisticate",
+    "name": "Dryad Sophisticate",
+    "typeLine": "Creature — Dryad",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Nonbasic landwalk (This creature can't be blocked as long as defending player controls a nonbasic land.)",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Three Tree Scribe": {
+    "id": "Three Tree Scribe",
+    "name": "Three Tree Scribe",
+    "typeLine": "Creature — Frog Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature or another creature you control leaves the battlefield without dying, put a +1/+1 counter on target creature you control.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Ainok Wayfarer": {
+    "id": "Ainok Wayfarer",
+    "name": "Ainok Wayfarer",
+    "typeLine": "Creature — Dog Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, mill three cards. You may put a land card from among them into your hand. If you don't, put a +1/+1 counter on this creature. (To mill three cards, put the top three cards of your library into your graveyard.)",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Formation Breaker": {
+    "id": "Formation Breaker",
+    "name": "Formation Breaker",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Creatures with power less than this creature's power can't block it.\nAs long as you control a creature with a counter on it, this creature gets +1/+2.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Skyshroud Elf": {
+    "id": "Skyshroud Elf",
+    "name": "Skyshroud Elf",
+    "typeLine": "Creature — Elf Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Add {G}.\n{1}: Add {R} or {W}.",
+    "power": "1",
+    "toughness": "1",
+    "producedMana": [
+      "G",
+      "R",
+      "W"
+    ]
+  },
+  "Pendelhaven Elder": {
+    "id": "Pendelhaven Elder",
+    "name": "Pendelhaven Elder",
+    "typeLine": "Creature — Elf Shaman",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Each 1/1 creature you control gets +1/+2 until end of turn.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Keeper of the Beasts": {
+    "id": "Keeper of the Beasts",
+    "name": "Keeper of the Beasts",
+    "typeLine": "Creature — Human Wizard",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{G}, {T}: Choose target opponent who controls more creatures than you do as you activate this ability. Create a 2/2 green Beast creature token.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Tifa Lockhart": {
+    "id": "Tifa Lockhart",
+    "name": "Tifa Lockhart",
+    "typeLine": "Legendary Creature — Human Monk",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nLandfall — Whenever a land you control enters, double Tifa Lockhart's power until end of turn.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Tough Cookie": {
+    "id": "Tough Cookie",
+    "name": "Tough Cookie",
+    "typeLine": "Artifact Creature — Food Golem",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\n{2}{G}: Until end of turn, target noncreature artifact you control becomes a 4/4 artifact creature.\n{2}, {T}, Sacrifice this creature: You gain 3 life.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Springheart Nantuko": {
+    "id": "Springheart Nantuko",
+    "name": "Springheart Nantuko",
+    "typeLine": "Enchantment Creature — Insect Monk",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Bestow {1}{G}\nEnchanted creature gets +1/+1.\nLandfall — Whenever a land you control enters, you may pay {1}{G} if this permanent is attached to a creature you control. If you do, create a token that's a copy of that creature. If you didn't create a token this way, create a 1/1 green Insect creature token.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Soilshaper": {
+    "id": "Soilshaper",
+    "name": "Soilshaper",
+    "typeLine": "Creature — Spirit",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever you cast a Spirit or Arcane spell, target land becomes a 3/3 creature until end of turn. It's still a land.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Rhonas's Stalwart": {
+    "id": "Rhonas's Stalwart",
+    "name": "Rhonas's Stalwart",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may exert this creature as it attacks. When you do, it gets +1/+1 until end of turn and can't be blocked by creatures with power 2 or less this turn. (An exerted creature won't untap during your next untap step.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Tunnel Tipster": {
+    "id": "Tunnel Tipster",
+    "name": "Tunnel Tipster",
+    "typeLine": "Creature — Mole Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your end step, if a face-down creature entered the battlefield under your control this turn, put a +1/+1 counter on this creature.\n{T}: Add {G}.",
+    "power": "1",
+    "toughness": "1",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Blanchwood Prowler": {
+    "id": "Blanchwood Prowler",
+    "name": "Blanchwood Prowler",
+    "typeLine": "Creature — Elemental",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, mill three cards. You may put a land card from among the cards milled this way into your hand. If you don't, put a +1/+1 counter on this creature. (To mill a card, put the top card of your library into your graveyard.)",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Scrounging Bandar": {
+    "id": "Scrounging Bandar",
+    "name": "Scrounging Bandar",
+    "typeLine": "Creature — Cat Monkey",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This creature enters with two +1/+1 counters on it.\nAt the beginning of your upkeep, you may move any number of +1/+1 counters from this creature onto another target creature.",
+    "power": "0",
+    "toughness": "0"
+  },
+  "Scythecat Cub": {
+    "id": "Scythecat Cub",
+    "name": "Scythecat Cub",
+    "typeLine": "Creature — Cat",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nLandfall — Whenever a land you control enters, put a +1/+1 counter on target creature you control. If this is the second time this ability has resolved this turn, double the number of +1/+1 counters on that creature instead.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Aloe Alchemist": {
+    "id": "Aloe Alchemist",
+    "name": "Aloe Alchemist",
+    "typeLine": "Creature — Plant Warlock",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nWhen this card becomes plotted, target creature gets +3/+2 and gains trample until end of turn.\nPlot {1}{G} (You may pay {1}{G} and exile this card from your hand. Cast it as a sorcery on a later turn without paying its mana cost. Plot only as a sorcery.)",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Essence Symbiote": {
+    "id": "Essence Symbiote",
+    "name": "Essence Symbiote",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control mutates, put a +1/+1 counter on that creature and you gain 2 life.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Built Bear": {
+    "id": "Built Bear",
+    "name": "Built Bear",
+    "typeLine": "Creature — Bear",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Legacy (During deckbuilding, circle any number of the following. You can spend 1 point for free. For every 2 points spent beyond that, increase this card's mana cost by {1}.)\n1 point each → Flash; deathtouch; reach; vigilance; or ward {2}\n2 points → {T}: Add one mana of any color.\n3 points each → +1/+1; or +0/+2\n4 points → When this creature enters the battlefield, draw a card.",
+    "power": "2",
+    "toughness": "2",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Naga Vitalist": {
+    "id": "Naga Vitalist",
+    "name": "Naga Vitalist",
+    "typeLine": "Creature — Snake Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Add one mana of any type that a land you control could produce.",
+    "power": "1",
+    "toughness": "2",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Town Greeter": {
+    "id": "Town Greeter",
+    "name": "Town Greeter",
+    "typeLine": "Creature — Human Citizen",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, mill four cards. You may put a land card from among them into your hand. If you put a Town card into your hand this way, you gain 2 life. (To mill four cards, a player puts the top four cards of their library into their graveyard.)",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Tempting Wurm": {
+    "id": "Tempting Wurm",
+    "name": "Tempting Wurm",
+    "typeLine": "Creature — Wurm",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, each opponent may put any number of artifact, creature, enchantment, and/or land cards from their hand onto the battlefield.",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Melira, Sylvok Outcast": {
+    "id": "Melira, Sylvok Outcast",
+    "name": "Melira, Sylvok Outcast",
+    "typeLine": "Legendary Creature — Human Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You can't get poison counters.\nCreatures you control can't have -1/-1 counters put on them.\nCreatures your opponents control lose infect.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Ayula, Queen Among Bears": {
+    "id": "Ayula, Queen Among Bears",
+    "name": "Ayula, Queen Among Bears",
+    "typeLine": "Legendary Creature — Bear",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever another Bear you control enters, choose one —\n• Put two +1/+1 counters on target Bear.\n• Target Bear you control fights target creature you don't control.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Elvish Clancaller": {
+    "id": "Elvish Clancaller",
+    "name": "Elvish Clancaller",
+    "typeLine": "Creature — Elf Druid",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Other Elves you control get +1/+1.\n{4}{G}{G}, {T}: Search your library for a card named Elvish Clancaller, put it onto the battlefield, then shuffle.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Vine Gecko": {
+    "id": "Vine Gecko",
+    "name": "Vine Gecko",
+    "typeLine": "Creature — Elemental Lizard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "The first kicked spell you cast each turn costs {1} less to cast.\nWhenever you cast a kicked spell, put a +1/+1 counter on this creature.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Bloodline Shaman": {
+    "id": "Bloodline Shaman",
+    "name": "Bloodline Shaman",
+    "typeLine": "Creature — Elf Wizard Shaman",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Choose a creature type. Reveal the top card of your library. If that card is a creature card of the chosen type, put it into your hand. Otherwise, put it into your graveyard.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Nessian Hornbeetle": {
+    "id": "Nessian Hornbeetle",
+    "name": "Nessian Hornbeetle",
+    "typeLine": "Creature — Insect",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of combat on your turn, if you control another creature with power 4 or greater, put a +1/+1 counter on this creature.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Tajuru Paragon": {
+    "id": "Tajuru Paragon",
+    "name": "Tajuru Paragon",
+    "typeLine": "Creature — Elf",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Tajuru Paragon is also a Cleric, Rogue, Warrior, and Wizard.\nKicker {3}\nWhen this creature enters, if it was kicked, reveal the top six cards of your library. You may put a card that shares a creature type with it from among them into your hand. Put the rest on the bottom of your library in a random order.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Llanowar Druid": {
+    "id": "Llanowar Druid",
+    "name": "Llanowar Druid",
+    "typeLine": "Creature — Elf Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}, Sacrifice this creature: Untap all Forests.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Tangle Asp": {
+    "id": "Tangle Asp",
+    "name": "Tangle Asp",
+    "typeLine": "Creature — Snake",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature blocks or becomes blocked by a creature, destroy that creature at end of combat.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Argothian Pixies": {
+    "id": "Argothian Pixies",
+    "name": "Argothian Pixies",
+    "typeLine": "Creature — Faerie",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This creature can't be blocked by artifact creatures.\nPrevent all damage that would be dealt to this creature by artifact creatures.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Cherished Hatchling": {
+    "id": "Cherished Hatchling",
+    "name": "Cherished Hatchling",
+    "typeLine": "Creature — Dinosaur",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature dies, you may cast Dinosaur spells this turn as though they had flash, and whenever you cast a Dinosaur spell this turn, it gains \"When this creature enters, you may have it fight another target creature.\"",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Slimy Piper": {
+    "id": "Slimy Piper",
+    "name": "Slimy Piper",
+    "typeLine": "Creature — Fungus Bard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature attacks, it gets +1/+1 until end of turn. If you control four or more creatures, it gets +2/+2 and gains indestructible until end of turn instead. (Damage and effects that say \"destroy\" don't destroy it.)",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Miles Morales // Ultimate Spider-Man": {
+    "id": "Miles Morales // Ultimate Spider-Man",
+    "name": "Miles Morales // Ultimate Spider-Man",
+    "typeLine": "Legendary Creature — Human Citizen Hero // Legendary Creature — Spider Human Hero",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Miles Morales: When Miles Morales enters, put a +1/+1 counter on each of up to two target creatures.\n{3}{R}{G}{W}: Transform Miles Morales. Activate only as a sorcery.\n\nUltimate Spider-Man: First strike, haste\nCamouflage — {2}: Put a +1/+1 counter on Ultimate Spider-Man. He gains hexproof and becomes colorless until end of turn.\nWhenever you attack, double the number of each kind of counter on each Spider and legendary creature you control.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Matsu-Tribe Sniper": {
+    "id": "Matsu-Tribe Sniper",
+    "name": "Matsu-Tribe Sniper",
+    "typeLine": "Creature — Snake Warrior Archer",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: This creature deals 1 damage to target creature with flying.\nWhenever this creature deals damage to a creature, tap that creature and it doesn't untap during its controller's next untap step.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Freyalise Supplicant": {
+    "id": "Freyalise Supplicant",
+    "name": "Freyalise Supplicant",
+    "typeLine": "Creature — Human Cleric",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}, Sacrifice a red or white creature: This creature deals damage to any target equal to half the sacrificed creature's power, rounded down.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Might Weaver": {
+    "id": "Might Weaver",
+    "name": "Might Weaver",
+    "typeLine": "Creature — Human Wizard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{2}: Target red or white creature gains trample until end of turn. (It can deal excess combat damage to the player or planeswalker it's attacking.)",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Hydra Trainer": {
+    "id": "Hydra Trainer",
+    "name": "Hydra Trainer",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "You may exert this creature as it attacks. When you do, target creature gets +X/+X until end of turn, where X is the number of counters on permanents you control. (An exerted creature won't untap during your next untap step.)\n{2}{G}: Adapt 2. (If this creature has no +1/+1 counters on it, put two +1/+1 counters on it.)",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Sunbathing Rootwalla": {
+    "id": "Sunbathing Rootwalla",
+    "name": "Sunbathing Rootwalla",
+    "typeLine": "Creature — Lizard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Domain — {3}{G}: Until end of turn, this creature gets +1/+1 for each basic land type among lands you control. Activate only once each turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Thelon of Havenwood": {
+    "id": "Thelon of Havenwood",
+    "name": "Thelon of Havenwood",
+    "typeLine": "Legendary Creature — Elf Druid",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Each Fungus creature gets +1/+1 for each spore counter on it.\n{B}{G}, Exile a Fungus card from a graveyard: Put a spore counter on each Fungus on the battlefield.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Skyshroud War Beast": {
+    "id": "Skyshroud War Beast",
+    "name": "Skyshroud War Beast",
+    "typeLine": "Creature — Beast",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nAs this creature enters, choose an opponent.\nSkyshroud War Beast's power and toughness are each equal to the number of nonbasic lands the chosen player controls.",
+    "power": "*",
+    "toughness": "*"
+  },
+  "Yoshimaru, Scrappy Stray": {
+    "id": "Yoshimaru, Scrappy Stray",
+    "name": "Yoshimaru, Scrappy Stray",
+    "typeLine": "Legendary Creature — Dog",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When Yoshimaru enters, another target creature you control fights up to one target creature an opponent controls. (Each deals damage equal to its power to the other.)\n{6}: Put a +1/+1 counter on target nonlegendary creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Forcemage Advocate": {
+    "id": "Forcemage Advocate",
+    "name": "Forcemage Advocate",
+    "typeLine": "Creature — Centaur Shaman",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Return target card from an opponent's graveyard to their hand. Put a +1/+1 counter on target creature.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Timberpack Wolf": {
+    "id": "Timberpack Wolf",
+    "name": "Timberpack Wolf",
+    "typeLine": "Creature — Wolf",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "This creature gets +1/+1 for each other creature you control named Timberpack Wolf.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Portent Tracker": {
+    "id": "Portent Tracker",
+    "name": "Portent Tracker",
+    "typeLine": "Creature — Satyr Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Untap target land.\n{T}: Choose target battle. If an opponent protects it, remove a defense counter from it. Otherwise, put a defense counter on it. Activate only as a sorcery.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Jukai Trainee": {
+    "id": "Jukai Trainee",
+    "name": "Jukai Trainee",
+    "typeLine": "Creature — Human Samurai",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature blocks or becomes blocked, it gets +1/+1 until end of turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Harvest Wurm": {
+    "id": "Harvest Wurm",
+    "name": "Harvest Wurm",
+    "typeLine": "Creature — Wurm",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, sacrifice it unless you return a basic land card from your graveyard to your hand.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Nissa's Chosen": {
+    "id": "Nissa's Chosen",
+    "name": "Nissa's Chosen",
+    "typeLine": "Creature — Elf Warrior",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "If this creature would die, put it on the bottom of its owner's library instead.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Spiders-Man, Heroic Horde": {
+    "id": "Spiders-Man, Heroic Horde",
+    "name": "Spiders-Man, Heroic Horde",
+    "typeLine": "Legendary Creature — Spider Hero",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Web-slinging {4}{G}{G} (You may cast this spell for {4}{G}{G} if you also return a tapped creature you control to its owner's hand.)\nWhen Spiders-Man enters, if they were cast using web-slinging, you gain 3 life and create two 2/1 green Spider creature tokens with reach.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Tendril of the Mycotyrant": {
+    "id": "Tendril of the Mycotyrant",
+    "name": "Tendril of the Mycotyrant",
+    "typeLine": "Creature — Fungus Wizard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{5}{G}{G}: Put seven +1/+1 counters on target noncreature land you control. It becomes a 0/0 Fungus creature with haste. It's still a land.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Intrepid Paleontologist": {
+    "id": "Intrepid Paleontologist",
+    "name": "Intrepid Paleontologist",
+    "typeLine": "Creature — Human Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{T}: Add one mana of any color.\n{2}: Exile target card from a graveyard.\nYou may cast Dinosaur creature spells from among cards you own exiled with this creature. If you cast a spell this way, that creature enters with a finality counter on it. (If a creature with a finality counter on it would die, exile it instead.)",
+    "power": "2",
+    "toughness": "2",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Unlucky Cabbage Merchant": {
+    "id": "Unlucky Cabbage Merchant",
+    "name": "Unlucky Cabbage Merchant",
+    "typeLine": "Creature — Human Citizen",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")\nWhenever you sacrifice a Food, you may search your library for a basic land card and put it onto the battlefield tapped. If you search your library this way, put this creature on the bottom of its owner's library, then shuffle.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Sarinth Steelseeker": {
+    "id": "Sarinth Steelseeker",
+    "name": "Sarinth Steelseeker",
+    "typeLine": "Creature — Human Artificer Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever an artifact you control enters, look at the top card of your library. If it's a land card, you may reveal it and put it into your hand. If you don't put the card into your hand, you may put it into your graveyard.",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Dreampod Druid": {
+    "id": "Dreampod Druid",
+    "name": "Dreampod Druid",
+    "typeLine": "Creature — Human Druid",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of each upkeep, if this creature is enchanted, create a 1/1 green Saproling creature token.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Carnivorous Cultivator // Enroot": {
+    "id": "Carnivorous Cultivator // Enroot",
+    "name": "Carnivorous Cultivator // Enroot",
+    "typeLine": "Creature — Elf Warlock // Sorcery",
+    "manaCost": "{1}{G} // {G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Carnivorous Cultivator: Deathtouch\nThis creature enters prepared.\nWhenever this creature deals combat damage to a player, return target land card from your graveyard to your hand.\n\nEnroot: Search your library for a land card, put it into your graveyard, then shuffle.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Silhana Wayfinder": {
+    "id": "Silhana Wayfinder",
+    "name": "Silhana Wayfinder",
+    "typeLine": "Creature — Elf Scout",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, look at the top four cards of your library. You may reveal a creature or land card from among them and put it on top of your library. Put the rest on the bottom of your library in a random order.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Eladamri, Lord of Leaves": {
+    "id": "Eladamri, Lord of Leaves",
+    "name": "Eladamri, Lord of Leaves",
+    "typeLine": "Legendary Creature — Elf Warrior",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Other Elf creatures have forestwalk. (They can't be blocked as long as defending player controls a Forest.)\nOther Elves have shroud. (They can't be the targets of spells or abilities.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Cylian Sunsinger": {
+    "id": "Cylian Sunsinger",
+    "name": "Cylian Sunsinger",
+    "typeLine": "Creature — Elf Shaman",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{R}{G}{W}: This creature and each other creature with the same name as it get +3/+3 until end of turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Routeway Moose": {
+    "id": "Routeway Moose",
+    "name": "Routeway Moose",
+    "typeLine": "Creature — Elk Mount",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever this creature attacks while saddled, seek a land card and put it onto the battlefield tapped.\nSaddle 2",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Kavu Titan": {
+    "id": "Kavu Titan",
+    "name": "Kavu Titan",
+    "typeLine": "Creature — Kavu",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {2}{G} (You may pay an additional {2}{G} as you cast this spell.)\nIf this creature was kicked, it enters with three +1/+1 counters on it and with trample.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Decorated Champion": {
+    "id": "Decorated Champion",
+    "name": "Decorated Champion",
+    "typeLine": "Creature — Elf Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever another Warrior your team controls enters, put a +1/+1 counter on this creature.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Lambholt Pacifist // Lambholt Butcher": {
+    "id": "Lambholt Pacifist // Lambholt Butcher",
+    "name": "Lambholt Pacifist // Lambholt Butcher",
+    "typeLine": "Creature — Human Shaman Werewolf // Creature — Werewolf",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Lambholt Pacifist: This creature can't attack unless you control a creature with power 4 or greater.\nAt the beginning of each upkeep, if no spells were cast last turn, transform this creature.\n\nLambholt Butcher: At the beginning of each upkeep, if a player cast two or more spells last turn, transform this creature.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Bayou Groff": {
+    "id": "Bayou Groff",
+    "name": "Bayou Groff",
+    "typeLine": "Creature — Plant Dog",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice a creature or pay {3}.",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Wild Mongrel": {
+    "id": "Wild Mongrel",
+    "name": "Wild Mongrel",
+    "typeLine": "Creature — Dog",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Discard a card: This creature gets +1/+1 and becomes the color of your choice until end of turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Resilient Khenra": {
+    "id": "Resilient Khenra",
+    "name": "Resilient Khenra",
+    "typeLine": "Creature — Jackal Wizard",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, you may have target creature get +X/+X until end of turn, where X is this creature's power.\nEternalize {4}{G}{G} ({4}{G}{G}, Exile this card from your graveyard: Create a token that's a copy of it, except it's a 4/4 black Zombie Jackal Wizard with no mana cost. Eternalize only as a sorcery.)",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Bull Aurochs": {
+    "id": "Bull Aurochs",
+    "name": "Bull Aurochs",
+    "typeLine": "Creature — Aurochs",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Trample\nWhenever this creature attacks, it gets +1/+0 until end of turn for each other attacking Aurochs.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Mister Immortal": {
+    "id": "Mister Immortal",
+    "name": "Mister Immortal",
+    "typeLine": "Legendary Creature — Mutant Hero",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{2}{G}: Return this card from your graveyard or from exile to the battlefield tapped.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Quirion Dryad": {
+    "id": "Quirion Dryad",
+    "name": "Quirion Dryad",
+    "typeLine": "Creature — Dryad",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever you cast a spell that's white, blue, black, or red, put a +1/+1 counter on this creature.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Wandering Treefolk": {
+    "id": "Wandering Treefolk",
+    "name": "Wandering Treefolk",
+    "typeLine": "Creature — Treefolk",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Vigilance\nDomain — {7}{G}: Seek a creature card. This ability costs {1} less to activate for each basic land type among lands you control.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Exemplar of Strength": {
+    "id": "Exemplar of Strength",
+    "name": "Exemplar of Strength",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, put three -1/-1 counters on target creature you control.\nWhenever this creature attacks, remove a -1/-1 counter from it. If you do, you gain 1 life.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Urborg Lhurgoyf": {
+    "id": "Urborg Lhurgoyf",
+    "name": "Urborg Lhurgoyf",
+    "typeLine": "Creature — Lhurgoyf",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Kicker {U} and/or {B} (You may pay an additional {U} and/or {B} as you cast this spell.)\nAs this creature enters, mill three cards for each time it was kicked.\nUrborg Lhurgoyf's power is equal to the number of creature cards in your graveyard and its toughness is equal to that number plus 1.",
+    "power": "*",
+    "toughness": "1+*"
+  },
+  "Hardy Veteran": {
+    "id": "Hardy Veteran",
+    "name": "Hardy Veteran",
+    "typeLine": "Creature — Human Warrior",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "During your turn, this creature gets +0/+2.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Fire Sprites": {
+    "id": "Fire Sprites",
+    "name": "Fire Sprites",
+    "typeLine": "Creature — Faerie",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flying\n{G}, {T}: Add {R}.",
+    "power": "1",
+    "toughness": "1",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Meriadoc Brandybuck": {
+    "id": "Meriadoc Brandybuck",
+    "name": "Meriadoc Brandybuck",
+    "typeLine": "Legendary Creature — Halfling Citizen",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever one or more Halflings you control attack a player, create a Food token. (It's an artifact with \"{2}, {T}, Sacrifice this token: You gain 3 life.\")",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Deepwood Elder": {
+    "id": "Deepwood Elder",
+    "name": "Deepwood Elder",
+    "typeLine": "Creature — Dryad Spellshaper",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "{X}{G}{G}, {T}, Discard a card: X target lands become Forests until end of turn.",
+    "power": "2",
+    "toughness": "2"
+  }
+}

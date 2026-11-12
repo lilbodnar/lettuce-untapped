@@ -106,11 +106,12 @@ test('Ingest exiles the top card; a processor uses it', () => {
 test('Kozilek, Butcher of Truth shuffles your graveyard back when it goes there', () => {
   const game = vsOpp();
   Game.hooks.moved = (s, inst, from, to) => Bot.cardMoved(game, s, inst, from, to, defOf, ctx(game));
-  Game.move(game, find(game, 'Bear'), 'graveyard');
-  const lib = game.zones.library.length;
-  Game.move(game, find(game, 'Kozilek, Butcher of Truth'), 'graveyard');
+  const bear = find(game, 'Bear'), koz = find(game, 'Kozilek, Butcher of Truth');
+  Game.move(game, bear, 'graveyard');
+  // (either card can start in the opening hand, so check where they end up rather than counting)
+  Game.move(game, koz, 'graveyard');
   assert.equal(game.zones.graveyard.length, 0);
-  assert.equal(game.zones.library.length, lib + 1);
+  assert.ok(game.zones.library.includes(bear) && game.zones.library.includes(koz));
 });
 
 test('Ulamog, the Ceaseless Hunger exiles twenty; Emrakul, the World Anew takes their creatures', () => {
@@ -141,10 +142,11 @@ test('Bilbo\'s Ring draws when its creature attacks alone; Infiltration Lens dra
   const ring = put(game, "Bilbo's Ring");
   const bear = put(game, 'Bear');
   equip(game, ring, bear);
+  // (put the Lens out before counting: put() can take it from the opening hand)
+  const lens = put(game, 'Infiltration Lens');
   const hand = game.zones.hand.length;
   Bot.attackWatch(game, game, defOf, ctx(game), [bear]);
   assert.equal(game.zones.hand.length, hand + 1);
-  const lens = put(game, 'Infiltration Lens');
   equip(game, lens, bear);
   Bot.becameBlocked(game, bear, 1, defOf, [], game);
   assert.equal(game.zones.hand.length, hand + 3);
