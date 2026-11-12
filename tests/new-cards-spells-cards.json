@@ -1,0 +1,264 @@
+{
+  "Mirror Universe Intrusion": {
+    "id": "Mirror Universe Intrusion",
+    "name": "Mirror Universe Intrusion",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{U}{B}",
+    "cmc": 3,
+    "colors": [
+      "B",
+      "U"
+    ],
+    "oracle": "Kicker {4}{U}{B} (You may pay an additional {4}{U}{B} as you cast this spell.)\nCreate a token that's a copy of target creature an opponent controls, except it has menace. If this spell was kicked, instead for each creature target opponent controls, create a token that's a copy of that creature, except it has menace."
+  },
+  "Assimilate the Wounded": {
+    "id": "Assimilate the Wounded",
+    "name": "Assimilate the Wounded",
+    "typeLine": "Instant",
+    "manaCost": "{2}{B}",
+    "cmc": 3,
+    "colors": [
+      "B"
+    ],
+    "oracle": "For each opponent, assimilate up to one target creature card from that player's graveyard that was put there from the battlefield this turn. (Put it onto the battlefield under your control with a +1/+1 counter. It's a Borg artifact creature and loses all other creature types.)"
+  },
+  "Final Frontier": {
+    "id": "Final Frontier",
+    "name": "Final Frontier",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Search your library for a basic land card or Planet card, put it onto the battlefield tapped, then shuffle.\nBeam me up {1}{G} (You may cast this card from your graveyard for {1}{G} if you also return a creature you control to its owner's hand. Then exile this spell.)"
+  },
+  "Planetary Bombardment": {
+    "id": "Planetary Bombardment",
+    "name": "Planetary Bombardment",
+    "typeLine": "Sorcery",
+    "manaCost": "{R}",
+    "cmc": 1,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Planetary Bombardment deals 2 damage to target creature. Planetary Bombardment deals 4 damage to that creature instead if a creature died this turn."
+  },
+  "Dominion Infiltration": {
+    "id": "Dominion Infiltration",
+    "name": "Dominion Infiltration",
+    "typeLine": "Sorcery",
+    "manaCost": "{X}{R}{R}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose X target creatures your opponents control. For each of them, create a token that's a copy of that creature, except it has changeling. Those tokens gain haste. Exile those tokens at the beginning of the next end step. (They're every creature type.)"
+  },
+  "Face Yourself": {
+    "id": "Face Yourself",
+    "name": "Face Yourself",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{R}{R}",
+    "cmc": 7,
+    "colors": [
+      "R"
+    ],
+    "oracle": "For each creature target player controls, create a token that's a copy of that creature, except it has haste and \"At the beginning of the end step, if you don't control a planeswalker, sacrifice this token.\""
+  },
+  "Rules of Acquisition": {
+    "id": "Rules of Acquisition",
+    "name": "Rules of Acquisition",
+    "typeLine": "Sorcery",
+    "manaCost": "{3}{U}{U}",
+    "cmc": 5,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Choose one —\n• Follow the 3rd Rule — Gain control of target nonland permanent an opponent controls. That opponent draws three cards.\n• Follow the 98th Rule — Target opponent gains control of target nonland permanent you control. If they do, you draw three cards."
+  },
+  "Deep Space Scan": {
+    "id": "Deep Space Scan",
+    "name": "Deep Space Scan",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{U}{U}",
+    "cmc": 6,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Strange new worlds — Draw X cards, where X is the number of differently named lands you control. You have no maximum hand size until your next turn."
+  },
+  "Cloak and Phaser": {
+    "id": "Cloak and Phaser",
+    "name": "Cloak and Phaser",
+    "typeLine": "Sorcery",
+    "manaCost": "{8}{U}",
+    "cmc": 9,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Strange new worlds — This spell costs {X} less to cast, where X is the number of differently named lands you control.\nCreate two 2/2 black Romulan creature tokens. Draw two cards, then discard a card."
+  },
+  "Test of Loyalty": {
+    "id": "Test of Loyalty",
+    "name": "Test of Loyalty",
+    "typeLine": "Sorcery",
+    "manaCost": "{B}",
+    "cmc": 1,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Choose one —\n• Plain, Simple Garak — Exile target card from a graveyard. Draw a card.\n• Of the Obsidian Order — Return target creature card from your graveyard to your hand."
+  },
+  "Branching Timeline": {
+    "id": "Branching Timeline",
+    "name": "Branching Timeline",
+    "typeLine": "Sorcery",
+    "manaCost": "{6}{G}{G}",
+    "cmc": 8,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Strange new worlds — Reveal the top X cards of your library, where X is the number of differently named lands you control. Put all permanent cards revealed this way onto the battlefield tapped and the rest on the bottom of your library in a random order."
+  },
+  "Right of Vengeance": {
+    "id": "Right of Vengeance",
+    "name": "Right of Vengeance",
+    "typeLine": "Instant",
+    "manaCost": "{3}{W}",
+    "cmc": 4,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Until end of turn, whenever a creature deals combat damage to you, destroy that creature and create a 2/1 red Klingon Warrior creature token with haste."
+  },
+  "There's Coffee in that Nebula": {
+    "id": "There's Coffee in that Nebula",
+    "name": "There's Coffee in that Nebula",
+    "typeLine": "Sorcery",
+    "manaCost": "{1}{W}",
+    "cmc": 2,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Look at the top five cards of your library. You may reveal a Plains card or nonland permanent card with mana value 3 or less from among them and put it into your hand. Put the rest on the bottom in a random order.\nBeam me up {2}{W} (You may cast this card from your graveyard for {2}{W} if you also return a creature you control to its owner's hand. Then exile this spell.)"
+  },
+  "The Needs of the Many": {
+    "id": "The Needs of the Many",
+    "name": "The Needs of the Many",
+    "typeLine": "Instant",
+    "manaCost": "{1}{W}",
+    "cmc": 2,
+    "colors": [
+      "W"
+    ],
+    "oracle": "As an additional cost to cast this spell, sacrifice a creature.\nCreatures you control gain hexproof and indestructible until end of turn. You gain hexproof until end of turn. Prevent all damage that would be dealt to you this turn. Exile The Needs of the Many."
+  },
+  "Brazen Bluff": {
+    "id": "Brazen Bluff",
+    "name": "Brazen Bluff",
+    "typeLine": "Instant",
+    "manaCost": "{R}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Choose target noncreature spell an opponent controls. That player may exile it. If they don't, you may cast a noncreature spell from your hand without paying its mana cost."
+  },
+  "The Promise of Kahless": {
+    "id": "The Promise of Kahless",
+    "name": "The Promise of Kahless",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "You may sacrifice a Klingon or Warrior. If you do, return all other Klingon and Warrior creature cards from your graveyard to the battlefield."
+  },
+  "Vulcan Mind-Meld": {
+    "id": "Vulcan Mind-Meld",
+    "name": "Vulcan Mind-Meld",
+    "typeLine": "Sorcery",
+    "manaCost": "{U}",
+    "cmc": 1,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Target opponent looks at the top card of your library, then exiles it face down. You look at the top two cards of their library, then exile them face down. For each card exiled this way, the player who exiled it may play it for as long as it remains exiled. Mana of any type can be spent to cast spells this way."
+  },
+  "Stray from History": {
+    "id": "Stray from History",
+    "name": "Stray from History",
+    "typeLine": "Sorcery",
+    "manaCost": "{2}{B}",
+    "cmc": 3,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Choose one —\n• Rewrite the Past — Return one or two target creature and/or Spacecraft cards from your graveyard to your hand.\n• Repair the Timeline — Target opponent reveals their hand. You choose a nonland card from it. Exile that card."
+  },
+  "Gift of Perfection": {
+    "id": "Gift of Perfection",
+    "name": "Gift of Perfection",
+    "typeLine": "Sorcery",
+    "manaCost": "{4}{U}",
+    "cmc": 5,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Each opponent reveals cards from the top of their library until they reveal a creature card. Assimilate one of the creature cards revealed this way. Then each opponent puts the other cards they revealed this way on the bottom of their library in a random order. (To assimilate a card, put it onto the battlefield under your control with a +1/+1 counter. It's a Borg artifact creature and loses all other creature types.)"
+  },
+  "Infinite Diversity": {
+    "id": "Infinite Diversity",
+    "name": "Infinite Diversity",
+    "typeLine": "Sorcery",
+    "manaCost": "{7}{R}{R}",
+    "cmc": 9,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Federation — Exile target instant or sorcery card from your graveyard. Copy that card X times, where X is the number of creature types among non-Borg creatures you control. You may cast the copies without paying their mana costs. Exile Infinite Diversity."
+  },
+  "Test of Priorities": {
+    "id": "Test of Priorities",
+    "name": "Test of Priorities",
+    "typeLine": "Instant",
+    "manaCost": "{1}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Choose one —\n• Power to Engines — Surveil 2, then draw a card.\n• Power to Life Support — Exile target creature you control. Return that card to the battlefield under its owner's control at the beginning of the next end step."
+  },
+  "Genesis Effect": {
+    "id": "Genesis Effect",
+    "name": "Genesis Effect",
+    "typeLine": "Instant",
+    "manaCost": "{4}{R}",
+    "cmc": 5,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Genesis Effect deals 6 damage to target creature. Destroy target land you control. Create a tapped Planet land token named New Planet with \"{T}: Add one mana of any color.\"",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Live Long and Prosper": {
+    "id": "Live Long and Prosper",
+    "name": "Live Long and Prosper",
+    "typeLine": "Sorcery",
+    "manaCost": "{5}{W}{U}",
+    "cmc": 7,
+    "colors": [
+      "U",
+      "W"
+    ],
+    "oracle": "This spell can't be countered.\nDouble your life total. Draw cards equal to the number of cards in your hand. You have no maximum hand size until your next turn."
+  }
+}

@@ -1,0 +1,1052 @@
+{
+  "Dr. Leonard \"Bones\" McCoy": {
+    "id": "Dr. Leonard \"Bones\" McCoy",
+    "name": "Dr. Leonard \"Bones\" McCoy",
+    "typeLine": "Legendary Creature — Human Doctor",
+    "manaCost": "{1}{G}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Flash\nWhen Dr. McCoy enters, choose one —\n• Return target non-Doctor permanent card from your graveyard to your hand.\n• Choose up to one other target creature. When it dies this turn, return that card to the battlefield under its owner's control with a +1/+1 counter on it at the beginning of the next end step.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Koloth, Tribble Hunter": {
+    "id": "Koloth, Tribble Hunter",
+    "name": "Koloth, Tribble Hunter",
+    "typeLine": "Legendary Creature — Klingon Warrior Officer",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of your end step, each player creates two 1/1 white Tribble creature tokens with \"This token can't block.\"\nAll Tribbles get +1/+0 and are goaded. (They attack each combat if able and attack a player other than you if able.)",
+    "power": "3",
+    "toughness": "3"
+  },
+  "The Duras Sisters": {
+    "id": "The Duras Sisters",
+    "name": "The Duras Sisters",
+    "typeLine": "Legendary Creature — Klingon Warrior",
+    "manaCost": "{B/R}{B/R}",
+    "cmc": 2,
+    "colors": [
+      "B",
+      "R"
+    ],
+    "oracle": "When The Duras Sisters die, create a 2/1 red Klingon Warrior creature token with haste.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Captain Jean-Luc Picard": {
+    "id": "Captain Jean-Luc Picard",
+    "name": "Captain Jean-Luc Picard",
+    "typeLine": "Legendary Creature — Human Officer",
+    "manaCost": "{2}{W}",
+    "cmc": 3,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Other creatures you control get +1/+1.\nWhenever you cast a creature or Spacecraft spell, create a 1/1 red Officer creature token.\nTap seven untapped Officers you control: Search your library for a Spacecraft card, put it onto the battlefield with seven charge counters on it, then shuffle.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Dr. Joseph M'Benga": {
+    "id": "Dr. Joseph M'Benga",
+    "name": "Dr. Joseph M'Benga",
+    "typeLine": "Legendary Creature — Human Doctor",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Other creatures you control with counters on them have hexproof.\nIf you would put one or more counters on a creature you control, put twice that many of each of those kinds of counters on that creature instead.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Una Chin-Riley, Number One": {
+    "id": "Una Chin-Riley, Number One",
+    "name": "Una Chin-Riley, Number One",
+    "typeLine": "Legendary Creature — Illyrian Officer",
+    "manaCost": "{4}{W}",
+    "cmc": 5,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Whenever you attack while creatures you control have total power 8 or greater, target attacking creature gets +2/+0 and gains first strike until end of turn.",
+    "power": "4",
+    "toughness": "5"
+  },
+  "Tuvok, Chief Tactical Officer": {
+    "id": "Tuvok, Chief Tactical Officer",
+    "name": "Tuvok, Chief Tactical Officer",
+    "typeLine": "Legendary Creature — Vulcan Officer",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flash\nWhen Tuvok enters during the declare attackers step, choose up to two target attacking creatures. For each of them, you may reselect which player or permanent that creature is attacking. (A creature can't attack its controller.)",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Chief Montgomery Scott": {
+    "id": "Chief Montgomery Scott",
+    "name": "Chief Montgomery Scott",
+    "typeLine": "Legendary Creature — Human Artificer",
+    "manaCost": "{2}{G}{U}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Strange new worlds — {6}, {T}: You may put a creature or Spacecraft card from your hand onto the battlefield. It enters with X additional +1/+1 counters on it if it's a creature and X additional charge counters on it if it's a Spacecraft, where X is the number of differently named lands you control.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Werewolf Pack Leader": {
+    "id": "Werewolf Pack Leader",
+    "name": "Werewolf Pack Leader",
+    "typeLine": "Creature — Human Werewolf",
+    "manaCost": "{G}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Pack tactics — Whenever this creature attacks, if you attacked with creatures with total power 6 or greater this combat, draw a card.\n{3}{G}: Until end of turn, this creature has base power and toughness 5/3, gains trample, and is a Werewolf.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Rite of Ascension": {
+    "id": "Rite of Ascension",
+    "name": "Rite of Ascension",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{W}",
+    "cmc": 4,
+    "colors": [
+      "R",
+      "W"
+    ],
+    "oracle": "Battlefront — Whenever you attack, for each opponent you attacked this turn, create a tapped and attacking 2/1 red Klingon Warrior creature token with haste."
+  },
+  "MACO Strike Team": {
+    "id": "MACO Strike Team",
+    "name": "MACO Strike Team",
+    "typeLine": "Creature — Human Soldier",
+    "manaCost": "{G}",
+    "cmc": 1,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever a creature you control becomes the target of a spell or ability an opponent controls, create a tapped 1/1 red Officer creature token.",
+    "power": "2",
+    "toughness": "1"
+  },
+  "Holo-Engineer": {
+    "id": "Holo-Engineer",
+    "name": "Holo-Engineer",
+    "typeLine": "Creature — Human Artificer",
+    "manaCost": "{2}{G}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, create a 3/3 colorless Illusion artifact creature token.\nIf one or more tokens would be created under your control, that many 3/3 colorless Illusion artifact creature tokens are created instead.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "The Inner Light": {
+    "id": "The Inner Light",
+    "name": "The Inner Light",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{G}{W}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "W"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Return target green or white creature card from your graveyard to the battlefield.\nII — Choose target creature. Whenever it deals combat damage to a player this turn, you draw that many cards.\nIII — You gain life equal to the greatest power among creatures you control. Create a Treasure token."
+  },
+  "Shuttlecraft Galileo": {
+    "id": "Shuttlecraft Galileo",
+    "name": "Shuttlecraft Galileo",
+    "typeLine": "Legendary Artifact — Spacecraft",
+    "manaCost": "{3}{W}",
+    "cmc": 4,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, create a 1/1 red Officer creature token.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 6+.)\n6+ | Flying\nWhenever Shuttlecraft Galileo attacks, up to seven target attacking creatures gain flying until end of turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Deep Space 9": {
+    "id": "Deep Space 9",
+    "name": "Deep Space 9",
+    "typeLine": "Legendary Artifact — Spacecraft",
+    "manaCost": "{9}",
+    "cmc": 9,
+    "colors": [],
+    "oracle": "When Deep Space 9 enters and at the beginning of your upkeep, exile the top four cards of your library. Put all permanent cards exiled this way onto the battlefield.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery.)\n9+ | Creatures you control get +3/+3."
+  },
+  "David and Carol Marcus, Creators": {
+    "id": "David and Carol Marcus, Creators",
+    "name": "David and Carol Marcus, Creators",
+    "typeLine": "Legendary Creature — Human Scientist",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When David and Carol Marcus enter, create a tapped Planet land token named New Planet with \"{T}: Add one mana of any color.\"",
+    "power": "1",
+    "toughness": "3",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Kai Winn, Faithless Leader": {
+    "id": "Kai Winn, Faithless Leader",
+    "name": "Kai Winn, Faithless Leader",
+    "typeLine": "Legendary Creature — Bajoran Cleric",
+    "manaCost": "{1}{B}",
+    "cmc": 2,
+    "colors": [
+      "B"
+    ],
+    "oracle": "As Kai Winn enters, choose a nonland card name.\nWhenever an opponent casts a spell with the chosen name or activates an ability of a source with the chosen name, that player loses 3 life.",
+    "power": "3",
+    "toughness": "1"
+  },
+  "Subspace Anomaly": {
+    "id": "Subspace Anomaly",
+    "name": "Subspace Anomaly",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "{T}: Add {C}.\n{4}{W}, {T}, Sacrifice this land: Create two 1/1 red Officer creature tokens. Create a tapped Planet land token named New Planet with \"{T}: Add one mana of any color.\"",
+    "producedMana": [
+      "B",
+      "C",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Voq, Torchbearer": {
+    "id": "Voq, Torchbearer",
+    "name": "Voq, Torchbearer",
+    "typeLine": "Legendary Creature — Klingon Spy",
+    "manaCost": "{3}{B}",
+    "cmc": 4,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Menace\nChoH'a' — You may have Voq enter as a copy of a creature card in a graveyard, except he's a Klingon Spy in addition to his other types and has menace.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Kang, Suspicious Captain": {
+    "id": "Kang, Suspicious Captain",
+    "name": "Kang, Suspicious Captain",
+    "typeLine": "Legendary Creature — Klingon Warrior Officer",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When Kang enters, choose target creature an opponent controls. Kang and that creature are goaded for as long as you control Kang. (They attack each combat if able and attack a player other than you if able.)\nWhenever one or more goaded creatures attack, put a +1/+1 counter on target creature you control.",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Vic Fontaine, One Night Only": {
+    "id": "Vic Fontaine, One Night Only",
+    "name": "Vic Fontaine, One Night Only",
+    "typeLine": "Legendary Artifact Creature — Illusion Performer",
+    "manaCost": "{1}{R}{W}",
+    "cmc": 3,
+    "colors": [
+      "R",
+      "W"
+    ],
+    "oracle": "Seek out — Whenever you draw your second card each turn, one or two target creatures each get +2/+0 and gain lifelink until end of turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Gaseous Anomaly": {
+    "id": "Gaseous Anomaly",
+    "name": "Gaseous Anomaly",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "{T}: Add {C}.\n{5}{U}, {T}, Sacrifice this land: Draw two cards. Create a tapped Planet land token named New Planet with \"{T}: Add one mana of any color.\"",
+    "producedMana": [
+      "B",
+      "C",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Melkotian Adjudicator": {
+    "id": "Melkotian Adjudicator",
+    "name": "Melkotian Adjudicator",
+    "typeLine": "Creature — Melkotian Advisor",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Flying, vigilance\nWhenever you face a dilemma, put a +1/+1 counter on this creature. (You face a dilemma as you choose one or more modes for a spell or ability.)",
+    "power": "2",
+    "toughness": "1"
+  },
+  "The Wrath of Khan": {
+    "id": "The Wrath of Khan",
+    "name": "The Wrath of Khan",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — This Saga deals 4 damage to target creature an opponent controls. At the beginning of the next combat this turn, gain control of that creature until end of turn. Untap it. It gains haste until end of turn.\nII — You may exile a card from your hand. If you do, draw a card.\nIII — Each opponent sacrifices a nontoken permanent of their choice."
+  },
+  "Sarcophagus, Ship of the Dead": {
+    "id": "Sarcophagus, Ship of the Dead",
+    "name": "Sarcophagus, Ship of the Dead",
+    "typeLine": "Legendary Artifact — Spacecraft",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Other creatures you control get +1/+0.\nWhenever a creature dies, if Sarcophagus isn't a creature, put a charge counter on it.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 10+.)\n10+ | Flying",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Seven of Nine, Tertiary Adjunct": {
+    "id": "Seven of Nine, Tertiary Adjunct",
+    "name": "Seven of Nine, Tertiary Adjunct",
+    "typeLine": "Legendary Artifact Creature — Borg",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "That Is Irrelevant — {T}: Draw a card, then discard a card. When you discard a nonland card this way, put two charge counters on up to one target artifact.",
+    "power": "1",
+    "toughness": "4"
+  },
+  "Extraction Integrant": {
+    "id": "Extraction Integrant",
+    "name": "Extraction Integrant",
+    "typeLine": "Artifact Creature — Borg",
+    "manaCost": "{1}{B}",
+    "cmc": 2,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Artifact creatures you control have menace and \"Whenever a creature blocks this creature, that creature gets -1/-1 until end of turn.\"",
+    "power": "1",
+    "toughness": "1"
+  },
+  "T'Pring, Never Parted": {
+    "id": "T'Pring, Never Parted",
+    "name": "T'Pring, Never Parted",
+    "typeLine": "Legendary Creature — Vulcan Citizen",
+    "manaCost": "{3}{G}{U}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "Kal-if-fee — When T'Pring enters, choose another target creature you control and target creature an opponent controls. You may have the chosen creatures fight each other. Whenever a creature that fought this way dies this turn, you draw a card.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Kurn, Son of Mogh": {
+    "id": "Kurn, Son of Mogh",
+    "name": "Kurn, Son of Mogh",
+    "typeLine": "Legendary Creature — Klingon Warrior Officer",
+    "manaCost": "{2}{B}",
+    "cmc": 3,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Deathtouch\nBattlefront — Whenever Kurn attacks, you draw X cards and lose X life, where X is the number of opponents you attacked this turn.",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Kobayashi Maru Scenario": {
+    "id": "Kobayashi Maru Scenario",
+    "name": "Kobayashi Maru Scenario",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{U}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "At the beginning of your upkeep, choose one that hasn't been chosen —\n• Hail — Return up to one target creature an opponent controls with mana value 3 or less to its owner's hand.\n• Sensors — Draw two cards.\n• Transport — Create two 1/1 red Officer creature tokens.\n• Abandon Ship — You lose the game."
+  },
+  "The Naked Time": {
+    "id": "The Naked Time",
+    "name": "The Naked Time",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{1}{R}",
+    "cmc": 2,
+    "colors": [
+      "R"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after III.)\nI — Search your library for a basic Mountain card, put it onto the battlefield tapped, then shuffle.\nII — Whenever a creature you control enters this turn, put a +1/+1 counter on it and it gains haste until end of turn.\nIII — Sacrifice a land."
+  },
+  "Andromedan Automatons": {
+    "id": "Andromedan Automatons",
+    "name": "Andromedan Automatons",
+    "typeLine": "Artifact Creature — Android",
+    "manaCost": "{2}{W}",
+    "cmc": 3,
+    "colors": [
+      "W"
+    ],
+    "oracle": "When this creature enters, you may search your library for any number of cards named Andromedan Automatons, reveal them, put them into your hand, then shuffle.",
+    "power": "3",
+    "toughness": "1"
+  },
+  "Daniels, Temporal Agent": {
+    "id": "Daniels, Temporal Agent",
+    "name": "Daniels, Temporal Agent",
+    "typeLine": "Legendary Creature — Human Advisor",
+    "manaCost": "{2}{B/G}{B/G}",
+    "cmc": 4,
+    "colors": [
+      "B",
+      "G"
+    ],
+    "oracle": "When Daniels enters, return target creature card from your graveyard to your hand.\n{2}, Put this card from your graveyard on the bottom of your library: You gain 2 life.",
+    "power": "3",
+    "toughness": "1"
+  },
+  "Celestial Vault": {
+    "id": "Celestial Vault",
+    "name": "Celestial Vault",
+    "typeLine": "Artifact",
+    "manaCost": "{1}{W}",
+    "cmc": 2,
+    "colors": [
+      "W"
+    ],
+    "oracle": "{W}, {T}: Draft a card from Celestial Vault's spellbook and exile it face down.\n{1}, Sacrifice this artifact: Put all cards exiled with this artifact into their owner's hand."
+  },
+  "Worf, Honor-Bound Warrior": {
+    "id": "Worf, Honor-Bound Warrior",
+    "name": "Worf, Honor-Bound Warrior",
+    "typeLine": "Legendary Creature — Klingon Warrior Officer",
+    "manaCost": "{R/W}{R/W}",
+    "cmc": 2,
+    "colors": [
+      "R",
+      "W"
+    ],
+    "oracle": "Whenever you attack while creatures you control have total power 8 or greater, double Worf's power until end of turn.\nTap two untapped artifacts and/or creatures you control: Put a +1/+1 counter on Worf. Activate only as a sorcery.",
+    "power": "1",
+    "toughness": "1"
+  },
+  "Korok, Liberated Rage": {
+    "id": "Korok, Liberated Rage",
+    "name": "Korok, Liberated Rage",
+    "typeLine": "Legendary Artifact Creature — Klingon Borg",
+    "manaCost": "{3}{W}",
+    "cmc": 4,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Battlefront — Whenever Korok attacks, creatures you control get +X/+X until end of turn, where X is the number of opponents you attacked this turn.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Temporal Conqueror": {
+    "id": "Temporal Conqueror",
+    "name": "Temporal Conqueror",
+    "typeLine": "Creature — Na'kuhl Warrior",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When this creature enters, mill three cards. Then return a land card from your graveyard to your hand. If you can't, create a Treasure token. (To mill three cards, put the top three cards of your library into your graveyard.)",
+    "power": "2",
+    "toughness": "3"
+  },
+  "Georgiou, Terran Emperor": {
+    "id": "Georgiou, Terran Emperor",
+    "name": "Georgiou, Terran Emperor",
+    "typeLine": "Legendary Creature — Human Rogue Noble",
+    "manaCost": "{4}{B}{B}",
+    "cmc": 6,
+    "colors": [
+      "B"
+    ],
+    "oracle": "You don't lose the game for having 0 or less life.\nAt the beginning of your end step, you lose 3 life and draw a card. Then if your life total is 0 or less, create ten 1/1 red Officer creature tokens.",
+    "power": "4",
+    "toughness": "6"
+  },
+  "Miles O'Brien, Transporter Ops": {
+    "id": "Miles O'Brien, Transporter Ops",
+    "name": "Miles O'Brien, Transporter Ops",
+    "typeLine": "Legendary Creature — Human Artificer",
+    "manaCost": "{2}{W}",
+    "cmc": 3,
+    "colors": [
+      "W"
+    ],
+    "oracle": "When Miles O'Brien enters, return up to one other target creature or artifact you control to its owner's hand.\nAt the beginning of each end step, if a permanent was returned to your hand from the battlefield this turn, draw a card.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Conquest Mission": {
+    "id": "Conquest Mission",
+    "name": "Conquest Mission",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{W}",
+    "cmc": 3,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Whenever a nontoken artifact you control enters, put a quest counter on this enchantment. Create a 1/1 colorless Borg artifact creature token. If this enchantment has six or more quest counters on it, create two of those tokens instead."
+  },
+  "Jean-Luc, Mon Capitaine": {
+    "id": "Jean-Luc, Mon Capitaine",
+    "name": "Jean-Luc, Mon Capitaine",
+    "typeLine": "Legendary Creature — Human Officer",
+    "manaCost": "{2}{U}{R}{W}",
+    "cmc": 5,
+    "colors": [
+      "R",
+      "U",
+      "W"
+    ],
+    "oracle": "Flying\nFederation — Faeries you control enter with an additional +1/+1 counter on them for each creature type among non-Borg creatures you already control.",
+    "power": "5",
+    "toughness": "3"
+  },
+  "Troi, Winging It": {
+    "id": "Troi, Winging It",
+    "name": "Troi, Winging It",
+    "typeLine": "Legendary Creature — Betazoid Human Advisor",
+    "manaCost": "{3}{W}",
+    "cmc": 4,
+    "colors": [
+      "W"
+    ],
+    "oracle": "Whenever an opponent draws a card during your turn, create a 1/1 blue Faerie creature token with flying.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "The Doctor, EMH": {
+    "id": "The Doctor, EMH",
+    "name": "The Doctor, EMH",
+    "typeLine": "Legendary Artifact Creature — Illusion Doctor",
+    "manaCost": "{3}{G/W}{G/W}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "W"
+    ],
+    "oracle": "When The Doctor enters, put a +1/+1 counter on target creature. Then put a +1/+1 counter on each creature you control with a counter on it.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "U.S.S. Farragut, Bold Explorer": {
+    "id": "U.S.S. Farragut, Bold Explorer",
+    "name": "U.S.S. Farragut, Bold Explorer",
+    "typeLine": "Legendary Artifact — Spacecraft",
+    "manaCost": "{6}",
+    "cmc": 6,
+    "colors": [],
+    "oracle": "Landfall — Whenever a land you control enters, you may put a creature card from your hand onto the battlefield. That creature gains haste. At the beginning of the next end step, put it on the bottom of your library. When you do, draw a card.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 7+.)\n7+ | Flying",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Exploratory Mission": {
+    "id": "Exploratory Mission",
+    "name": "Exploratory Mission",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "Landfall — Whenever a land you control enters, put a quest counter on this enchantment. Then exile cards from the top of your library until you exile a nonland card. You may play that card this turn. If this enchantment has five or more quest counters on it, add {R}{R}.",
+    "producedMana": [
+      "R"
+    ]
+  },
+  "Gowron, Eager for Battle": {
+    "id": "Gowron, Eager for Battle",
+    "name": "Gowron, Eager for Battle",
+    "typeLine": "Legendary Creature — Klingon Warrior",
+    "manaCost": "{2}{B}{R}",
+    "cmc": 4,
+    "colors": [
+      "B",
+      "R"
+    ],
+    "oracle": "Whenever another creature dies, put a +1/+1 counter on Gowron.\nSacrifice another creature: Gowron gains trample until end of turn. If you sacrificed a Klingon this way, you draw a card and lose 1 life.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Transwarp Hub": {
+    "id": "Transwarp Hub",
+    "name": "Transwarp Hub",
+    "typeLine": "Artifact — Spacecraft",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "When this Spacecraft enters, mill five cards. You may put up to two artifact cards from among them into your hand.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery.)\n3+ | {T}: Target creature can't be blocked this turn."
+  },
+  "Queen's Diamond": {
+    "id": "Queen's Diamond",
+    "name": "Queen's Diamond",
+    "typeLine": "Legendary Artifact — Spacecraft",
+    "manaCost": "{4}",
+    "cmc": 4,
+    "colors": [],
+    "oracle": "{T}: Choose a color. Add one mana of that color for each charge counter on Queen's Diamond. Spend this mana only to cast your commander.\nStation (Tap another creature you control: Put charge counters equal to its power on this Spacecraft. Station only as a sorcery. It's an artifact creature at 8+.)\n8+ | Flying, vigilance, haste",
+    "power": "5",
+    "toughness": "5",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Pavel Chekov, First Posting": {
+    "id": "Pavel Chekov, First Posting",
+    "name": "Pavel Chekov, First Posting",
+    "typeLine": "Legendary Creature — Human Pilot",
+    "manaCost": "{2}{G}{U}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "If you would draw a card, you may instead choose land or nonland and reveal cards from the top of your library until you reveal a card of the chosen kind. Put that card into your hand and put all other cards revealed this way on the bottom of your library in a random order.",
+    "power": "1",
+    "toughness": "4"
+  },
+  "Assimilation Assessor": {
+    "id": "Assimilation Assessor",
+    "name": "Assimilation Assessor",
+    "typeLine": "Artifact Creature — Borg",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When this creature enters, exile target opponent's graveyard.\nWhenever this creature attacks, assimilate a creature card exiled with it. (Put it onto the battlefield under your control with a +1/+1 counter. It's a Borg artifact creature and loses all other creature types.)",
+    "power": "5",
+    "toughness": "5"
+  },
+  "Jett Reno, Problem Solver": {
+    "id": "Jett Reno, Problem Solver",
+    "name": "Jett Reno, Problem Solver",
+    "typeLine": "Legendary Creature — Human Artificer",
+    "manaCost": "{1}{U}",
+    "cmc": 2,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever Jett Reno becomes tapped, surveil 1. If her power is 4 or greater, instead draw a card.\nWhenever you face a dilemma, put a +1/+1 counter on Jett Reno. (You face a dilemma as you choose one or more modes for a spell or ability.)",
+    "power": "1",
+    "toughness": "2"
+  },
+  "Spock, Voice of Reason": {
+    "id": "Spock, Voice of Reason",
+    "name": "Spock, Voice of Reason",
+    "typeLine": "Legendary Creature — Vulcan Human Scientist",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "{2}, {T}: Draw a card for each nontoken permanent you control that entered this turn.",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Commander Raffi Musiker": {
+    "id": "Commander Raffi Musiker",
+    "name": "Commander Raffi Musiker",
+    "typeLine": "Legendary Creature — Human Officer",
+    "manaCost": "{2}{B}",
+    "cmc": 3,
+    "colors": [
+      "B"
+    ],
+    "oracle": "When Commander Musiker enters, choose one —\n• Exile up to one target card from a graveyard. You gain 2 life.\n• Investigate. You lose 2 life. (Create a Clue token. It's an artifact with \"{2}, Sacrifice this token: Draw a card.\")",
+    "power": "3",
+    "toughness": "2"
+  },
+  "Overflow Submatrix": {
+    "id": "Overflow Submatrix",
+    "name": "Overflow Submatrix",
+    "typeLine": "Artifact Creature — Borg",
+    "manaCost": "{2}{B}",
+    "cmc": 3,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Once during each of your turns, you may cast an artifact creature spell from your graveyard. If you cast a spell this way, that artifact creature enters with a finality counter on it. (If a creature with a finality counter on it would die, exile it instead.)",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Anthropological Mission": {
+    "id": "Anthropological Mission",
+    "name": "Anthropological Mission",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever you cast a noncreature spell, put a quest counter on this enchantment. Draw a card. Then discard a card unless this enchantment has three or more quest counters on it."
+  },
+  "Lieutenant Hikaru Sulu": {
+    "id": "Lieutenant Hikaru Sulu",
+    "name": "Lieutenant Hikaru Sulu",
+    "typeLine": "Legendary Creature — Human Pilot",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Whenever Lieutenant Sulu becomes tapped, he explores. (Reveal the top card of your library. Put that card into your hand if it's a land. Otherwise, put a +1/+1 counter on this creature, then put the card back or put it into your graveyard.)\n{2}{U}: Target creature can't be blocked this turn.",
+    "power": "3",
+    "toughness": "3"
+  },
+  "Warp Speed": {
+    "id": "Warp Speed",
+    "name": "Warp Speed",
+    "typeLine": "Enchantment",
+    "manaCost": "{2}{G}",
+    "cmc": 3,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Lands you control enter untapped.\nWhen this enchantment enters, search your library for a basic land card or Planet card, reveal it, put it into your hand, then shuffle.\nStrange new worlds — {7}{U}{U}, Sacrifice this enchantment: Draw two cards. This ability costs {X} less to activate, where X is the number of differently named lands you control."
+  },
+  "Nog, Ambitious Cadet": {
+    "id": "Nog, Ambitious Cadet",
+    "name": "Nog, Ambitious Cadet",
+    "typeLine": "Legendary Creature — Ferengi Rogue",
+    "manaCost": "{B}{G}",
+    "cmc": 2,
+    "colors": [
+      "B",
+      "G"
+    ],
+    "oracle": "Menace\n{1}: If Nog is a Rogue, he becomes a Ferengi Scout with base power and toughness 3/4 and gains \"Whenever Nog becomes tapped, surveil 2.\"\n{3}: If Nog is a Scout, he becomes a Ferengi Officer and gains \"You may play lands from your graveyard\" and \"You may play an additional land on each of your turns.\"",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Culber and Stamets, Star-Crossed": {
+    "id": "Culber and Stamets, Star-Crossed",
+    "name": "Culber and Stamets, Star-Crossed",
+    "typeLine": "Legendary Creature — Human Doctor Artificer",
+    "manaCost": "{3}{G}",
+    "cmc": 4,
+    "colors": [
+      "G"
+    ],
+    "oracle": "When Culber and Stamets enter, choose one —\n• Put a +1/+1 counter on target creature.\n• Add two mana of any one color.",
+    "power": "3",
+    "toughness": "4",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Those Old Scientists": {
+    "id": "Those Old Scientists",
+    "name": "Those Old Scientists",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{2}{U}",
+    "cmc": 3,
+    "colors": [
+      "U"
+    ],
+    "oracle": "(As this Saga enters and after your draw\nstep, add a lore counter. Sacrifice after III.)\nI — Draw two cards, then discard two cards.\nII — Return up to one target artifact, instant, or sorcery card from your graveyard to your hand.\nIII — Choose up to two target cards in graveyards. The owners of those cards shuffle them into their libraries."
+  },
+  "Uhura, Xenolinguist": {
+    "id": "Uhura, Xenolinguist",
+    "name": "Uhura, Xenolinguist",
+    "typeLine": "Legendary Creature — Human Officer",
+    "manaCost": "{4}{U}",
+    "cmc": 5,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Whenever a non-Human creature enters, you may pay {1}. If you do, draw a card.",
+    "power": "3",
+    "toughness": "4"
+  },
+  "Commander Spock": {
+    "id": "Commander Spock",
+    "name": "Commander Spock",
+    "typeLine": "Legendary Creature — Vulcan Human Scientist",
+    "manaCost": "{2}{G}{W}{U}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "U",
+      "W"
+    ],
+    "oracle": "Strange new worlds — Whenever Commander Spock enters or attacks, reveal the top card of your library. You may cast that card without paying its mana cost if that spell's mana value is equal to or less than the number of differently named lands you control. If it's a land card, you may put it onto the battlefield tapped. If that card is still on top of your library, draw a card.",
+    "power": "3",
+    "toughness": "5"
+  },
+  "Quark, Humble Proprietor": {
+    "id": "Quark, Humble Proprietor",
+    "name": "Quark, Humble Proprietor",
+    "typeLine": "Legendary Creature — Ferengi Rogue",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "You can't sacrifice Treasure tokens.\nAt the beginning of each upkeep, create a Treasure token. (It's an artifact with \"{T}, Sacrifice this token: Add one mana of any color.\")",
+    "power": "1",
+    "toughness": "2",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "All Good Things...": {
+    "id": "All Good Things...",
+    "name": "All Good Things...",
+    "typeLine": "Enchantment — Saga",
+    "manaCost": "{3}{G}{U}",
+    "cmc": 5,
+    "colors": [
+      "G",
+      "U"
+    ],
+    "oracle": "(As this Saga enters and after your draw step, add a lore counter. Sacrifice after IV.)\nI, II, III — Draw two cards, then exile a card from your hand.\nIV — If all cards exiled with this Saga share a card type, you gain 10 life."
+  },
+  "Hit It!": {
+    "id": "Hit It!",
+    "name": "Hit It!",
+    "typeLine": "Enchantment",
+    "manaCost": "{1}{R}{G}",
+    "cmc": 3,
+    "colors": [
+      "G",
+      "R"
+    ],
+    "oracle": "Creatures you control have haste.\nWhen this enchantment enters, look at the top five cards of your library. Put a land card from among them onto the battlefield tapped and the rest into your graveyard."
+  },
+  "Gabriel Lorca, Mirror Menace": {
+    "id": "Gabriel Lorca, Mirror Menace",
+    "name": "Gabriel Lorca, Mirror Menace",
+    "typeLine": "Legendary Creature — Human Rogue Officer",
+    "manaCost": "{4}{B}",
+    "cmc": 5,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Menace\nWhenever you face a dilemma, you may pay {B}. If you do, return this card from your graveyard to your hand. (You face a dilemma as you choose one or more modes for a spell or ability.)",
+    "power": "5",
+    "toughness": "4"
+  },
+  "Species 8472": {
+    "id": "Species 8472",
+    "name": "Species 8472",
+    "typeLine": "Creature — Insect Beast",
+    "manaCost": "{4}{G}{G}",
+    "cmc": 6,
+    "colors": [
+      "G"
+    ],
+    "oracle": "Strange new worlds — When this creature enters, you gain life equal to the number of differently named lands you control.\nThis creature can't be blocked by artifact creatures.\nThis creature can't be the target of abilities from artifact sources your opponents control.",
+    "power": "7",
+    "toughness": "5"
+  },
+  "The Beacon of Kahless": {
+    "id": "The Beacon of Kahless",
+    "name": "The Beacon of Kahless",
+    "typeLine": "Legendary Artifact",
+    "manaCost": "{2}{R}",
+    "cmc": 3,
+    "colors": [
+      "R"
+    ],
+    "oracle": "{T}: Add one mana of any color.\nBattlefront — {T}: Choose a color. Add an amount of mana of that color equal to the number of opponents you attacked this turn.",
+    "producedMana": [
+      "B",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Jadzia Dax, Living Legacy": {
+    "id": "Jadzia Dax, Living Legacy",
+    "name": "Jadzia Dax, Living Legacy",
+    "typeLine": "Legendary Creature — Trill Scientist",
+    "manaCost": "{1}{G}",
+    "cmc": 2,
+    "colors": [
+      "G"
+    ],
+    "oracle": "At the beginning of your first main phase, put a +1/+1 counter on Jadzia Dax, then add an amount of {G} equal to the number of counters on her.\nTransfer Symbiont — {2}{G}, Discard this card: Put two +1/+1 counters on target creature.",
+    "power": "0",
+    "toughness": "1",
+    "producedMana": [
+      "G"
+    ]
+  },
+  "Q, Stacking the Deck": {
+    "id": "Q, Stacking the Deck",
+    "name": "Q, Stacking the Deck",
+    "typeLine": "Legendary Creature — Q",
+    "manaCost": "{2}{R}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "When Q enters, shuffle your library, then exile cards from the top of your library until you exile a nonland card. That nonland card gains \"Exile a card from your hand: Create a copy of this card. You may cast the copy. Activate only during your turn and only if this card is exiled.\"",
+    "power": "4",
+    "toughness": "4"
+  },
+  "Obsidian Order Operative": {
+    "id": "Obsidian Order Operative",
+    "name": "Obsidian Order Operative",
+    "typeLine": "Creature — Cardassian Officer Spy",
+    "manaCost": "{3}{B}",
+    "cmc": 4,
+    "colors": [
+      "B"
+    ],
+    "oracle": "Whenever you face a dilemma, each opponent loses 1 life and you gain 1 life. (You face a dilemma as you choose one or more modes for a spell or ability.)",
+    "power": "2",
+    "toughness": "5"
+  },
+  "Kes, Evolving Telepath": {
+    "id": "Kes, Evolving Telepath",
+    "name": "Kes, Evolving Telepath",
+    "typeLine": "Legendary Creature — Ocampa Advisor",
+    "manaCost": "{4}{U}",
+    "cmc": 5,
+    "colors": [
+      "U"
+    ],
+    "oracle": "At the beginning of your end step, put a time counter on Kes, then draw X cards, where X is the number of time counters on her. Then if she has nine or more time counters on her, sacrifice her.",
+    "power": "2",
+    "toughness": "6"
+  },
+  "Sarek, Federation Ambassador": {
+    "id": "Sarek, Federation Ambassador",
+    "name": "Sarek, Federation Ambassador",
+    "typeLine": "Legendary Creature — Vulcan Advisor",
+    "manaCost": "{1}{G}{W}{U}",
+    "cmc": 4,
+    "colors": [
+      "G",
+      "U",
+      "W"
+    ],
+    "oracle": "Federation — At the beginning of combat on your turn, draw a card for every five creature types among non-Borg creatures you control. If you draw three or more cards this way, put two +1/+1 counters on each creature you control.",
+    "power": "0",
+    "toughness": "5"
+  },
+  "Zero, Incorporeal Sensate": {
+    "id": "Zero, Incorporeal Sensate",
+    "name": "Zero, Incorporeal Sensate",
+    "typeLine": "Legendary Artifact Creature — Medusan Scientist",
+    "manaCost": "{1}{W/B}{W/B}",
+    "cmc": 3,
+    "colors": [
+      "B",
+      "W"
+    ],
+    "oracle": "Lifelink\nWhen Zero enters, look at target opponent's hand. You may exile a nonland card from it. For as long as that card remains exiled, its owner may play it. A spell cast this way costs {2} more to cast.",
+    "power": "2",
+    "toughness": "2"
+  },
+  "Will Riker, First in the Field": {
+    "id": "Will Riker, First in the Field",
+    "name": "Will Riker, First in the Field",
+    "typeLine": "Legendary Creature — Human Officer",
+    "manaCost": "{3}{R}",
+    "cmc": 4,
+    "colors": [
+      "R"
+    ],
+    "oracle": "At the beginning of combat on your turn, reveal cards from the top of your library until you reveal two land cards. Put those land cards onto the battlefield and the rest on the bottom of your library in a random order. Sacrifice those lands at the beginning of your next end step.",
+    "power": "4",
+    "toughness": "3"
+  },
+  "Ensign Pavel Chekov": {
+    "id": "Ensign Pavel Chekov",
+    "name": "Ensign Pavel Chekov",
+    "typeLine": "Legendary Creature — Human Pilot",
+    "manaCost": "{3}{U}",
+    "cmc": 4,
+    "colors": [
+      "U"
+    ],
+    "oracle": "Strange new worlds — When Ensign Chekov enters, each opponent exiles the top X cards of their library, where X is the number of differently named lands you control. For each opponent, choose a land card that player owns exiled this way. You may play the chosen cards for as long as they remain exiled.",
+    "power": "1",
+    "toughness": "5"
+  },
+  "Artificial Anomaly": {
+    "id": "Artificial Anomaly",
+    "name": "Artificial Anomaly",
+    "typeLine": "Land",
+    "manaCost": "",
+    "cmc": 0,
+    "colors": [],
+    "oracle": "{T}: Add {C}.\n{3}{B}, {T}, Sacrifice this land: Each opponent loses 2 life and you gain 2 life. Create a tapped Planet land token named New Planet with \"{T}: Add one mana of any color.\"",
+    "producedMana": [
+      "B",
+      "C",
+      "G",
+      "R",
+      "U",
+      "W"
+    ]
+  },
+  "Võx, Child of the Collective": {
+    "id": "Võx, Child of the Collective",
+    "name": "Võx, Child of the Collective",
+    "typeLine": "Legendary Artifact Creature — Borg",
+    "manaCost": "{4}{U}",
+    "cmc": 5,
+    "colors": [
+      "U"
+    ],
+    "oracle": "When Võx enters and at the beginning of your first main phase, the next artifact creature spell and the next Spacecraft spell you cast this turn have undaunted. (They cost {1} less to cast for each opponent.)",
+    "power": "3",
+    "toughness": "3"
+  }
+}
