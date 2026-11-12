@@ -265,6 +265,9 @@ body.peek .side { position: relative; z-index: 51; }
 .preview img { width: 100%; border-radius: 4.75% / 3.5%; display: block; }
 .preview .other-face { width: 45%; margin-top: .3rem; }
 .preview .small { margin-top: .35rem; }
+.preview .plays-as { margin-top: .4rem; }
+.preview .plays-as summary { cursor: pointer; color: var(--muted, #888); }
+.preview .plays-as-line { margin-top: .3rem; padding-left: .5rem; border-left: 2px solid var(--line, #8884); }
 .info { display: grid; grid-template-columns: 1fr 1fr; gap: .25rem .6rem; font-size: .82rem; }
 .info div { display: flex; justify-content: space-between; gap: .4rem; border-bottom: 1px solid var(--line); padding-bottom: .15rem; }
 .info span { color: var(--muted); }

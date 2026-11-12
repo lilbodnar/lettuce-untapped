@@ -160,7 +160,7 @@ const Autoplay = (() => {
   }
 
   // deckA against deckB, both played with Opp's rules. defs: { scryfallId: card } for both.
-  // opts: { aFirst, maxTurns (each, default 25) }. Returns { winner: 'A' | 'B' | null, turns, why,
+  // opts: { aFirst, maxTurns (each, default 25), check([{ s, life }, …], turn) after every turn }. Returns { winner: 'A' | 'B' | null, turns, why,
   // first, cardsA, cardsB, openA, openB } (open: lands in the opening hand).
   function match(deckA, deckB, defs, opts = {}) {
     const defOf = id => defs[id];
@@ -182,6 +182,7 @@ const Autoplay = (() => {
         current = defender.bot.s;
         takeTurn(active, defender, defOf);
         current = null;
+        if (opts.check) opts.check([A, Bp].map(p => ({ s: p.bot.s, life: p.life })), t); // tests: the state after every turn
         const turns = Math.floor(t / 2) + 1;
         const outD = lost(defender);
         const outA = lost(active);

@@ -3440,7 +3440,17 @@
         ${inst.commander ? ` <span class="pill">commander · tax +${(inst.castCount || 0) * 2}</span>` : ''}
         ${inst.chosenType && !inst.faceDown ? ` <span class="pill">chosen type: ${esc(inst.chosenType)}</span>` : ''}
         ${attachedText(inst)}
-        ${counters.length ? `<div class="muted">${counters.map(([k, n]) => `${esc(k)}: ${n}`).join(', ')}</div>` : ''}</div>`;
+        ${counters.length ? `<div class="muted">${counters.map(([k, n]) => `${esc(k)}: ${n}`).join(', ')}</div>` : ''}
+        ${inst.faceDown ? '' : playsAsHtml(c)}</div>`;
+  }
+
+  // Lines of this card the simulator plays as simpler ones (bot.js's approximations), so you know what to expect.
+  function playsAsHtml(c) {
+    const list = c && typeof Bot !== 'undefined' && Bot.approximations ? Bot.approximations(c.oracle) : [];
+    if (!list.length) return '';
+    const cut = s => (s.length > 140 ? s.slice(0, 137) + '…' : s);
+    return `<details class="plays-as"><summary>Simplified here (${list.length} line${list.length === 1 ? '' : 's'})</summary>${list.map(a =>
+      `<div class="plays-as-line"><div class="muted">${esc(cut(a.line))}</div><div>→ ${a.playsAs ? esc(a.playsAs) : '<i>not used by the simulator</i>'}</div></div>`).join('')}</details>`;
   }
 
   // ---------- menus for cards and piles ----------

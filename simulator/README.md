@@ -81,6 +81,8 @@ Your game is saved automatically, so you can close the page and come back later.
 
 On the **Decks** tab, under **Play against the computer**, pick your deck, Opp's deck (any of your decks) and who goes first, then click **Play**. Opp's table shows across the top, like a friend's would online.
 
+Some cards' lines are played as simpler ones (an X fixed at 3, a choice always made the same way) or not at all. Hover a card: **Simplified here** under its picture lists those lines and what each one does in the Simulator.
+
 Opp plays with simple rules:
 
 - It keeps a hand with 2 to 5 lands, otherwise it mulligans once.
@@ -250,6 +252,7 @@ js/app.js            screens, drag and drop, menus, odds charts
 js/game.js           the game: zones, moving cards, turns, tokens
 js/odds.js           draw-odds math
 js/bot.js            the computer opponent: what it casts, attacks and blocks with
+js/wp-lines.js       card lines the Simulator plays as simpler ones (one per line; bot.js reads it)
 js/autoplay.js       the Auto-test tab's games: a deck alone, or two decks against each other
 js/online.js         playing online: connecting to friends, what they see of your table
 js/tracker-link.js   reads decks from MTG Tracker (read-only)

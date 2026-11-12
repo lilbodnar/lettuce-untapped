@@ -249,5 +249,8 @@ worker/           the Archidekt relay and accounts (runs on Cloudflare, not in t
 ## Making changes
 
 - **Tests:** with [Node.js](https://nodejs.org) installed, run `npm test` in this folder. Nothing to install first. They also run on GitHub for every push, and the site isn't published if one fails.
+  - Every random choice in the Simulator (shuffles, coin flips, "at random") uses one fixed seed while the tests run, so a test that fails always fails the same way. To try another seed: `MTG_SEED=7 npm test`.
+  - `tests/smoke-games.test.js` plays whole games between random decks of real cards. For a longer run: `node tests/smoke-games.js 300 1000` (300 games, seeds from 1000). A failed game prints its seed and both decks; `node tests/smoke-games.js 1 <seed>` plays it again exactly.
+- **New sets:** `node tools/new-cards.js` downloads Scryfall's latest card file (only when it changed) and lists every card the Simulator doesn't play by itself yet, by set (joke sets left out), with test fixtures to start from. Lines get simpler readings with `node tools/add-lines.js <map.json>`, which adds them to `simulator/js/wp-lines.js`.
 - **Publishing:** pushing to `main` publishes the site. GitHub adds a version number to every script and stylesheet link as it publishes, so visitors always get the new files without a hard refresh. You don't need to change anything in `index.html` for this.
 - **One-time setup** (already done if the Actions tab shows green runs): on GitHub go to **Settings → Pages** and set **Source** to **GitHub Actions**.

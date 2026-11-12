@@ -33,7 +33,30 @@ const Game = (() => {
   // hooks.graveInstead(s, inst) true sends a card on its way to a graveyard to exile instead (Dauthi Voidwalker).
   const hooks = { milled: null, entered: null, tokenEntered: null, died: null, cast: null, casting: null, wouldDie: null, discard: null, moved: null, sendHome: null, oppDamaged: null, drew: null, counters: null, manaTapped: null, drawInstead: null, graveInstead: null, spent: null, shuffled: null };
 
+  // Randomness. Normally it's crypto-strength and can't be repeated. setSeed(n) switches every random
+  // choice in the simulator (shuffles, coin flips, "at random") to a seeded generator, so the same
+  // seed plays out the same way again: tests use it (a fixed seed under `node --test`, or MTG_SEED=n
+  // to try another), and so does replaying an automatic game. setSeed(null) goes back to normal.
+  let seedState = null;
+  function setSeed(n) { seedState = n == null ? null : (Number(n) >>> 0); return seedState; }
+  const getSeed = () => seedState;
+  function seededNext() { // mulberry32
+    seedState = (seedState + 0x6D2B79F5) >>> 0;
+    let t = seedState;
+    t = Math.imul(t ^ (t >>> 15), t | 1);
+    t ^= t + Math.imul(t ^ (t >>> 7), t | 61);
+    return ((t ^ (t >>> 14)) >>> 0) / 4294967296;
+  }
+  // A number in [0, 1), like Math.random().
+  function random() {
+    if (seedState != null) return seededNext();
+    if (typeof crypto !== 'undefined' && crypto.getRandomValues) return crypto.getRandomValues(new Uint32Array(1))[0] / 4294967296;
+    return Math.random();
+  }
+  if (typeof process !== 'undefined' && process.env && (process.env.MTG_SEED || process.env.NODE_TEST_CONTEXT)) setSeed(process.env.MTG_SEED || 20261112);
+
   function randomInt(n) {
+    if (seedState != null) return Math.floor(seededNext() * n);
     if (typeof crypto !== 'undefined' && crypto.getRandomValues) {
       const buf = new Uint32Array(1);
       const limit = Math.floor(0x100000000 / n) * n;
@@ -1890,7 +1913,7 @@ const Game = (() => {
     ZONES, ZONE_NAMES, CELL_W, CELL_H, MANA, layout, hooks, producesOf, available, enterLife, enterDraw, entersTapped, tapsOnEntry, parseCost, autoPay, manaAbility, isCreature,
     choosesType, typeChoices, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TARGET_DISCOUNT, GRAVE_DISCOUNT, FIRST_FLIER, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
-    counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt,
+    counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt, random, setSeed, getSeed,
     beginLeylines, takeBackLeylines, LEYLINE, attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,
     place: autoPlace, arrangePiles, isWalker,
   };
