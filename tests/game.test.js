@@ -51,11 +51,39 @@ test("autoPay taps the right lands, or nothing if it can't pay", () => {
 
 test('reads "spells you cast cost {N} less" and skips opponents and conditions', () => {
   assert.deepEqual(Game.costReductions("As Urza's Incubator enters, choose a creature type.\nCreature spells of the chosen type cost {2} less to cast."),
-    [{ n: 2, types: ['creature'], chosen: true }]);
-  assert.deepEqual(Game.costReductions('Instant and sorcery spells you cast cost {1} less to cast.'), [{ n: 1, types: ['instant', 'sorcery'], chosen: false }]);
+    [{ n: 2, groups: [['creature']], chosen: true }]);
+  assert.deepEqual(Game.costReductions('Instant and sorcery spells you cast cost {1} less to cast.'), [{ n: 1, groups: [['instant'], ['sorcery']], chosen: false }]);
   assert.deepEqual(Game.costReductions('Spells your opponents cast cost {1} less to cast.'), []);
   assert.deepEqual(Game.costReductions('Creature spells you cast with power 4 or greater cost {2} less to cast.'), []);
   assert.ok(Game.choosesType("As Herald's Horn enters, choose a creature type."));
+  // colors, "White creature" (both), "Red spells and white spells", "Each spell … that's red or green", everyone's
+  assert.deepEqual(Game.costReductions('White creature spells you cast cost {1} less to cast.'), [{ n: 1, groups: [['white', 'creature']], chosen: false }]);
+  assert.deepEqual(Game.costReductions('Red spells and white spells you cast cost {1} less to cast.'), [{ n: 1, groups: [['red'], ['white']], chosen: false }]);
+  assert.deepEqual(Game.costReductions("Each spell you cast that's red or green costs {1} less to cast."), [{ n: 1, groups: [['red'], ['green']], chosen: false }]);
+  assert.deepEqual(Game.costReductions('Multicolored spells cost {2} less to cast.'), [{ n: 2, groups: [['multicolored']], chosen: false, anyone: true }]);
+  assert.deepEqual(Game.costReductions("Each spell you cast that's a Demon, Horror, or Nightmare costs {1} less to cast."), []); // bot.js's Ancient Cellarspawn
+});
+
+test('color cost reductions: Medallions, Monuments, Familiars, Eye of Ugin, Urza\'s Filter', () => {
+  const s = Game.create(deck([{ id: 'forest', name: 'Forest', qty: 40 }]), defs);
+  s.zones.battlefield = [];
+  const texts = {};
+  const add = (name, text) => { const iid = Game.createToken(s, { name, typeLine: 'Artifact' }).iid; texts[iid] = text; };
+  const oracle = inst => texts[inst.iid] || '';
+  const card = (manaCost, typeLine) => Game.create({ key: 'k', name: 'k', rows: [{ id: 'x', qty: 1 }] }, { x: { id: 'x', name: 'X', typeLine, manaCost } }).cards.c1;
+  const whiteBear = card('{2}{W}', 'Creature — Bear');
+  const whiteBolt = card('{1}{W}', 'Instant');
+  const greenBear = card('{1}{G}', 'Creature — Bear');
+  const gold = card('{W}{U}', 'Instant');
+  const eldrazi = card('{7}', 'Creature — Eldrazi');
+  assert.deepEqual(whiteBear.cardColors, ['W']); // from the mana cost (the app's cards don't keep colors)
+  add("Oketra's Monument", 'White creature spells you cast cost {1} less to cast.');
+  assert.deepEqual([whiteBear, whiteBolt, greenBear].map(c => Game.discount(s, c, oracle)), [1, 0, 0]);
+  add('Thornscape Familiar', 'Red spells and white spells you cast cost {1} less to cast.');
+  assert.deepEqual([whiteBear, whiteBolt, greenBear].map(c => Game.discount(s, c, oracle)), [2, 1, 0]);
+  add("Urza's Filter", 'Multicolored spells cost {2} less to cast.');
+  add('Eye of Ugin', 'Colorless Eldrazi spells you cast cost {2} less to cast.');
+  assert.deepEqual([gold, eldrazi, greenBear].map(c => Game.discount(s, c, oracle)), [3, 2, 0]); // gold: white (Familiar) + multicolored
 });
 
 test('discounts only spells of the chosen type, and never below the colored part', () => {

@@ -526,24 +526,50 @@ const Game = (() => {
   // "As this artifact enters, choose a color." (Heraldic Banner)
   const choosesColor = oracle => /\bas (?:this|.+?) enters, choose a colou?r\b/i.test(oracle || '');
 
-  // Reads "<types> spells you cast cost {N} less to cast" from rules text. Returns a list of
-  // { n, types, chosen }: types are the words a spell's type line needs (any one of them; "non…"
-  // means it must not have it; empty means any spell), and chosen means it also has to be the
-  // creature type picked for this card. Spells your opponents cast, and discounts with conditions
-  // ("with flying", "for each…"), aren't read.
+  // Reads "<kinds> spells you cast cost {N} less to cast" from rules text. Returns a list of
+  // { n, groups, chosen }: groups are the kinds of spell that get it (any one group will do; "Instant
+  // and sorcery" is two), each a list of words the spell needs all of ("White creature": white and
+  // creature). A word is a type, a subtype or a color (white … green, colorless, multicolored,
+  // monocolored); "non…" means it must not have it; no groups means any spell. chosen means it also
+  // has to be the creature type picked for this card. anyone: the line has no "you cast" (Urza's
+  // Filter, Helm of Awakening), so it's for every player's spells (bot.js's selfDiscount adds
+  // Opp's). Spells your opponents cast, and discounts with conditions ("with flying", "for
+  // each…"), aren't read.
   function costReductions(oracle) {
     const out = [];
     for (const sentence of String(oracle || '').split(/\n+|(?<=\.)\s+/)) {
       // Eminence (The Ur-Sphinx): "As long as The Ur-Sphinx is in the command zone or on the
       // battlefield, other Sphinx spells you cast cost {1} less to cast." (from the command zone too)
       const em = /^(?:eminence\s*[—-]\s*)?as long as .+? is in the command zone or on the battlefield, (?:other )?(.+)$/i.exec(sentence.trim());
-      const m = (em ? em[1] : sentence.trim()).match(/^(.*?)\s*\bspells (you cast )?(of the chosen type )?(you cast )?cost \{(\d+)\} less to cast\.?$/i);
-      if (!m || !(m[2] || m[3] || m[4])) continue;
-      const words = m[1].toLowerCase().split(/,?\s+(?:and\/or|and|or)\s+|,\s*|\s+/).filter(Boolean);
-      if (words.length > 4 || !words.every(w => /^[a-z-]+$/.test(w))) continue;
-      out.push({ n: Number(m[5]), types: words, chosen: !!m[3], ...(em ? { eminence: true } : {}) });
+      // Goblin Anarchomancer: "Each spell you cast that's red or green costs {1} less to cast." (not Ancient Cellarspawn's "that's a Demon…": bot.js)
+      const t = (em ? em[1] : sentence.trim()).replace(/^each spell you cast that's (?!an? )(.+?) costs (\{\d+\} less to cast\.?)$/i, '$1 spells you cast cost $2');
+      const m = t.match(/^(.*?)\s*\bspells (you cast )?(of the chosen type )?(you cast )?cost \{(\d+)\} less to cast\.?$/i);
+      if (!m) continue;
+      // "Red spells and white spells" (Thornscape Familiar): the second "spells" is dropped
+      const groups = m[1].toLowerCase().replace(/\bspells\b/g, ' ').split(/,?\s+(?:and\/or|and|or)\s+|,\s*/)
+        .map(g => g.trim().split(/\s+/).filter(Boolean)).filter(g => g.length);
+      if (groups.flat().length > 4 || !groups.flat().every(w => /^[a-z-]+$/.test(w))) continue;
+      out.push({ n: Number(m[5]), groups, chosen: !!m[3], ...(em ? { eminence: true } : {}), ...(m[2] || m[3] || m[4] ? {} : { anyone: true }) });
     }
     return out;
+  }
+
+  // The words a spell can be asked for by a cost reduction: its type line's words and its colors.
+  const COLOR_WORD = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' };
+  function spellWords(spell) {
+    const words = String(spell.typeLine || '').split('//')[0].toLowerCase().split(/[^a-z-]+/).filter(Boolean);
+    const cols = spell.allColors ? Object.keys(COLOR_WORD) : (spell.tokenColors || spell.cardColors || (spell.bot && spell.bot.colors)
+      || [...new Set(String(spell.manaCost || '').split('//')[0].match(/[WUBRG]/g) || [])]).filter(k => COLOR_WORD[k]);
+    words.push(...cols.map(k => COLOR_WORD[k]), cols.length ? 'colored' : 'colorless', ...(cols.length > 1 ? ['multicolored'] : []), ...(cols.length === 1 ? ['monocolored'] : []));
+    return words;
+  }
+  // Does cost reduction r (from costReductions) cover this spell? src: the card it's on (its chosen type).
+  function reductionCovers(r, spell, src) {
+    const words = spellWords(spell);
+    const has = w => words.includes(w);
+    const fits = g => g.every(w => (w.startsWith('non') ? !has(w.replace(/^non-?/, '')) : has(w)));
+    if (r.groups.length && !r.groups.some(fits)) return false;
+    return !r.chosen || !!(src && src.chosenType && has(src.chosenType.toLowerCase()));
   }
 
   // How much less a spell costs from the permanents on your battlefield. oracleOf(inst) gives a
@@ -558,11 +584,6 @@ const Game = (() => {
   const hasFlying = text => /(?:^|\n)(?:[a-z ]+, )*flying(?:,|\n|$)/i.test(String(text || ''));
   function discount(s, spell, oracleOf) {
     const typeWords = String(spell.typeLine || '').split('//')[0].toLowerCase().split(/[^a-z-]+/).filter(Boolean);
-    // Color words too: Pearl Medallion's "White spells you cast cost {1} less" (the card's colors, or its mana cost's)
-    const COLOR_WORD = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' };
-    const cols = (spell.cardColors && spell.cardColors.length ? spell.cardColors
-      : [...new Set((String(spell.manaCost || '').split('//')[0].match(/[WUBRG]/g) || []))]).filter(k => COLOR_WORD[k]);
-    typeWords.push(...cols.map(k => COLOR_WORD[k]), ...(cols.length ? [] : ['colorless']), ...(cols.length > 1 ? ['multicolored'] : []), ...(cols.length === 1 ? ['monocolored'] : []));
     const has = w => typeWords.includes(w);
     let total = 0;
     for (const iid of [...s.zones.battlefield, ...s.zones.command]) {
@@ -570,11 +591,7 @@ const Game = (() => {
       if (src.faceDown || src.iid === spell.iid) continue;
       for (const r of costReductions(oracleOf(src))) {
         if (src.zone === 'command' && !r.eminence) continue;
-        const plain = r.types.filter(w => !w.startsWith('non'));
-        const nots = r.types.filter(w => w.startsWith('non')).map(w => w.replace(/^non-?/, ''));
-        if (nots.some(has) || (plain.length && !plain.some(has))) continue;
-        if (r.chosen && !(src.chosenType && has(src.chosenType.toLowerCase()))) continue;
-        total += r.n;
+        if (reductionCovers(r, spell, src)) total += r.n;
       }
       // Pearl-Ear, Imperial Advisor: "Enchantment spells you cast have affinity for Auras." ({1} less for each Aura you control)
       const aff = src.zone === 'battlefield' && AFFINITY_GRANT.exec(String(oracleOf(src) || ''));
@@ -937,6 +954,11 @@ const Game = (() => {
     }, extra);
     if (/^(?:changeling\b|(?:this creature|mistform ultimus) is every creature type(?: \([^)]*\))?\.?$)/im.test(String(def.oracle || ''))) inst.changeling = true; // every creature type (bot.js)
     if (Array.isArray(def.colors) && def.colors.length && !def.custom) inst.cardColors = def.colors; // "multicolored card" (bot.js)
+    // The app's cards (js/scryfall.js) don't keep their colors: they're read from the front face's mana cost (Devoid ones are colorless).
+    else if (!Array.isArray(def.colors) && !def.custom && !/^devoid\b/im.test(String(def.oracle || ''))) {
+      const cols = MANA.filter(k => k !== 'C' && new RegExp(`\\{[^}]*${k}[^}]*\\}`).test(String(def.manaCost || '').split('//')[0]));
+      if (cols.length) inst.cardColors = cols;
+    }
     if (/^.+? is all colors\b/im.test(String(def.oracle || ''))) inst.allColors = true; // Transguild Courier
     if (/^tap two untapped tokens you control: add one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.tapTokens = true; // Baylen, the Haymaker (manaUnits)
     if (/^tap an untapped legendary creature you control: add one mana of any colou?r\.?$/im.test(String(def.oracle || ''))) inst.tapLegend = true; // Relic of Legends (manaUnits)
@@ -1916,7 +1938,7 @@ const Game = (() => {
 
   return {
     ZONES, ZONE_NAMES, CELL_W, CELL_H, MANA, layout, hooks, producesOf, available, enterLife, enterDraw, entersTapped, tapsOnEntry, parseCost, autoPay, manaAbility, isCreature,
-    choosesType, typeChoices, choosesColor, sourceOf, costReductions, discount, AFFINITY_GRANT, TARGET_DISCOUNT, GRAVE_DISCOUNT, FIRST_FLIER, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
+    choosesType, typeChoices, choosesColor, sourceOf, costReductions, reductionCovers, discount, AFFINITY_GRANT, TARGET_DISCOUNT, GRAVE_DISCOUNT, FIRST_FLIER, TAP_PAIN, enterDiscard, entersWithCounters, doublesOf, tokenCount, endOfTurn, drawsTurnOne, isCounterspell, counterLast,
     create, drawCards, shuffle, move, setTapped, untapAll, nextTurn, mulligan, mill,
     counter, toggle, createToken, copyAsToken, log, isLand, count, shuffleArray, randomInt, random, setSeed, getSeed,
     beginLeylines, takeBackLeylines, LEYLINE, attach, detach, isAttachment, isAura, attachmentsOf, sortHand, isVehicle, endCrew, uncrew, emptyMana,

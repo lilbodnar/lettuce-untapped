@@ -158,6 +158,25 @@ test('Pearl Medallion and The Wind Crystal make white spells cost {2} less, and 
   assert.equal(lands.filter(l => l.tapped).length, 3);
 });
 
+test("Opp's Urza's Filter discounts your gold spells too; It That Heralds the End counts mana value", () => {
+  const d = { ...defs,
+    filter: { id: 'filter', name: "Urza's Filter", typeLine: 'Artifact', manaCost: '{4}', cmc: 4, oracle: 'Multicolored spells cost {2} less to cast.' },
+    herald: { id: 'herald', name: 'It That Heralds the End', typeLine: 'Creature — Eldrazi Drone', manaCost: '{1}{C}', cmc: 2, power: '2', toughness: '2', oracle: 'Colorless spells you cast with mana value 7 or greater cost {1} less to cast.' },
+    gold: { id: 'gold', name: 'Gold', typeLine: 'Creature — Bear', manaCost: '{1}{W}{U}', cmc: 3, power: '2', toughness: '2', oracle: '' },
+    big: { id: 'big', name: 'Big', typeLine: 'Creature — Eldrazi', manaCost: '{7}', cmc: 7, power: '7', toughness: '7', oracle: '' },
+    small: { id: 'small', name: 'Small', typeLine: 'Artifact', manaCost: '{3}', cmc: 3, oracle: '' } };
+  const dOf = id => d[id];
+  const game = Game.create(deck('You', [{ id: 'gold', qty: 10 }, { id: 'herald', qty: 1 }, { id: 'big', qty: 5 }, { id: 'small', qty: 5 }]), d);
+  game.bot = Bot.create(deck('Opp', [{ id: 'filter', qty: 1 }, { id: 'gold', qty: 39 }]), d, { onDraw: false });
+  put(game.bot.s, 'filter');
+  const gold = game.cards[game.zones.library.find(i => game.cards[i].id === 'gold')];
+  assert.equal(Bot.selfDiscount(game, gold, dOf), 2); // Opp's Filter
+  put(game, 'herald');
+  const card = id => game.cards[game.zones.library.find(i => game.cards[i].id === id)];
+  assert.equal(Bot.selfDiscount(game, card('big'), dOf), 1);
+  assert.equal(Bot.selfDiscount(game, card('small'), dOf), 0); // mana value 3
+});
+
 test('on the draw, the first-turn card is drawn on top of 7 and kept after a mulligan', () => {
   const s = Game.create(deck('You', [{ id: 'bear', qty: 40 }]), defs, { onDraw: true });
   assert.equal(s.zones.hand.length, 8);
