@@ -143,6 +143,21 @@ test('haste from a lord lets a creature attack the turn it arrives', () => {
   assert.equal(Game.discount(game, { typeLine: 'Creature — Goblin' }, i => (defs[i.id] || {}).oracle), 1);
 });
 
+test('Pearl Medallion and The Wind Crystal make white spells cost {2} less, and autotap pays the rest', () => {
+  const real = require('./angels-cards.json');
+  const d = { ...defs, pearl: { ...real['Pearl Medallion'], id: 'pearl' }, crystal: { ...real['The Wind Crystal'], id: 'crystal' }, plains: { id: 'plains', name: 'Plains', typeLine: 'Basic Land — Plains', producedMana: ['W'] } };
+  const s = Game.create(deck('You', [{ id: 'pearl', qty: 1 }, { id: 'crystal', qty: 1 }, { id: 'plains', qty: 30 }]), d);
+  put(s, 'pearl');
+  put(s, 'crystal');
+  const oracle = i => (d[i.id] || {}).oracle;
+  assert.equal(Game.discount(s, { typeLine: 'Creature — Angel', manaCost: '{4}{W}' }, oracle), 2);
+  assert.equal(Game.discount(s, { typeLine: 'Instant', manaCost: '{1}{W}{W}' }, oracle), 2);
+  assert.equal(Game.discount(s, { typeLine: 'Creature — Bear', manaCost: '{1}{G}' }, oracle), 0); // not white
+  const lands = [put(s, 'plains'), put(s, 'plains'), put(s, 'plains'), put(s, 'plains')];
+  assert.ok(Game.autoPay(s, '{4}{W}', -2, null)); // {4}{W} costs {2}{W}: three Plains
+  assert.equal(lands.filter(l => l.tapped).length, 3);
+});
+
 test('on the draw, the first-turn card is drawn on top of 7 and kept after a mulligan', () => {
   const s = Game.create(deck('You', [{ id: 'bear', qty: 40 }]), defs, { onDraw: true });
   assert.equal(s.zones.hand.length, 8);

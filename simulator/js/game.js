@@ -558,6 +558,11 @@ const Game = (() => {
   const hasFlying = text => /(?:^|\n)(?:[a-z ]+, )*flying(?:,|\n|$)/i.test(String(text || ''));
   function discount(s, spell, oracleOf) {
     const typeWords = String(spell.typeLine || '').split('//')[0].toLowerCase().split(/[^a-z-]+/).filter(Boolean);
+    // Color words too: Pearl Medallion's "White spells you cast cost {1} less" (the card's colors, or its mana cost's)
+    const COLOR_WORD = { W: 'white', U: 'blue', B: 'black', R: 'red', G: 'green' };
+    const cols = (spell.cardColors && spell.cardColors.length ? spell.cardColors
+      : [...new Set((String(spell.manaCost || '').split('//')[0].match(/[WUBRG]/g) || []))]).filter(k => COLOR_WORD[k]);
+    typeWords.push(...cols.map(k => COLOR_WORD[k]), ...(cols.length ? [] : ['colorless']), ...(cols.length > 1 ? ['multicolored'] : []), ...(cols.length === 1 ? ['monocolored'] : []));
     const has = w => typeWords.includes(w);
     let total = 0;
     for (const iid of [...s.zones.battlefield, ...s.zones.command]) {
